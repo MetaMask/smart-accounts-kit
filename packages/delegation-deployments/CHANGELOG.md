@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.13.0]
 
-### Changes
+### Changed
 
 - Rebrand Delegation Toolkit as Smart Accounts Kit ([#89](https://github.com/MetaMask/smart-accounts-kit.git/pull/89))
 - add-sei-chain ([#84](https://github.com/MetaMask/smart-accounts-kit.git/pull/84))

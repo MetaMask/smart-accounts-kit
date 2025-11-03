@@ -18,17 +18,17 @@ import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { sepolia as chain } from 'viem/chains';
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { erc7710BundlerActions, erc7710WalletActions } from '../../src/actions';
+import type {
+  SendTransactionWithDelegationParameters,
+  SendUserOperationWithDelegationParameters,
+} from '../../src/actions/erc7710RedeemDelegationAction';
 import { Implementation } from '../../src/constants';
 import {
   createExecution,
   encodeExecutionCalldatas,
   ExecutionMode,
 } from '../../src/executions';
-import { erc7710BundlerActions, erc7710WalletActions } from '../../src/actions';
-import type {
-  SendTransactionWithDelegationParameters,
-  SendUserOperationWithDelegationParameters,
-} from '../../src/actions/erc7710RedeemDelegationAction';
 import { overrideDeployedEnvironment } from '../../src/smartAccountsEnvironment';
 import { toMetaMaskSmartAccount } from '../../src/toMetaMaskSmartAccount';
 import type {

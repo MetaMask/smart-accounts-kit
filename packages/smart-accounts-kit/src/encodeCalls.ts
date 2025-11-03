@@ -2,6 +2,7 @@ import { DelegationManager } from '@metamask/delegation-abis';
 import { encodeFunctionData } from 'viem';
 import type { Address, Hex } from 'viem';
 
+import type { DelegatedCall } from './actions/erc7710RedeemDelegationAction';
 import {
   execute,
   executeWithMode,
@@ -11,7 +12,6 @@ import {
   createExecution,
   encodeExecutionCalldatas,
 } from './executions';
-import type { DelegatedCall } from './actions/erc7710RedeemDelegationAction';
 import type { Call } from './types';
 
 /**

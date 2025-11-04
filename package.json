@@ -56,7 +56,7 @@
     "viem": "2.31.4",
     "webauthn-p256": "^0.0.10"
   },
-  "packageManager": "yarn@4.10.0",
+  "packageManager": "yarn@4.10.1",
   "engines": {
     "node": "^18.18 || >=20"
   },

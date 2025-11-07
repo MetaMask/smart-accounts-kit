@@ -132,6 +132,21 @@ const inkSepoliaChain: Chain = {
   },
 };
 
+const sonicTestnetChain: Chain = {
+  id: 14601,
+  name: 'Sonic Testnet',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.testnet.soniclabs.com'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Sonic',
+    symbol: 'SONIC',
+    decimals: 18,
+  },
+};
+
 export const chains = {
   ...allChains,
   megaEthTestNet: megaEthTestNetChain,
@@ -142,6 +157,7 @@ export const chains = {
   citreaTestnet: citreaTestnetChain,
   inkMainnet: inkMainnetChain,
   inkSepolia: inkSepoliaChain,
+  sonicTestnet: sonicTestnetChain,
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them

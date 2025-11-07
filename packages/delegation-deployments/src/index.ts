@@ -28,7 +28,7 @@ export const CHAIN_ID = {
   berachainBepolia: 0x138c5,
   chiado: 0x27d8,
   citreaTestnet: 0x13fb,
-  hoodiTestnet: 0x279f,
+  hoodiTestnet: 0x88bb0,
   inkSepolia: 0xba5ed,
   lineaSepolia: 0xe705,
   megaEthTestnet: 0x18c6,

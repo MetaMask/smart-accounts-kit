@@ -208,8 +208,19 @@ const allChainsDone = chainIds.map(async (chainIdAsString) => {
     transport,
   });
 
-  const contractNames = Object.keys(contracts);
+  const actualChainId = await publicClient.getChainId();
 
+  if (actualChainId !== chainId) {
+    // this is only possible if a custom chain configuration is used, and incorrectly configured.
+    console.error(
+      `ChainId mismatch for ${chain.name}: ${actualChainId} !== ${chainId}`,
+    );
+    hasFailed = true;
+    return;
+  }
+
+  const contractNames = Object.keys(contracts);
+  let hasThisChainFailed = false;
   const allContractsDone = contractNames.map(async (contractName) => {
     const contractAddress = contracts[contractName];
 
@@ -220,17 +231,22 @@ const allChainsDone = chainIds.map(async (chainIdAsString) => {
         console.error(
           `${chain.name}: ${contractName} is not deployed at ${contractAddress}`,
         );
-        hasFailed = true;
+        hasThisChainFailed = true;
       }
     } catch (error) {
       console.error(`RPC Request failed for ${chain.name}: ${contractName}`);
-      hasFailed = true;
+      hasThisChainFailed = true;
     }
   });
 
   await Promise.all(allContractsDone);
 
-  console.log(`${chain.name} succeeded`);
+  if (hasThisChainFailed) {
+    hasFailed = true;
+    console.error(`${chain.name} failed`);
+  } else {
+    console.log(`${chain.name} succeeded`);
+  }
 });
 
 Promise.all(allChainsDone).then(() => {

@@ -37,7 +37,7 @@ export const deployments_1_3_0 = {
   OwnershipTransferEnforcer: '0x7EEf9734E7092032B5C56310Eb9BbD1f4A524681',
   RedeemerEnforcer: '0xE144b0b2618071B4E56f746313528a669c7E65c5',
   SpecificActionERC20TransferBatchEnforcer:
-    '0x00e0251aaA263dfE3B3541B758A82D1CBA1c3B6D',
+    '0x6649b61c873F6F9686A1E1ae9ee98aC380c7bA13',
   TimestampEnforcer: '0x1046bb45C8d673d4ea75321280DB34899413c069',
   ValueLteEnforcer: '0x92Bf12322527cAA612fd31a0e810472BBB106A8F',
   MultiTokenPeriodEnforcer: '0xFB2f1a9BD76d3701B730E5d69C3219D42D80eBb7',

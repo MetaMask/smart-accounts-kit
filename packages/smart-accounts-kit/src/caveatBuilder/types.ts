@@ -1,4 +1,4 @@
-import type { SmartAccountsEnvironment } from 'src/types';
+import type { SmartAccountsEnvironment } from '../types';
 
 export enum BalanceChangeType {
   Increase = 0x0,

@@ -23,7 +23,7 @@ import {
   ExecutionMode,
 } from '../executions';
 import { getSmartAccountsEnvironment } from '../smartAccountsEnvironment';
-import type { Call } from 'src/types';
+import type { Call } from '../types';
 
 export type DelegatedCall = Call &
   OneOf<{ permissionsContext: Hex; delegationManager: Hex } | object>;

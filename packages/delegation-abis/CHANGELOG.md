@@ -7,8 +7,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Uncategorized
-
-- feat: promote readable permissions actions ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
-
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/

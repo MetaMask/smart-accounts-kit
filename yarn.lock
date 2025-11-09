@@ -2545,6 +2545,7 @@ __metadata:
     eslint-plugin-prettier: "npm:latest"
     eslint-plugin-promise: "npm:^6.1.1"
     keccak: "npm:^3.0.4"
+    lodash: "npm:^4.17.21"
     nodemon: "npm:^3.1.0"
     prettier: "npm:^3.3.3"
     turbo: "npm:latest"
@@ -4629,6 +4630,13 @@ __metadata:
   version: 4.7.0
   resolution: "lodash.sortby@npm:4.7.0"
   checksum: 10/38df19ae28608af2c50ac342fc1f414508309d53e1d58ed9adfb2c3cd17c3af290058c0a0478028d932c5404df3d53349d19fa364ef6bed6145a6bc21320399e
+  languageName: node
+  linkType: hard
+
+"lodash@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash@npm:4.17.21"
+  checksum: 10/c08619c038846ea6ac754abd6dd29d2568aa705feb69339e836dfa8d8b09abbb2f859371e86863eda41848221f9af43714491467b5b0299122431e202bb0c532
   languageName: node
   linkType: hard
 

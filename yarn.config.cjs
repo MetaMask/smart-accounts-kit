@@ -179,7 +179,7 @@ module.exports = defineConfig({
       if (isChildWorkspace) {
         workspace.unset('packageManager');
       } else {
-        expectWorkspaceField(workspace, 'packageManager', 'yarn@4.2.2');
+        expectWorkspaceField(workspace, 'packageManager', 'yarn@4.10.1');
       }
 
       // All packages must specify a minimum Node.js version of 18.18.
@@ -471,7 +471,7 @@ function expectCorrectWorkspaceExports(workspace) {
   expectWorkspaceField(
     workspace,
     'exports["."].import.types',
-    './dist/index.d.mts',
+    './dist/index.d.ts',
   );
   expectWorkspaceField(
     workspace,
@@ -484,14 +484,14 @@ function expectCorrectWorkspaceExports(workspace) {
   expectWorkspaceField(
     workspace,
     'exports["."].require.types',
-    './dist/index.d.ts',
+    './dist/index.d.cts',
   );
   expectWorkspaceField(
     workspace,
     'exports["."].require.default',
-    './dist/index.js',
+    './dist/index.cjs',
   );
-  expectWorkspaceField(workspace, 'main', './dist/index.js');
+  expectWorkspaceField(workspace, 'main', './dist/index.cjs');
   expectWorkspaceField(workspace, 'types', './dist/index.d.ts');
 
   // Types should not be set in the export object directly, but rather in the

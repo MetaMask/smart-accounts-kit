@@ -9,11 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0]
 
-### Uncategorized
+### Changed
 
-- Chore/fix publish ([#100](https://github.com/MetaMask/smart-accounts-kit/pull/100))
-- Replace absolute imports with relative ([#99](https://github.com/MetaMask/smart-accounts-kit/pull/99))
-- feat: promote readable permissions actions ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
+- Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
 [Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.1.0...HEAD
 [0.1.0]: https://github.com/MetaMask/smart-accounts-kit/releases/tag/@metamask/smart-accounts-kit@0.1.0

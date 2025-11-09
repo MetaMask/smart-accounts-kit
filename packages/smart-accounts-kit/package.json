@@ -1,10 +1,9 @@
 {
   "name": "@metamask/smart-accounts-kit",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "Toolkit for managing and interacting with MetaMask Smart Accounts, built on Viem",
   "license": "(MIT-0 OR Apache-2.0)",
-  "private": true,
   "keywords": [
     "MetaMask",
     "Ethereum"

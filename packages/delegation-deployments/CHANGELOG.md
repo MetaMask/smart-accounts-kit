@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.15.0]
 
-### Uncategorized
+### Added
 
-- feat: add Monad mainnet chain support ([#102](https://github.com/MetaMask/smart-accounts-kit/pull/102))
+- Add chain deployments for Monad mainnet ([#102](https://github.com/MetaMask/smart-accounts-kit/pull/102))
 
 ## [0.14.0]
 
@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add deployments for Sei mainnet ([#84](https://github.com/metamask/smart-accounts-kit/pull/84))
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.15.0...HEAD
-[0.15.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.14.0...@metamask/delegation-deployments@0.15.0
-[0.14.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.13.0...@metamask/delegation-deployments@0.14.0
-[0.13.0]: https://github.com/MetaMask/smart-accounts-kit/releases/tag/@metamask/delegation-deployments@0.13.0
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.15.0...HEAD
+[0.15.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.14.0...@metamask/delegation-deployments@0.15.0
+[0.14.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.13.0...@metamask/delegation-deployments@0.14.0
+[0.13.0]: https://github.com/metamask/smart-accounts-kit/releases/tag/@metamask/delegation-deployments@0.13.0

@@ -87,6 +87,23 @@ const monadTestnetChain: Chain = {
   },
 };
 
+const monadMainnetChain: Chain = {
+  id: 143,
+  name: 'Monad Mainnet',
+  rpcUrls: {
+    default: {
+      // tbd: monad is not yet live
+      // this should fail
+      http: ['https://rpc.monad.xyz'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Monad',
+    symbol: 'MON',
+    decimals: 18,
+  },
+};
+
 const citreaTestnetChain: Chain = {
   id: 5115,
   name: 'Citrea Testnet',
@@ -158,6 +175,7 @@ export const chains = {
   inkMainnet: inkMainnetChain,
   inkSepolia: inkSepoliaChain,
   sonicTestnet: sonicTestnetChain,
+  monad: monadMainnetChain,
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them

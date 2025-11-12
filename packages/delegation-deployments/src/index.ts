@@ -16,6 +16,7 @@ export const CHAIN_ID = {
   ink: 0xdef1,
   linea: 0xe708,
   mainnet: 0x1,
+  monad: 0x8f,
   optimism: 0xa,
   polygon: 0x89,
   sei: 0x531,
@@ -97,6 +98,7 @@ export const DELEGATOR_CONTRACTS: DeployedContracts = {
     [CHAIN_ID.arbitrumNova]: deployments_1_3_0,
     [CHAIN_ID.sei]: deployments_1_3_0,
     [CHAIN_ID.sonic]: deployments_1_3_0,
+    [CHAIN_ID.monad]: deployments_1_3_0,
     // Testnets
     [CHAIN_ID.bscTestnet]: deployments_1_3_0,
     [CHAIN_ID.citreaTestnet]: deployments_1_3_0,

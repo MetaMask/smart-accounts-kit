@@ -429,8 +429,14 @@ function formatErc20TokenStreamPermission({
   return {
     type: 'erc20-token-stream',
     data: {
-      tokenAddress: toHexOrThrow(tokenAddress),
-      amountPerSecond: toHexOrThrow(amountPerSecond),
+      tokenAddress: toHexOrThrow(
+        tokenAddress,
+        'Invalid parameters: tokenAddress is required',
+      ),
+      amountPerSecond: toHexOrThrow(
+        amountPerSecond,
+        'Invalid parameters: amountPerSecond is required',
+      ),
       ...optionalFields,
     },
     isAdjustmentAllowed,
@@ -466,7 +472,10 @@ function formatNativeTokenPeriodicPermission({
   return {
     type: 'native-token-periodic',
     data: {
-      periodAmount: toHexOrThrow(periodAmount),
+      periodAmount: toHexOrThrow(
+        periodAmount,
+        'Invalid parameters: periodAmount is required',
+      ),
       periodDuration: Number(periodDuration),
       ...optionalFields,
     },
@@ -509,8 +518,14 @@ function formatErc20TokenPeriodicPermission({
   return {
     type: 'erc20-token-periodic',
     data: {
-      tokenAddress: toHexOrThrow(tokenAddress),
-      periodAmount: toHexOrThrow(periodAmount),
+      tokenAddress: toHexOrThrow(
+        tokenAddress,
+        'Invalid parameters: tokenAddress is required',
+      ),
+      periodAmount: toHexOrThrow(
+        periodAmount,
+        'Invalid parameters: periodAmount is required',
+      ),
       periodDuration: Number(periodDuration),
       ...optionalFields,
     },

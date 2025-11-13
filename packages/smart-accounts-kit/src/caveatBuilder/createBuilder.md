@@ -51,6 +51,7 @@ Follow the instructions below exactly. Do not skip steps. Do not change behavior
    → Match the structure and approach used in existing integration tests.
    → Do not run the integration test.
    → Constraints for integration tests:
+
    - Only expect revert messages that come from the Enforcer contract.
    - Always call `expectUserOperationToSucceed` with the `userOperationReceipt`.
    - Do not fund addresses with native token unless explicitly required for the logic under test.

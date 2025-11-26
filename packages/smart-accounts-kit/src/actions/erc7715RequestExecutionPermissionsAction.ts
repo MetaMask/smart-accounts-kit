@@ -283,7 +283,7 @@ function toHexOrThrow(
 
   if (typeof value === 'string') {
     if (!isHex(value)) {
-      throw new Error('Invalid parameters: invalid hex value');
+      throw new Error(message ?? 'Invalid parameters: invalid hex value');
     }
     return value;
   }

@@ -1,4 +1,5 @@
-import { type Hex, concat, isHex, toHex } from 'viem';
+import { createAllowedCalldataTerms } from '@metamask/delegation-core';
+import { type Hex } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 
@@ -30,21 +31,7 @@ export const allowedCalldataBuilder = (
 ): Caveat => {
   const { startIndex, value } = config;
 
-  if (!isHex(value)) {
-    throw new Error('Invalid value: must be a valid hex string');
-  }
-
-  if (startIndex < 0) {
-    throw new Error('Invalid startIndex: must be zero or positive');
-  }
-
-  if (!Number.isInteger(startIndex)) {
-    throw new Error('Invalid startIndex: must be a whole number');
-  }
-
-  const startIndexHex = toHex(startIndex, { size: 32 });
-
-  const terms = concat([startIndexHex, value]);
+  const terms = createAllowedCalldataTerms({ startIndex, value });
 
   const {
     caveatEnforcers: { AllowedCalldataEnforcer },

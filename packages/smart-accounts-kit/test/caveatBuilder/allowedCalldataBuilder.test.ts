@@ -20,7 +20,7 @@ describe('allowedCalldataBuilder()', () => {
   describe('validation', () => {
     it('should fail with empty value', () => {
       expect(() => buildWithParams(0, '' as Hex)).to.throw(
-        'Invalid value: must be a valid hex string',
+        'Invalid value: must be a hex string starting with 0x',
       );
     });
 

@@ -265,9 +265,7 @@ function assertIsDefined<TValue>(
 ): asserts value is TValue {
   if (!isDefined(value)) {
     throw new Error(
-      parameterName
-        ? `Invalid parameters: ${parameterName} is required`
-        : 'Invalid parameters: value is required',
+      `Invalid parameters: ${parameterName ?? 'value'} is required`,
     );
   }
 }
@@ -288,9 +286,7 @@ function toHexOrThrow(
   if (typeof value === 'string') {
     if (!isHex(value)) {
       throw new Error(
-        parameterName
-          ? `Invalid parameters: ${parameterName} is not a valid hex value`
-          : 'Invalid parameters: invalid hex value',
+        `Invalid parameters: ${parameterName ?? 'value'} is not a valid hex value`,
       );
     }
     return value;

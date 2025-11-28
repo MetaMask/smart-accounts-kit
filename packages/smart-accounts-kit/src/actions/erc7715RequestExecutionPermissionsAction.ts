@@ -256,15 +256,17 @@ function isDefined<TValue>(value: TValue | null | undefined): value is TValue {
  * Asserts that a value is defined (not null or undefined).
  *
  * @param value - The value to check.
- * @param message - Optional custom error message to throw if the value is not defined.
+ * @param parameterName - Optional: The name of the parameter that is being checked.
  * @throws {Error} If the value is null or undefined.
  */
 function assertIsDefined<TValue>(
   value: TValue | null | undefined,
-  message?: string,
+  parameterName?: string,
 ): asserts value is TValue {
   if (!isDefined(value)) {
-    throw new Error(message ?? 'Invalid parameters: value is required');
+    throw new Error(
+      `Invalid parameters: ${parameterName ?? 'value'} is required`,
+    );
   }
 }
 
@@ -272,18 +274,20 @@ function assertIsDefined<TValue>(
  * Converts a value to a hex string or throws an error if the value is invalid.
  *
  * @param value - The value to convert to hex.
- * @param message - Optional custom error message.
+ * @param parameterName - Optional: The name of the parameter that is being converted to hex.
  * @returns The value as a hex string.
  */
 function toHexOrThrow(
   value: Parameters<typeof toHex>[0] | undefined,
-  message?: string,
+  parameterName?: string,
 ) {
-  assertIsDefined(value, message);
+  assertIsDefined(value, parameterName);
 
   if (typeof value === 'string') {
     if (!isHex(value)) {
-      throw new Error('Invalid parameters: invalid hex value');
+      throw new Error(
+        `Invalid parameters: ${parameterName ?? 'value'} is not a valid hex value`,
+      );
     }
     return value;
   }
@@ -361,10 +365,10 @@ function formatNativeTokenStreamPermission({
 
   const optionalFields = {
     ...(isDefined(initialAmount) && {
-      initialAmount: toHexOrThrow(initialAmount),
+      initialAmount: toHexOrThrow(initialAmount, 'initialAmount'),
     }),
     ...(isDefined(maxAmount) && {
-      maxAmount: toHexOrThrow(maxAmount),
+      maxAmount: toHexOrThrow(maxAmount, 'maxAmount'),
     }),
     ...(isDefined(startTime) && {
       startTime: Number(startTime),
@@ -375,10 +379,7 @@ function formatNativeTokenStreamPermission({
   return {
     type: 'native-token-stream',
     data: {
-      amountPerSecond: toHexOrThrow(
-        amountPerSecond,
-        'Invalid parameters: amountPerSecond is required',
-      ),
+      amountPerSecond: toHexOrThrow(amountPerSecond, 'amountPerSecond'),
       ...optionalFields,
     },
     isAdjustmentAllowed,
@@ -415,10 +416,10 @@ function formatErc20TokenStreamPermission({
 
   const optionalFields = {
     ...(isDefined(initialAmount) && {
-      initialAmount: toHexOrThrow(initialAmount),
+      initialAmount: toHexOrThrow(initialAmount, 'initialAmount'),
     }),
     ...(isDefined(maxAmount) && {
-      maxAmount: toHexOrThrow(maxAmount),
+      maxAmount: toHexOrThrow(maxAmount, 'maxAmount'),
     }),
     ...(isDefined(startTime) && {
       startTime: Number(startTime),
@@ -429,14 +430,8 @@ function formatErc20TokenStreamPermission({
   return {
     type: 'erc20-token-stream',
     data: {
-      tokenAddress: toHexOrThrow(
-        tokenAddress,
-        'Invalid parameters: tokenAddress is required',
-      ),
-      amountPerSecond: toHexOrThrow(
-        amountPerSecond,
-        'Invalid parameters: amountPerSecond is required',
-      ),
+      tokenAddress: toHexOrThrow(tokenAddress, 'tokenAddress'),
+      amountPerSecond: toHexOrThrow(amountPerSecond, 'amountPerSecond'),
       ...optionalFields,
     },
     isAdjustmentAllowed,
@@ -472,10 +467,7 @@ function formatNativeTokenPeriodicPermission({
   return {
     type: 'native-token-periodic',
     data: {
-      periodAmount: toHexOrThrow(
-        periodAmount,
-        'Invalid parameters: periodAmount is required',
-      ),
+      periodAmount: toHexOrThrow(periodAmount, 'periodAmount'),
       periodDuration: Number(periodDuration),
       ...optionalFields,
     },
@@ -518,14 +510,8 @@ function formatErc20TokenPeriodicPermission({
   return {
     type: 'erc20-token-periodic',
     data: {
-      tokenAddress: toHexOrThrow(
-        tokenAddress,
-        'Invalid parameters: tokenAddress is required',
-      ),
-      periodAmount: toHexOrThrow(
-        periodAmount,
-        'Invalid parameters: periodAmount is required',
-      ),
+      tokenAddress: toHexOrThrow(tokenAddress, 'tokenAddress'),
+      periodAmount: toHexOrThrow(periodAmount, 'periodAmount'),
       periodDuration: Number(periodDuration),
       ...optionalFields,
     },

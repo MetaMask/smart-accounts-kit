@@ -2,6 +2,7 @@ import type {
   AccountSigner,
   Erc20TokenPeriodicPermission,
   Erc20TokenStreamPermission,
+  Erc20TokenRevocationPermission,
   NativeTokenPeriodicPermission,
   NativeTokenStreamPermission,
   PermissionRequest,
@@ -116,11 +117,23 @@ export type Erc20TokenPeriodicPermissionParameter = PermissionParameter & {
   };
 };
 
+/**
+ * Represents an ERC-20 token revocation permission.
+ * This allows for revoking an ERC-20 token allowance.
+ */
+export type Erc20TokenRevocationPermissionParameter = PermissionParameter & {
+  type: 'erc20-token-revocation';
+  data: {
+    justification?: string;
+  };
+};
+
 export type SupportedPermissionParams =
   | NativeTokenStreamPermissionParameter
   | Erc20TokenStreamPermissionParameter
   | NativeTokenPeriodicPermissionParameter
-  | Erc20TokenPeriodicPermissionParameter;
+  | Erc20TokenPeriodicPermissionParameter
+  | Erc20TokenRevocationPermissionParameter;
 
 export type SignerParam = Address | AccountSigner;
 
@@ -329,6 +342,12 @@ function getPermissionFormatter(permissionType: string): PermissionFormatter {
           permission: permission as Erc20TokenPeriodicPermissionParameter,
           isAdjustmentAllowed,
         });
+    case 'erc20-token-revocation':
+      return ({ permission, isAdjustmentAllowed }) =>
+        formatErc20TokenRevocationPermission({
+          permission: permission as Erc20TokenRevocationPermissionParameter,
+          isAdjustmentAllowed,
+        });
     default:
       throw new Error(`Unsupported permission type: ${permissionType}`);
   }
@@ -529,6 +548,35 @@ function formatErc20TokenPeriodicPermission({
       periodDuration: Number(periodDuration),
       ...optionalFields,
     },
+    isAdjustmentAllowed,
+  };
+}
+
+/**
+ * Formats an ERC-20 token revocation permission for submission to the wallet.
+ *
+ * @param params - The parameters for formatting the ERC-20 token revocation permission.
+ * @param params.permission - The ERC-20 token revocation permission parameter to format.
+ * @param params.isAdjustmentAllowed - Whether the permission is allowed to be adjusted.
+ * @returns The formatted Erc20TokenRevocationPermission object.
+ */
+function formatErc20TokenRevocationPermission({
+  permission,
+  isAdjustmentAllowed,
+}: {
+  permission: Erc20TokenRevocationPermissionParameter;
+  isAdjustmentAllowed: boolean;
+}): Erc20TokenRevocationPermission {
+  const {
+    data: { justification },
+  } = permission;
+
+  const data = {
+    ...(justification ? { justification } : {}),
+  };
+  return {
+    type: 'erc20-token-revocation',
+    data,
     isAdjustmentAllowed,
   };
 }

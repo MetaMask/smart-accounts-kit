@@ -6,11 +6,11 @@
  * A hex-encoded string.
  */
 export type Hex = `0x${string}`;
-  
+
 /**
  * The types of keys that are supported for the following `key` and `keys` signer types.
  */
-export type KeyType = "secp256r1" | "secp256k1" | "ed25519" | "schnorr";
+export type KeyType = 'secp256r1' | 'secp256k1' | 'ed25519' | 'schnorr';
 
 ////////////////////////////////////////////////////
 // Signer Types
@@ -21,20 +21,20 @@ export type KeyType = "secp256r1" | "secp256k1" | "ed25519" | "schnorr";
  * `data` is not necessary for this signer type as the wallet is both the signer and grantor of these permissions
  */
 export type WalletSigner = {
-    type: "wallet";
-    data: {};
+  type: 'wallet';
+  data: {};
 };
-  
+
 /**
  * A signer representing a single key.
  * "Key" types are explicitly secp256r1 (p256) or secp256k1, and the public keys are hex-encoded.
  */
 export type KeySigner = {
-    type: "key";
-    data: {
-        type: KeyType;
-        publicKey: Hex;
-    };
+  type: 'key';
+  data: {
+    type: KeyType;
+    publicKey: Hex;
+  };
 };
 
 /**
@@ -42,23 +42,23 @@ export type KeySigner = {
  * Each element of `publicKeys` are all explicitly the same `KeyType`, and the public keys are hex-encoded.
  */
 export type MultiKeySigner = {
-    type: "keys";
-    data: {
-        keys: {
-            type: KeyType;
-            publicKey: Hex;
-        }[];
-    };
+  type: 'keys';
+  data: {
+    keys: {
+      type: KeyType;
+      publicKey: Hex;
+    }[];
+  };
 };
 
 /**
  * An account that can be granted with permissions as in ERC-7710.
  */
 export type AccountSigner = {
-    type: "account";
-    data: {
-        address: Hex;
-    };
+  type: 'account';
+  data: {
+    address: Hex;
+  };
 };
 
 export type Signer = WalletSigner | KeySigner | MultiKeySigner | AccountSigner;
@@ -75,9 +75,9 @@ export type Signer = WalletSigner | KeySigner | MultiKeySigner | AccountSigner;
  * @property data - is a record of the data that is associated with the permission, and the structure is defined by the ERCs.
  */
 export type BasePermission = {
-    type: string;
-    isAdjustmentAllowed: boolean;
-    data: Record<string, any>;
+  type: string;
+  isAdjustmentAllowed: boolean;
+  data: Record<string, any>;
 };
 
 /**
@@ -88,9 +88,9 @@ export type BasePermission = {
  * @property data - is a record of the data that is associated with the rule, and the structure is defined by the ERCs.
  */
 export type Rule = {
-    type: string;
-    isAdjustmentAllowed: boolean;
-    data: Record<string, any>;
+  type: string;
+  isAdjustmentAllowed: boolean;
+  data: Record<string, any>;
 };
 
 ////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ export type Rule = {
  * @property justification - is a human-readable explanation of why the permission is being requested.
  */
 export type MetaMaskBasePermissionData = {
-    justification?: string | null;
+  justification?: string | null;
 };
 
 /**
@@ -113,13 +113,13 @@ export type MetaMaskBasePermissionData = {
  * @property data.startTime - is the start time of the stream. Defaults to current time.
  */
 export type NativeTokenStreamPermission = BasePermission & {
-    type: 'native-token-stream';
-    data: MetaMaskBasePermissionData & {
-      initialAmount?: Hex | null;
-      maxAmount?: Hex | null;
-      amountPerSecond: Hex;
-      startTime?: number | null;
-    };
+  type: 'native-token-stream';
+  data: MetaMaskBasePermissionData & {
+    initialAmount?: Hex | null;
+    maxAmount?: Hex | null;
+    amountPerSecond: Hex;
+    startTime?: number | null;
+  };
 };
 
 /**
@@ -129,12 +129,12 @@ export type NativeTokenStreamPermission = BasePermission & {
  * @property data.startTime - is the start time of the stream. Defaults to current time.
  */
 export type NativeTokenPeriodicPermission = BasePermission & {
-    type: 'native-token-periodic';
-    data: MetaMaskBasePermissionData & {
-      periodAmount: Hex;
-      periodDuration: number;
-      startTime?: number | null;
-    };
+  type: 'native-token-periodic';
+  data: MetaMaskBasePermissionData & {
+    periodAmount: Hex;
+    periodDuration: number;
+    startTime?: number | null;
+  };
 };
 
 /**
@@ -146,16 +146,16 @@ export type NativeTokenPeriodicPermission = BasePermission & {
  * @property data.tokenAddress - is the address of the ERC20 token to be streamed.
  */
 export type Erc20TokenStreamPermission = BasePermission & {
-    type: 'erc20-token-stream';
-    data: MetaMaskBasePermissionData & {
-      initialAmount?: Hex | null;
-      maxAmount?: Hex | null;
-      amountPerSecond: Hex;
-      startTime?: number | null;
-      tokenAddress: Hex;
-    };
+  type: 'erc20-token-stream';
+  data: MetaMaskBasePermissionData & {
+    initialAmount?: Hex | null;
+    maxAmount?: Hex | null;
+    amountPerSecond: Hex;
+    startTime?: number | null;
+    tokenAddress: Hex;
+  };
 };
-  
+
 /**
  * A permission to stream ERC20 tokens periodically.
  * @property data.periodAmount - is the amount of the ERC20 token to be streamed per period.
@@ -164,13 +164,21 @@ export type Erc20TokenStreamPermission = BasePermission & {
  * @property data.tokenAddress - is the address of the ERC20 token to be streamed per period.
  */
 export type Erc20TokenPeriodicPermission = BasePermission & {
-    type: 'erc20-token-periodic';
-    data: MetaMaskBasePermissionData & {
-      periodAmount: Hex;
-      periodDuration: number;
-      startTime?: number | null;
-      tokenAddress: Hex;
-    };
+  type: 'erc20-token-periodic';
+  data: MetaMaskBasePermissionData & {
+    periodAmount: Hex;
+    periodDuration: number;
+    startTime?: number | null;
+    tokenAddress: Hex;
+  };
+};
+
+/**
+ * A permission to revoke an ERC20 token allowance.
+ */
+export type Erc20TokenRevocationPermission = BasePermission & {
+  type: 'erc20-token-revocation';
+  data: MetaMaskBasePermissionData;
 };
 
 /**
@@ -187,10 +195,11 @@ export type Erc20TokenPeriodicPermission = BasePermission & {
  * Represents the type of the ERC-7715 permissions that can be granted.
  */
 export type PermissionTypes =
-    | NativeTokenStreamPermission
-    | NativeTokenPeriodicPermission
-    | Erc20TokenStreamPermission
-    | Erc20TokenPeriodicPermission;
+  | NativeTokenStreamPermission
+  | NativeTokenPeriodicPermission
+  | Erc20TokenStreamPermission
+  | Erc20TokenPeriodicPermission
+  | Erc20TokenRevocationPermission;
 
 ////////////////////////////////////////////////////
 // Permission Requests
@@ -205,14 +214,14 @@ export type PermissionTypes =
  * @property rules - rules defined the restrictions or conditions that a signer MUST abide by when using a permission to act on behalf of an account. See the "Rule" section for details.
  */
 export type PermissionRequest<
-    TSigner extends Signer,
-    TPermission extends PermissionTypes
+  TSigner extends Signer,
+  TPermission extends PermissionTypes,
 > = {
-    chainId: Hex; // hex-encoding of uint256
-    address?: Hex;
-    signer: TSigner;
-    permission: TPermission;
-    rules?: Rule[] | null;
+  chainId: Hex; // hex-encoding of uint256
+  address?: Hex;
+  signer: TSigner;
+  permission: TPermission;
+  rules?: Rule[] | null;
 };
 
 /**
@@ -223,20 +232,20 @@ export type PermissionRequest<
  * @property signerMeta - is dependent on the account type. If the signer type is `wallet` then it's not required. If the signer type is `key` or `keys` then `userOpBuilder` is required as defined in ERC-7679. If the signer type is `account` then `delegationManager` is required as defined in ERC-7710.
  */
 export type PermissionResponse<
-    TSigner extends Signer,
-    TPermission extends PermissionTypes
+  TSigner extends Signer,
+  TPermission extends PermissionTypes,
 > = PermissionRequest<TSigner, TPermission> & {
-    context: Hex;
-    dependencyInfo: {
-        factory: Hex;
-        factoryData: Hex;
-    }[];
-    signerMeta?: {
-        // 7679 userOp building
-        userOpBuilder?: Hex;
-        // 7710 delegation
-        delegationManager?: Hex;
-    };  
+  context: Hex;
+  dependencyInfo: {
+    factory: Hex;
+    factoryData: Hex;
+  }[];
+  signerMeta?: {
+    // 7679 userOp building
+    userOpBuilder?: Hex;
+    // 7710 delegation
+    delegationManager?: Hex;
+  };
 };
 
 /**
@@ -244,7 +253,7 @@ export type PermissionResponse<
  * @property permissionContext - the context identifier for the permission to be revoked
  */
 export type RevokeExecutionPermissionRequestParams = {
-    permissionContext: Hex;
+  permissionContext: Hex;
 };
 
 /**

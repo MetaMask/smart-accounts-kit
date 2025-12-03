@@ -2,6 +2,7 @@ import type {
   AccountSigner,
   Erc20TokenPeriodicPermission,
   Erc20TokenStreamPermission,
+  Erc20TokenRevocationPermission,
   NativeTokenPeriodicPermission,
   NativeTokenStreamPermission,
   PermissionRequest,
@@ -57,7 +58,9 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         isAdjustmentAllowed: false,
         signer: alice.address,
       };
-      const parameters = [permissionRequest];
+      const parameters: RequestExecutionPermissionsParameters = [
+        permissionRequest,
+      ];
 
       stubRequest.resolves(mockResponse);
 
@@ -121,7 +124,9 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         signer: alice.address,
       };
 
-      const parameters = [permissionRequest];
+      const parameters: RequestExecutionPermissionsParameters = [
+        permissionRequest,
+      ];
       stubRequest.resolves(mockResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
@@ -174,7 +179,9 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         isAdjustmentAllowed: false,
         signer: alice.address,
       };
-      const parameters = [permissionRequest];
+      const parameters: RequestExecutionPermissionsParameters = [
+        permissionRequest,
+      ];
 
       stubRequest.resolves(mockResponse);
 
@@ -326,11 +333,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         isAdjustmentAllowed: false,
         signer: alice.address,
       };
-      const parameters = [permissionRequest];
-
       stubRequest.resolves(mockResponse);
-
-      await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
+      await erc7715RequestExecutionPermissionsAction(mockClient, [
+        permissionRequest,
+      ]);
 
       expect(stubRequest.callCount).to.equal(1);
       expect(stubRequest.firstCall.args[0]).to.deep.equal({
@@ -385,11 +391,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         isAdjustmentAllowed: false,
         signer: alice.address,
       };
-      const parameters = [permissionRequest];
-
       stubRequest.resolves(mockResponse);
-
-      await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
+      await (erc7715RequestExecutionPermissionsAction as any)(mockClient, [
+        permissionRequest,
+      ] as any);
 
       expect(stubRequest.callCount).to.equal(1);
       expect(stubRequest.firstCall.args[0]).to.deep.equal({
@@ -563,11 +568,11 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         isAdjustmentAllowed: true,
         signer: alice.address,
       } as const;
-      const parameters = [permissionRequest];
-
       stubRequest.resolves(mockResponse);
 
-      await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
+      await (erc7715RequestExecutionPermissionsAction as any)(mockClient, [
+        permissionRequest,
+      ]);
 
       const expectedRequest: PermissionRequest<
         AccountSigner,
@@ -595,6 +600,119 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           {
             type: 'expiry',
             isAdjustmentAllowed: true,
+            data: {
+              timestamp: 1234567890,
+            },
+          },
+        ],
+      };
+
+      expect(stubRequest.callCount).to.equal(1);
+      expect(stubRequest.firstCall.args[0]).to.deep.equal({
+        method: 'wallet_requestExecutionPermissions',
+        params: [expectedRequest],
+      });
+    });
+
+    it('formats Erc20 Token Revocation correctly', async () => {
+      const permissionRequest = {
+        chainId: 31337,
+        address: bob.address,
+        expiry: 1234567890,
+        permission: {
+          type: 'erc20-token-revocation' as const,
+          data: {
+            justification: 'Revoke stale allowance',
+          },
+        },
+        isAdjustmentAllowed: true,
+        signer: alice.address,
+      } as const;
+      const parameters: RequestExecutionPermissionsParameters = [
+        permissionRequest,
+      ];
+      stubRequest.resolves(mockResponse);
+
+      await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
+
+      const expectedRequest: PermissionRequest<
+        AccountSigner,
+        Erc20TokenRevocationPermission
+      > = {
+        chainId: '0x7a69',
+        address: bob.address,
+        permission: {
+          type: 'erc20-token-revocation',
+          data: {
+            justification: 'Revoke stale allowance',
+          },
+          isAdjustmentAllowed: true,
+        },
+        signer: {
+          type: 'account',
+          data: {
+            address: alice.address,
+          },
+        },
+        rules: [
+          {
+            type: 'expiry',
+            isAdjustmentAllowed: true,
+            data: {
+              timestamp: 1234567890,
+            },
+          },
+        ],
+      };
+
+      expect(stubRequest.callCount).to.equal(1);
+      expect(stubRequest.firstCall.args[0]).to.deep.equal({
+        method: 'wallet_requestExecutionPermissions',
+        params: [expectedRequest],
+      });
+    });
+
+    it("doesn't include justification when omitted for Erc20 Token Revocation", async () => {
+      const permissionRequest = {
+        chainId: 31337,
+        address: bob.address,
+        expiry: 1234567890,
+        permission: {
+          type: 'erc20-token-revocation' as const,
+          data: {},
+        },
+        isAdjustmentAllowed: false,
+        signer: alice.address,
+      };
+      const parameters: RequestExecutionPermissionsParameters = [
+        permissionRequest,
+      ];
+
+      stubRequest.resolves(mockResponse);
+
+      await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
+
+      const expectedRequest: PermissionRequest<
+        AccountSigner,
+        Erc20TokenRevocationPermission
+      > = {
+        chainId: '0x7a69',
+        address: bob.address,
+        permission: {
+          type: 'erc20-token-revocation',
+          data: {},
+          isAdjustmentAllowed: false,
+        },
+        signer: {
+          type: 'account',
+          data: {
+            address: alice.address,
+          },
+        },
+        rules: [
+          {
+            type: 'expiry',
+            isAdjustmentAllowed: false,
             data: {
               timestamp: 1234567890,
             },

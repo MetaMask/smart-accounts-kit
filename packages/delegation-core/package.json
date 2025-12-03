@@ -1,6 +1,6 @@
 {
   "name": "@metamask/delegation-core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Low level core functionality for interacting with the Delegation Framework",
   "license": "(MIT-0 OR Apache-2.0)",
   "type": "module",

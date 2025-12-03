@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0]
+
 ### Uncategorized
 
 - Add permission type erc20-token-revocation ([#110](https://github.com/MetaMask/smart-accounts-kit/pull/110))
@@ -21,5 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.1.0...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.2.0...HEAD
+[0.2.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.1.0...@metamask/smart-accounts-kit@0.2.0
 [0.1.0]: https://github.com/MetaMask/smart-accounts-kit/releases/tag/@metamask/smart-accounts-kit@0.1.0

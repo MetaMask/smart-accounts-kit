@@ -9,10 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.0]
 
-### Uncategorized
+### Added
 
-- Add allowedCalldata terms builder in @metamask/delegation-core ([#108](https://github.com/MetaMask/smart-accounts-kit/pull/108))
-- Rebrand Delegation Toolkit as Smart Accounts Kit ([#89](https://github.com/MetaMask/smart-accounts-kit/pull/89))
+- New `allowedCalldata` terms builder ([#108](https://github.com/MetaMask/smart-accounts-kit/pull/108))
 
 ## [0.2.0]
 
@@ -42,8 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add @metamask/delegation-core package, providing utility types, delegation hashing, and terms encoding for a limited set of caveat enforcers.
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-core@0.3.0...HEAD
-[0.3.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-core@0.2.0...@metamask/delegation-core@0.3.0
-[0.2.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-core@0.2.0-rc.1...@metamask/delegation-core@0.2.0
-[0.2.0-rc.1]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-core@0.1.0...@metamask/delegation-core@0.2.0-rc.1
-[0.1.0]: https://github.com/MetaMask/smart-accounts-kit/releases/tag/@metamask/delegation-core@0.1.0
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@0.3.0...HEAD
+[0.3.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@0.2.0...@metamask/delegation-core@0.3.0
+[0.2.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@0.2.0-rc.1...@metamask/delegation-core@0.2.0
+[0.2.0-rc.1]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@0.1.0...@metamask/delegation-core@0.2.0-rc.1
+[0.1.0]: https://github.com/metamask/smart-accounts-kit/releases/tag/@metamask/delegation-core@0.1.0

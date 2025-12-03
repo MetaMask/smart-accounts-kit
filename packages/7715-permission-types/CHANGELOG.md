@@ -9,11 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.0]
 
-### Uncategorized
+### Added
 
-- Add permission type erc20-token-revocation ([#110](https://github.com/MetaMask/smart-accounts-kit/pull/110))
-- feat: promote readable permissions actions ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
-- Rebrand Delegation Toolkit as Smart Accounts Kit ([#89](https://github.com/MetaMask/smart-accounts-kit/pull/89))
+- New permission type `erc20-token-revocation` ([#110](https://github.com/MetaMask/smart-accounts-kit/pull/110))
 
 ## [0.3.0]
 
@@ -27,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Type definitions for EIP-7715 Execution Permissions, and definitions for permission types supported by MetaMask
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.4.0...HEAD
-[0.4.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.3.0...@metamask/7715-permission-types@0.4.0
-[0.3.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.2.0...@metamask/7715-permission-types@0.3.0
-[0.2.0]: https://github.com/MetaMask/smart-accounts-kit/releases/tag/@metamask/7715-permission-types@0.2.0
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.4.0...HEAD
+[0.4.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.3.0...@metamask/7715-permission-types@0.4.0
+[0.3.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.2.0...@metamask/7715-permission-types@0.3.0
+[0.2.0]: https://github.com/metamask/smart-accounts-kit/releases/tag/@metamask/7715-permission-types@0.2.0

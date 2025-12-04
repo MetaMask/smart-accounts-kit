@@ -700,20 +700,21 @@ __metadata:
   linkType: hard
 
 "@metamask/utils@npm:^11.0.1, @metamask/utils@npm:^11.4.0":
-  version: 11.4.2
-  resolution: "@metamask/utils@npm:11.4.2"
+  version: 11.8.1
+  resolution: "@metamask/utils@npm:11.8.1"
   dependencies:
     "@ethereumjs/tx": "npm:^4.2.0"
     "@metamask/superstruct": "npm:^3.1.0"
     "@noble/hashes": "npm:^1.3.1"
     "@scure/base": "npm:^1.1.3"
     "@types/debug": "npm:^4.1.7"
+    "@types/lodash": "npm:^4.17.20"
     debug: "npm:^4.3.4"
-    lodash.memoize: "npm:^4.1.2"
+    lodash: "npm:^4.17.21"
     pony-cause: "npm:^2.1.10"
     semver: "npm:^7.5.4"
     uuid: "npm:^9.0.1"
-  checksum: 10/63415da3479f7022bc98e63d0f68a53ef31b2ef3d459eb3f81d62140f510ebba937c7034dd63cde6b2d5faf74250081903cc8009a174a9984d2fec1d0be04b8d
+  checksum: 10/efd3aab7f86b4a74d396cf1d5fc76e748ff78906802fdc15ec9ce2d1a9bd6b035e8e036ea93eb6b9ea33782c70adb9000772eb7a5e0164e8e9e2ebb077dca3ab
   languageName: node
   linkType: hard
 
@@ -1358,6 +1359,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10/83cf38a5aa59d24edd7b6f8cd143b5f7b95d4c3a922b1479fe681c32d63683a8f97b9923fea8b48114eb819e80e3ed1f4cb7bcc744382862bf62ab0ae9b6c77e
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:^4.17.20":
+  version: 4.17.21
+  resolution: "@types/lodash@npm:4.17.21"
+  checksum: 10/34920830a3bc82ba619cda05e606fef00c148a69b4f19f770645d2587ccdb8e42ef3ddfc174b7884c0c709fc0a1aeb48f7326da969bad12a1464a03efbbe414c
   languageName: node
   linkType: hard
 
@@ -4457,13 +4465,6 @@ __metadata:
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
   checksum: 10/2a4925f6e89bc2c010a77a802d1ba357e17ed1ea03c2ddf6a146429f2856a216663e694a6aa3549a318cbbba3fd8b7decb392db457e6ac0b83dc745ed0a17380
-  languageName: node
-  linkType: hard
-
-"lodash.memoize@npm:^4.1.2":
-  version: 4.1.2
-  resolution: "lodash.memoize@npm:4.1.2"
-  checksum: 10/192b2168f310c86f303580b53acf81ab029761b9bd9caa9506a019ffea5f3363ea98d7e39e7e11e6b9917066c9d36a09a11f6fe16f812326390d8f3a54a1a6da
   languageName: node
   linkType: hard
 

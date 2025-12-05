@@ -76,6 +76,22 @@
     },
     "./package.json": "./package.json"
   },
+  "typesVersions": {
+    "*": {
+      "utils": [
+        "./dist/utils/index.d.ts"
+      ],
+      "actions": [
+        "./dist/actions/index.d.ts"
+      ],
+      "contracts": [
+        "./dist/contracts/index.d.ts"
+      ],
+      "experimental": [
+        "./dist/experimental/index.d.ts"
+      ]
+    }
+  },
   "engines": {
     "node": "^18.18 || >=20"
   },

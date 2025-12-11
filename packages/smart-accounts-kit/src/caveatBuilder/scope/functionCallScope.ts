@@ -6,17 +6,18 @@ import type { AllowedTargetsBuilderConfig } from '../allowedTargetsBuilder';
 import { createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 import type { ExactCalldataBuilderConfig } from '../exactCalldataBuilder';
+import type { ValueLteBuilderConfig } from '../valueLteBuilder';
 
 type FunctionCallScopeBaseConfig = {
   type: 'functionCall';
+  allowedCalldata?: AllowedCalldataBuilderConfig[];
+  exactCalldata?: ExactCalldataBuilderConfig;
+  valueLte?: ValueLteBuilderConfig;
 };
 
 export type FunctionCallScopeConfig = FunctionCallScopeBaseConfig &
   AllowedTargetsBuilderConfig &
-  AllowedMethodsBuilderConfig & {
-    allowedCalldata?: AllowedCalldataBuilderConfig[];
-    exactCalldata?: ExactCalldataBuilderConfig;
-  };
+  AllowedMethodsBuilderConfig;
 
 const isFunctionCallConfig = (
   config: FunctionCallScopeConfig,
@@ -49,9 +50,12 @@ export function createFunctionCallCaveatBuilder(
     );
   }
 
+  const valueLteConfig = config.valueLte ?? { maxValue: 0n };
+
   const caveatBuilder = createCaveatBuilder(environment)
     .addCaveat('allowedTargets', { targets })
-    .addCaveat('allowedMethods', { selectors });
+    .addCaveat('allowedMethods', { selectors })
+    .addCaveat('valueLte', valueLteConfig);
 
   if (allowedCalldata && allowedCalldata.length > 0) {
     allowedCalldata.forEach((calldataConfig) => {

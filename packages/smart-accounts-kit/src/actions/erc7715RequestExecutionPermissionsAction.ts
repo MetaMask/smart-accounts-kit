@@ -149,9 +149,9 @@ export type PermissionRequestParameter = {
   // Account to assign the permission to.
   signer: SignerParam;
   // address from which the permission should be granted.
-  address?: Address;
+  address?: Address | undefined | null;
   // Timestamp (in seconds) that specifies the time by which this permission MUST expire.
-  expiry: number;
+  expiry?: number | undefined | null;
 };
 
 /**
@@ -223,15 +223,17 @@ function formatPermissionsRequest(
       ? parameters.signer
       : parameters.signer.data.address;
 
-  const rules: Rule[] = [
-    {
-      type: 'expiry',
-      isAdjustmentAllowed,
-      data: {
-        timestamp: expiry,
-      },
-    },
-  ];
+  const rules: Rule[] = isDefined(expiry)
+    ? [
+        {
+          type: 'expiry',
+          isAdjustmentAllowed,
+          data: {
+            timestamp: expiry,
+          },
+        },
+      ]
+    : [];
 
   const optionalFields = {
     ...(address ? { address } : {}),

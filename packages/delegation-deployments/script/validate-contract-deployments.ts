@@ -12,6 +12,22 @@ import { compareVersions } from 'compare-versions';
   code is found at the expected address for each contract.
 */
 
+const megaEthMainnetChain: Chain = {
+  id: 4326,
+  name: 'MegaEth Mainnet',
+  rpcUrls: {
+    default: {
+      // tbd: megaeth is not yet live
+      http: ['https://mainnet.megaeth.com/rpc'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Ether',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+};
+
 const megaEthTestNetChain: Chain = {
   id: 6342,
   name: 'MegaEth Testnet',
@@ -176,6 +192,7 @@ export const chains = {
   inkSepolia: inkSepoliaChain,
   sonicTestnet: sonicTestnetChain,
   monad: monadMainnetChain,
+  megaEthMainnet: megaEthMainnetChain,
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them

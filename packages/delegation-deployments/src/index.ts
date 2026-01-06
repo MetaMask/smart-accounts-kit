@@ -22,6 +22,7 @@ export const CHAIN_ID = {
   sei: 0x531,
   sonic: 0x92,
   unichain: 0x82,
+  megaEthMainnet: 0x10e6,
   // Testnets
   bscTestnet: 0x61,
   arbitrumSepolia: 0x66eee,
@@ -99,6 +100,7 @@ export const DELEGATOR_CONTRACTS: DeployedContracts = {
     [CHAIN_ID.sei]: deployments_1_3_0,
     [CHAIN_ID.sonic]: deployments_1_3_0,
     [CHAIN_ID.monad]: deployments_1_3_0,
+    [CHAIN_ID.megaEthMainnet]: deployments_1_3_0,
     // Testnets
     [CHAIN_ID.bscTestnet]: deployments_1_3_0,
     [CHAIN_ID.citreaTestnet]: deployments_1_3_0,

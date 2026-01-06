@@ -8,9 +8,9 @@ import {
 import { nodeUrl, bundlerUrl, paymasterUrl, chain, deployPk } from './config';
 import { privateKeyToAccount } from 'viem/accounts';
 import { deploySmartAccountsEnvironment } from '@metamask/smart-accounts-kit/utils';
-import { ENTRYPOINT_ADDRESS_V07 } from 'permissionless';
 import { writeFile } from 'fs/promises';
 
+const ENTRYPOINT_ADDRESS_V07 = '0x0000000071727De22E5E9d8BAf0edAc6f37da032';
 const POLL_INTERVAL_MS = 1_000;
 // timeout is 5 minutes, which is sufficiently long to never trigger a false positive
 const TIMEOUT_MS = 5 * 60_000;

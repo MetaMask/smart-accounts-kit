@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.16.0]
 
-### Uncategorized
+### Changed
 
 - Update megaeth testnet chainId ([#125](https://github.com/metamask/smart-accounts-kit/pull/125))
 

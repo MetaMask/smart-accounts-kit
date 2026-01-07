@@ -27,6 +27,7 @@ export const defaultOptions = { out: 'hex' } as EncodingOptions<any>;
 
 /**
  * Prepares a result by converting between hex and bytes based on options.
+ *
  * @param result - The value to convert (either Uint8Array or Hex optionally prefixed with 0x).
  * @param options - The options specifying the desired output format.
  * @returns The converted value with proper type narrowing.
@@ -48,10 +49,11 @@ export function prepareResult<TResultValue extends ResultValue>(
 
 /**
  * Converts a bytes-like value to a hex string.
+ *
  * @param bytesLike - The bytes-like value to convert.
  * @returns The hex string representation of the bytes-like value.
  */
-export const bytesLikeToHex = (bytesLike: BytesLike) => {
+export const bytesLikeToHex = (bytesLike: BytesLike): Hex => {
   if (typeof bytesLike === 'string') {
     return bytesLike;
   }
@@ -60,10 +62,11 @@ export const bytesLikeToHex = (bytesLike: BytesLike) => {
 
 /**
  * Converts a bytes-like value to a Uint8Array.
+ *
  * @param bytesLike - The bytes-like value to convert.
  * @returns The Uint8Array representation of the bytes-like value.
  */
-export const bytesLikeToBytes = (bytesLike: BytesLike) => {
+export const bytesLikeToBytes = (bytesLike: BytesLike): Uint8Array => {
   if (typeof bytesLike === 'string') {
     return hexToBytes(bytesLike);
   }

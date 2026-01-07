@@ -1,3 +1,4 @@
+import { hexToBytes } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { createAllowedCalldataTerms } from '../../src/caveats/allowedCalldata';
@@ -5,7 +6,7 @@ import type { Hex } from '../../src/types';
 import { toHexString } from '../../src/utils';
 
 describe('createAllowedCalldataTerms', function () {
-  const prefixWithIndex = (startIndex: number, value: Hex) => {
+  const prefixWithIndex = (startIndex: number, value: Hex): Hex => {
     const indexHex = toHexString({ value: startIndex, size: 32 });
     return `0x${indexHex}${value.slice(2)}` as Hex;
   };
@@ -157,7 +158,7 @@ describe('createAllowedCalldataTerms', function () {
       expect(result).toHaveLength(32 + 8);
       // Verify prefix bytes equal encoded index
       const expectedPrefixHex = toHexString({ value: startIndex, size: 32 });
-      const expectedPrefix = Array.from(Buffer.from(expectedPrefixHex, 'hex'));
+      const expectedPrefix = Array.from(hexToBytes(expectedPrefixHex));
       expect(Array.from(result.slice(0, 32))).toEqual(expectedPrefix);
       // Verify value bytes at the end
       expect(Array.from(result.slice(32))).toEqual([

@@ -66,4 +66,15 @@ export default [
       'import-x/unambiguous': 'off',
     },
   },
+
+  // Ensure script TypeScript files are parsed within their package tsconfig
+  {
+    files: ['**/script/**/*.ts'],
+    languageOptions: {
+      parserOptions: {
+        projectService: false,
+        project: ['./tsconfig.json'],
+      },
+    },
+  },
 ];

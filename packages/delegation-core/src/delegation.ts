@@ -47,6 +47,7 @@ const DELEGATION_ARRAY_ABI_TYPES =
 
 /**
  * Encodes an array of delegations into a permission context.
+ *
  * @param delegations - The delegations to encode.
  * @param options - Encoding options. Defaults to { out: 'hex' }.
  * @returns The encoded delegations as a hex string (default) or Uint8Array.
@@ -61,6 +62,7 @@ export function encodeDelegations(
 ): Uint8Array;
 /**
  * Encodes an array of delegations into a permission context.
+ *
  * @param delegations - The delegations to encode.
  * @param options - Encoding options. Defaults to { out: 'hex' }.
  * @returns The encoded delegations as a hex string (default) or Uint8Array.
@@ -98,6 +100,7 @@ export function encodeDelegations(
 
 /**
  * Converts a decoded delegation struct to a delegation object using the provided conversion function.
+ *
  * @param decodedDelegation - The decoded delegation struct as a tuple.
  * @param convertFn - Function to convert BytesLike values to the desired output type.
  * @returns A delegation object with all bytes-like values converted using the provided function.
@@ -139,6 +142,7 @@ type DecodedDelegation = [
 
 /**
  * Decodes an encoded permission context back into an array of delegations.
+ *
  * @param encoded - The encoded delegations as a hex string or Uint8Array.
  * @param options - Encoding options. Defaults to { out: 'hex' }.
  * @returns The decoded delegations array with types resolved based on options.
@@ -153,6 +157,7 @@ export function decodeDelegations(
 ): DelegationStruct<Uint8Array>[];
 /**
  * Decodes an encoded permission context back into an array of delegations.
+ *
  * @param encoded - The encoded delegations as a hex string or Uint8Array.
  * @param options - Encoding options. Defaults to { out: 'hex' }.
  * @returns The decoded delegations array with types resolved based on options.
@@ -252,6 +257,7 @@ function getCaveatsArrayHash(caveats: CaveatStruct[]): Uint8Array {
 
 /**
  * Calculates the hash of a single caveat.
+ *
  * @param caveat - The caveat to hash.
  * @returns The keccak256 hash of the encoded caveat.
  */

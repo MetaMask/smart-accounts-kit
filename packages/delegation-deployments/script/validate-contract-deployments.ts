@@ -1,9 +1,10 @@
+import { compareVersions } from 'compare-versions';
 import { createPublicClient, http } from 'viem';
 import * as allChains from 'viem/chains';
+import { mainnet, bsc, bscTestnet } from 'viem/chains';
 import type { Chain } from 'viem/chains';
 
-import { DELEGATOR_CONTRACTS } from '../src/index';
-import { compareVersions } from 'compare-versions';
+import { DELEGATOR_CONTRACTS } from '../src';
 /*
   This test validates that the DeleGator contracts are deployed on the specified chains, 
   as specified in the @metamask-private/delegation-deployments package.
@@ -198,10 +199,10 @@ export const chains = {
 // The default rpc urls for these chains are not reliable, so we override them
 // This may be a game of cat and mouse, so a better solution may be needed.
 export const rpcUrlOverrides = {
-  [chains.mainnet.id]: 'https://eth.merkle.io',
-  [chains.bsc.id]: 'https://bsc-dataseed1.binance.org/',
-  [chains.bscTestnet.id]: 'https://bsc-testnet-rpc.publicnode.com',
-};
+  [mainnet.id]: 'https://eth.merkle.io',
+  [bsc.id]: 'https://bsc-dataseed1.binance.org/',
+  [bscTestnet.id]: 'https://bsc-testnet-rpc.publicnode.com',
+} as Record<number, string>;
 
 const latestVersion = Object.keys(DELEGATOR_CONTRACTS).reduce(
   (acc, version) => {
@@ -218,18 +219,26 @@ console.log();
 
 const latestContracts = DELEGATOR_CONTRACTS[latestVersion];
 
+if (latestContracts === undefined) {
+  throw new Error(`No contracts found for version ${latestVersion}`);
+}
+
 const chainIds = Object.keys(latestContracts);
 
 let hasFailed = false;
 
 const allChainsDone = chainIds.map(async (chainIdAsString) => {
-  const chainId = parseInt(chainIdAsString);
+  const chainId = parseInt(chainIdAsString, 10);
 
-  const contracts = latestContracts[chainIdAsString];
+  const contracts = latestContracts[chainId];
+
+  if (contracts === undefined) {
+    throw new Error(`No contracts found for chainId ${chainId}`);
+  }
 
   const transport = http(rpcUrlOverrides[chainId]);
 
-  const chain = Object.values(chains).find((c) => c.id === chainId);
+  const chain = Object.values(chains).find(({ id }) => id === chainId);
 
   if (!chain) {
     hasFailed = true;
@@ -259,6 +268,12 @@ const allChainsDone = chainIds.map(async (chainIdAsString) => {
   const allContractsDone = contractNames.map(async (contractName) => {
     const contractAddress = contracts[contractName];
 
+    if (contractAddress === undefined) {
+      throw new Error(
+        `No contract address found for contractName ${contractName}`,
+      );
+    }
+
     try {
       const code = await publicClient.getCode({ address: contractAddress });
 
@@ -268,7 +283,7 @@ const allChainsDone = chainIds.map(async (chainIdAsString) => {
         );
         hasThisChainFailed = true;
       }
-    } catch (error) {
+    } catch {
       console.error(`RPC Request failed for ${chain.name}: ${contractName}`);
       hasThisChainFailed = true;
     }
@@ -284,12 +299,20 @@ const allChainsDone = chainIds.map(async (chainIdAsString) => {
   }
 });
 
-Promise.all(allChainsDone).then(() => {
-  console.log();
-  if (hasFailed) {
+Promise.all(allChainsDone)
+  .then(() => {
+    console.log();
+    if (hasFailed) {
+      // eslint-disable-next-line no-restricted-globals
+      process.exitCode = 1;
+      console.error('Failed to validate contract deployments');
+    } else {
+      console.log('Successfully validated contract deployments');
+    }
+    return undefined;
+  })
+  .catch((error) => {
+    console.error(error.message);
+    // eslint-disable-next-line no-restricted-globals
     process.exitCode = 1;
-    console.error('Failed to validate contract deployments');
-  } else {
-    console.log('Successfully validated contract deployments');
-  }
-});
+  });

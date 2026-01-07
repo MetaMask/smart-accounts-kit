@@ -921,6 +921,59 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     });
   });
 
+  it('omits expiry rule when expiry is not provided', async () => {
+    const permissionRequest = {
+      chainId: 31337,
+      address: bob.address,
+      // expiry is intentionally omitted
+      permission: {
+        type: 'native-token-stream' as const,
+        data: {
+          amountPerSecond: 0x1n,
+          maxAmount: 2n,
+          startTime: 2,
+          justification: 'Test justification',
+        },
+      },
+      isAdjustmentAllowed: false,
+      signer: alice.address,
+    };
+    const parameters: RequestExecutionPermissionsParameters = [
+      permissionRequest,
+    ];
+
+    stubRequest.resolves(mockResponse);
+
+    await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
+
+    expect(stubRequest.callCount).to.equal(1);
+    expect(stubRequest.firstCall.args[0]).to.deep.equal({
+      method: 'wallet_requestExecutionPermissions',
+      params: [
+        {
+          chainId: '0x7a69',
+          address: bob.address,
+          permission: {
+            type: 'native-token-stream',
+            data: {
+              amountPerSecond: '0x1',
+              maxAmount: '0x2',
+              startTime: 2,
+              justification: 'Test justification',
+            },
+            isAdjustmentAllowed: false,
+          },
+          signer: {
+            type: 'account',
+            data: {
+              address: alice.address,
+            },
+          },
+          rules: [],
+        },
+      ],
+    });
+  });
   describe('erc7715ProviderActions integration', () => {
     it('should extend the client with erc7715 actions', async () => {
       const client = createClient({

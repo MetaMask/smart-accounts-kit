@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- Update megaeth testnet chainId ([#125](https://github.com/metamask/smart-accounts-kit/pull/125))
+
 ### Added
 
 - Add chain deployment for MegaETH mainnet ([#124](https://github.com/MetaMask/smart-accounts-kit/pull/124))

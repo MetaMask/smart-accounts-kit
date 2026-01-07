@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0]
+
 ### Uncategorized
 
 - Update megaeth testnet chainId ([#125](https://github.com/metamask/smart-accounts-kit/pull/125))
@@ -37,7 +39,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add deployments for Sei mainnet ([#84](https://github.com/metamask/smart-accounts-kit/pull/84))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.15.0...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.16.0...HEAD
+[0.16.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.15.0...@metamask/delegation-deployments@0.16.0
 [0.15.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.14.0...@metamask/delegation-deployments@0.15.0
 [0.14.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.13.0...@metamask/delegation-deployments@0.14.0
 [0.13.0]: https://github.com/metamask/smart-accounts-kit/releases/tag/@metamask/delegation-deployments@0.13.0

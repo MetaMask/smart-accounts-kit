@@ -1,6 +1,6 @@
 {
   "name": "@metamask/delegation-deployments",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "A history of deployments of the Delegation Framework",
   "license": "(MIT-0 OR Apache-2.0)",
   "type": "module",

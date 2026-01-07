@@ -7,10 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Uncategorized
-
-- Allow expiry to be omitted when requesting 7715 permissions ([#122](https://github.com/metamask/smart-accounts-kit/pull/122))
-
 ## [0.3.0]
 
 ### Fixed

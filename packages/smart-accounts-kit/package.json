@@ -132,7 +132,7 @@
     "@metamask/7715-permission-types": "^0.4.0",
     "@metamask/delegation-abis": "^0.11.0",
     "@metamask/delegation-core": "^0.3.0",
-    "@metamask/delegation-deployments": "^0.15.0",
+    "@metamask/delegation-deployments": "^0.16.0",
     "buffer": "^6.0.3",
     "webauthn-p256": "^0.0.10"
   },

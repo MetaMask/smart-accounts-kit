@@ -43,6 +43,7 @@
   "scripts": {
     "build": "yarn typecheck && tsup",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint . --cache --ext js,ts",
     "changelog:update": "../../scripts/update-changelog.sh @metamask/delegation-deployments",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/delegation-deployments",
     "validate-latest-contracts": "yarn tsx script/validate-contract-deployments.ts"
@@ -54,6 +55,7 @@
   "devDependencies": {
     "@metamask/auto-changelog": "^5.0.2",
     "compare-versions": "^6.1.1",
+    "eslint": "^9.39.2",
     "prettier": "^3.5.3",
     "tsup": "^8.5.0",
     "tsx": "^4.20.5",

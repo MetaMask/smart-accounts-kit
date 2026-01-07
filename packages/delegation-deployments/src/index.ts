@@ -33,7 +33,7 @@ export const CHAIN_ID = {
   hoodiTestnet: 0x88bb0,
   inkSepolia: 0xba5ed,
   lineaSepolia: 0xe705,
-  megaEthTestnet: 0x18c6,
+  megaEthTestnet: 0x18c7,
   monadTestnet: 0x279f,
   optimismSepolia: 0xaa37dc,
   polygonAmoy: 0x13882,

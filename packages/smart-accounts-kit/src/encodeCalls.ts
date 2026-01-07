@@ -118,7 +118,7 @@ export const encodeCallsForCaller = async (
 ): Promise<Hex> => {
   if (calls.length === 1) {
     const call = calls[0];
-    if (call && call.to === caller && !isDelegatedCall(call)) {
+    if (call?.to === caller && !isDelegatedCall(call)) {
       // if there's a single call, and it's to the delegator, we can just return the calldata directly.
       return call.data ?? '0x';
     }

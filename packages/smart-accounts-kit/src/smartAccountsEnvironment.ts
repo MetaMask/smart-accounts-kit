@@ -54,6 +54,7 @@ const getContractOverrideKey = (chainId: number, version: SupportedVersion) =>
 
 /**
  * Overrides the default environment for a specific chain and version.
+ *
  * @param chainId - The chain ID to override.
  * @param version - The version of the environment to override.
  * @param environment - The environment to use as override.
@@ -71,6 +72,7 @@ export function overrideDeployedEnvironment(
 
 /**
  * Gets the SmartAccountsEnvironment for the specified chain and version.
+ *
  * @param chainId - The chain ID to get the environment for.
  * @param version - The version of the environment to get.
  * @returns The SmartAccountsEnvironment.
@@ -97,6 +99,7 @@ export function getSmartAccountsEnvironment(
 
 /**
  * Creates a SmartAccountsEnvironment from contract addresses.
+ *
  * @param contracts - The contract addresses to create the environment from.
  * @returns The created SmartAccountsEnvironment.
  */
@@ -158,6 +161,7 @@ export type DeployedContract = {
 
 /**
  * Deploys the contracts needed for the Delegation Framework and MetaMask SCA to be functional as well as all Caveat Enforcers.
+ *
  * @param walletClient - The wallet client to use for deployment.
  * @param publicClient - The public client to use for deployment.
  * @param chain - The chain to deploy to.

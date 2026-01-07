@@ -1,6 +1,6 @@
 /**
  * To be used in sdk methods to call Implementation specific code
- * @type {Implementation}
+ *
  */
 export enum Implementation {
   MultiSig = 'MultiSig',
@@ -13,14 +13,20 @@ export enum Implementation {
  * These values are commonly used to specify the duration of transfer periods,
  * such as hourly, daily, weekly, etc., where each enum member's value is the
  * number of seconds in that interval.
- * @enum {number}
- * @property {number} Hourly - 1 hour (3600 seconds)
- * @property {number} Daily - 1 day (86400 seconds)
- * @property {number} Weekly - 1 week (604800 seconds)
- * @property {number} BiWeekly - 2 weeks (1209600 seconds)
- * @property {number} Monthly - 1 month (30 days, 2592000 seconds)
- * @property {number} Quarterly - 1 quarter (90 days, 7776000 seconds)
- * @property {number} Yearly - 1 year (365 days, 31536000 seconds)
+ *
+ * Hourly - 1 hour (3600 seconds)
+ *
+ * Daily - 1 day (86400 seconds)
+ *
+ * Weekly - 1 week (604800 seconds)
+ *
+ * BiWeekly - 2 weeks (1209600 seconds)
+ *
+ * Monthly - 1 month (30 days, 2592000 seconds)
+ *
+ * Quarterly - 1 quarter (90 days, 7776000 seconds)
+ *
+ * Yearly - 1 year (365 days, 31536000 seconds)
  */
 export enum TransferWindow {
   Hourly = 3600, // 60 * 60 (seconds)

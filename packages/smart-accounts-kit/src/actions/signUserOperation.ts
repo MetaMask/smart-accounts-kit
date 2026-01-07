@@ -34,6 +34,7 @@ export type SignUserOperationReturnType = Hex;
 
 /**
  * Signs a user operation using a wallet client.
+ *
  * @param client - The wallet client to use for signing.
  * @param parameters - The parameters for signing the user operation.
  * @returns The signature of the user operation.
@@ -99,6 +100,7 @@ export async function signUserOperation<
 
 /**
  * Creates a sign user operation action that can be used to extend a wallet client.
+ *
  * @returns A function that can be used with wallet client extend method.
  * @example
  * ```ts

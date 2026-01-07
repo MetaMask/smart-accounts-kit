@@ -32,10 +32,8 @@ export type SendTransactionWithDelegationParameters<
   TChain extends Chain | undefined = Chain | undefined,
   TAccount extends Account | undefined = Account | undefined,
   TChainOverride extends Chain | undefined = Chain | undefined,
-  TRequest extends SendTransactionRequest<
-    TChain,
-    TChainOverride
-  > = SendTransactionRequest<TChain, TChainOverride>,
+  TRequest extends SendTransactionRequest<TChain, TChainOverride> =
+    SendTransactionRequest<TChain, TChainOverride>,
 > = SendTransactionParameters<TChain, TAccount, TChainOverride, TRequest> & {
   permissionsContext: Hex;
   delegationManager: Hex;

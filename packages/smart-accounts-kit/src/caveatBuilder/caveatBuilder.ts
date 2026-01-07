@@ -20,6 +20,7 @@ export type CaveatBuilderConfig = {
 
 /**
  * A builder class for creating and managing caveats.
+ *
  * @template TCaveatBuilderMap - The type map of available caveat builder functions.
  */
 export class CaveatBuilder<
@@ -29,11 +30,11 @@ export class CaveatBuilder<
 
   #hasBeenBuilt = false;
 
-  #environment: SmartAccountsEnvironment;
+  readonly #environment: SmartAccountsEnvironment;
 
-  #config: CaveatBuilderConfig;
+  readonly #config: CaveatBuilderConfig;
 
-  #enforcerBuilders: TCaveatBuilderMap;
+  readonly #enforcerBuilders: TCaveatBuilderMap;
 
   constructor(
     environment: SmartAccountsEnvironment,
@@ -49,6 +50,7 @@ export class CaveatBuilder<
 
   /**
    * Extends the CaveatBuilder with a new enforcer function.
+   *
    * @template TEnforcerName - The name of the enforcer.
    * @template TFunction - The type of the enforcer function.
    * @param name - The name of the enforcer.
@@ -77,6 +79,7 @@ export class CaveatBuilder<
 
   /**
    * Adds a caveat directly using a Caveat object.
+   *
    * @param caveat - The caveat to add.
    * @returns The CaveatBuilder instance for chaining.
    */
@@ -84,6 +87,7 @@ export class CaveatBuilder<
 
   /**
    * Adds a caveat using a named enforcer function.
+   *
    * @param name - The name of the enforcer function to use.
    * @param config - The configuration to pass to the enforcer function.
    * @returns The CaveatBuilder instance for chaining.
@@ -122,6 +126,7 @@ export class CaveatBuilder<
 
   /**
    * Returns the caveats that have been built using this CaveatBuilder.
+   *
    * @returns The array of built caveats.
    * @throws Error if the builder has already been built or if no caveats are found and empty caveats are not allowed.
    */

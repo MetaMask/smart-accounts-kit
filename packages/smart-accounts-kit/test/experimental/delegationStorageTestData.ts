@@ -49,9 +49,8 @@ export const MOCK_DELEGATION_CHAIN_API_RESPONSE: Delegation[] = [
 ];
 
 export enum RequestType {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   DelegationChange = 'delegation-chain',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
+
   DELEGATIONS = 'delegations',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   FAILED_REQUEST = 'SOME_API_ERROR',

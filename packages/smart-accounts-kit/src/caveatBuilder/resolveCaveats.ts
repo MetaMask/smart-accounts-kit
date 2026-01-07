@@ -7,6 +7,7 @@ export type Caveats = CaveatBuilder | (Caveat | CoreCaveatConfiguration)[];
 
 /**
  * Resolves the array of Caveat from a Caveats argument.
+ *
  * @param config - The configuration for the caveat builder.
  * @param config.environment - The environment to be used for the caveat builder.
  * @param config.scope - The scope to be used for the caveat builder.

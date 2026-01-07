@@ -13,7 +13,7 @@ import { compareVersions } from 'compare-versions';
 */
 
 const megaEthTestNetChain: Chain = {
-  id: 6342,
+  id: 6343,
   name: 'MegaEth Testnet',
   rpcUrls: {
     default: {

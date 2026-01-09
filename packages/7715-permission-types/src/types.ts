@@ -209,7 +209,7 @@ export type Erc20TokenRevocationPermission = BasePermission & {
  *
  * data - is a record of the data that is associated with the permission, and the structure is defined by the ERCs.
  */
-// TODO: Consider openning up permission types with Custom / Unknown permissions in subseqential versions.
+// TODO: Consider opening up permission types with Custom / Unknown permissions in subsequent versions.
 // export type CustomPermission = BasePermission & {
 //     type: 'custom';
 //     data: MetaMaskBasePermissionData & Record<string, unknown>;
@@ -293,4 +293,4 @@ export type RevokeExecutionPermissionRequestParams = {
  * Response from the `wallet_revokeExecutionPermission` JSON-RPC method.
  * The wallet will respond with an empty response when successful.
  */
-export type RevokeExecutionPermissionResponseResult = object;
+export type RevokeExecutionPermissionResponseResult = Record<string, never>;

@@ -283,8 +283,12 @@ const allChainsDone = chainIds.map(async (chainIdAsString) => {
         );
         hasThisChainFailed = true;
       }
-    } catch {
-      console.error(`RPC Request failed for ${chain.name}: ${contractName}`);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.error(
+        `RPC Request failed for ${chain.name}: ${contractName} - ${errorMessage}`,
+      );
       hasThisChainFailed = true;
     }
   });
@@ -312,7 +316,8 @@ Promise.all(allChainsDone)
     return undefined;
   })
   .catch((error) => {
-    console.error(error.message);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Failed with: ${errorMessage}`);
     // eslint-disable-next-line no-restricted-globals
     process.exitCode = 1;
   });

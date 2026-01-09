@@ -23,6 +23,7 @@ export const SIGNATURE_ABI_PARAMS = parseAbiParameters(
  * contracts. We need the flattend JSON strings before and after the
  * userOpHash/challenge. This function provides those two client data string
  * slices.
+ *
  * @param clientDataJson - The client data JSON string.
  * @returns Returns [clientDataJSONPrefix and clientDataJSONSuffix]
  * ClientDataJSONPrefix contains the client data till the challengeHash
@@ -55,6 +56,7 @@ export const splitOnChallenge = (
 
 /**
  * Returns the index of '"type":' in the ClientData.
+ *
  * @param clientDataJson - Stringified ClientDataJSON.
  * @returns The index of '"type":' in the ClientData.
  */
@@ -79,6 +81,7 @@ export const getResponseTypeLocation = (clientDataJson: string): bigint => {
 /**
  * Encodes a signature to a hexadecimal signature that will be accepted
  * by the DeleGator contracts.
+ *
  * @param keyId - The key used for the signature, represented as a hexadecimal string.
  * @param signature - The signature to convert, as Hex.
  * @param clientDataJSON - The client data used in the creation of the signature.
@@ -141,6 +144,7 @@ export type AuthenticatorFlags = {
 /**
  * Parses the authenticator data and returns an authenticator flags object with the `userVerified` flag.
  * See https://developer.mozilla.org/en-US/docs/Web/API/Web_Authentication_API/Authenticator_data.
+ *
  * @param authenticatorData - The authenticator data to parse.
  * @returns An object representing the parsed authenticator flags.
  */
@@ -167,6 +171,7 @@ export function parseAuthenticatorFlags(
 /**
  * Creates a dummy signature.
  * This must meet all early-failure conditions of the real signature, but does not need to be a valid signature.
+ *
  * @param keyId - The key ID to use for the dummy signature.
  * @returns The encoded signature.
  */

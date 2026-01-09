@@ -57,6 +57,7 @@ export const allowedMethodsBuilder = (
 
 /**
  * Parses a method selector into a hex string.
+ *
  * @param selector - The method selector to parse.
  * @returns The parsed selector as a hex string.
  */

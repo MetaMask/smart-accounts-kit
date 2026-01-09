@@ -65,9 +65,11 @@
   },
   "devDependencies": {
     "@metamask/auto-changelog": "^5.0.2",
-    "@types/node": "^20.10.6",
+    "@types/node": "^20.19.0",
+    "eslint": "^9.39.2",
+    "prettier": "^3.5.3",
     "tsup": "^8.5.0",
-    "typescript": "5.0.4",
+    "typescript": "5.5.4",
     "vitest": "^3.2.4"
   },
   "dependencies": {

@@ -16,6 +16,7 @@ export type PartialSignature = {
 
 /**
  * Aggregates signatures into a single signature as expected by the MultiSig implementation.
+ *
  * @param params - The parameters for signature aggregation.
  * @param params.signatures - The array of partial signatures to aggregate.
  * @returns The aggregated signature.

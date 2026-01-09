@@ -19,6 +19,7 @@ export type CreateExecutionArgs = {
 
 /**
  * Creates an execution data structure.
+ *
  * @param args - The arguments for creating an execution.
  * @param args.target - The address to invoke some calldata on.
  * @param args.value - ETH to send to the address.
@@ -55,6 +56,7 @@ export const EXECUTION_ABI_TYPE_COMPONENTS = [
 
 /**
  * Encodes a single Execution. Used for executing a single Execution in a DeleGator SCA.
+ *
  * @param execution - The execution to encode.
  * @returns The encoded execution.
  */
@@ -67,6 +69,7 @@ export const encodeSingleExecution = (execution: ExecutionStruct): Hex => {
 
 /**
  * Encodes a batch of Executions. Used for executing a batch of Executions in a DeleGator SCA.
+ *
  * @param executions - The executions to encode.
  * @returns The encoded executions.
  */
@@ -85,6 +88,7 @@ export const encodeBatchExecution = (executions: ExecutionStruct[]): Hex => {
 
 /**
  * Encodes the calldata for interacting with the advanced `execute` DeleGator method.
+ *
  * @param executions - The execution(s) to encode.
  * @returns The encoded execution(s).
  */
@@ -107,6 +111,7 @@ export const encodeExecutionCalldata = (executions: ExecutionStruct[]): Hex => {
 
 /**
  * Encodes the calldata for interacting with `redeemDelegations`.
+ *
  * @param executionsBatch - The executions to encode.
  * @returns The encoded executions.
  */

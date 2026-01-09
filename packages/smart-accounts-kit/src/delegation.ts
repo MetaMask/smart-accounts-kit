@@ -37,6 +37,7 @@ export const DELEGATION_ABI_TYPE_COMPONENTS = [
 
 /**
  * Converts a delegation to a delegation struct.
+ *
  * @param delegation - The delegation to convert.
  * @returns The delegation struct.
  */
@@ -54,10 +55,7 @@ export const toDelegationStruct = (
   return {
     delegate: getAddress(delegation.delegate),
     delegator: getAddress(delegation.delegator),
-    authority:
-      delegation.authority === undefined
-        ? ROOT_AUTHORITY
-        : delegation.authority,
+    authority: delegation.authority ?? ROOT_AUTHORITY,
     caveats,
     salt,
     signature: delegation.signature,
@@ -67,6 +65,7 @@ export const toDelegationStruct = (
 /**
  * Converts a DelegationStruct to a Delegation.
  * The Delegation type is used for off-chain operations and has a hex string salt.
+ *
  * @param delegationStruct - The delegation struct to convert
  * @returns The converted delegation with a hex string salt
  */
@@ -91,6 +90,7 @@ export type DelegationStruct = Omit<Delegation, 'salt'> & {
 
 /**
  * ABI Encodes an array of delegations.
+ *
  * @param delegations - The delegations to encode.
  * @returns The encoded delegations.
  */
@@ -102,6 +102,7 @@ export const encodeDelegations = (delegations: Delegation[]): Hex => {
 
 /**
  * Abi encodes permission contexts.
+ *
  * @param delegations - The delegation chains to encode.
  * @returns The encoded permission contexts.
  */
@@ -115,6 +116,7 @@ export const encodePermissionContexts = (delegations: Delegation[][]) => {
 
 /**
  * Decodes an array of delegations from its ABI-encoded representation.
+ *
  * @param encoded - The hex-encoded delegation array to decode.
  * @returns An array of decoded delegations.
  */
@@ -125,6 +127,7 @@ export const decodeDelegations = (encoded: Hex): Delegation[] => {
 
 /**
  * Decodes an array of encoded permission contexts into an array of delegation chains.
+ *
  * @param encoded - The hex-encoded permission context to decode.
  * @returns An array of decoded delegations.
  */
@@ -161,6 +164,7 @@ export const DELEGATION_ARRAY_ABI_TYPE: AbiParameter = {
 
 /**
  * Prepares a delegation hash for passkey signing.
+ *
  * @param delegationHash - The delegation hash to prepare.
  * @returns The prepared hash for passkey signing.
  */
@@ -172,6 +176,7 @@ export const prepDelegationHashForPasskeySign = (delegationHash: Hex) => {
 
 /**
  * Gets a delegation hash offchain.
+ *
  * @param input - The delegation to get the hash for.
  * @returns The hash of the delegation parameters.
  */
@@ -204,6 +209,7 @@ export type CreateOpenDelegationOptions = BaseCreateDelegationOptions;
 
 /**
  * Resolves the authority for a delegation based on the parent delegation.
+ *
  * @param parentDelegation - The parent delegation or its hash.
  * @returns The resolved authority hash.
  */
@@ -221,6 +227,7 @@ export const resolveAuthority = (parentDelegation?: Delegation | Hex): Hex => {
 
 /**
  * Creates a delegation with specific delegate.
+ *
  * @param options - The options for creating the delegation.
  * @returns The created delegation data structure.
  */
@@ -239,6 +246,7 @@ export const createDelegation = (
 
 /**
  * Creates an open delegation that can be redeemed by any delegate.
+ *
  * @param options - The options for creating the open delegation.
  * @returns The created delegation data structure.
  */
@@ -257,6 +265,7 @@ export const createOpenDelegation = (
 
 /**
  * Prepares typed data for delegation signing (internal helper function).
+ *
  * @param params - The parameters for preparing the typed data.
  * @param params.delegation - The delegation to prepare for signing.
  * @param params.delegationManager - The address of the delegation manager contract.
@@ -311,6 +320,7 @@ export const prepareSignDelegationTypedData = ({
 
 /**
  * Signs a delegation using a private key.
+ *
  * @param params - The parameters for signing the delegation.
  * @param params.privateKey - The private key to use for signing.
  * @param params.delegation - The delegation to sign.

@@ -30,30 +30,29 @@
     "@lavamoat/allow-scripts": "^3.4.0",
     "@lavamoat/preinstall-always-fail": "^2.1.1",
     "@metamask/create-release-branch": "^4.1.1",
-    "@metamask/eslint-config": "^12.0.0",
-    "@metamask/eslint-config-nodejs": "^12.0.0",
-    "@metamask/eslint-config-typescript": "^12.0.0",
+    "@metamask/eslint-config": "14.1.0",
+    "@metamask/eslint-config-nodejs": "14.0.0",
+    "@metamask/eslint-config-typescript": "14.0.0",
     "@types/keccak": "^3.0.4",
-    "@typescript-eslint/eslint-plugin": "^5.42.1",
-    "@typescript-eslint/parser": "^5.42.1",
     "@yarnpkg/types": "^4.0.1",
     "abitype": "^1.0.2",
     "buffer": "^6.0.3",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-config-turbo": "^1.11.3",
     "eslint-import-resolver-typescript": "^3.6.1",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsdoc": "^41.1.2",
-    "eslint-plugin-n": "^15.7.0",
-    "eslint-plugin-prettier": "latest",
-    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-import-x": "^4.0.0",
+    "eslint-plugin-jsdoc": "^50.2.4",
+    "eslint-plugin-n": "^17.10.3",
+    "eslint-plugin-prettier": "^5.2.6",
+    "eslint-plugin-promise": "^7.1.0",
     "keccak": "^3.0.4",
     "lodash": "^4.17.21",
     "nodemon": "^3.1.0",
     "prettier": "^3.3.3",
     "turbo": "latest",
-    "typescript": "5.0.4",
+    "typescript": "5.5.4",
+    "typescript-eslint": "^8.0.0",
     "viem": "2.31.4",
     "webauthn-p256": "^0.0.10"
   },
@@ -67,7 +66,8 @@
   "lavamoat": {
     "allowScripts": {
       "@lavamoat/preinstall-always-fail": false,
-      "keccak": false
+      "keccak": false,
+      "eslint-plugin-import-x>unrs-resolver": false
     }
   }
 }

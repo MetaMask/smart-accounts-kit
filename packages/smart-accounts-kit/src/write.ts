@@ -8,6 +8,7 @@ import type { Delegation, ContractMetaData, Redemption } from './types';
 
 /**
  * Deploys a contract using the SimpleFactory contract.
+ *
  * @param walletClient - The wallet client to use for deployment.
  * @param publicClient - The public client to use for simulation.
  * @param simpleFactoryAddress - The address of the SimpleFactory contract.
@@ -34,6 +35,7 @@ export const deployWithSimpleFactory = async (
 
 /**
  * Redeems a delegation to execute the provided executions.
+ *
  * @param walletClient - The wallet client to use for redemption.
  * @param publicClient - The public client to use for simulation.
  * @param delegationManagerAddress - The address of the DelegationManager contract.
@@ -76,6 +78,7 @@ export const redeemDelegations = async (
 
 /**
  * Deploys a contract to the blockchain.
+ *
  * @param walletClient - The wallet client to use for deployment.
  * @param publicClient - The public client to use for transaction receipt.
  * @param chain - The chain to deploy on.

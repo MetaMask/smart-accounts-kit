@@ -24,7 +24,7 @@ const mockCreateAABundlerClient = vi.mocked(createAABundlerClient);
  * @returns Mock bundler client objects.
  */
 function createMockBundlerClient(overrides: any = {}) {
-  const mockRequest = overrides.mockRequest || vi.fn();
+  const mockRequest = overrides.mockRequest ?? vi.fn();
 
   const mockExtendedClient = {
     sendUserOperation: vi.fn(),

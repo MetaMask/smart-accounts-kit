@@ -34,6 +34,7 @@ export type SignDelegationReturnType = Hex;
 
 /**
  * Signs a delegation using a wallet client.
+ *
  * @param client - The wallet client to use for signing.
  * @param parameters - The parameters for signing the delegation.
  * @returns The signature of the delegation.
@@ -94,6 +95,7 @@ export async function signDelegation<
 
 /**
  * Creates a sign delegation action that can be used to extend a wallet client.
+ *
  * @returns A function that can be used with wallet client extend method.
  * @example
  * ```ts

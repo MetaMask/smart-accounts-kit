@@ -4,11 +4,10 @@
     "./node_modules/**/*",
     "./dist/**/*",
     "./test/**/*",
-    "./script/**/*",
     "./**/*.test.ts"
   ],
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "dist",
+    "outDir": "dist"
   }
 }

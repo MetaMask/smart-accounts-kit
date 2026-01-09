@@ -94,7 +94,7 @@ export async function isValid7702Implementation({
     }
 
     return isAddressEqual(delegatedAddress, expectedImplementation);
-  } catch (error) {
+  } catch {
     // If the call fails (e.g., no code at address, network error),
     // then it's not properly delegated to our implementation
     return false;

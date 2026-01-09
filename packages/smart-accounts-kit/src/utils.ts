@@ -2,6 +2,7 @@ import { type Hex, isHex, toHex } from 'viem';
 
 /**
  * Checks if two hexadecimal strings are equal, ignoring case sensitivity.
+ *
  * @param a - The first hexadecimal string.
  * @param b - The second hexadecimal string.
  * @returns True if the hexadecimal strings are equal, false otherwise.

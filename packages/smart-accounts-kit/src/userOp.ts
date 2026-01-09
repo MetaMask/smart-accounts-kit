@@ -51,6 +51,7 @@ export type UserOperationV07 = {
 
 /**
  * Creates a raw user operation data structure.
+ *
  * @param sender - The smart account taking some action.
  * @param nonce - A nonce, ideally fetched from the Entry Point.
  * @param callData - Calldata to invoke on some contract.
@@ -87,6 +88,7 @@ export const createRawUserOp = (
 // TODO: These userOp functions are duplicated in ./apps/ew-client/src/utils/userOpBuilder.ts. We should move them to a shared location along with test(./apps/ew-client/test/UserOpBuilder.test.ts) to avoid duplication
 /**
  * Generates a salt value for address derivation.
+ *
  * @param salt - Optional salt value.
  * @returns The chosen salt value.
  */
@@ -164,6 +166,7 @@ export const packUserOp = (
 
 /**
  * Calculates the user operation hash for a given packed user operation.
+ *
  * @param packedOp - The packed user operation.
  * @param entryPoint - The entry point address.
  * @param chainId - The chain ID.
@@ -307,6 +310,7 @@ export const prepareSignUserOperationTypedData = ({
 
 /**
  * Signs a user operation using a private key.
+ *
  * @param params - The parameters for signing the user operation.
  * @param params.privateKey - The private key to use for signing.
  * @param params.userOperation - The user operation to sign.

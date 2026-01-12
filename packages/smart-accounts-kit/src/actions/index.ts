@@ -9,6 +9,10 @@ import {
   sendTransactionWithDelegationAction,
   sendUserOperationWithDelegationAction,
 } from './erc7710RedeemDelegationAction';
+import { erc7715GetGrantedExecutionPermissionsAction } from './erc7715GetGrantedExecutionPermissionsAction';
+import type { GetGrantedExecutionPermissionsClient } from './erc7715GetGrantedExecutionPermissionsAction';
+import { erc7715GetSupportedExecutionPermissionsAction } from './erc7715GetSupportedExecutionPermissionsAction';
+import type { GetSupportedExecutionPermissionsClient } from './erc7715GetSupportedExecutionPermissionsAction';
 import { erc7715RequestExecutionPermissionsAction } from './erc7715RequestExecutionPermissionsAction';
 import type {
   MetaMaskExtensionClient,
@@ -56,6 +60,21 @@ export {
   type RequestExecutionPermissionsReturnType,
 } from './erc7715RequestExecutionPermissionsAction';
 
+export {
+  erc7715GetSupportedExecutionPermissionsAction as getSupportedExecutionPermissions,
+  type GetSupportedExecutionPermissionsClient,
+  type GetSupportedExecutionPermissionsSchema,
+  type GetSupportedExecutionPermissionsResult,
+  type SupportedPermissionInfo,
+} from './erc7715GetSupportedExecutionPermissionsAction';
+
+export {
+  erc7715GetGrantedExecutionPermissionsAction as getGrantedExecutionPermissions,
+  type GetGrantedExecutionPermissionsClient,
+  type GetGrantedExecutionPermissionsSchema,
+  type GetGrantedExecutionPermissionsResult,
+} from './erc7715GetGrantedExecutionPermissionsAction';
+
 export type { DelegatedCall } from './erc7710RedeemDelegationAction';
 
 export const erc7715ProviderActions = () => (client: Client) => ({
@@ -65,6 +84,16 @@ export const erc7715ProviderActions = () => (client: Client) => ({
     return erc7715RequestExecutionPermissionsAction(
       client as MetaMaskExtensionClient,
       parameters,
+    );
+  },
+  getSupportedExecutionPermissions: async () => {
+    return erc7715GetSupportedExecutionPermissionsAction(
+      client as GetSupportedExecutionPermissionsClient,
+    );
+  },
+  getGrantedExecutionPermissions: async () => {
+    return erc7715GetGrantedExecutionPermissionsAction(
+      client as GetGrantedExecutionPermissionsClient,
     );
   },
 });

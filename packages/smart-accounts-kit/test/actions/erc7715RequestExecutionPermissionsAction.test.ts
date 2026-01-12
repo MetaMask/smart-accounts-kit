@@ -1,5 +1,4 @@
 import type {
-  AccountSigner,
   Erc20TokenPeriodicPermission,
   Erc20TokenStreamPermission,
   Erc20TokenRevocationPermission,
@@ -44,7 +43,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('calls the wallet RPC method', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'native-token-stream' as const,
@@ -56,7 +55,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: false,
-        signer: alice.address,
+        to: alice.address,
       };
       const parameters: RequestExecutionPermissionsParameters = [
         permissionRequest,
@@ -74,7 +73,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         params: [
           {
             chainId: '0x7a69',
-            address: bob.address,
+            from: bob.address,
             permission: {
               type: 'native-token-stream',
               data: {
@@ -109,7 +108,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('should set retryCount to 0', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'native-token-stream' as const,
@@ -121,7 +120,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: false,
-        signer: alice.address,
+        to: alice.address,
       };
 
       const parameters: RequestExecutionPermissionsParameters = [
@@ -141,7 +140,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       const parameters = [
         {
           chainId: 31337,
-          address: bob.address,
+          from: bob.address,
           expiry: 1234567890,
           permission: {
             type: 'native-token-stream' as const,
@@ -153,7 +152,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             },
           },
           isAdjustmentAllowed: false,
-          signer: alice.address,
+          to: alice.address,
         },
       ];
 
@@ -165,7 +164,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it("doesn't throw error when justification is undefined", async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'native-token-stream' as const,
@@ -177,7 +176,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: false,
-        signer: alice.address,
+        to: alice.address,
       };
       const parameters: RequestExecutionPermissionsParameters = [
         permissionRequest,
@@ -193,7 +192,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('should format native-token-stream permission request correctly', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'native-token-stream' as const,
@@ -205,7 +204,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: false,
-        signer: alice.address,
+        to: alice.address,
       };
 
       const parameters = [permissionRequest];
@@ -219,7 +218,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         params: [
           {
             chainId: '0x7a69',
-            address: bob.address,
+            from: bob.address,
             permission: {
               type: 'native-token-stream',
               data: {
@@ -267,7 +266,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             },
           },
           isAdjustmentAllowed: false,
-          signer: alice.address,
+          to: alice.address,
         },
       ];
 
@@ -291,7 +290,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             },
           },
           isAdjustmentAllowed: false,
-          signer: alice.address,
+          to: alice.address,
         },
         {
           chainId: 31337,
@@ -304,7 +303,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             },
           },
           isAdjustmentAllowed: false,
-          signer: bob.address,
+          to: bob.address,
         },
       ];
 
@@ -319,7 +318,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('should not specify isAdjustmentAllowed when not specified in the request', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'native-token-stream' as const,
@@ -331,7 +330,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: false,
-        signer: alice.address,
+        to: alice.address,
       };
       stubRequest.resolves(mockResponse);
       await erc7715RequestExecutionPermissionsAction(mockClient, [
@@ -344,7 +343,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         params: [
           {
             chainId: '0x7a69',
-            address: bob.address,
+            from: bob.address,
             permission: {
               type: 'native-token-stream',
               data: {
@@ -378,7 +377,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('should allow maxAmount to be excluded from the request', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'native-token-stream' as const,
@@ -389,7 +388,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: false,
-        signer: alice.address,
+        to: alice.address,
       };
       stubRequest.resolves(mockResponse);
       await (erc7715RequestExecutionPermissionsAction as any)(mockClient, [
@@ -402,7 +401,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         params: [
           {
             chainId: '0x7a69',
-            address: bob.address,
+            from: bob.address,
             permission: {
               type: 'native-token-stream',
               data: {
@@ -435,7 +434,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('should allow maxAmount to be null in the request', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'native-token-stream' as const,
@@ -447,7 +446,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: false,
-        signer: alice.address,
+        to: alice.address,
       };
       const parameters = [permissionRequest];
 
@@ -461,7 +460,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         params: [
           {
             chainId: '0x7a69',
-            address: bob.address,
+            from: bob.address,
             permission: {
               type: 'native-token-stream',
               data: {
@@ -494,7 +493,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('should accept numerical values as hex for startTime', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'native-token-stream' as const,
@@ -506,7 +505,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: false,
-        signer: alice.address,
+        to: alice.address,
       };
       const parameters = [permissionRequest];
 
@@ -520,7 +519,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         params: [
           {
             chainId: '0x7a69',
-            address: bob.address,
+            from: bob.address,
             permission: {
               type: 'native-token-stream',
               data: {
@@ -554,7 +553,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('formats Native Token Stream correctly', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'native-token-stream',
@@ -566,7 +565,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: true,
-        signer: alice.address,
+        to: alice.address,
       } as const;
       stubRequest.resolves(mockResponse);
 
@@ -574,12 +573,9 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         permissionRequest,
       ]);
 
-      const expectedRequest: PermissionRequest<
-        AccountSigner,
-        NativeTokenStreamPermission
-      > = {
+      const expectedRequest: PermissionRequest<NativeTokenStreamPermission> = {
         chainId: '0x7a69',
-        address: bob.address,
+        from: bob.address,
         permission: {
           type: 'native-token-stream',
           data: {
@@ -590,16 +586,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
           isAdjustmentAllowed: true,
         },
-        signer: {
-          type: 'account',
-          data: {
-            address: alice.address,
-          },
-        },
+        to: alice.address,
         rules: [
           {
             type: 'expiry',
-            isAdjustmentAllowed: true,
             data: {
               timestamp: 1234567890,
             },
@@ -617,7 +607,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('formats Erc20 Token Revocation correctly', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'erc20-token-revocation' as const,
@@ -626,7 +616,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: true,
-        signer: alice.address,
+        to: alice.address,
       } as const;
       const parameters: RequestExecutionPermissionsParameters = [
         permissionRequest,
@@ -635,35 +625,27 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
-      const expectedRequest: PermissionRequest<
-        AccountSigner,
-        Erc20TokenRevocationPermission
-      > = {
-        chainId: '0x7a69',
-        address: bob.address,
-        permission: {
-          type: 'erc20-token-revocation',
-          data: {
-            justification: 'Revoke stale allowance',
-          },
-          isAdjustmentAllowed: true,
-        },
-        signer: {
-          type: 'account',
-          data: {
-            address: alice.address,
-          },
-        },
-        rules: [
-          {
-            type: 'expiry',
-            isAdjustmentAllowed: true,
+      const expectedRequest: PermissionRequest<Erc20TokenRevocationPermission> =
+        {
+          chainId: '0x7a69',
+          from: bob.address,
+          permission: {
+            type: 'erc20-token-revocation',
             data: {
-              timestamp: 1234567890,
+              justification: 'Revoke stale allowance',
             },
+            isAdjustmentAllowed: true,
           },
-        ],
-      };
+          to: alice.address,
+          rules: [
+            {
+              type: 'expiry',
+              data: {
+                timestamp: 1234567890,
+              },
+            },
+          ],
+        };
 
       expect(stubRequest.callCount).to.equal(1);
       expect(stubRequest.firstCall.args[0]).to.deep.equal({
@@ -675,14 +657,14 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it("doesn't include justification when omitted for Erc20 Token Revocation", async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'erc20-token-revocation' as const,
           data: {},
         },
         isAdjustmentAllowed: false,
-        signer: alice.address,
+        to: alice.address,
       };
       const parameters: RequestExecutionPermissionsParameters = [
         permissionRequest,
@@ -692,33 +674,25 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
-      const expectedRequest: PermissionRequest<
-        AccountSigner,
-        Erc20TokenRevocationPermission
-      > = {
-        chainId: '0x7a69',
-        address: bob.address,
-        permission: {
-          type: 'erc20-token-revocation',
-          data: {},
-          isAdjustmentAllowed: false,
-        },
-        signer: {
-          type: 'account',
-          data: {
-            address: alice.address,
-          },
-        },
-        rules: [
-          {
-            type: 'expiry',
+      const expectedRequest: PermissionRequest<Erc20TokenRevocationPermission> =
+        {
+          chainId: '0x7a69',
+          from: bob.address,
+          permission: {
+            type: 'erc20-token-revocation',
+            data: {},
             isAdjustmentAllowed: false,
-            data: {
-              timestamp: 1234567890,
-            },
           },
-        ],
-      };
+          to: alice.address,
+          rules: [
+            {
+              type: 'expiry',
+              data: {
+                timestamp: 1234567890,
+              },
+            },
+          ],
+        };
 
       expect(stubRequest.callCount).to.equal(1);
       expect(stubRequest.firstCall.args[0]).to.deep.equal({
@@ -730,7 +704,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('formats Erc20 Token Stream correctly', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'erc20-token-stream',
@@ -743,7 +717,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: true,
-        signer: alice.address,
+        to: alice.address,
       } as const;
       const parameters = [permissionRequest];
 
@@ -751,12 +725,9 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
-      const expectedRequest: PermissionRequest<
-        AccountSigner,
-        Erc20TokenStreamPermission
-      > = {
+      const expectedRequest: PermissionRequest<Erc20TokenStreamPermission> = {
         chainId: '0x7a69',
-        address: bob.address,
+        from: bob.address,
         permission: {
           type: 'erc20-token-stream',
           data: {
@@ -768,16 +739,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
           isAdjustmentAllowed: true,
         },
-        signer: {
-          type: 'account',
-          data: {
-            address: alice.address,
-          },
-        },
+        to: alice.address,
         rules: [
           {
             type: 'expiry',
-            isAdjustmentAllowed: true,
             data: {
               timestamp: 1234567890,
             },
@@ -795,7 +760,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('formats Native Token Periodic correctly', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'native-token-periodic' as const,
@@ -807,7 +772,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: true,
-        signer: alice.address,
+        to: alice.address,
       };
       const parameters = [permissionRequest];
 
@@ -815,38 +780,30 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
-      const expectedRequest: PermissionRequest<
-        AccountSigner,
-        NativeTokenPeriodicPermission
-      > = {
-        chainId: '0x7a69',
-        address: bob.address,
-        permission: {
-          type: 'native-token-periodic',
-          data: {
-            periodAmount: '0x5',
-            periodDuration: 60,
-            startTime: 1000,
-            justification: 'Periodic native token test',
-          },
-          isAdjustmentAllowed: true,
-        },
-        signer: {
-          type: 'account',
-          data: {
-            address: alice.address,
-          },
-        },
-        rules: [
-          {
-            type: 'expiry',
-            isAdjustmentAllowed: true,
+      const expectedRequest: PermissionRequest<NativeTokenPeriodicPermission> =
+        {
+          chainId: '0x7a69',
+          from: bob.address,
+          permission: {
+            type: 'native-token-periodic',
             data: {
-              timestamp: 1234567890,
+              periodAmount: '0x5',
+              periodDuration: 60,
+              startTime: 1000,
+              justification: 'Periodic native token test',
             },
+            isAdjustmentAllowed: true,
           },
-        ],
-      };
+          to: alice.address,
+          rules: [
+            {
+              type: 'expiry',
+              data: {
+                timestamp: 1234567890,
+              },
+            },
+          ],
+        };
 
       expect(stubRequest.callCount).to.equal(1);
       expect(stubRequest.firstCall.args[0]).to.deep.equal({
@@ -858,7 +815,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     it('formats Erc20 Token Periodic correctly', async () => {
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'erc20-token-periodic' as const,
@@ -871,7 +828,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: true,
-        signer: alice.address,
+        to: alice.address,
       } as const;
       const parameters = [permissionRequest];
 
@@ -879,12 +836,9 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
-      const expectedRequest: PermissionRequest<
-        AccountSigner,
-        Erc20TokenPeriodicPermission
-      > = {
+      const expectedRequest: PermissionRequest<Erc20TokenPeriodicPermission> = {
         chainId: '0x7a69',
-        address: bob.address,
+        from: bob.address,
         permission: {
           type: 'erc20-token-periodic',
           data: {
@@ -896,16 +850,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
           isAdjustmentAllowed: true,
         },
-        signer: {
-          type: 'account',
-          data: {
-            address: alice.address,
-          },
-        },
+        to: alice.address,
         rules: [
           {
             type: 'expiry',
-            isAdjustmentAllowed: true,
             data: {
               timestamp: 1234567890,
             },
@@ -924,7 +872,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
   it('omits expiry rule when expiry is not provided', async () => {
     const permissionRequest = {
       chainId: 31337,
-      address: bob.address,
+      from: bob.address,
       // expiry is intentionally omitted
       permission: {
         type: 'native-token-stream' as const,
@@ -936,7 +884,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         },
       },
       isAdjustmentAllowed: false,
-      signer: alice.address,
+      to: alice.address,
     };
     const parameters: RequestExecutionPermissionsParameters = [
       permissionRequest,
@@ -952,7 +900,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       params: [
         {
           chainId: '0x7a69',
-          address: bob.address,
+          from: bob.address,
           permission: {
             type: 'native-token-stream',
             data: {
@@ -986,7 +934,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
 
       const permissionRequest = {
         chainId: 31337,
-        address: bob.address,
+        from: bob.address,
         expiry: 1234567890,
         permission: {
           type: 'native-token-stream' as const,
@@ -997,7 +945,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         },
         isAdjustmentAllowed: false,
-        signer: alice.address,
+        to: alice.address,
       };
 
       stubRequest.resolves(mockResponse);
@@ -1013,7 +961,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         params: [
           {
             chainId: '0x7a69',
-            address: bob.address,
+            from: bob.address,
             permission: {
               type: 'native-token-stream',
               data: {

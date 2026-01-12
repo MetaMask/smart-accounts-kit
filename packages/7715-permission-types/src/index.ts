@@ -1,12 +1,6 @@
 // Export all types from types.ts
 export type {
   Hex,
-  WalletSigner,
-  KeyType,
-  KeySigner,
-  MultiKeySigner,
-  AccountSigner,
-  Signer,
   BasePermission,
   PermissionTypes,
   NativeTokenStreamPermission,

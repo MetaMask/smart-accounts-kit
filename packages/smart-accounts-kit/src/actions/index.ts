@@ -59,20 +59,8 @@ export {
 } from './erc7715RequestExecutionPermissionsAction';
 
 export { erc7715GetSupportedExecutionPermissionsAction as getSupportedExecutionPermissions } from './erc7715GetSupportedExecutionPermissionsAction';
-export {
-  /** @deprecated Use `MetaMaskExtensionClient` instead. */
-  type GetSupportedExecutionPermissionsClient,
-  /** @deprecated Use `MetaMaskExtensionSchema` instead. */
-  type GetSupportedExecutionPermissionsSchema,
-} from './erc7715GetSupportedExecutionPermissionsAction';
 
 export { erc7715GetGrantedExecutionPermissionsAction as getGrantedExecutionPermissions } from './erc7715GetGrantedExecutionPermissionsAction';
-export {
-  /** @deprecated Use `MetaMaskExtensionClient` instead. */
-  type GetGrantedExecutionPermissionsClient,
-  /** @deprecated Use `MetaMaskExtensionSchema` instead. */
-  type GetGrantedExecutionPermissionsSchema,
-} from './erc7715GetGrantedExecutionPermissionsAction';
 
 export {
   type GetSupportedExecutionPermissionsResult,

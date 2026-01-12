@@ -1,20 +1,9 @@
 import type {
   GetGrantedExecutionPermissionsResult,
   MetaMaskExtensionClient,
-  MetaMaskExtensionSchema,
-} from './erc7715RequestExecutionPermissionsAction';
+} from './erc7715Types';
 
-export type { GetGrantedExecutionPermissionsResult } from './erc7715RequestExecutionPermissionsAction';
-
-/**
- * @deprecated Use `MetaMaskExtensionClient` instead.
- */
-export type GetGrantedExecutionPermissionsClient = MetaMaskExtensionClient;
-
-/**
- * @deprecated Use `MetaMaskExtensionSchema` instead.
- */
-export type GetGrantedExecutionPermissionsSchema = MetaMaskExtensionSchema;
+export type { GetGrantedExecutionPermissionsResult } from './erc7715Types';
 
 /**
  * Retrieves all previously granted execution permissions from the wallet according to EIP-7715 specification.

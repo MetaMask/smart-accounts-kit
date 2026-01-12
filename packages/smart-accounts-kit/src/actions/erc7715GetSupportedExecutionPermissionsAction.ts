@@ -1,23 +1,12 @@
 import type {
   GetSupportedExecutionPermissionsResult,
   MetaMaskExtensionClient,
-  MetaMaskExtensionSchema,
-} from './erc7715RequestExecutionPermissionsAction';
+} from './erc7715Types';
 
 export type {
   GetSupportedExecutionPermissionsResult,
   SupportedPermissionInfo,
-} from './erc7715RequestExecutionPermissionsAction';
-
-/**
- * @deprecated Use `MetaMaskExtensionClient` instead.
- */
-export type GetSupportedExecutionPermissionsClient = MetaMaskExtensionClient;
-
-/**
- * @deprecated Use `MetaMaskExtensionSchema` instead.
- */
-export type GetSupportedExecutionPermissionsSchema = MetaMaskExtensionSchema;
+} from './erc7715Types';
 
 /**
  * Retrieves the supported execution permission types from the wallet according to EIP-7715 specification.

@@ -1,4 +1,4 @@
-export const deployments_1_3_0 = {
+export const DEPLOYMENTS_1_3_0 = {
   DelegationManager: '0xdb9B1e94B5b69Df7e401DDbedE43491141047dB3',
   EntryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
   SimpleFactory: '0x69Aa2f9fe1572F1B640E1bbc512f5c3a734fc77c',
@@ -43,7 +43,7 @@ export const deployments_1_3_0 = {
   MultiTokenPeriodEnforcer: '0xFB2f1a9BD76d3701B730E5d69C3219D42D80eBb7',
 } as const;
 
-export const deployments_1_1_0 = {
+export const DEPLOYMENTS_1_1_0 = {
   DelegationManager: '0x56D56e07e3d6Ee5a24e30203A37a0a460f42D7A3',
   EntryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
   SimpleFactory: '0x6ff518884f21168c30c58CB21184D6AdBC18Ad90',
@@ -71,7 +71,7 @@ export const deployments_1_1_0 = {
   RedeemerEnforcer: '0x926672b130D1EF60A9d6b11D2048d121b30f40C1',
 } as const;
 
-export const deployments_1_0_0 = {
+export const DEPLOYMENTS_1_0_0 = {
   DelegationManager: '0xbe4138886cb096bdc1b930f2f0ca7892aa234d78',
   EntryPoint: '0x0000000071727De22E5E9d8BAf0edAc6f37da032',
   SimpleFactory: '0x6ff518884f21168c30c58CB21184D6AdBC18Ad90',

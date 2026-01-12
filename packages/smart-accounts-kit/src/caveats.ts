@@ -21,6 +21,7 @@ export const CAVEAT_TYPEHASH: Hex = keccak256(
 
 /**
  * Calculates the hash of a single Caveat.
+ *
  * @param input - The Caveat data.
  * @returns The keccak256 hash of the encoded Caveat packet.
  */
@@ -34,6 +35,7 @@ export const getCaveatPacketHash = (input: Caveat): Hex => {
 
 /**
  * Calculates the hash of an array of Caveats.
+ *
  * @param input - The array of Caveats.
  * @returns The keccak256 hash of the encoded Caveat array packet.
  */
@@ -49,6 +51,7 @@ export const getCaveatArrayPacketHash = (input: Caveat[]): Hex => {
 
 /**
  * Creates a caveat.
+ *
  * @param enforcer - The contract that guarantees the caveat is upheld.
  * @param terms - The data that the enforcer will use to verify the caveat (unique per enforcer).
  * @param args - Additional arguments for the caveat (optional).

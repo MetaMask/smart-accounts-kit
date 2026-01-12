@@ -92,6 +92,7 @@ export const getCounterfactualAccountData = async <
       initcode = initializeMultiSigDeleGator({ owners, threshold });
       break;
     }
+    case Implementation.Stateless7702:
     default:
       throw new Error(`Implementation type '${implementation}' not supported`);
   }

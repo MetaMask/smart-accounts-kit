@@ -32,7 +32,6 @@ describe('MetaMaskSmartAccount', () => {
       request: async () => '0x',
     });
     publicClient = createPublicClient({ transport, chain });
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 
     environment = {
       SimpleFactory: randomAddress(),

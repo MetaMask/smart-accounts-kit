@@ -36,6 +36,7 @@ export function createExactCalldataTerms(
 /**
  * Creates terms for an ExactCalldata caveat that ensures the provided execution calldata
  * matches exactly the expected calldata.
+ *
  * @param terms - The terms for the ExactCalldata caveat.
  * @param encodingOptions - The encoding options for the result.
  * @returns The terms as the calldata itself.

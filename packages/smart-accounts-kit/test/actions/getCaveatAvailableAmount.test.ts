@@ -102,9 +102,8 @@ describe('getCaveatAvailableAmount', () => {
         currentPeriod: 1n,
       };
 
-      const { read } = await import(
-        '../../src/DelegationFramework/MultiTokenPeriodEnforcer/methods/getAvailableAmount'
-      );
+      const { read } =
+        await import('../../src/DelegationFramework/MultiTokenPeriodEnforcer/methods/getAvailableAmount');
       vi.mocked(read).mockResolvedValue(mockResult);
 
       const result = await getMultiTokenPeriodEnforcerAvailableAmount(
@@ -226,9 +225,8 @@ describe('getCaveatAvailableAmount', () => {
         currentPeriod: 1n,
       };
 
-      const { read } = await import(
-        '../../src/DelegationFramework/ERC20PeriodTransferEnforcer/methods/getAvailableAmount'
-      );
+      const { read } =
+        await import('../../src/DelegationFramework/ERC20PeriodTransferEnforcer/methods/getAvailableAmount');
       vi.mocked(read).mockResolvedValue(mockResult);
 
       const result = await getErc20PeriodTransferEnforcerAvailableAmount(
@@ -346,9 +344,8 @@ describe('getCaveatAvailableAmount', () => {
         availableAmount: 1000n,
       };
 
-      const { read } = await import(
-        '../../src/DelegationFramework/ERC20StreamingEnforcer/methods/getAvailableAmount'
-      );
+      const { read } =
+        await import('../../src/DelegationFramework/ERC20StreamingEnforcer/methods/getAvailableAmount');
       vi.mocked(read).mockResolvedValue(mockResult);
 
       const result = await getErc20StreamingEnforcerAvailableAmount(
@@ -469,9 +466,8 @@ describe('getCaveatAvailableAmount', () => {
         currentPeriod: 1n,
       };
 
-      const { read } = await import(
-        '../../src/DelegationFramework/NativeTokenPeriodTransferEnforcer/methods/getAvailableAmount'
-      );
+      const { read } =
+        await import('../../src/DelegationFramework/NativeTokenPeriodTransferEnforcer/methods/getAvailableAmount');
       vi.mocked(read).mockResolvedValue(mockResult);
 
       const result = await getNativeTokenPeriodTransferEnforcerAvailableAmount(
@@ -601,9 +597,8 @@ describe('getCaveatAvailableAmount', () => {
         availableAmount: 1000n,
       };
 
-      const { read } = await import(
-        '../../src/DelegationFramework/NativeTokenStreamingEnforcer/methods/getAvailableAmount'
-      );
+      const { read } =
+        await import('../../src/DelegationFramework/NativeTokenStreamingEnforcer/methods/getAvailableAmount');
       vi.mocked(read).mockResolvedValue(mockResult);
 
       const result = await getNativeTokenStreamingEnforcerAvailableAmount(

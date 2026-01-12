@@ -44,13 +44,13 @@ export type DelegationStorageConfig = {
 };
 
 export class DelegationStorageClient {
-  #apiVersionPrefix = 'api/v0';
+  readonly #apiVersionPrefix = 'api/v0';
 
-  #config: DelegationStorageConfig;
+  readonly #config: DelegationStorageConfig;
 
-  #fetcher: typeof fetch;
+  readonly #fetcher: typeof fetch;
 
-  #apiUrl: string;
+  readonly #apiUrl: string;
 
   constructor(config: DelegationStorageConfig) {
     const { apiUrl } = config.environment;

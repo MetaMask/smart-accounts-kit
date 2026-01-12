@@ -33,6 +33,7 @@ export type StreamingResult = {
 
 /**
  * Finds a caveat that matches the specified enforcer address.
+ *
  * @param config - The configuration object.
  * @param config.delegation - The delegation to search.
  * @param config.enforcerAddress - The enforcer address to match.

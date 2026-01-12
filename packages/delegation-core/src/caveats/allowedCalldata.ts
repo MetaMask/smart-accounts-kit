@@ -37,6 +37,7 @@ export function createAllowedCalldataTerms(
 /**
  * Creates terms for an AllowedCalldata caveat that ensures the provided execution calldata
  * matches the expected calldata at the specified index.
+ *
  * @param terms - The terms for the AllowedCalldata caveat.
  * @param encodingOptions - The encoding options for the result.
  * @returns The terms as the calldata itself.

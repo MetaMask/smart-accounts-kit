@@ -147,7 +147,7 @@ export type PermissionRequestParameter = {
   // Account to assign the permission to.
   to: Hex;
   // address from which the permission should be granted.
-  address?: Address | undefined | null;
+  from?: Address | undefined | null;
   // Timestamp (in seconds) that specifies the time by which this permission MUST expire.
   expiry?: number | undefined | null;
 };
@@ -208,7 +208,7 @@ export async function erc7715RequestExecutionPermissionsAction(
 function formatPermissionsRequest(
   parameters: PermissionRequestParameter,
 ): PermissionRequest<PermissionTypes> {
-  const { chainId, address, expiry, isAdjustmentAllowed } = parameters;
+  const { chainId, from, expiry, isAdjustmentAllowed } = parameters;
 
   const permissionFormatter = getPermissionFormatter(
     parameters.permission.type,
@@ -226,7 +226,7 @@ function formatPermissionsRequest(
     : [];
 
   const optionalFields = {
-    ...(address ? { address } : {}),
+    ...(from ? { from } : {}),
   };
 
   return {

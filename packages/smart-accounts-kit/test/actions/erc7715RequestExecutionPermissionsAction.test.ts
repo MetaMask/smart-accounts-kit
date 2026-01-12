@@ -89,16 +89,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
                 data: {
                   timestamp: 1234567890,
                 },
-                isAdjustmentAllowed: false,
                 type: 'expiry',
               },
             ],
-            signer: {
-              data: {
-                address: alice.address,
-              },
-              type: 'account',
-            },
+            to: alice.address,
           },
         ],
       });
@@ -229,16 +223,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
               },
               isAdjustmentAllowed: false,
             },
-            signer: {
-              type: 'account',
-              data: {
-                address: alice.address,
-              },
-            },
+            to: alice.address,
             rules: [
               {
                 type: 'expiry',
-                isAdjustmentAllowed: false,
                 data: {
                   timestamp: 1234567890,
                 },
@@ -354,16 +342,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
               },
               isAdjustmentAllowed: false,
             },
-            signer: {
-              type: 'account',
-              data: {
-                address: alice.address,
-              },
-            },
+            to: alice.address,
             rules: [
               {
                 type: 'expiry',
-                isAdjustmentAllowed: false,
                 data: {
                   timestamp: 1234567890,
                 },
@@ -411,16 +393,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
               },
               isAdjustmentAllowed: false,
             },
-            signer: {
-              type: 'account',
-              data: {
-                address: alice.address,
-              },
-            },
+            to: alice.address,
             rules: [
               {
                 type: 'expiry',
-                isAdjustmentAllowed: false,
                 data: {
                   timestamp: 1234567890,
                 },
@@ -470,16 +446,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
               },
               isAdjustmentAllowed: false,
             },
-            signer: {
-              type: 'account',
-              data: {
-                address: alice.address,
-              },
-            },
+            to: alice.address,
             rules: [
               {
                 type: 'expiry',
-                isAdjustmentAllowed: false,
                 data: {
                   timestamp: 1234567890,
                 },
@@ -530,16 +500,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
               },
               isAdjustmentAllowed: false,
             },
-            signer: {
-              type: 'account',
-              data: {
-                address: alice.address,
-              },
-            },
+            to: alice.address,
             rules: [
               {
                 type: 'expiry',
-                isAdjustmentAllowed: false,
                 data: {
                   timestamp: 1234567890,
                 },
@@ -911,12 +875,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             },
             isAdjustmentAllowed: false,
           },
-          signer: {
-            type: 'account',
-            data: {
-              address: alice.address,
-            },
-          },
+          to: alice.address,
           rules: [],
         },
       ],
@@ -971,16 +930,10 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
               },
               isAdjustmentAllowed: false,
             },
-            signer: {
-              type: 'account',
-              data: {
-                address: alice.address,
-              },
-            },
+            to: alice.address,
             rules: [
               {
                 type: 'expiry',
-                isAdjustmentAllowed: false,
                 data: {
                   timestamp: 1234567890,
                 },

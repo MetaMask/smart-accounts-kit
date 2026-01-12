@@ -10,9 +10,7 @@ import {
   sendUserOperationWithDelegationAction,
 } from './erc7710RedeemDelegationAction';
 import { erc7715GetGrantedExecutionPermissionsAction } from './erc7715GetGrantedExecutionPermissionsAction';
-import type { GetGrantedExecutionPermissionsClient } from './erc7715GetGrantedExecutionPermissionsAction';
 import { erc7715GetSupportedExecutionPermissionsAction } from './erc7715GetSupportedExecutionPermissionsAction';
-import type { GetSupportedExecutionPermissionsClient } from './erc7715GetSupportedExecutionPermissionsAction';
 import { erc7715RequestExecutionPermissionsAction } from './erc7715RequestExecutionPermissionsAction';
 import type {
   MetaMaskExtensionClient,
@@ -60,20 +58,27 @@ export {
   type RequestExecutionPermissionsReturnType,
 } from './erc7715RequestExecutionPermissionsAction';
 
+export { erc7715GetSupportedExecutionPermissionsAction as getSupportedExecutionPermissions } from './erc7715GetSupportedExecutionPermissionsAction';
 export {
-  erc7715GetSupportedExecutionPermissionsAction as getSupportedExecutionPermissions,
+  /** @deprecated Use `MetaMaskExtensionClient` instead. */
   type GetSupportedExecutionPermissionsClient,
+  /** @deprecated Use `MetaMaskExtensionSchema` instead. */
   type GetSupportedExecutionPermissionsSchema,
-  type GetSupportedExecutionPermissionsResult,
-  type SupportedPermissionInfo,
 } from './erc7715GetSupportedExecutionPermissionsAction';
 
+export { erc7715GetGrantedExecutionPermissionsAction as getGrantedExecutionPermissions } from './erc7715GetGrantedExecutionPermissionsAction';
 export {
-  erc7715GetGrantedExecutionPermissionsAction as getGrantedExecutionPermissions,
+  /** @deprecated Use `MetaMaskExtensionClient` instead. */
   type GetGrantedExecutionPermissionsClient,
+  /** @deprecated Use `MetaMaskExtensionSchema` instead. */
   type GetGrantedExecutionPermissionsSchema,
-  type GetGrantedExecutionPermissionsResult,
 } from './erc7715GetGrantedExecutionPermissionsAction';
+
+export {
+  type GetSupportedExecutionPermissionsResult,
+  type GetGrantedExecutionPermissionsResult,
+  type SupportedPermissionInfo,
+} from './erc7715RequestExecutionPermissionsAction';
 
 export type { DelegatedCall } from './erc7710RedeemDelegationAction';
 
@@ -88,12 +93,12 @@ export const erc7715ProviderActions = () => (client: Client) => ({
   },
   getSupportedExecutionPermissions: async () => {
     return erc7715GetSupportedExecutionPermissionsAction(
-      client as GetSupportedExecutionPermissionsClient,
+      client as MetaMaskExtensionClient,
     );
   },
   getGrantedExecutionPermissions: async () => {
     return erc7715GetGrantedExecutionPermissionsAction(
-      client as GetGrantedExecutionPermissionsClient,
+      client as MetaMaskExtensionClient,
     );
   },
 });

@@ -1,43 +1,20 @@
 import type {
-  AccountSigner,
-  PermissionResponse,
-  PermissionTypes,
-} from '@metamask/7715-permission-types';
-import type { Client, Account, RpcSchema, Transport, Chain } from 'viem';
+  GetGrantedExecutionPermissionsResult,
+  MetaMaskExtensionClient,
+  MetaMaskExtensionSchema,
+} from './erc7715RequestExecutionPermissionsAction';
+
+export type { GetGrantedExecutionPermissionsResult } from './erc7715RequestExecutionPermissionsAction';
 
 /**
- * Result type for the getGrantedExecutionPermissions action.
- * An array of permission responses representing all granted permissions that are not yet revoked.
+ * @deprecated Use `MetaMaskExtensionClient` instead.
  */
-export type GetGrantedExecutionPermissionsResult = PermissionResponse<
-  AccountSigner,
-  PermissionTypes
->[];
+export type GetGrantedExecutionPermissionsClient = MetaMaskExtensionClient;
 
 /**
- * RPC schema for the wallet_getGrantedExecutionPermissions method.
+ * @deprecated Use `MetaMaskExtensionSchema` instead.
  */
-export type GetGrantedExecutionPermissionsSchema = RpcSchema &
-  [
-    {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      Method: 'wallet_getGrantedExecutionPermissions';
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      Params: [];
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      ReturnType: GetGrantedExecutionPermissionsResult;
-    },
-  ];
-
-/**
- * A Viem client extended with the getGrantedExecutionPermissions RPC method.
- */
-export type GetGrantedExecutionPermissionsClient = Client<
-  Transport,
-  Chain | undefined,
-  Account | undefined,
-  GetGrantedExecutionPermissionsSchema
->;
+export type GetGrantedExecutionPermissionsSchema = MetaMaskExtensionSchema;
 
 /**
  * Retrieves all previously granted execution permissions from the wallet according to EIP-7715 specification.
@@ -55,7 +32,7 @@ export type GetGrantedExecutionPermissionsClient = Client<
  * ```
  */
 export async function erc7715GetGrantedExecutionPermissionsAction(
-  client: GetGrantedExecutionPermissionsClient,
+  client: MetaMaskExtensionClient,
 ): Promise<GetGrantedExecutionPermissionsResult> {
   const result = await client.request(
     {

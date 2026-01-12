@@ -1,46 +1,23 @@
-import type { Client, Account, RpcSchema, Transport, Chain } from 'viem';
+import type {
+  GetSupportedExecutionPermissionsResult,
+  MetaMaskExtensionClient,
+  MetaMaskExtensionSchema,
+} from './erc7715RequestExecutionPermissionsAction';
+
+export type {
+  GetSupportedExecutionPermissionsResult,
+  SupportedPermissionInfo,
+} from './erc7715RequestExecutionPermissionsAction';
 
 /**
- * Represents the supported execution permissions for a specific permission type.
+ * @deprecated Use `MetaMaskExtensionClient` instead.
  */
-export type SupportedPermissionInfo = {
-  chainIds: `0x${string}`[];
-  ruleTypes: string[];
-};
+export type GetSupportedExecutionPermissionsClient = MetaMaskExtensionClient;
 
 /**
- * Result type for the getSupportedExecutionPermissions action.
- * A record keyed by permission type containing supported chain IDs and rule types.
+ * @deprecated Use `MetaMaskExtensionSchema` instead.
  */
-export type GetSupportedExecutionPermissionsResult = Record<
-  string,
-  SupportedPermissionInfo
->;
-
-/**
- * RPC schema for the wallet_getSupportedExecutionPermissions method.
- */
-export type GetSupportedExecutionPermissionsSchema = RpcSchema &
-  [
-    {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      Method: 'wallet_getSupportedExecutionPermissions';
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      Params: [];
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      ReturnType: GetSupportedExecutionPermissionsResult;
-    },
-  ];
-
-/**
- * A Viem client extended with the getSupportedExecutionPermissions RPC method.
- */
-export type GetSupportedExecutionPermissionsClient = Client<
-  Transport,
-  Chain | undefined,
-  Account | undefined,
-  GetSupportedExecutionPermissionsSchema
->;
+export type GetSupportedExecutionPermissionsSchema = MetaMaskExtensionSchema;
 
 /**
  * Retrieves the supported execution permission types from the wallet according to EIP-7715 specification.
@@ -67,7 +44,7 @@ export type GetSupportedExecutionPermissionsClient = Client<
  * ```
  */
 export async function erc7715GetSupportedExecutionPermissionsAction(
-  client: GetSupportedExecutionPermissionsClient,
+  client: MetaMaskExtensionClient,
 ): Promise<GetSupportedExecutionPermissionsResult> {
   const result = await client.request(
     {

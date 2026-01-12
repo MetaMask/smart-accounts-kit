@@ -10,7 +10,7 @@ import type {
   PermissionTypes,
   Rule,
 } from '@metamask/7715-permission-types';
-import { isHex, toHex } from 'viem';
+import { toHex } from 'viem';
 import type {
   Client,
   Account,
@@ -20,11 +20,41 @@ import type {
   Address,
 } from 'viem';
 
+import { isDefined, toHexOrThrow } from '../utils';
+
 /**
- * RPC schema for MetaMask related methods.
+ * Represents the supported execution permissions for a specific permission type.
+ */
+export type SupportedPermissionInfo = {
+  chainIds: `0x${string}`[];
+  ruleTypes: string[];
+};
+
+/**
+ * Result type for the getSupportedExecutionPermissions action.
+ * A record keyed by permission type containing supported chain IDs and rule types.
+ */
+export type GetSupportedExecutionPermissionsResult = Record<
+  string,
+  SupportedPermissionInfo
+>;
+
+/**
+ * Result type for the getGrantedExecutionPermissions action.
+ * An array of permission responses representing all granted permissions that are not yet revoked.
+ */
+export type GetGrantedExecutionPermissionsResult = PermissionResponse<
+  AccountSigner,
+  PermissionTypes
+>[];
+
+/**
+ * RPC schema for ERC-7715 execution permission methods.
  *
  * Extends the base RPC schema with methods specific to interacting with EIP-7715:
- * - `wallet_invokeSnap`: Invokes a method on a specific Snap.
+ * - `wallet_requestExecutionPermissions`: Requests execution permissions from the wallet.
+ * - `wallet_getSupportedExecutionPermissions`: Gets supported permission types.
+ * - `wallet_getGrantedExecutionPermissions`: Gets all granted permissions.
  */
 export type MetaMaskExtensionSchema = RpcSchema &
   [
@@ -35,6 +65,22 @@ export type MetaMaskExtensionSchema = RpcSchema &
       Params: PermissionRequest<AccountSigner, PermissionTypes>[];
       // eslint-disable-next-line @typescript-eslint/naming-convention
       ReturnType: PermissionResponse<AccountSigner, PermissionTypes>[];
+    },
+    {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      Method: 'wallet_getSupportedExecutionPermissions';
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      Params: [];
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ReturnType: GetSupportedExecutionPermissionsResult;
+    },
+    {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      Method: 'wallet_getGrantedExecutionPermissions';
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      Params: [];
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      ReturnType: GetGrantedExecutionPermissionsResult;
     },
   ];
 
@@ -255,59 +301,6 @@ function formatPermissionsRequest(
     },
     rules,
   };
-}
-
-/**
- * Checks if a value is defined (not null or undefined).
- *
- * @param value - The value to check.
- * @returns A boolean indicating whether the value is defined.
- */
-function isDefined<TValue>(value: TValue | null | undefined): value is TValue {
-  return value !== undefined && value !== null;
-}
-
-/**
- * Asserts that a value is defined (not null or undefined).
- *
- * @param value - The value to check.
- * @param parameterName - Optional: The name of the parameter that is being checked.
- * @throws {Error} If the value is null or undefined.
- */
-function assertIsDefined<TValue>(
-  value: TValue | null | undefined,
-  parameterName?: string,
-): asserts value is TValue {
-  if (!isDefined(value)) {
-    throw new Error(
-      `Invalid parameters: ${parameterName ?? 'value'} is required`,
-    );
-  }
-}
-
-/**
- * Converts a value to a hex string or throws an error if the value is invalid.
- *
- * @param value - The value to convert to hex.
- * @param parameterName - Optional: The name of the parameter that is being converted to hex.
- * @returns The value as a hex string.
- */
-function toHexOrThrow(
-  value: Parameters<typeof toHex>[0] | undefined,
-  parameterName?: string,
-) {
-  assertIsDefined(value, parameterName);
-
-  if (typeof value === 'string') {
-    if (!isHex(value)) {
-      throw new Error(
-        `Invalid parameters: ${parameterName ?? 'value'} is not a valid hex value`,
-      );
-    }
-    return value;
-  }
-
-  return toHex(value);
 }
 
 type PermissionFormatter = (params: {

@@ -66,7 +66,7 @@ export {
   type GetSupportedExecutionPermissionsResult,
   type GetGrantedExecutionPermissionsResult,
   type SupportedPermissionInfo,
-} from './erc7715RequestExecutionPermissionsAction';
+} from './erc7715Types';
 
 export type { DelegatedCall } from './erc7710RedeemDelegationAction';
 

@@ -3,11 +3,11 @@ import type { Client } from 'viem';
 import { createClient, custom } from 'viem';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { erc7715ProviderActions } from '../../src/actions';
 import {
-  erc7715GetSupportedExecutionPermissionsAction,
+  erc7715ProviderActions,
   type GetSupportedExecutionPermissionsResult,
-} from '../../src/actions/erc7715GetSupportedExecutionPermissionsAction';
+} from '../../src/actions';
+import { erc7715GetSupportedExecutionPermissionsAction } from '../../src/actions/erc7715GetSupportedExecutionPermissionsAction';
 
 describe('erc7715GetSupportedExecutionPermissionsAction', () => {
   const stubRequest = stub();

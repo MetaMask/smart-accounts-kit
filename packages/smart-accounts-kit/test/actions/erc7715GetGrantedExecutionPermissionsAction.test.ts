@@ -8,11 +8,11 @@ import type { Client } from 'viem';
 import { createClient, custom } from 'viem';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { erc7715ProviderActions } from '../../src/actions';
 import {
-  erc7715GetGrantedExecutionPermissionsAction,
+  erc7715ProviderActions,
   type GetGrantedExecutionPermissionsResult,
-} from '../../src/actions/erc7715GetGrantedExecutionPermissionsAction';
+} from '../../src/actions';
+import { erc7715GetGrantedExecutionPermissionsAction } from '../../src/actions/erc7715GetGrantedExecutionPermissionsAction';
 
 describe('erc7715GetGrantedExecutionPermissionsAction', () => {
   const stubRequest = stub();

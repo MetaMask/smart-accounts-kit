@@ -3,8 +3,6 @@ import type {
   MetaMaskExtensionClient,
 } from './erc7715Types';
 
-export type { GetGrantedExecutionPermissionsResult } from './erc7715Types';
-
 /**
  * Retrieves all previously granted execution permissions from the wallet according to EIP-7715 specification.
  *

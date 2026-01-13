@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- chore: Implement erc-7715 type scheme revisions across packages ([#128](https://github.com/metamask/smart-accounts-kit/pull/128))
+- Resolve yarn peer dependency warnings ([#123](https://github.com/metamask/smart-accounts-kit/pull/123))
+- Release/18.0.0 ([#126](https://github.com/metamask/smart-accounts-kit/pull/126))
+- Allow expiry to be omitted when requesting 7715 permissions ([#122](https://github.com/metamask/smart-accounts-kit/pull/122))
+
 ## [0.3.0]
 
 ### Fixed

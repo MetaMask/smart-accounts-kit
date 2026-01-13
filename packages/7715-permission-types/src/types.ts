@@ -29,7 +29,6 @@ export type BasePermission = {
 
 /**
  * A base rule type that all rules must extend.
- * `isAdjustmentAllowed` defines a boolean value that allows DApp to define whether the "rule" can be attenuated–adjusted to meet the user's terms.
  *
  * type - is an enum defined by the ERCs
  *
@@ -177,7 +176,7 @@ export type PermissionTypes =
  *
  * address - address identifies the account being targetted for this permission request which is useful when a connection has been established and multiple accounts have been exposed. It is optional to let the user choose which account to grant permission for.
  *
- * signer - signer is a field that identifies the key or account associated with the permission or alternatively the wallet will manage the session. See the "Signers" section for details.
+ * to - is a field that identifies the DApp session account associated with the permission.
  *
  * permission - permission defines the allowed behavior the signer can do on behalf of the account. See the "Permission" section for details.
  *

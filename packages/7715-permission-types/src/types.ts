@@ -7,62 +7,6 @@
  */
 export type Hex = `0x${string}`;
 
-/**
- * The types of keys that are supported for the following `key` and `keys` signer types.
- */
-export type KeyType = 'secp256r1' | 'secp256k1' | 'ed25519' | 'schnorr';
-
-// //////////////////////////////////////////////////
-// Signer Types
-// //////////////////////////////////////////////////
-
-/**
- * A wallet is the signer for these permissions
- * `data` is not necessary for this signer type as the wallet is both the signer and grantor of these permissions
- */
-export type WalletSigner = {
-  type: 'wallet';
-  data: object;
-};
-
-/**
- * A signer representing a single key.
- * "Key" types are explicitly secp256r1 (p256) or secp256k1, and the public keys are hex-encoded.
- */
-export type KeySigner = {
-  type: 'key';
-  data: {
-    type: KeyType;
-    publicKey: Hex;
-  };
-};
-
-/**
- * A signer representing a multisig signer.
- * Each element of `publicKeys` are all explicitly the same `KeyType`, and the public keys are hex-encoded.
- */
-export type MultiKeySigner = {
-  type: 'keys';
-  data: {
-    keys: {
-      type: KeyType;
-      publicKey: Hex;
-    }[];
-  };
-};
-
-/**
- * An account that can be granted with permissions as in ERC-7710.
- */
-export type AccountSigner = {
-  type: 'account';
-  data: {
-    address: Hex;
-  };
-};
-
-export type Signer = WalletSigner | KeySigner | MultiKeySigner | AccountSigner;
-
 // //////////////////////////////////////////////////
 // Permission Types
 // //////////////////////////////////////////////////
@@ -85,17 +29,13 @@ export type BasePermission = {
 
 /**
  * A base rule type that all rules must extend.
- * `isAdjustmentAllowed` defines a boolean value that allows DApp to define whether the "rule" can be attenuated–adjusted to meet the user's terms.
  *
  * type - is an enum defined by the ERCs
- *
- * isAdjustmentAllowed - is a boolean that indicates whether the rule can be adjusted.
  *
  * data - is a record of the data that is associated with the rule, and the structure is defined by the ERCs.
  */
 export type Rule = {
   type: string;
-  isAdjustmentAllowed: boolean;
   data: Record<string, any>;
 };
 
@@ -236,19 +176,16 @@ export type PermissionTypes =
  *
  * address - address identifies the account being targetted for this permission request which is useful when a connection has been established and multiple accounts have been exposed. It is optional to let the user choose which account to grant permission for.
  *
- * signer - signer is a field that identifies the key or account associated with the permission or alternatively the wallet will manage the session. See the "Signers" section for details.
+ * to - is a field that identifies the DApp session account associated with the permission.
  *
  * permission - permission defines the allowed behavior the signer can do on behalf of the account. See the "Permission" section for details.
  *
  * rules - rules defined the restrictions or conditions that a signer MUST abide by when using a permission to act on behalf of an account. See the "Rule" section for details.
  */
-export type PermissionRequest<
-  TSigner extends Signer,
-  TPermission extends PermissionTypes,
-> = {
+export type PermissionRequest<TPermission extends PermissionTypes> = {
   chainId: Hex; // hex-encoding of uint256
-  address?: Hex;
-  signer: TSigner;
+  from?: Hex;
+  to: Hex;
   permission: TPermission;
   rules?: Rule[] | null;
 };
@@ -259,26 +196,19 @@ export type PermissionRequest<
  *
  * context - is a catch-all to identify a permission for revoking permissions or submitting userOps, and can contain non-identifying data as well. It MAY be the `context` as defined in ERC-7679 and ERC-7710.
  *
- * dependencyInfo - is an array of objects, each containing fields for `factory` and `factoryData` as defined in ERC-4337. Either both `factory` and `factoryData` must be specified in an entry, or neither. This array is used describe accounts that are not yet deployed but MUST be deployed in order for a permission to be successfully redeemed.
+ * dependencies - is an array of objects, each containing fields for `factory` and `factoryData` as defined in ERC-4337. Either both `factory` and `factoryData` must be specified in an entry, or neither. This array is used describe accounts that are not yet deployed but MUST be deployed in order for a permission to be successfully redeemed.
  *
- * signerMeta - is dependent on the account type. If the signer type is `wallet` then it's not required. If the signer type is `key` or `keys` then `userOpBuilder` is required as defined in ERC-7679. If the signer type is `account` then `delegationManager` is required as defined in ERC-7710.
+ * delegationManager - is required as defined in ERC-7710.
  */
-export type PermissionResponse<
-  TSigner extends Signer,
-  TPermission extends PermissionTypes,
-> = PermissionRequest<TSigner, TPermission> & {
-  context: Hex;
-  dependencyInfo: {
-    factory: Hex;
-    factoryData: Hex;
-  }[];
-  signerMeta?: {
-    // 7679 userOp building
-    userOpBuilder?: Hex;
-    // 7710 delegation
-    delegationManager?: Hex;
+export type PermissionResponse<TPermission extends PermissionTypes> =
+  PermissionRequest<TPermission> & {
+    context: Hex;
+    dependencies: {
+      factory: Hex;
+      factoryData: Hex;
+    }[];
+    delegationManager: Hex;
   };
-};
 
 /**
  * Parameters for the `wallet_revokeExecutionPermission` JSON-RPC method.

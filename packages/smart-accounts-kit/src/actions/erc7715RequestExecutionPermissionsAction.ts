@@ -1,5 +1,4 @@
 import type {
-  AccountSigner,
   Erc20TokenPeriodicPermission,
   Erc20TokenStreamPermission,
   Erc20TokenRevocationPermission,
@@ -9,6 +8,7 @@ import type {
   PermissionResponse,
   PermissionTypes,
   Rule,
+  Hex,
 } from '@metamask/7715-permission-types';
 import { toHex } from 'viem';
 import type { Address } from 'viem';
@@ -107,8 +107,6 @@ export type SupportedPermissionParams =
   | Erc20TokenPeriodicPermissionParameter
   | Erc20TokenRevocationPermissionParameter;
 
-export type SignerParam = Address | AccountSigner;
-
 /**
  * Represents a single permission request.
  */
@@ -119,9 +117,9 @@ export type PermissionRequestParameter = {
   // Whether the caller allows the permission to be adjusted.
   isAdjustmentAllowed: boolean;
   // Account to assign the permission to.
-  signer: SignerParam;
+  to: Hex;
   // address from which the permission should be granted.
-  address?: Address | undefined | null;
+  from?: Address | undefined | null;
   // Timestamp (in seconds) that specifies the time by which this permission MUST expire.
   expiry?: number | undefined | null;
 };
@@ -137,10 +135,8 @@ export type RequestExecutionPermissionsParameters =
 /**
  * Return type for the request execution permissions action.
  */
-export type RequestExecutionPermissionsReturnType = PermissionResponse<
-  AccountSigner,
-  PermissionTypes
->[];
+export type RequestExecutionPermissionsReturnType =
+  PermissionResponse<PermissionTypes>[];
 
 /**
  * Grants permissions according to EIP-7715 specification.
@@ -183,23 +179,17 @@ export async function erc7715RequestExecutionPermissionsAction(
  */
 function formatPermissionsRequest(
   parameters: PermissionRequestParameter,
-): PermissionRequest<AccountSigner, PermissionTypes> {
-  const { chainId, address, expiry, isAdjustmentAllowed } = parameters;
+): PermissionRequest<PermissionTypes> {
+  const { chainId, from, expiry, isAdjustmentAllowed } = parameters;
 
   const permissionFormatter = getPermissionFormatter(
     parameters.permission.type,
   );
 
-  const signerAddress =
-    typeof parameters.signer === 'string'
-      ? parameters.signer
-      : parameters.signer.data.address;
-
   const rules: Rule[] = isDefined(expiry)
     ? [
         {
           type: 'expiry',
-          isAdjustmentAllowed,
           data: {
             timestamp: expiry,
           },
@@ -208,7 +198,7 @@ function formatPermissionsRequest(
     : [];
 
   const optionalFields = {
-    ...(address ? { address } : {}),
+    ...(from ? { from } : {}),
   };
 
   return {
@@ -218,13 +208,7 @@ function formatPermissionsRequest(
       permission: parameters.permission,
       isAdjustmentAllowed,
     }),
-    signer: {
-      // MetaMask 7715 implementation only supports AccountSigner
-      type: 'account',
-      data: {
-        address: signerAddress,
-      },
-    },
+    to: parameters.to,
     rules,
   };
 }

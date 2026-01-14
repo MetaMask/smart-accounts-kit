@@ -1,5 +1,4 @@
 import type {
-  AccountSigner,
   PermissionTypes,
   PermissionRequest,
   PermissionResponse,
@@ -28,7 +27,6 @@ export type GetSupportedExecutionPermissionsResult = Record<
  * An array of permission responses representing all granted permissions that are not yet revoked.
  */
 export type GetGrantedExecutionPermissionsResult = PermissionResponse<
-  AccountSigner,
   PermissionTypes
 >[];
 
@@ -45,8 +43,8 @@ export type MetaMaskExtensionSchema = RpcSchema &
   [
     {
       Method: 'wallet_requestExecutionPermissions';
-      Params: PermissionRequest<AccountSigner, PermissionTypes>[];
-      ReturnType: PermissionResponse<AccountSigner, PermissionTypes>[];
+      Params: PermissionRequest<PermissionTypes>[];
+      ReturnType: PermissionResponse<PermissionTypes>[];
     },
     {
       Method: 'wallet_getSupportedExecutionPermissions';

@@ -1,5 +1,4 @@
 import type {
-  AccountSigner,
   NativeTokenStreamPermission,
   PermissionResponse,
 } from '@metamask/7715-permission-types';
@@ -21,40 +20,30 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
   } as unknown as Client;
 
   const mockPermission: PermissionResponse<
-    AccountSigner,
     NativeTokenStreamPermission
   > = {
     chainId: '0x1',
-    address: '0x1234567890123456789012345678901234567890',
-    signer: {
-      type: 'account',
-      data: {
-        address: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
-      },
-    },
+    from: '0x1234567890123456789012345678901234567890',
+    to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
     permission: {
       type: 'native-token-stream',
       isAdjustmentAllowed: true,
       data: {
         amountPerSecond: '0x1',
-        maxAmount: '0x100',
         startTime: 1234567890,
       },
     },
     context: '0x1234567890abcdef',
-    dependencyInfo: [],
+    dependencies: [],
     rules: [
       {
         type: 'expiry',
-        isAdjustmentAllowed: true,
         data: {
           timestamp: 1234567890,
         },
       },
     ],
-    signerMeta: {
-      delegationManager: '0x0987654321098765432109876543210987654321',
-    },
+    delegationManager: '0x0987654321098765432109876543210987654321',
   };
 
   const mockResponse: GetGrantedExecutionPermissionsResult = [mockPermission];
@@ -117,17 +106,11 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
 
     it('should handle response with multiple granted permissions', async () => {
       const secondPermission: PermissionResponse<
-        AccountSigner,
         NativeTokenStreamPermission
       > = {
         chainId: '0x89',
-        address: '0x2234567890123456789012345678901234567890',
-        signer: {
-          type: 'account',
-          data: {
-            address: '0xbbcdefabcdefabcdefabcdefabcdefabcdefabcd',
-          },
-        },
+        from: '0x2234567890123456789012345678901234567890',
+        to: '0xbbcdefabcdefabcdefabcdefabcdefabcdefabcd',
         permission: {
           type: 'native-token-stream',
           isAdjustmentAllowed: false,
@@ -136,12 +119,13 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
           },
         },
         context: '0xabcdef1234567890',
-        dependencyInfo: [
+        dependencies: [
           {
             factory: '0x1111111111111111111111111111111111111111',
             factoryData: '0xfactorydata',
           },
         ],
+        delegationManager: '0x0987654321098765432109876543210987654321',
         rules: [],
       };
 

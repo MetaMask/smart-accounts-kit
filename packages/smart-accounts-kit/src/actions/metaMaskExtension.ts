@@ -1,5 +1,4 @@
 import type {
-  AccountSigner,
   PermissionRequest,
   PermissionResponse,
   PermissionTypes,
@@ -18,9 +17,9 @@ export type MetaMaskExtensionSchema = RpcSchema &
       // eslint-disable-next-line @typescript-eslint/naming-convention
       Method: 'wallet_requestExecutionPermissions';
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      Params: PermissionRequest<AccountSigner, PermissionTypes>[];
+      Params: PermissionRequest<PermissionTypes>[];
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      ReturnType: PermissionResponse<AccountSigner, PermissionTypes>[];
+      ReturnType: PermissionResponse<PermissionTypes>[];
     },
   ];
 

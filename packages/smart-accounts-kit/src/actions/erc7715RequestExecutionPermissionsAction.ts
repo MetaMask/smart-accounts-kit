@@ -10,47 +10,19 @@ import type {
   Rule,
   Hex,
 } from '@metamask/7715-permission-types';
-import { isHex, toHex } from 'viem';
-import type {
-  Client,
-  Account,
-  RpcSchema,
-  Transport,
-  Chain,
-  Address,
-} from 'viem';
+import { toHex } from 'viem';
+import type { Address } from 'viem';
 
-/**
- * RPC schema for MetaMask related methods.
- *
- * Extends the base RPC schema with methods specific to interacting with EIP-7715:
- * - `wallet_invokeSnap`: Invokes a method on a specific Snap.
- */
-export type MetaMaskExtensionSchema = RpcSchema &
-  [
-    {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      Method: 'wallet_requestExecutionPermissions';
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      Params: PermissionRequest<PermissionTypes>[];
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      ReturnType: PermissionResponse<PermissionTypes>[];
-    },
-  ];
+import { isDefined, toHexOrThrow } from '../utils';
+import type { MetaMaskExtensionClient } from './erc7715Types';
 
-/**
- * A Viem client extended with MetaMask Snap-specific RPC methods.
- *
- * This client type allows for interaction with MetaMask Snaps through
- * the standard Viem client interface, with added type safety for
- * Snap-specific methods.
- */
-export type MetaMaskExtensionClient = Client<
-  Transport,
-  Chain | undefined,
-  Account | undefined,
-  MetaMaskExtensionSchema
->;
+export type {
+  GetGrantedExecutionPermissionsResult,
+  GetSupportedExecutionPermissionsResult,
+  MetaMaskExtensionClient,
+  MetaMaskExtensionSchema,
+  SupportedPermissionInfo,
+} from './erc7715Types';
 
 type PermissionParameter = {
   type: string;
@@ -239,59 +211,6 @@ function formatPermissionsRequest(
     to: parameters.to,
     rules,
   };
-}
-
-/**
- * Checks if a value is defined (not null or undefined).
- *
- * @param value - The value to check.
- * @returns A boolean indicating whether the value is defined.
- */
-function isDefined<TValue>(value: TValue | null | undefined): value is TValue {
-  return value !== undefined && value !== null;
-}
-
-/**
- * Asserts that a value is defined (not null or undefined).
- *
- * @param value - The value to check.
- * @param parameterName - Optional: The name of the parameter that is being checked.
- * @throws {Error} If the value is null or undefined.
- */
-function assertIsDefined<TValue>(
-  value: TValue | null | undefined,
-  parameterName?: string,
-): asserts value is TValue {
-  if (!isDefined(value)) {
-    throw new Error(
-      `Invalid parameters: ${parameterName ?? 'value'} is required`,
-    );
-  }
-}
-
-/**
- * Converts a value to a hex string or throws an error if the value is invalid.
- *
- * @param value - The value to convert to hex.
- * @param parameterName - Optional: The name of the parameter that is being converted to hex.
- * @returns The value as a hex string.
- */
-function toHexOrThrow(
-  value: Parameters<typeof toHex>[0] | undefined,
-  parameterName?: string,
-) {
-  assertIsDefined(value, parameterName);
-
-  if (typeof value === 'string') {
-    if (!isHex(value)) {
-      throw new Error(
-        `Invalid parameters: ${parameterName ?? 'value'} is not a valid hex value`,
-      );
-    }
-    return value;
-  }
-
-  return toHex(value);
 }
 
 type PermissionFormatter = (params: {

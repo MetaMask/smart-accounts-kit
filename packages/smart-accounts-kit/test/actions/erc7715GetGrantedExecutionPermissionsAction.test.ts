@@ -19,9 +19,7 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
     request: stubRequest,
   } as unknown as Client;
 
-  const mockPermission: PermissionResponse<
-    NativeTokenStreamPermission
-  > = {
+  const mockPermission: PermissionResponse<NativeTokenStreamPermission> = {
     chainId: '0x1',
     from: '0x1234567890123456789012345678901234567890',
     to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
@@ -105,29 +103,28 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
     });
 
     it('should handle response with multiple granted permissions', async () => {
-      const secondPermission: PermissionResponse<
-        NativeTokenStreamPermission
-      > = {
-        chainId: '0x89',
-        from: '0x2234567890123456789012345678901234567890',
-        to: '0xbbcdefabcdefabcdefabcdefabcdefabcdefabcd',
-        permission: {
-          type: 'native-token-stream',
-          isAdjustmentAllowed: false,
-          data: {
-            amountPerSecond: '0x2',
+      const secondPermission: PermissionResponse<NativeTokenStreamPermission> =
+        {
+          chainId: '0x89',
+          from: '0x2234567890123456789012345678901234567890',
+          to: '0xbbcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          permission: {
+            type: 'native-token-stream',
+            isAdjustmentAllowed: false,
+            data: {
+              amountPerSecond: '0x2',
+            },
           },
-        },
-        context: '0xabcdef1234567890',
-        dependencies: [
-          {
-            factory: '0x1111111111111111111111111111111111111111',
-            factoryData: '0xfactorydata',
-          },
-        ],
-        delegationManager: '0x0987654321098765432109876543210987654321',
-        rules: [],
-      };
+          context: '0xabcdef1234567890',
+          dependencies: [
+            {
+              factory: '0x1111111111111111111111111111111111111111',
+              factoryData: '0xfactorydata',
+            },
+          ],
+          delegationManager: '0x0987654321098765432109876543210987654321',
+          rules: [],
+        };
 
       const multiplePermissions: GetGrantedExecutionPermissionsResult = [
         mockPermission,

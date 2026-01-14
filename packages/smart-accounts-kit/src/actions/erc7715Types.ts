@@ -26,9 +26,8 @@ export type GetSupportedExecutionPermissionsResult = Record<
  * Result type for the getGrantedExecutionPermissions action.
  * An array of permission responses representing all granted permissions that are not yet revoked.
  */
-export type GetGrantedExecutionPermissionsResult = PermissionResponse<
-  PermissionTypes
->[];
+export type GetGrantedExecutionPermissionsResult =
+  PermissionResponse<PermissionTypes>[];
 
 /**
  * RPC schema for ERC-7715 execution permission methods.

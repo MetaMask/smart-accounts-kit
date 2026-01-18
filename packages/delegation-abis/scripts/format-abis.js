@@ -1,25 +1,38 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
 
 // Directory containing the JSON ABI files
-const inputDir = './src/raw';
-// Output directory for the TypeScript files
-const outputDir = './src/formatted';
+const inputDir = './src/artifacts';
+const abiDir = './src/abis';
+const bytecodeModulesDir = './src/bytecode';
+const INDEX_FILE = './src/index.ts';
+const BYTECODE_FILE = './src/bytecode.ts';
 
-// Ensure the output directory exists
-if (!fs.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir, { recursive: true });
+if (!fs.existsSync(abiDir)) {
+  fs.mkdirSync(abiDir, { recursive: true });
+}
+if (!fs.existsSync(bytecodeModulesDir)) {
+  fs.mkdirSync(bytecodeModulesDir, { recursive: true });
 }
 
-// Export ts in an index file
+// Initialize index files (truncate)
+fs.writeFileSync(INDEX_FILE, '');
+fs.writeFileSync(BYTECODE_FILE, '');
+
+// Append exports to index and bytecode files
 function addExportToIndexFile(fileName) {
-  const indexStream = fs.createWriteStream('./src/index.ts', {
+  const indexStream = fs.createWriteStream(INDEX_FILE, {
+    flags: 'a',
+  });
+  const bytecodeStream = fs.createWriteStream(BYTECODE_FILE, {
     flags: 'a',
   });
 
-  indexStream.write(`export * as ${fileName} from './formatted/${fileName}'\n`);
+  indexStream.write(`export { abi as ${fileName} } from './abis/${fileName}'\n`);
+  bytecodeStream.write(`export { bytecode as ${fileName} } from './bytecode/${fileName}'\n`);
 
   indexStream.end();
+  bytecodeStream.end();
 }
 
 // Recursive function to process files and directories
@@ -55,29 +68,47 @@ function processFile(filePath, fileName) {
     }
 
     try {
-      const abi = JSON.parse(data);
-      const tsContent = `export const abi = ${JSON.stringify(
-        abi.abi,
+      const parsed = JSON.parse(data);
+      const abi = parsed.abi;
+      const bytecode = parsed.bytecode?.object ?? '';
+      const abiOnlyContent = `export const abi = ${JSON.stringify(
+        abi,
         null,
         2,
-      )} as const;\n
-
-export const bytecode = \"${abi.bytecode.object}\" as const;`;
-      const outputFilePath = path.join(
-        outputDir,
+      )} as const;\n`;
+      const bytecodeOnlyContent = `export const bytecode = \"${bytecode}\" as const;`;
+      const abiOnlyPath = path.join(
+        abiDir,
+        `${path.basename(fileName, '.json')}.ts`,
+      );
+      const bytecodeOnlyPath = path.join(
+        bytecodeModulesDir,
         `${path.basename(fileName, '.json')}.ts`,
       );
 
-      fs.writeFile(outputFilePath, tsContent, (err) => {
+      // Write abi-only and bytecode-only modules
+      fs.writeFile(abiOnlyPath, abiOnlyContent, (err) => {
         if (err) {
-          console.error(`Error writing TypeScript file for ${fileName}:`, err);
+          console.error(`Error writing ABI-only file for ${fileName}:`, err);
         } else {
           console.log(
-            `TypeScript file generated for ${fileName}: ${outputFilePath}`,
+            `ABI-only file generated for ${fileName}: ${abiOnlyPath}`,
           );
-          addExportToIndexFile(path.basename(fileName, '.json'));
         }
       });
+      fs.writeFile(bytecodeOnlyPath, bytecodeOnlyContent, (err) => {
+        if (err) {
+          console.error(
+            `Error writing bytecode-only file for ${fileName}:`,
+            err,
+          );
+        } else {
+          console.log(
+            `Bytecode-only file generated for ${fileName}: ${bytecodeOnlyPath}`,
+          );
+        }
+      });
+      addExportToIndexFile(path.basename(fileName, '.json'));
     } catch (parseError) {
       console.error(`Error parsing JSON from ${fileName}:`, parseError);
     }

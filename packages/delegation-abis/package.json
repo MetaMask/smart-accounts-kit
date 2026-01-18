@@ -37,13 +37,23 @@
         "default": "./dist/index.mjs"
       }
     },
+    "./bytecode": {
+      "require": {
+        "types": "./dist/bytecode.d.cts",
+        "default": "./dist/bytecode.cjs"
+      },
+      "import": {
+        "types": "./dist/bytecode.d.ts",
+        "default": "./dist/bytecode.mjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "engines": {
     "node": "^18.18 || >=20"
   },
   "scripts": {
-    "build": "yarn typecheck && tsup",
+    "build": "yarn typecheck && tsup && node ./scripts/patch-extensions.mjs",
     "typecheck": "tsc --noEmit",
     "changelog:update": "../../scripts/update-changelog.sh @metamask/delegation-abis",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/delegation-abis",

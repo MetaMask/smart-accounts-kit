@@ -37,6 +37,16 @@
         "default": "./dist/index.mjs"
       }
     },
+    "./bytecode": {
+      "require": {
+        "types": "./dist/bytecode.d.cts",
+        "default": "./dist/bytecode.cjs"
+      },
+      "import": {
+        "types": "./dist/bytecode.d.ts",
+        "default": "./dist/bytecode.mjs"
+      }
+    },
     "./package.json": "./package.json"
   },
   "engines": {

@@ -6,7 +6,6 @@ import { simulateContract, writeContract } from 'viem/actions';
 import { toDelegationStruct } from '../../../delegation';
 import type { Delegation } from '../../../types';
 import type { InitializedClient } from '../../types';
-import type { NarrowAbiToFunction } from '../../utils';
 
 export type EncodeEnableDelegationParameters = {
   delegation: Delegation;
@@ -27,16 +26,11 @@ export const simulate = async ({
   delegationManagerAddress,
   delegation,
 }: SimulateEnableDelegationParameters) => {
-  const abi = DelegationManager as any as NarrowAbiToFunction<
-    typeof DelegationManager,
-    'enableDelegation'
-  >;
-
   const delegationStruct = toDelegationStruct(delegation);
 
   return simulateContract(client, {
     address: delegationManagerAddress,
-    abi,
+    abi: DelegationManager,
     functionName: 'enableDelegation',
     args: [delegationStruct],
   });

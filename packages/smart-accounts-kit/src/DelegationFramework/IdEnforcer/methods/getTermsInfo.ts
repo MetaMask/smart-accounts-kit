@@ -15,7 +15,7 @@ export const read = async ({
 }: ReadGetTermsInfoParameters): Promise<bigint> => {
   const id = await readContract(client, {
     address: contractAddress,
-    abi: IdEnforcer.abi,
+    abi: IdEnforcer,
     functionName: 'getTermsInfo',
     args: [terms],
   });

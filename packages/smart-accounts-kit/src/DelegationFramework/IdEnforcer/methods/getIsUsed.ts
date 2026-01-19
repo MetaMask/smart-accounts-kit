@@ -19,7 +19,7 @@ export const read = async ({
 }: ReadGetIsUsedParameters): Promise<boolean> => {
   const isUsed = await readContract(client, {
     address: contractAddress,
-    abi: IdEnforcer.abi,
+    abi: IdEnforcer,
     functionName: 'getIsUsed',
     args: [delegationManager, delegator, id],
   });

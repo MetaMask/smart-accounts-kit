@@ -68,7 +68,7 @@ export async function sendTransactionWithDelegationAction<
   ];
 
   const calldata = encodeFunctionData({
-    abi: DelegationManager.abi,
+    abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [
       [args.permissionsContext],

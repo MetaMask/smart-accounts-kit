@@ -18,9 +18,9 @@ cd ../..
 # Synchronize files
 cd packages/delegation-abis
 
-rsync -r ../../abisTemp1/ src/raw/
-rsync -r --ignore-existing ../../abisTemp2/ src/raw/
-rsync -r --ignore-existing ../../abisTemp3/ src/raw/
+rsync -r ../../abisTemp1/ src/artifacts/
+rsync -r --ignore-existing ../../abisTemp2/ src/artifacts/
+rsync -r --ignore-existing ../../abisTemp3/ src/artifacts/
 rm -r ../../abisTemp1
 rm -r ../../abisTemp2
 rm -r ../../abisTemp3

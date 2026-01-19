@@ -8,7 +8,6 @@ import { encodeExecutionCalldatas } from '../../../executions';
 import type { ExecutionMode, ExecutionStruct } from '../../../executions';
 import type { Delegation } from '../../../types';
 import type { InitializedClient } from '../../types';
-import type { NarrowAbiToFunction } from '../../utils';
 
 export type EncodeRedeemDelegationsParameters = {
   delegations: Delegation[][];
@@ -33,14 +32,9 @@ export const simulate = async ({
   modes,
   executions,
 }: SimulateRedeemDelegationsParameters) => {
-  const abi = DelegationManager.abi as any as NarrowAbiToFunction<
-    typeof DelegationManager.abi,
-    'redeemDelegations'
-  >;
-
   return simulateContract(client, {
     address: delegationManagerAddress,
-    abi,
+    abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [
       encodePermissionContexts(delegations),
@@ -74,7 +68,7 @@ export const encode = ({
   executions,
 }: EncodeRedeemDelegationsParameters) => {
   return encodeFunctionData({
-    abi: DelegationManager.abi,
+    abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [
       encodePermissionContexts(delegations),

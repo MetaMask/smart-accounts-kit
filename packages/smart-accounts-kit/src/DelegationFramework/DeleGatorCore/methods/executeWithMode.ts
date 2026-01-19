@@ -29,7 +29,7 @@ export const simulate = async ({
 }: SimulateExecuteWithModeParameters) => {
   return simulateContract(client, {
     address: contractAddress,
-    abi: DeleGatorCore.abi,
+    abi: DeleGatorCore,
     functionName: 'execute',
     args: [mode, encodeExecutionCalldata(executions)],
   });
@@ -56,7 +56,7 @@ export const encode = ({
   executions,
 }: EncodeExecuteWithModeParameters) => {
   return encodeFunctionData({
-    abi: DeleGatorCore.abi,
+    abi: DeleGatorCore,
     functionName: 'execute',
     args: [mode, encodeExecutionCalldata(executions)],
   });

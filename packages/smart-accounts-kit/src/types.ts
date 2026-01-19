@@ -179,9 +179,9 @@ export type MetaMaskSmartAccountImplementation<
   '0.7',
   {
     abi: {
-      [Implementation.Hybrid]: typeof HybridDeleGator.abi;
-      [Implementation.MultiSig]: typeof MultiSigDeleGator.abi;
-      [Implementation.Stateless7702]: typeof EIP7702StatelessDeleGator.abi;
+      [Implementation.Hybrid]: typeof HybridDeleGator;
+      [Implementation.MultiSig]: typeof MultiSigDeleGator;
+      [Implementation.Stateless7702]: typeof EIP7702StatelessDeleGator;
     }[TImplementation];
     signDelegation: (params: SignDelegationParams) => Promise<Hex>;
     environment: SmartAccountsEnvironment;
@@ -242,7 +242,7 @@ export type Call = {
 };
 
 export type AbiByImplementation = {
-  [Implementation.Hybrid]: typeof HybridDeleGator.abi;
-  [Implementation.MultiSig]: typeof MultiSigDeleGator.abi;
-  [Implementation.Stateless7702]: typeof EIP7702StatelessDeleGator.abi;
+  [Implementation.Hybrid]: typeof HybridDeleGator;
+  [Implementation.MultiSig]: typeof MultiSigDeleGator;
+  [Implementation.Stateless7702]: typeof EIP7702StatelessDeleGator;
 };

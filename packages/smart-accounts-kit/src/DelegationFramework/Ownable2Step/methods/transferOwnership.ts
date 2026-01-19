@@ -24,7 +24,7 @@ export const simulate = async ({
 }: SimulateTransferOwnershipParameters) => {
   return simulateContract(client, {
     address: contractAddress,
-    abi: Ownable2Step.abi,
+    abi: Ownable2Step,
     functionName: 'transferOwnership',
     args: [account],
   });
@@ -45,7 +45,7 @@ export const execute = async ({
 
 export const encode = (account: Address) => {
   return encodeFunctionData({
-    abi: Ownable2Step.abi,
+    abi: Ownable2Step,
     functionName: 'transferOwnership',
     args: [account],
   });

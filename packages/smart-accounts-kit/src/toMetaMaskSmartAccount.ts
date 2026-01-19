@@ -98,15 +98,15 @@ export async function toMetaMaskSmartAccount<
   const { abi, contractName } = {
     [Implementation.Hybrid]: {
       contractName: 'HybridDeleGator',
-      abi: HybridDeleGator.abi,
+      abi: HybridDeleGator,
     },
     [Implementation.MultiSig]: {
       contractName: 'MultiSigDeleGator',
-      abi: MultiSigDeleGator.abi,
+      abi: MultiSigDeleGator,
     },
     [Implementation.Stateless7702]: {
       contractName: 'EIP7702StatelessDeleGator',
-      abi: EIP7702StatelessDeleGator.abi,
+      abi: EIP7702StatelessDeleGator,
     },
   }[implementation] as {
     contractName: string;

@@ -25,8 +25,6 @@ export {
   encodeProxyCreationCode,
 } from '../DelegationFramework/utils';
 
-export type { NarrowAbiToFunction } from '../DelegationFramework/utils';
-
 export {
   DelegationManager,
   DeleGatorCore,

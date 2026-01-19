@@ -69,7 +69,7 @@ describe('encodeCallsForCaller', () => {
       throw new Error('executionCalldata is not set');
     }
     const expectedEncodedCalls = encodeFunctionData({
-      abi: DeleGatorCore.abi,
+      abi: DeleGatorCore,
       functionName: 'execute',
       args: [ExecutionMode.BatchDefault, expectedExecutionCalldata],
     });
@@ -113,7 +113,7 @@ describe('encodeCallsForCaller', () => {
       throw new Error('executionCalldata is not set');
     }
     const expectedEncodedCalls = encodeFunctionData({
-      abi: DeleGatorCore.abi,
+      abi: DeleGatorCore,
       functionName: 'execute',
       args: [ExecutionMode.BatchDefault, expectedExecutionCalldata],
     });
@@ -157,7 +157,7 @@ describe('encodeCallsForCaller', () => {
       throw new Error('executionCalldata is not set');
     }
     const expectedEncodedCalls = encodeFunctionData({
-      abi: DeleGatorCore.abi,
+      abi: DeleGatorCore,
       functionName: 'execute',
       args: [ExecutionMode.BatchDefault, expectedExecutionCalldata],
     });
@@ -177,7 +177,7 @@ describe('encodeCallsForCaller', () => {
     const encodedCalls = await encodeCallsForCaller(caller, calls);
 
     const expectedCalldata = encodeFunctionData({
-      abi: DeleGatorCore.abi,
+      abi: DeleGatorCore,
       functionName: 'execute',
       args: [
         {

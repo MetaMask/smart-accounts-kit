@@ -24,7 +24,7 @@ export const read = async ({
   // First, get the current state from the contract
   const allowanceState = await readContract(client, {
     address: contractAddress,
-    abi: ERC20StreamingEnforcer.abi,
+    abi: ERC20StreamingEnforcer,
     functionName: 'streamingAllowances',
     args: [delegationManager, delegationHash],
   });
@@ -52,7 +52,7 @@ export const read = async ({
   // State doesn't exist, decode terms and simulate with spent = 0
   const decodedTerms = await readContract(client, {
     address: contractAddress,
-    abi: ERC20StreamingEnforcer.abi,
+    abi: ERC20StreamingEnforcer,
     functionName: 'getTermsInfo',
     args: [terms],
   });

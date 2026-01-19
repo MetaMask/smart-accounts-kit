@@ -13,6 +13,6 @@ export const read = async ({
 }: ReadGetPendingOwnerParameters) =>
   await readContract(client, {
     address: contractAddress,
-    abi: Ownable2Step.abi,
+    abi: Ownable2Step,
     functionName: 'pendingOwner',
   });

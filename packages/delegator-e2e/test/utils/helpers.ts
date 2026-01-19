@@ -144,7 +144,7 @@ export type CounterContract = GetContractReturnType<
 export const deployCounter = async (owner: Hex) => {
   // Deploy the counter contract using Viem's deployContract
   const hash = await deployerClient.deployContract({
-    abi: CounterMetadata.abi as Abi,
+    abi: CounterMetadata.abi,
     bytecode: CounterMetadata.bytecode.object as Hex,
   });
 

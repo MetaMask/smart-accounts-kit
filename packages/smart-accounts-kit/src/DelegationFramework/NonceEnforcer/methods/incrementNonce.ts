@@ -11,7 +11,7 @@ export type SimulateIncrementNonceParameters = {
 
 export const encode = (delegationManager: Address) => {
   return encodeFunctionData({
-    abi: NonceEnforcer.abi,
+    abi: NonceEnforcer,
     functionName: 'incrementNonce',
     args: [delegationManager],
   });
@@ -24,7 +24,7 @@ export const simulate = async ({
 }: SimulateIncrementNonceParameters) => {
   return simulateContract(client, {
     address: contractAddress,
-    abi: NonceEnforcer.abi,
+    abi: NonceEnforcer,
     functionName: 'incrementNonce',
     args: [delegationManager],
   });

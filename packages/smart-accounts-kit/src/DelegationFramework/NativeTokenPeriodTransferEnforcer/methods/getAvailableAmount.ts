@@ -21,7 +21,7 @@ export const read = async ({
     client,
     {
       address: contractAddress,
-      abi: NativeTokenPeriodTransferEnforcer.abi,
+      abi: NativeTokenPeriodTransferEnforcer,
       functionName: 'getAvailableAmount',
       args: [delegationHash, delegationManager, terms],
     },

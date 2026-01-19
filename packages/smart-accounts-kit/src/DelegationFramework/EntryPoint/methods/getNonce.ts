@@ -17,7 +17,7 @@ export const read = async ({
 }: ReadGetNonceParameters) =>
   await readContract(client, {
     address: entryPoint,
-    abi: EntryPoint.abi,
+    abi: EntryPoint,
     functionName: 'getNonce',
     args: [contractAddress, key],
   });

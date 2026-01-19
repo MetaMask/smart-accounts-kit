@@ -21,7 +21,7 @@ export const read = async ({
     client,
     {
       address: contractAddress,
-      abi: ERC20PeriodTransferEnforcer.abi,
+      abi: ERC20PeriodTransferEnforcer,
       functionName: 'getAvailableAmount',
       args: [delegationHash, delegationManager, terms],
     },

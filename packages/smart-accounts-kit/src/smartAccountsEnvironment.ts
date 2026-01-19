@@ -38,6 +38,46 @@ import {
   ExactExecutionBatchEnforcer,
   MultiTokenPeriodEnforcer,
 } from '@metamask/delegation-abis';
+import {
+  EntryPoint as EntryPointBytecode,
+  SimpleFactory as SimpleFactoryBytecode,
+  DelegationManager as DelegationManagerBytecode,
+  MultiSigDeleGator as MultiSigDeleGatorBytecode,
+  HybridDeleGator as HybridDeleGatorBytecode,
+  EIP7702StatelessDeleGator as EIP7702StatelessDeleGatorBytecode,
+  SCL_RIP7212 as SCLRIP7212Bytecode,
+  AllowedTargetsEnforcer as AllowedTargetsEnforcerBytecode,
+  AllowedMethodsEnforcer as AllowedMethodsEnforcerBytecode,
+  DeployedEnforcer as DeployedEnforcerBytecode,
+  TimestampEnforcer as TimestampEnforcerBytecode,
+  NonceEnforcer as NonceEnforcerBytecode,
+  AllowedCalldataEnforcer as AllowedCalldataEnforcerBytecode,
+  BlockNumberEnforcer as BlockNumberEnforcerBytecode,
+  LimitedCallsEnforcer as LimitedCallsEnforcerBytecode,
+  ERC20BalanceChangeEnforcer as ERC20BalanceChangeEnforcerBytecode,
+  ERC20StreamingEnforcer as ERC20StreamingEnforcerBytecode,
+  IdEnforcer as IdEnforcerBytecode,
+  ERC20TransferAmountEnforcer as ERC20TransferAmountEnforcerBytecode,
+  ValueLteEnforcer as ValueLteEnforcerBytecode,
+  NativeTokenTransferAmountEnforcer as NativeTokenTransferAmountEnforcerBytecode,
+  NativeBalanceChangeEnforcer as NativeBalanceChangeEnforcerBytecode,
+  NativeTokenStreamingEnforcer as NativeTokenStreamingEnforcerBytecode,
+  NativeTokenPaymentEnforcer as NativeTokenPaymentEnforcerBytecode,
+  RedeemerEnforcer as RedeemerEnforcerBytecode,
+  ArgsEqualityCheckEnforcer as ArgsEqualityCheckEnforcerBytecode,
+  ERC721BalanceChangeEnforcer as ERC721BalanceChangeEnforcerBytecode,
+  ERC721TransferEnforcer as ERC721TransferEnforcerBytecode,
+  ERC1155BalanceChangeEnforcer as ERC1155BalanceChangeEnforcerBytecode,
+  OwnershipTransferEnforcer as OwnershipTransferEnforcerBytecode,
+  SpecificActionERC20TransferBatchEnforcer as SpecificActionERC20TransferBatchEnforcerBytecode,
+  ERC20PeriodTransferEnforcer as ERC20PeriodTransferEnforcerBytecode,
+  NativeTokenPeriodTransferEnforcer as NativeTokenPeriodTransferEnforcerBytecode,
+  ExactCalldataBatchEnforcer as ExactCalldataBatchEnforcerBytecode,
+  ExactCalldataEnforcer as ExactCalldataEnforcerBytecode,
+  ExactExecutionEnforcer as ExactExecutionEnforcerBytecode,
+  ExactExecutionBatchEnforcer as ExactExecutionBatchEnforcerBytecode,
+  MultiTokenPeriodEnforcer as MultiTokenPeriodEnforcerBytecode,
+} from '@metamask/delegation-abis/bytecode';
 import { DELEGATOR_CONTRACTS } from '@metamask/delegation-deployments';
 import type { Chain, Hex, PublicClient, WalletClient } from 'viem';
 
@@ -205,37 +245,127 @@ export async function deploySmartAccountsEnvironment(
   // Deploy v1.3.0 DeleGator contracts
   // - deploy standalone contracts
   const standaloneContracts = {
-    SimpleFactory,
-    AllowedCalldataEnforcer,
-    AllowedTargetsEnforcer,
-    AllowedMethodsEnforcer,
-    ArgsEqualityCheckEnforcer,
-    DeployedEnforcer,
-    TimestampEnforcer,
-    BlockNumberEnforcer,
-    LimitedCallsEnforcer,
-    ERC20BalanceChangeEnforcer,
-    ERC20TransferAmountEnforcer,
-    ERC20StreamingEnforcer,
-    ERC721BalanceChangeEnforcer,
-    ERC721TransferEnforcer,
-    ERC1155BalanceChangeEnforcer,
-    IdEnforcer,
-    NonceEnforcer,
-    ValueLteEnforcer,
-    NativeTokenTransferAmountEnforcer,
-    NativeBalanceChangeEnforcer,
-    NativeTokenStreamingEnforcer,
-    OwnershipTransferEnforcer,
-    RedeemerEnforcer,
-    SpecificActionERC20TransferBatchEnforcer,
-    ERC20PeriodTransferEnforcer,
-    NativeTokenPeriodTransferEnforcer,
-    ExactCalldataBatchEnforcer,
-    ExactCalldataEnforcer,
-    ExactExecutionEnforcer,
-    ExactExecutionBatchEnforcer,
-    MultiTokenPeriodEnforcer,
+    SimpleFactory: {
+      abi: SimpleFactory,
+      bytecode: SimpleFactoryBytecode,
+    },
+    AllowedCalldataEnforcer: {
+      abi: AllowedCalldataEnforcer,
+      bytecode: AllowedCalldataEnforcerBytecode,
+    },
+    AllowedTargetsEnforcer: {
+      abi: AllowedTargetsEnforcer,
+      bytecode: AllowedTargetsEnforcerBytecode,
+    },
+    AllowedMethodsEnforcer: {
+      abi: AllowedMethodsEnforcer,
+      bytecode: AllowedMethodsEnforcerBytecode,
+    },
+    ArgsEqualityCheckEnforcer: {
+      abi: ArgsEqualityCheckEnforcer,
+      bytecode: ArgsEqualityCheckEnforcerBytecode,
+    },
+    DeployedEnforcer: {
+      abi: DeployedEnforcer,
+      bytecode: DeployedEnforcerBytecode,
+    },
+    TimestampEnforcer: {
+      abi: TimestampEnforcer,
+      bytecode: TimestampEnforcerBytecode,
+    },
+    BlockNumberEnforcer: {
+      abi: BlockNumberEnforcer,
+      bytecode: BlockNumberEnforcerBytecode,
+    },
+    LimitedCallsEnforcer: {
+      abi: LimitedCallsEnforcer,
+      bytecode: LimitedCallsEnforcerBytecode,
+    },
+    ERC20BalanceChangeEnforcer: {
+      abi: ERC20BalanceChangeEnforcer,
+      bytecode: ERC20BalanceChangeEnforcerBytecode,
+    },
+    ERC20TransferAmountEnforcer: {
+      abi: ERC20TransferAmountEnforcer,
+      bytecode: ERC20TransferAmountEnforcerBytecode,
+    },
+    ERC20StreamingEnforcer: {
+      abi: ERC20StreamingEnforcer,
+      bytecode: ERC20StreamingEnforcerBytecode,
+    },
+    ERC721BalanceChangeEnforcer: {
+      abi: ERC721BalanceChangeEnforcer,
+      bytecode: ERC721BalanceChangeEnforcerBytecode,
+    },
+    ERC721TransferEnforcer: {
+      abi: ERC721TransferEnforcer,
+      bytecode: ERC721TransferEnforcerBytecode,
+    },
+    ERC1155BalanceChangeEnforcer: {
+      abi: ERC1155BalanceChangeEnforcer,
+      bytecode: ERC1155BalanceChangeEnforcerBytecode,
+    },
+    IdEnforcer: { abi: IdEnforcer, bytecode: IdEnforcerBytecode },
+    NonceEnforcer: {
+      abi: NonceEnforcer,
+      bytecode: NonceEnforcerBytecode,
+    },
+    ValueLteEnforcer: {
+      abi: ValueLteEnforcer,
+      bytecode: ValueLteEnforcerBytecode,
+    },
+    NativeTokenTransferAmountEnforcer: {
+      abi: NativeTokenTransferAmountEnforcer,
+      bytecode: NativeTokenTransferAmountEnforcerBytecode,
+    },
+    NativeBalanceChangeEnforcer: {
+      abi: NativeBalanceChangeEnforcer,
+      bytecode: NativeBalanceChangeEnforcerBytecode,
+    },
+    NativeTokenStreamingEnforcer: {
+      abi: NativeTokenStreamingEnforcer,
+      bytecode: NativeTokenStreamingEnforcerBytecode,
+    },
+    OwnershipTransferEnforcer: {
+      abi: OwnershipTransferEnforcer,
+      bytecode: OwnershipTransferEnforcerBytecode,
+    },
+    RedeemerEnforcer: {
+      abi: RedeemerEnforcer,
+      bytecode: RedeemerEnforcerBytecode,
+    },
+    SpecificActionERC20TransferBatchEnforcer: {
+      abi: SpecificActionERC20TransferBatchEnforcer,
+      bytecode: SpecificActionERC20TransferBatchEnforcerBytecode,
+    },
+    ERC20PeriodTransferEnforcer: {
+      abi: ERC20PeriodTransferEnforcer,
+      bytecode: ERC20PeriodTransferEnforcerBytecode,
+    },
+    NativeTokenPeriodTransferEnforcer: {
+      abi: NativeTokenPeriodTransferEnforcer,
+      bytecode: NativeTokenPeriodTransferEnforcerBytecode,
+    },
+    ExactCalldataBatchEnforcer: {
+      abi: ExactCalldataBatchEnforcer,
+      bytecode: ExactCalldataBatchEnforcerBytecode,
+    },
+    ExactCalldataEnforcer: {
+      abi: ExactCalldataEnforcer,
+      bytecode: ExactCalldataEnforcerBytecode,
+    },
+    ExactExecutionEnforcer: {
+      abi: ExactExecutionEnforcer,
+      bytecode: ExactExecutionEnforcerBytecode,
+    },
+    ExactExecutionBatchEnforcer: {
+      abi: ExactExecutionBatchEnforcer,
+      bytecode: ExactExecutionBatchEnforcerBytecode,
+    },
+    MultiTokenPeriodEnforcer: {
+      abi: MultiTokenPeriodEnforcer,
+      bytecode: MultiTokenPeriodEnforcerBytecode,
+    },
   };
   for (const [name, contract] of Object.entries(standaloneContracts)) {
     await deployContractCurried(name, contract);
@@ -244,18 +374,24 @@ export async function deploySmartAccountsEnvironment(
   // - deploy dependencies
   const delegationManager = await deployContractCurried(
     'DelegationManager',
-    DelegationManager,
+    { abi: DelegationManager, bytecode: DelegationManagerBytecode },
     [walletClient.account?.address],
   );
 
   // - NativeTokenPaymentEnforcer DelegationManager and ArgsEqualityCheckEnforcer as constructor args
   await deployContractCurried(
     'NativeTokenPaymentEnforcer',
-    NativeTokenPaymentEnforcer,
+    {
+      abi: NativeTokenPaymentEnforcer,
+      bytecode: NativeTokenPaymentEnforcerBytecode,
+    },
     [delegationManager.address, deployedContracts.ArgsEqualityCheckEnforcer],
   );
 
-  const entryPoint = await deployContractCurried('EntryPoint', EntryPoint);
+  const entryPoint = await deployContractCurried('EntryPoint', {
+    abi: EntryPoint,
+    bytecode: EntryPointBytecode,
+  });
 
   // This is a hack to work around the SCL_RIP7212 being deployed as a library.
   // Forge handles this gracefully, but in the tests we need to manually link
@@ -266,14 +402,14 @@ export async function deploySmartAccountsEnvironment(
     walletClient,
     publicClient,
     chain,
-    SCL_RIP7212,
+    { abi: SCL_RIP7212, bytecode: SCLRIP7212Bytecode },
     [],
   );
 
   // replace linked library address in bytecode https://docs.soliditylang.org/en/latest/using-the-compiler.html#library-linking
   const hybridDeleGatorWithLinkedLibrary = {
-    ...HybridDeleGator,
-    bytecode: HybridDeleGator.bytecode.replace(
+    abi: HybridDeleGator,
+    bytecode: HybridDeleGatorBytecode.replace(
       /__\$b8f96b288d4d0429e38b8ed50fd423070f\$__/gu,
       sclRIP7212.slice(2),
     ) as Hex,
@@ -286,14 +422,21 @@ export async function deploySmartAccountsEnvironment(
     [delegationManager.address, entryPoint.address],
   );
 
-  await deployContractCurried('MultiSigDeleGatorImpl', MultiSigDeleGator, [
-    delegationManager.address,
-    entryPoint.address,
-  ]);
+  await deployContractCurried(
+    'MultiSigDeleGatorImpl',
+    {
+      abi: MultiSigDeleGator,
+      bytecode: MultiSigDeleGatorBytecode,
+    },
+    [delegationManager.address, entryPoint.address],
+  );
 
   await deployContractCurried(
     'EIP7702StatelessDeleGatorImpl',
-    EIP7702StatelessDeleGator,
+    {
+      abi: EIP7702StatelessDeleGator,
+      bytecode: EIP7702StatelessDeleGatorBytecode,
+    },
     [delegationManager.address, entryPoint.address],
   );
 

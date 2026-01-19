@@ -23,7 +23,7 @@ export const read = async ({
     client,
     {
       address: contractAddress,
-      abi: MultiTokenPeriodEnforcer.abi,
+      abi: MultiTokenPeriodEnforcer,
       functionName: 'getAvailableAmount',
       args: [delegationHash, delegationManager, terms, args],
     },

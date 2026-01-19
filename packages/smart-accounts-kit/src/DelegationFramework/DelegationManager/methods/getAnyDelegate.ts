@@ -13,6 +13,6 @@ export const read = async ({
 }: ReadGetAnyDelegateParameters) =>
   await readContract(client, {
     address: contractAddress,
-    abi: DelegationManager.abi,
+    abi: DelegationManager,
     functionName: 'ANY_DELEGATE',
   });

@@ -20,7 +20,7 @@ export const read = async ({
 }: ReadGetTermsInfoParameters): Promise<TermsData> => {
   const [allowedContract, maxTokens] = await readContract(client, {
     address: contractAddress,
-    abi: ERC20TransferAmountEnforcer.abi,
+    abi: ERC20TransferAmountEnforcer,
     functionName: 'getTermsInfo',
     args: [terms],
   });

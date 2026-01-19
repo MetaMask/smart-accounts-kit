@@ -26,7 +26,7 @@ export const simulate = async ({
 }: SimulateUpdateThresholdParameters) => {
   return simulateContract(client, {
     address: multiSigDeleGatorAddress,
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'updateThreshold',
     args: [threshold],
   });
@@ -48,7 +48,7 @@ export const execute = async ({
 
 export const encode = ({ threshold }: EncodeUpdateThresholdParameters) => {
   return encodeFunctionData({
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'updateThreshold',
     args: [threshold],
   });

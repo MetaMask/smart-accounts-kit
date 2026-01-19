@@ -13,6 +13,6 @@ export const read = async ({
 }: ReadGetMaxNumberOfSignersParameters) =>
   await readContract(client, {
     address: multiSigDeleGatorAddress,
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'MAX_NUMBER_OF_SIGNERS',
   });

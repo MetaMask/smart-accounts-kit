@@ -33,8 +33,8 @@ export const simulate = async ({
   modes,
   executions,
 }: SimulateRedeemDelegationsParameters) => {
-  const abi = DelegationManager.abi as any as NarrowAbiToFunction<
-    typeof DelegationManager.abi,
+  const abi = DelegationManager as any as NarrowAbiToFunction<
+    typeof DelegationManager,
     'redeemDelegations'
   >;
 
@@ -74,7 +74,7 @@ export const encode = ({
   executions,
 }: EncodeRedeemDelegationsParameters) => {
   return encodeFunctionData({
-    abi: DelegationManager.abi,
+    abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [
       encodePermissionContexts(delegations),

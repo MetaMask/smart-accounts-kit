@@ -17,7 +17,7 @@ export const read = async ({
 }: ReadUsedDelegationsParameters): Promise<boolean> => {
   const isUsed = await readContract(client, {
     address: contractAddress,
-    abi: SpecificActionERC20TransferBatchEnforcer.abi,
+    abi: SpecificActionERC20TransferBatchEnforcer,
     functionName: 'usedDelegations',
     args: [delegationManager, delegationHash],
   });

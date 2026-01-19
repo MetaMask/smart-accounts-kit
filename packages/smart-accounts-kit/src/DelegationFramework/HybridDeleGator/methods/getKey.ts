@@ -15,7 +15,7 @@ export const read = async ({
 }: ReadGetKeyParameters) =>
   await readContract(client, {
     address: hybridDeleGatorAddress,
-    abi: HybridDeleGator.abi,
+    abi: HybridDeleGator,
     functionName: 'getKey',
     args: [keyId],
   });

@@ -32,7 +32,7 @@ export const simulate = async ({
 }: SimulateReinitializeParameters) => {
   return simulateContract(client, {
     address: multiSigDeleGatorAddress,
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'reinitialize',
     args: [version, owners, threshold, removeExistingOwners],
   });
@@ -65,7 +65,7 @@ export const encode = ({
   removeExistingOwners,
 }: EncodeReinitializeParameters) => {
   return encodeFunctionData({
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'reinitialize',
     args: [version, owners, threshold, removeExistingOwners],
   });

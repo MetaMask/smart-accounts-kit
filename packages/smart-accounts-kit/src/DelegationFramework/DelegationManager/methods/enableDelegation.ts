@@ -27,8 +27,8 @@ export const simulate = async ({
   delegationManagerAddress,
   delegation,
 }: SimulateEnableDelegationParameters) => {
-  const abi = DelegationManager.abi as any as NarrowAbiToFunction<
-    typeof DelegationManager.abi,
+  const abi = DelegationManager as any as NarrowAbiToFunction<
+    typeof DelegationManager,
     'enableDelegation'
   >;
 
@@ -60,7 +60,7 @@ export const encode = ({ delegation }: EncodeEnableDelegationParameters) => {
   const delegationStruct = toDelegationStruct(delegation);
 
   return encodeFunctionData({
-    abi: DelegationManager.abi,
+    abi: DelegationManager,
     functionName: 'enableDelegation',
     args: [delegationStruct],
   });

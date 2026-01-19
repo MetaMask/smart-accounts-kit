@@ -21,7 +21,7 @@ export const simulate = async ({
 }: SimulateAcceptOwnershipParameters) => {
   return simulateContract(client, {
     address: contractAddress,
-    abi: Ownable2Step.abi,
+    abi: Ownable2Step,
     functionName: 'acceptOwnership',
   });
 };
@@ -39,7 +39,7 @@ export const execute = async ({
 
 export const encode = () => {
   return encodeFunctionData({
-    abi: Ownable2Step.abi,
+    abi: Ownable2Step,
     functionName: 'acceptOwnership',
   });
 };

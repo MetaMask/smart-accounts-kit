@@ -49,7 +49,7 @@ const processDelegatedCall = (call: DelegatedCall) => {
   }
 
   const redeemCalldata = encodeFunctionData({
-    abi: DelegationManager.abi,
+    abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [
       [permissionsContext],

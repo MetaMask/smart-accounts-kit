@@ -26,7 +26,7 @@ export const simulate = async ({
 }: SimulateRemoveSignerParameters) => {
   return simulateContract(client, {
     address: multiSigDeleGatorAddress,
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'removeSigner',
     args: [signer],
   });
@@ -48,7 +48,7 @@ export const execute = async ({
 
 export const encode = ({ signer }: EncodeRemoveSignerParameters) => {
   return encodeFunctionData({
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'removeSigner',
     args: [signer],
   });

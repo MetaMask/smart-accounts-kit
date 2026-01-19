@@ -15,7 +15,7 @@ export const read = async ({
 }: ReadGetTermsInfoParameters): Promise<bigint> => {
   const allowance = await readContract(client, {
     address: contractAddress,
-    abi: NativeTokenTransferAmountEnforcer.abi,
+    abi: NativeTokenTransferAmountEnforcer,
     functionName: 'getTermsInfo',
     args: [terms],
   });

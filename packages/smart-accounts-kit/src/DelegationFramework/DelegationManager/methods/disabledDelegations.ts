@@ -15,7 +15,7 @@ export const read = async ({
 }: ReadDisabledDelegationsParameters) =>
   await readContract(client, {
     address: contractAddress,
-    abi: DelegationManager.abi,
+    abi: DelegationManager,
     functionName: 'disabledDelegations',
     args: [delegationHash],
   });

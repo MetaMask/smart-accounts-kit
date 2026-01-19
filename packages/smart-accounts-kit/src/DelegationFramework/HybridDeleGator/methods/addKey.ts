@@ -26,7 +26,7 @@ export const simulate = async ({
 }: SimulateAddKeyParameters) => {
   return simulateContract(client, {
     address: hybridDeleGatorAddress,
-    abi: HybridDeleGator.abi,
+    abi: HybridDeleGator,
     functionName: 'addKey',
     args: [p256Owner.keyId, p256Owner.x, p256Owner.y],
   });
@@ -48,7 +48,7 @@ export const execute = async ({
 
 export const encode = ({ p256Owner }: EncodeAddKeyParameters) => {
   return encodeFunctionData({
-    abi: HybridDeleGator.abi,
+    abi: HybridDeleGator,
     functionName: 'addKey',
     args: [p256Owner.keyId, p256Owner.x, p256Owner.y],
   });

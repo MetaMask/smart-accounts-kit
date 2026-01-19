@@ -17,7 +17,7 @@ export const read = async ({
 }: ReadGetSpentAmountParameters): Promise<bigint> => {
   const amount = await readContract(client, {
     address: contractAddress,
-    abi: ERC20TransferAmountEnforcer.abi,
+    abi: ERC20TransferAmountEnforcer,
     functionName: 'spentMap',
     args: [delegationManager, delegationHash],
   });

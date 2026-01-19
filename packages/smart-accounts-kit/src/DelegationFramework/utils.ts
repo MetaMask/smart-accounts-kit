@@ -1,4 +1,5 @@
 import { ERC1967Proxy } from '@metamask/delegation-abis';
+import { ERC1967Proxy as ERC1967ProxyBytecode } from '@metamask/delegation-abis/bytecode';
 import type { Abi, Address, Client, Hex } from 'viem';
 import { encodeDeployData } from 'viem';
 import { getCode } from 'viem/actions';
@@ -92,7 +93,7 @@ export const encodeProxyCreationCode = ({
   initcode: Hex;
 }): Hex =>
   encodeDeployData({
-    abi: ERC1967Proxy.abi,
+    abi: ERC1967Proxy,
     args: [implementationAddress, initcode],
-    bytecode: ERC1967Proxy.bytecode,
+    bytecode: ERC1967ProxyBytecode as Hex,
   });

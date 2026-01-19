@@ -27,7 +27,7 @@ export const simulate = async ({
 }: SimulateCreate2DeployParameters) => {
   return simulateContract(client, {
     address: factoryAddress,
-    abi: SimpleFactory.abi,
+    abi: SimpleFactory,
     functionName: 'deploy',
     args: [creationCode, salt],
   });
@@ -35,7 +35,7 @@ export const simulate = async ({
 
 export const encode = (creationCode: Hex, salt: Hex) => {
   return encodeFunctionData({
-    abi: SimpleFactory.abi,
+    abi: SimpleFactory,
     functionName: 'deploy',
     args: [creationCode, salt],
   });

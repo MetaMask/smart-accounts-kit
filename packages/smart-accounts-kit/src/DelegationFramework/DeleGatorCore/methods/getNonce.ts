@@ -15,7 +15,7 @@ export const read = async ({
 }: ReadGetNonceParameters) =>
   await readContract(client, {
     address: contractAddress,
-    abi: DeleGatorCore.abi,
+    abi: DeleGatorCore,
     functionName: 'getNonce',
     args: key ? [key] : undefined,
   });

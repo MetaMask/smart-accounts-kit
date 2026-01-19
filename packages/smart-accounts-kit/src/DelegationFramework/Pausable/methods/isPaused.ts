@@ -13,6 +13,6 @@ export const read = async ({
 }: ReadIsPausedParameters) =>
   await readContract(client, {
     address: contractAddress,
-    abi: Pausable.abi,
+    abi: Pausable,
     functionName: 'paused',
   });

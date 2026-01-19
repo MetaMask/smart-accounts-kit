@@ -26,7 +26,7 @@ export const deployWithSimpleFactory = async (
   const { request } = await publicClient.simulateContract({
     account: walletClient.account,
     address: simpleFactoryAddress,
-    abi: SimpleFactory.abi,
+    abi: SimpleFactory,
     functionName: 'deploy',
     args: [creationCode, salt],
   });
@@ -69,7 +69,7 @@ export const redeemDelegations = async (
   const { request } = await publicClient.simulateContract({
     account: walletClient.account,
     address: delegationManagerAddress,
-    abi: DelegationManager.abi,
+    abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [encodedPermissionContexts, executionModes, executionCalldatas],
   });

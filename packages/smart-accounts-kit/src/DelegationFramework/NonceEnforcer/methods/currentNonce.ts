@@ -17,7 +17,7 @@ export const read = async ({
 }: ReadCurrentNonceParameters): Promise<bigint> => {
   const nonce = await readContract(client, {
     address: contractAddress,
-    abi: NonceEnforcer.abi,
+    abi: NonceEnforcer,
     functionName: 'currentNonce',
     args: [delegationManager, delegator],
   });

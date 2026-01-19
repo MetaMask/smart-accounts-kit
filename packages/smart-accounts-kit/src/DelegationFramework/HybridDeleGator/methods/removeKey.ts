@@ -26,7 +26,7 @@ export const simulate = async ({
 }: SimulateRemoveKeyParameters) => {
   return simulateContract(client, {
     address: hybridDeleGatorAddress,
-    abi: HybridDeleGator.abi,
+    abi: HybridDeleGator,
     functionName: 'removeKey',
     args: [keyId],
   });
@@ -48,7 +48,7 @@ export const execute = async ({
 
 export const encode = ({ keyId }: EncodeRemoveKeyParameters) => {
   return encodeFunctionData({
-    abi: HybridDeleGator.abi,
+    abi: HybridDeleGator,
     functionName: 'removeKey',
     args: [keyId],
   });

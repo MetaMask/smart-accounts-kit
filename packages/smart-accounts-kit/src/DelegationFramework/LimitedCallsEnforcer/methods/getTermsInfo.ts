@@ -15,7 +15,7 @@ export const read = async ({
 }: ReadGetTermsInfoParameters): Promise<bigint> => {
   const limit = await readContract(client, {
     address: contractAddress,
-    abi: LimitedCallsEnforcer.abi,
+    abi: LimitedCallsEnforcer,
     functionName: 'getTermsInfo',
     args: [terms],
   });

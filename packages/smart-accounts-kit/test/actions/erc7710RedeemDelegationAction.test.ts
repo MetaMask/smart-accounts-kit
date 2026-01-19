@@ -294,7 +294,7 @@ describe('erc7710RedeemDelegationAction', () => {
       }
 
       const redeemDelegationCallData = encodeFunctionData({
-        abi: DelegationManager.abi,
+        abi: DelegationManager,
         functionName: 'redeemDelegations',
         args: [
           [args.permissionsContext],

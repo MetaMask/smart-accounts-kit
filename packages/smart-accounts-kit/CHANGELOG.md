@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Breaking** Replace scope type strings with ScopeType enum ([#133](https://github.com/MetaMask/smart-accounts-kit/pull/133))
+
 ## [0.4.0-beta.0]
 
 ### Added

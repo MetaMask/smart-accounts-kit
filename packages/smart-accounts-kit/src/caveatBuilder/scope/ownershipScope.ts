@@ -1,4 +1,4 @@
-import { ScopeType } from '../../constants';
+import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import { hasProperties } from '../../utils';
 import { createCaveatBuilder } from '../coreCaveatBuilder';

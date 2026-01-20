@@ -1,6 +1,3 @@
-import { ScopeType } from '../../constants';
-import type { SmartAccountsEnvironment } from '../../types';
-
 import {
   type Erc20PeriodicScopeConfig,
   createErc20PeriodicCaveatBuilder,
@@ -37,6 +34,8 @@ import {
   createOwnershipCaveatBuilder,
   type OwnershipScopeConfig,
 } from './ownershipScope';
+import { ScopeType } from '../../constants';
+import type { SmartAccountsEnvironment } from '../../types';
 
 export type ScopeConfig =
   | Erc20TransferScopeConfig

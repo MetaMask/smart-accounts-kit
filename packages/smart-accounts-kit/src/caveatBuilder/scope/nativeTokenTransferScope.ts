@@ -1,4 +1,4 @@
-import type { ScopeType } from '../../constants';
+import { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import type { AllowedCalldataBuilderConfig } from '../allowedCalldataBuilder';
 import { createCaveatBuilder } from '../coreCaveatBuilder';

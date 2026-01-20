@@ -384,7 +384,7 @@ const runScopeTest_expectFailure = async (
     target: aliceCounter.address,
     value: 0n,
     callData: encodeFunctionData({
-      abi: CounterMetadata.abi as AbiFunction[],
+      abi: CounterMetadata.abi,
       functionName: 'setCount',
       args: [42n],
     }),

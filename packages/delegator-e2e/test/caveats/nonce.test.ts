@@ -258,7 +258,7 @@ const incrementNonce = async () => {
       {
         to: environment.caveatEnforcers.NonceEnforcer!,
         data: encodeFunctionData({
-          abi: NonceEnforcer.abi,
+          abi: NonceEnforcer,
           functionName: 'incrementNonce',
           args: [environment.DelegationManager],
         }),
@@ -397,7 +397,7 @@ describe('NonceEnforcer Contract Read Methods', () => {
           {
             to: charlieSmartAccount.environment.caveatEnforcers.NonceEnforcer!,
             data: encodeFunctionData({
-              abi: NonceEnforcer.abi,
+              abi: NonceEnforcer,
               functionName: 'incrementNonce',
               args: [charlieSmartAccount.environment.DelegationManager],
             }),
@@ -461,7 +461,7 @@ describe('NonceEnforcer Contract Read Methods', () => {
   test('encode function produces correct calldata for incrementNonce', async () => {
     // Test the encode utility function
     const expectedCalldata = encodeFunctionData({
-      abi: NonceEnforcer.abi,
+      abi: NonceEnforcer,
       functionName: 'incrementNonce',
       args: [aliceSmartAccount.environment.DelegationManager],
     });

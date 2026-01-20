@@ -79,7 +79,7 @@ test('maincase: Change the keys on a deployed gator', async () => {
 
   const aliceContract = getContract({
     address,
-    abi: HybridDeleGator.abi,
+    abi: HybridDeleGator,
     client: publicClient,
   });
 
@@ -96,7 +96,7 @@ test('maincase: Change the keys on a deployed gator', async () => {
       {
         to: aliceContract.address,
         data: encodeFunctionData({
-          abi: HybridDeleGator.abi,
+          abi: HybridDeleGator,
           functionName: 'addKey',
           args: [KEY_ID, P256_X, P256_Y],
         }),

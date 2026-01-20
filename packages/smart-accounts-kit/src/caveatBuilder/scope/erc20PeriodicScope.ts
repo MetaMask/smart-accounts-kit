@@ -1,13 +1,11 @@
+import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import { createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
-import type {
-  erc20PeriodTransfer,
-  Erc20PeriodTransferBuilderConfig,
-} from '../erc20PeriodTransferBuilder';
+import type { Erc20PeriodTransferBuilderConfig } from '../erc20PeriodTransferBuilder';
 
 export type Erc20PeriodicScopeConfig = {
-  type: typeof erc20PeriodTransfer;
+  type: ScopeType.Erc20PeriodTransfer;
 } & Erc20PeriodTransferBuilderConfig;
 
 /**

@@ -34,16 +34,8 @@ import {
   createOwnershipCaveatBuilder,
   type OwnershipScopeConfig,
 } from './ownershipScope';
+import { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
-// Import caveat builder name constants
-import { erc20PeriodTransfer } from '../erc20PeriodTransferBuilder';
-import { erc20Streaming } from '../erc20StreamingBuilder';
-import { erc20TransferAmount } from '../erc20TransferAmountBuilder';
-import { erc721Transfer } from '../erc721TransferBuilder';
-import { nativeTokenPeriodTransfer } from '../nativeTokenPeriodTransferBuilder';
-import { nativeTokenStreaming } from '../nativeTokenStreamingBuilder';
-import { nativeTokenTransferAmount } from '../nativeTokenTransferAmountBuilder';
-import { ownershipTransfer } from '../ownershipTransferBuilder';
 
 export type ScopeConfig =
   | Erc20TransferScopeConfig
@@ -61,23 +53,23 @@ export const createCaveatBuilderFromScope = (
   scopeConfig: ScopeConfig,
 ) => {
   switch (scopeConfig.type) {
-    case erc20TransferAmount:
+    case ScopeType.Erc20TransferAmount:
       return createErc20TransferCaveatBuilder(environment, scopeConfig);
-    case erc20Streaming:
+    case ScopeType.Erc20Streaming:
       return createErc20StreamingCaveatBuilder(environment, scopeConfig);
-    case erc20PeriodTransfer:
+    case ScopeType.Erc20PeriodTransfer:
       return createErc20PeriodicCaveatBuilder(environment, scopeConfig);
-    case nativeTokenTransferAmount:
+    case ScopeType.NativeTokenTransferAmount:
       return createNativeTokenTransferCaveatBuilder(environment, scopeConfig);
-    case nativeTokenStreaming:
+    case ScopeType.NativeTokenStreaming:
       return createNativeTokenStreamingCaveatBuilder(environment, scopeConfig);
-    case nativeTokenPeriodTransfer:
+    case ScopeType.NativeTokenPeriodTransfer:
       return createNativeTokenPeriodicCaveatBuilder(environment, scopeConfig);
-    case erc721Transfer:
+    case ScopeType.Erc721Transfer:
       return createErc721CaveatBuilder(environment, scopeConfig);
-    case ownershipTransfer:
+    case ScopeType.OwnershipTransfer:
       return createOwnershipCaveatBuilder(environment, scopeConfig);
-    case 'functionCall':
+    case ScopeType.FunctionCall:
       return createFunctionCallCaveatBuilder(environment, scopeConfig);
     default:
       // eslint-disable-next-line no-case-declarations

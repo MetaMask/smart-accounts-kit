@@ -2,6 +2,7 @@ import { isHex } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { describe, expect, it } from 'vitest';
 
+import { ScopeType } from '../../../src/constants';
 import { createDelegation } from '../../../src/delegation';
 import * as DelegationManager from '../../../src/DelegationFramework/DelegationManager';
 import { ExecutionMode, createExecution } from '../../../src/executions';
@@ -87,7 +88,7 @@ describe('DelegationManager - Delegation Management', () => {
         from: alice.address,
         environment,
         scope: {
-          type: 'functionCall',
+          type: ScopeType.FunctionCall,
           targets: [alice.address],
           selectors: ['0x00000000'],
         },
@@ -112,7 +113,7 @@ describe('DelegationManager - Delegation Management', () => {
         from: alice.address,
         environment,
         scope: {
-          type: 'functionCall',
+          type: ScopeType.FunctionCall,
           targets: [alice.address],
           selectors: ['0x00000000'],
         },
@@ -137,7 +138,7 @@ describe('DelegationManager - Delegation Management', () => {
         from: alice.address,
         environment,
         scope: {
-          type: 'functionCall',
+          type: ScopeType.FunctionCall,
           targets: [alice.address],
           selectors: ['0x00000000'],
         },

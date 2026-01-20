@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 
 import { createOwnershipCaveatBuilder } from '../../../src/caveatBuilder/scope/ownershipScope';
 import type { OwnershipScopeConfig } from '../../../src/caveatBuilder/scope/ownershipScope';
+import { ScopeType } from '../../../src/constants';
 import type { SmartAccountsEnvironment } from '../../../src/types';
 import { randomAddress } from '../../utils';
 
@@ -14,7 +15,7 @@ describe('createOwnershipTransferCaveatBuilder', () => {
 
   it('creates an Ownership Transfer CaveatBuilder', () => {
     const config: OwnershipScopeConfig = {
-      type: 'ownershipTransfer',
+      type: ScopeType.OwnershipTransfer,
       contractAddress: randomAddress(),
     };
 
@@ -33,7 +34,7 @@ describe('createOwnershipTransferCaveatBuilder', () => {
 
   it('throws an error for invalid configuration', () => {
     const config = {
-      type: 'ownershipTransfer',
+      type: ScopeType.OwnershipTransfer,
     } as unknown as OwnershipScopeConfig;
 
     expect(() => createOwnershipCaveatBuilder(environment, config)).to.throw(

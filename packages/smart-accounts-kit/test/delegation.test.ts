@@ -2,6 +2,7 @@ import { getAddress, type Address, type Hex } from 'viem';
 import { describe, it, expect } from 'vitest';
 
 import { randomAddress } from './utils';
+import { ScopeType } from '../src/constants';
 import {
   type DelegationStruct,
   ROOT_AUTHORITY,
@@ -27,7 +28,7 @@ const mockSignature =
   '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890' as const;
 
 const erc20Scope = {
-  type: 'erc20TransferAmount',
+  type: ScopeType.Erc20TransferAmount,
   tokenAddress: '0x1234567890123456789012345678901234567890',
   maxAmount: 100n,
 } as const;

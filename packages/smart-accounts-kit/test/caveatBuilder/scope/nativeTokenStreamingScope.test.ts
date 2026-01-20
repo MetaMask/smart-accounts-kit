@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import { createNativeTokenStreamingCaveatBuilder } from '../../../src/caveatBuilder/scope/nativeTokenStreamingScope';
 import type { NativeTokenStreamingScopeConfig } from '../../../src/caveatBuilder/scope/nativeTokenStreamingScope';
+import { ScopeType } from '../../../src/constants';
 import type { SmartAccountsEnvironment } from '../../../src/types';
 import { randomAddress } from '../../utils';
 
@@ -17,7 +18,7 @@ describe('createNativeTokenStreamingCaveatBuilder', () => {
 
   it('creates a native token streaming CaveatBuilder with default empty calldata', () => {
     const config: NativeTokenStreamingScopeConfig = {
-      type: 'nativeTokenStreaming',
+      type: ScopeType.NativeTokenStreaming,
       initialAmount: 1000n,
       maxAmount: 10000n,
       amountPerSecond: 1n,
@@ -52,7 +53,7 @@ describe('createNativeTokenStreamingCaveatBuilder', () => {
 
   it('creates a native token streaming CaveatBuilder with empty allowedCalldata array (should fall back to default)', () => {
     const config: NativeTokenStreamingScopeConfig = {
-      type: 'nativeTokenStreaming',
+      type: ScopeType.NativeTokenStreaming,
       initialAmount: 1000n,
       maxAmount: 10000n,
       amountPerSecond: 1n,
@@ -88,7 +89,7 @@ describe('createNativeTokenStreamingCaveatBuilder', () => {
 
   it('creates a native token streaming CaveatBuilder with allowedCalldata', () => {
     const config: NativeTokenStreamingScopeConfig = {
-      type: 'nativeTokenStreaming',
+      type: ScopeType.NativeTokenStreaming,
       initialAmount: 1000n,
       maxAmount: 10000n,
       amountPerSecond: 1n,

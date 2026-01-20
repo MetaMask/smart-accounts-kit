@@ -4,6 +4,7 @@ import { describe, it, expect } from 'vitest';
 
 import { createFunctionCallCaveatBuilder } from '../../../src/caveatBuilder/scope/functionCallScope';
 import type { FunctionCallScopeConfig } from '../../../src/caveatBuilder/scope/functionCallScope';
+import { ScopeType } from '../../../src/constants';
 import type { SmartAccountsEnvironment } from '../../../src/types';
 import { randomAddress } from '../../utils';
 
@@ -20,7 +21,7 @@ describe('createFunctionCallCaveatBuilder', () => {
 
   it('creates a Function Call CaveatBuilder', () => {
     const config: FunctionCallScopeConfig = {
-      type: 'functionCall',
+      type: ScopeType.FunctionCall,
       targets: [randomAddress()],
       selectors: ['0x12345678'],
     };
@@ -51,7 +52,7 @@ describe('createFunctionCallCaveatBuilder', () => {
   it('creates a Function Call CaveatBuilder with allowed calldata', () => {
     const allowedCalldata = { value: '0x12345678', startIndex: 0 } as const;
     const config: FunctionCallScopeConfig = {
-      type: 'functionCall',
+      type: ScopeType.FunctionCall,
       targets: [randomAddress()],
       selectors: ['0x12345678'],
       allowedCalldata: [allowedCalldata],
@@ -91,7 +92,7 @@ describe('createFunctionCallCaveatBuilder', () => {
   it('creates a Function Call CaveatBuilder with exact calldata', () => {
     const exactCalldata = { calldata: '0x12345678' } as const;
     const config: FunctionCallScopeConfig = {
-      type: 'functionCall',
+      type: ScopeType.FunctionCall,
       targets: [randomAddress()],
       selectors: ['0x12345678'],
       exactCalldata,
@@ -127,7 +128,7 @@ describe('createFunctionCallCaveatBuilder', () => {
 
   it('creates a Function Call CaveatBuilder with configured valueLte', () => {
     const config: FunctionCallScopeConfig = {
-      type: 'functionCall',
+      type: ScopeType.FunctionCall,
       targets: [randomAddress()],
       selectors: ['0x12345678'],
       valueLte: { maxValue: 123n },
@@ -158,7 +159,7 @@ describe('createFunctionCallCaveatBuilder', () => {
 
   it('throws an error for invalid configuration', () => {
     const config = {
-      type: 'functionCall',
+      type: ScopeType.FunctionCall,
     } as unknown as FunctionCallScopeConfig;
 
     expect(() => createFunctionCallCaveatBuilder(environment, config)).to.throw(

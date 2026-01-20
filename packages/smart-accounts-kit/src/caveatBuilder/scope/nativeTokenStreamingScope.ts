@@ -1,15 +1,13 @@
+import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import type { AllowedCalldataBuilderConfig } from '../allowedCalldataBuilder';
 import { createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 import type { ExactCalldataBuilderConfig } from '../exactCalldataBuilder';
-import type {
-  nativeTokenStreaming,
-  NativeTokenStreamingBuilderConfig,
-} from '../nativeTokenStreamingBuilder';
+import type { NativeTokenStreamingBuilderConfig } from '../nativeTokenStreamingBuilder';
 
 export type NativeTokenStreamingScopeConfig = {
-  type: typeof nativeTokenStreaming;
+  type: ScopeType.NativeTokenStreaming;
   allowedCalldata?: AllowedCalldataBuilderConfig[];
   exactCalldata?: ExactCalldataBuilderConfig;
 } & NativeTokenStreamingBuilderConfig;

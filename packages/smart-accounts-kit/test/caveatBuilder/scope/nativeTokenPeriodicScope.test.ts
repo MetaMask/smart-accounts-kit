@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import { createNativeTokenPeriodicCaveatBuilder } from '../../../src/caveatBuilder/scope/nativeTokenPeriodicScope';
 import type { NativeTokenPeriodicScopeConfig } from '../../../src/caveatBuilder/scope/nativeTokenPeriodicScope';
+import { ScopeType } from '../../../src/constants';
 import type { SmartAccountsEnvironment } from '../../../src/types';
 import { randomAddress } from '../../utils';
 
@@ -17,7 +18,7 @@ describe('createNativeTokenPeriodicCaveatBuilder', () => {
 
   it('creates a native token periodic transfer CaveatBuilder', () => {
     const config: NativeTokenPeriodicScopeConfig = {
-      type: 'nativeTokenPeriodTransfer',
+      type: ScopeType.NativeTokenPeriodTransfer,
       periodAmount: 1000n,
       periodDuration: 1000,
       startDate: Math.floor(Date.now() / 1000),
@@ -50,7 +51,7 @@ describe('createNativeTokenPeriodicCaveatBuilder', () => {
 
   it('creates a native token periodic transfer CaveatBuilder with empty allowedCalldata array (should fall back to default)', () => {
     const config: NativeTokenPeriodicScopeConfig = {
-      type: 'nativeTokenPeriodTransfer',
+      type: ScopeType.NativeTokenPeriodTransfer,
       periodAmount: 1000n,
       periodDuration: 1000,
       startDate: Math.floor(Date.now() / 1000),

@@ -28,7 +28,7 @@ export const simulate = async ({
 }: SimulateInitializeParameters) => {
   return simulateContract(client, {
     address: hybridDeleGatorAddress,
-    abi: HybridDeleGator.abi,
+    abi: HybridDeleGator,
     functionName: 'initialize',
     args: [
       eoaOwner,
@@ -60,7 +60,7 @@ export const encode = ({
   p256Owners,
 }: EncodeInitializeParameters) => {
   return encodeFunctionData({
-    abi: HybridDeleGator.abi,
+    abi: HybridDeleGator,
     functionName: 'initialize',
     args: [
       eoaOwner,

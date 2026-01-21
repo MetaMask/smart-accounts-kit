@@ -54,6 +54,7 @@ export {
   erc7715RequestExecutionPermissionsAction as requestExecutionPermissions,
   type MetaMaskExtensionClient,
   type MetaMaskExtensionSchema,
+  type PermissionRequestParameter,
   type RequestExecutionPermissionsParameters,
   type RequestExecutionPermissionsReturnType,
 } from './erc7715RequestExecutionPermissionsAction';
@@ -90,6 +91,25 @@ export const erc7715ProviderActions = () => (client: Client) => ({
     );
   },
 });
+
+/**
+ * Type for a viem Client extended with ERC-7715 provider actions.
+ * Use this to type variables that will be assigned an extended client later.
+ *
+ * @example
+ * ```typescript
+ * let client: Erc7715Client | null = null;
+ *
+ * function setupClient() {
+ *   client = createWalletClient({
+ *     chain: sepolia,
+ *     transport: custom(window.ethereum),
+ *   }).extend(erc7715ProviderActions());
+ * }
+ * ```
+ */
+export type Erc7715Client = Client &
+  ReturnType<ReturnType<typeof erc7715ProviderActions>>;
 
 export const erc7710WalletActions = () => (client: WalletClient) => ({
   sendTransactionWithDelegation: async (

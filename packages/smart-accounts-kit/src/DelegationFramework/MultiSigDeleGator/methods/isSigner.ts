@@ -15,7 +15,7 @@ export const read = async ({
 }: ReadIsSignerParameters) =>
   await readContract(client, {
     address: multiSigDeleGatorAddress,
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'isSigner',
     args: [signer],
   });

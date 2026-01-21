@@ -30,7 +30,7 @@ export const simulate = async ({
 }: SimulateUpdateMultiSigParametersParameters) => {
   return simulateContract(client, {
     address: multiSigDeleGatorAddress,
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'updateMultiSigParameters',
     args: [owners, threshold, removeExistingOwners],
   });
@@ -60,7 +60,7 @@ export const encode = ({
   removeExistingOwners,
 }: EncodeUpdateMultiSigParametersParameters) => {
   return encodeFunctionData({
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'updateMultiSigParameters',
     args: [owners, threshold, removeExistingOwners],
   });

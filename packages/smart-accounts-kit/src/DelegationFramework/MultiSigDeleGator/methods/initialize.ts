@@ -28,7 +28,7 @@ export const simulate = async ({
 }: SimulateInitializeParameters) => {
   return simulateContract(client, {
     address: multiSigDeleGatorAddress,
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'initialize',
     args: [owners, threshold],
   });
@@ -52,7 +52,7 @@ export const execute = async ({
 
 export const encode = ({ owners, threshold }: EncodeInitializeParameters) => {
   return encodeFunctionData({
-    abi: MultiSigDeleGator.abi,
+    abi: MultiSigDeleGator,
     functionName: 'initialize',
     args: [owners, threshold],
   });

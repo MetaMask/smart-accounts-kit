@@ -10,7 +10,7 @@ export const read = async (
 ) => {
   return readContract(client, {
     address: factoryAddress,
-    abi: SimpleFactory.abi,
+    abi: SimpleFactory,
     functionName: 'computeAddress',
     args: [creationCode, salt],
   });

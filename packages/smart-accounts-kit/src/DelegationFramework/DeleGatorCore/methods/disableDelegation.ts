@@ -6,7 +6,6 @@ import { simulateContract, writeContract } from 'viem/actions';
 import { toDelegationStruct } from '../../../delegation';
 import type { Delegation } from '../../../types';
 import type { InitializedClient } from '../../types';
-import type { NarrowAbiToFunction } from '../../utils';
 
 export type SimulateDisableDelegationParameters = {
   client: Client;
@@ -29,16 +28,11 @@ export const simulate = async ({
   delegationManagerAddress,
   delegation,
 }: SimulateDisableDelegationParameters) => {
-  const abi = DeleGatorCore.abi as any as NarrowAbiToFunction<
-    typeof DeleGatorCore.abi,
-    'disableDelegation'
-  >;
-
   const delegationStruct = toDelegationStruct(delegation);
 
   return simulateContract(client, {
     address: delegationManagerAddress,
-    abi,
+    abi: DeleGatorCore,
     functionName: 'disableDelegation',
     args: [delegationStruct],
   });
@@ -62,7 +56,7 @@ export const encode = ({ delegation }: EncodeDisableDelegationParameters) => {
   const delegationStruct = toDelegationStruct(delegation);
 
   return encodeFunctionData({
-    abi: DeleGatorCore.abi,
+    abi: DeleGatorCore,
     functionName: 'disableDelegation',
     args: [delegationStruct],
   });

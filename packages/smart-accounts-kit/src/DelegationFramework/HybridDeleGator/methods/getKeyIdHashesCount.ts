@@ -13,6 +13,6 @@ export const read = async ({
 }: ReadGetKeyIdHashesCountParameters) =>
   await readContract(client, {
     address: hybridDeleGatorAddress,
-    abi: HybridDeleGator.abi,
+    abi: HybridDeleGator,
     functionName: 'getKeyIdHashesCount',
   });

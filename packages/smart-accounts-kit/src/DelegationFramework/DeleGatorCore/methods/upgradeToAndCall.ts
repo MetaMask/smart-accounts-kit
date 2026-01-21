@@ -28,7 +28,7 @@ export const simulate = async ({
 }: SimulateUpgradeToAndCallParameters) => {
   return simulateContract(client, {
     address: contractAddress,
-    abi: DeleGatorCore.abi,
+    abi: DeleGatorCore,
     functionName: 'upgradeToAndCall',
     args: [implementation, data],
   });
@@ -55,7 +55,7 @@ export const encode = ({
   data,
 }: EncodeUpgradeToAndCallParameters) => {
   return encodeFunctionData({
-    abi: DeleGatorCore.abi,
+    abi: DeleGatorCore,
     functionName: 'upgradeToAndCall',
     args: [implementation, data],
   });

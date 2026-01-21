@@ -23,7 +23,7 @@ export const read = async ({
 }: IsValidSignatureParameters) =>
   await readContract(client, {
     address: contractAddress,
-    abi: DeleGatorCore.abi,
+    abi: DeleGatorCore,
     functionName: 'isValidSignature',
     args: [hash, signature],
   });
@@ -33,7 +33,7 @@ export const encode = ({
   signature,
 }: EncodeIsValidSignatureParameters) => {
   return encodeFunctionData({
-    abi: DeleGatorCore.abi,
+    abi: DeleGatorCore,
     functionName: 'isValidSignature',
     args: [hash, signature],
   });

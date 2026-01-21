@@ -1,26 +1,10 @@
 import { ERC1967Proxy } from '@metamask/delegation-abis';
-import type { Abi, Address, Client, Hex } from 'viem';
+import { ERC1967Proxy as ERC1967ProxyBytecode } from '@metamask/delegation-abis/bytecode';
+import type { Address, Client, Hex } from 'viem';
 import { encodeDeployData } from 'viem';
 import { getCode } from 'viem/actions';
 
 import { getProxyImplementation } from './DeleGatorCore/read';
-
-// Where a function signature is duplicated across contracts, we need to narrow
-// the ABI type passed as the `simulateContract` generic argument. Without this,
-// the `simulate()` return type would not match, despite being functionally
-// identical.
-export type NarrowAbiToFunction<
-  TAbi extends Abi,
-  FunctionName extends string,
-> = [
-  Extract<
-    TAbi[number],
-    {
-      type: 'function';
-      name: FunctionName;
-    }
-  >[],
-];
 
 /**
  * Checks if a contract is deployed at the given address.
@@ -92,7 +76,7 @@ export const encodeProxyCreationCode = ({
   initcode: Hex;
 }): Hex =>
   encodeDeployData({
-    abi: ERC1967Proxy.abi,
+    abi: ERC1967Proxy,
     args: [implementationAddress, initcode],
-    bytecode: ERC1967Proxy.bytecode,
+    bytecode: ERC1967ProxyBytecode,
   });

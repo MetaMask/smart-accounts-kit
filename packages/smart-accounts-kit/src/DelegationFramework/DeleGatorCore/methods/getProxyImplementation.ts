@@ -13,6 +13,6 @@ export const read = async ({
 }: ReadGetProxyImplementationParameters) =>
   await readContract(client, {
     address: contractAddress,
-    abi: DeleGatorCore.abi,
+    abi: DeleGatorCore,
     functionName: 'getImplementation',
   });

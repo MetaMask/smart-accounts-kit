@@ -13,6 +13,6 @@ export const read = async ({
 }: ReadGetRootAuthorityParameters) =>
   await readContract(client, {
     address: contractAddress,
-    abi: DelegationManager.abi,
+    abi: DelegationManager,
     functionName: 'ROOT_AUTHORITY',
   });

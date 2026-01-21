@@ -1,0 +1,1 @@
+export const bytecode = '0x' as const;

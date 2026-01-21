@@ -32,7 +32,7 @@ export const simulate = async ({
 }: SimulateReinitializeParameters) => {
   return simulateContract(client, {
     address: hybridDeleGatorAddress,
-    abi: HybridDeleGator.abi,
+    abi: HybridDeleGator,
     functionName: 'reinitialize',
     args: [
       version,
@@ -72,7 +72,7 @@ export const encode = ({
   removeExistingP256Owners,
 }: EncodeReinitializeParameters) => {
   return encodeFunctionData({
-    abi: HybridDeleGator.abi,
+    abi: HybridDeleGator,
     functionName: 'reinitialize',
     args: [
       version,

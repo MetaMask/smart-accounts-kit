@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- Improve @metamask/delegation-abis tree-shakability ([#131](https://github.com/metamask/smart-accounts-kit/pull/131))
+
 ### Added
 
 - Exports 2 new types: `PermissionRequestParameter` and `Erc7715Client` ([#134](https://github.com/MetaMask/smart-accounts-kit/pull/134))

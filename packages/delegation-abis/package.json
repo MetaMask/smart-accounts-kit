@@ -1,6 +1,6 @@
 {
   "name": "@metamask/delegation-abis",
-  "version": "0.11.0",
+  "version": "0.12.0-beta.0",
   "description": "ABIs mapped to versions of the Delegation Framework contracts",
   "license": "(MIT-0 OR Apache-2.0)",
   "type": "module",

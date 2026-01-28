@@ -7,4 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/
+## [0.12.0-beta.0]
+
+### Fixed
+
+- Improve @metamask/delegation-abis tree-shakability ([#131](https://github.com/metamask/smart-accounts-kit/pull/131))
+
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-abis@0.12.0-beta.0...HEAD
+[0.12.0-beta.0]: https://github.com/metamask/smart-accounts-kit/releases/tag/@metamask/delegation-abis@0.12.0-beta.0

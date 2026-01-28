@@ -664,7 +664,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/delegation-abis@npm:^0.11.0, @metamask/delegation-abis@workspace:packages/delegation-abis":
+"@metamask/delegation-abis@npm:^0.12.0-beta.0, @metamask/delegation-abis@workspace:packages/delegation-abis":
   version: 0.0.0-use.local
   resolution: "@metamask/delegation-abis@workspace:packages/delegation-abis"
   dependencies:
@@ -778,7 +778,7 @@ __metadata:
     "@lavamoat/preinstall-always-fail": "npm:^2.1.1"
     "@metamask/7715-permission-types": "npm:^0.5.0"
     "@metamask/auto-changelog": "npm:^5.0.2"
-    "@metamask/delegation-abis": "npm:^0.11.0"
+    "@metamask/delegation-abis": "npm:^0.12.0-beta.0"
     "@metamask/delegation-core": "npm:^0.3.0"
     "@metamask/delegation-deployments": "npm:^0.16.0"
     "@metamask/eslint-config": "npm:14.1.0"

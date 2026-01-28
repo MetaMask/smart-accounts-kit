@@ -166,6 +166,24 @@ describe('resolveAuthority', () => {
 });
 
 describe('createDelegation', () => {
+  it('creates a delegation with a scope type as a string', () => {
+    const result = createDelegation({
+      environment: smartAccountEnvironment,
+      scope: { ...erc20Scope, type: 'erc20TransferAmount' },
+      to: mockDelegate,
+      from: mockDelegator,
+    });
+
+    expect(result).to.deep.equal({
+      delegate: mockDelegate,
+      delegator: mockDelegator,
+      authority: ROOT_AUTHORITY,
+      caveats: [...erc20ScopeCaveats],
+      salt: '0x',
+      signature: '0x',
+    });
+  });
+
   it('should create a basic delegation with root authority', () => {
     const result = createDelegation({
       environment: smartAccountEnvironment,
@@ -178,9 +196,9 @@ describe('createDelegation', () => {
     expect(result).to.deep.equal({
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats, mockCaveat],
-      salt: '0x' as Hex,
+      salt: '0x',
       signature: '0x',
     });
   });

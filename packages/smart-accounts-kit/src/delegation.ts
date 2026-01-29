@@ -7,7 +7,7 @@ import {
   CAVEAT_TYPEHASH,
   ROOT_AUTHORITY,
 } from '@metamask/delegation-core';
-import { hashMessage, toBytes, toHex, getAddress } from 'viem';
+import { toHex, getAddress } from 'viem';
 import type { TypedData, AbiParameter, Address, Hex } from 'viem';
 import { signTypedData } from 'viem/accounts';
 
@@ -175,18 +175,6 @@ export const DELEGATION_ARRAY_ABI_TYPE: AbiParameter = {
   type: 'tuple[]',
   components: DELEGATION_ABI_TYPE_COMPONENTS,
 } as const;
-
-/**
- * Prepares a delegation hash for passkey signing.
- *
- * @param delegationHash - The delegation hash to prepare.
- * @returns The prepared hash for passkey signing.
- */
-export const prepDelegationHashForPasskeySign = (delegationHash: Hex) => {
-  return hashMessage({
-    raw: toBytes(delegationHash),
-  });
-};
 
 /**
  * Gets a delegation hash offchain.

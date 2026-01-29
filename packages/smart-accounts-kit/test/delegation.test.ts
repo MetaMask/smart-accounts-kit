@@ -179,7 +179,7 @@ describe('createDelegation', () => {
       delegator: mockDelegator,
       authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats],
-      salt: '0x',
+      salt: '0x00',
       signature: '0x',
     });
   });

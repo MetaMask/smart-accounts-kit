@@ -71,6 +71,6 @@ export const erc20BalanceChangeBuilder = (
   return {
     enforcer: ERC20BalanceChangeEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

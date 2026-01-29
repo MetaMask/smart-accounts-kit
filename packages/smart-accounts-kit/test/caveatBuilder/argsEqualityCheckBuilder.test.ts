@@ -44,7 +44,7 @@ describe('argsEqualityCheckBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ArgsEqualityCheckEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -58,7 +58,7 @@ describe('argsEqualityCheckBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ArgsEqualityCheckEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

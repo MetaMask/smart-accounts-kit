@@ -34,12 +34,12 @@ describe('createNativeTokenStreamingCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.ExactCalldataEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: '0x',
       },
       {
         enforcer: environment.caveatEnforcers.NativeTokenStreamingEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat([
           toHex(config.initialAmount, { size: 32 }),
           toHex(config.maxAmount, { size: 32 }),
@@ -70,12 +70,12 @@ describe('createNativeTokenStreamingCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.ExactCalldataEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: '0x',
       },
       {
         enforcer: environment.caveatEnforcers.NativeTokenStreamingEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat([
           toHex(config.initialAmount, { size: 32 }),
           toHex(config.maxAmount, { size: 32 }),

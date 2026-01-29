@@ -63,6 +63,6 @@ export const blockNumberBuilder = (
   return {
     enforcer: BlockNumberEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

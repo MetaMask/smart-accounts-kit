@@ -42,6 +42,6 @@ export const ownershipTransferBuilder = (
   return {
     enforcer: OwnershipTransferEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

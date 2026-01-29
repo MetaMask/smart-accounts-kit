@@ -51,6 +51,6 @@ export const erc20TransferAmountBuilder = (
   return {
     enforcer: ERC20TransferAmountEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

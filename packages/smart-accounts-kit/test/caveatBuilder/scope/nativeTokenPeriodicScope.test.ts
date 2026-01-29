@@ -33,12 +33,12 @@ describe('createNativeTokenPeriodicCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.ExactCalldataEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: '0x',
       },
       {
         enforcer: environment.caveatEnforcers.NativeTokenPeriodTransferEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat([
           toHex(config.periodAmount, { size: 32 }),
           toHex(config.periodDuration, { size: 32 }),
@@ -67,12 +67,12 @@ describe('createNativeTokenPeriodicCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.ExactCalldataEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: '0x',
       },
       {
         enforcer: environment.caveatEnforcers.NativeTokenPeriodTransferEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat([
           toHex(config.periodAmount, { size: 32 }),
           toHex(config.periodDuration, { size: 32 }),

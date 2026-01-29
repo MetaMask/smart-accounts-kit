@@ -76,6 +76,6 @@ export const exactExecutionBatchBuilder = (
   return {
     enforcer: ExactExecutionBatchEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

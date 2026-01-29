@@ -125,7 +125,7 @@ describe('specificActionERC20TransferBatchBuilder()', () => {
       expect(caveat.enforcer).to.equal(
         environment.caveatEnforcers.SpecificActionERC20TransferBatchEnforcer,
       );
-      expect(caveat.args).to.equal('0x');
+      expect(caveat.args).to.equal('0x00');
 
       // Verify terms encoding
       const expectedTerms = concat([

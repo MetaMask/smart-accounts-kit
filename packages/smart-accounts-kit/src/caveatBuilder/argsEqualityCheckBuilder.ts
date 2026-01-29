@@ -39,6 +39,6 @@ export const argsEqualityCheckBuilder = (
   return {
     enforcer: ArgsEqualityCheckEnforcer,
     terms: args,
-    args: '0x',
+    args: '0x00',
   };
 };

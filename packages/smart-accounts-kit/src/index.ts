@@ -29,6 +29,7 @@ export type {
   MultiSigSignerConfig,
   Delegation,
   Caveat,
+  PermissionContext,
 } from './types';
 
 export {

@@ -38,7 +38,7 @@ let aliceSmartAccount: MetaMaskSmartAccount<Implementation.Hybrid>;
 let bob: Account;
 let bobPrivateKey: Hex;
 let aliceCounterContractAddress: Address;
-let permissionsContext: Hex;
+let permissionContext: Hex;
 let signedDelegation: Delegation;
 
 beforeEach(async () => {
@@ -75,7 +75,7 @@ beforeEach(async () => {
     signature: await aliceSmartAccount.signDelegation({ delegation }),
   };
 
-  permissionsContext = encodeDelegations([signedDelegation]);
+  permissionContext = encodeDelegations([signedDelegation]);
 });
 
 /*
@@ -113,7 +113,7 @@ test('maincase: Bob redeems the delegation in order to increment() on the counte
       abi: CounterMetadata.abi,
       functionName: 'increment',
     }),
-    permissionsContext,
+    permissionContext,
     delegationManager,
   });
 
@@ -183,7 +183,7 @@ test('Bob redelegates to Carol, who redeems the delegation to call increment() o
         abi: CounterMetadata.abi,
         functionName: 'increment',
       }),
-      permissionsContext: redelegatedPermissionsContext,
+      permissionContext: redelegatedPermissionsContext,
       delegationManager,
     },
   );
@@ -253,7 +253,7 @@ test('Bob sends a native value transaction with delegation', async () => {
     signature: await aliceSmartAccount.signDelegation({ delegation }),
   };
 
-  const permissionsContext = encodeDelegations([signedDelegation]);
+  const permissionContext = encodeDelegations([signedDelegation]);
 
   const bobWalletClient = createWalletClient({
     account: bob,
@@ -268,7 +268,7 @@ test('Bob sends a native value transaction with delegation', async () => {
     chain,
     to: recipient,
     value: maxAmount,
-    permissionsContext,
+    permissionContext,
     delegationManager,
   });
 

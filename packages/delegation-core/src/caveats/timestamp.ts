@@ -1,3 +1,4 @@
+import { toHexString } from '../internalUtils';
 import {
   defaultOptions,
   prepareResult,
@@ -5,7 +6,6 @@ import {
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
-import { toHexString } from '../utils';
 
 // Upper bound for timestamps (equivalent to January 1, 10000 CE)
 const TIMESTAMP_UPPER_BOUND_SECONDS = 253402300799;

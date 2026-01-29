@@ -44,6 +44,6 @@ export const nativeTokenTransferAmountBuilder = (
   return {
     enforcer: NativeTokenTransferAmountEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

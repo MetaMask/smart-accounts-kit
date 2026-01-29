@@ -46,6 +46,6 @@ export const limitedCallsBuilder = (
   return {
     enforcer: LimitedCallsEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

@@ -68,7 +68,7 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.AllowedMethodsEnforcer,
           terms: concat(selectors),
-          args: '0x',
+          args: '0x00',
         },
       ]);
 
@@ -90,7 +90,7 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.AllowedTargetsEnforcer,
           terms: targets[0] + targets[1]?.slice(2),
-          args: '0x',
+          args: '0x00',
         },
       ]);
 
@@ -117,7 +117,7 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.DeployedEnforcer,
           terms: concat([contractAddress, pad(salt, { size: 32 }), bytecode]),
-          args: '0x',
+          args: '0x00',
         },
       ]);
 
@@ -143,7 +143,7 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.AllowedCalldataEnforcer,
           terms: concat([toHex(startIndex, { size: 32 }), value]),
-          args: '0x',
+          args: '0x00',
         },
       ]);
 
@@ -180,7 +180,7 @@ describe('createCaveatBuilder()', () => {
             ['uint8', 'address', 'address', 'uint256'],
             [BalanceChangeType.Increase, tokenAddress, recipient, balance],
           ),
-          args: '0x',
+          args: '0x00',
         },
       ]);
       const caveat = caveats[0];
@@ -204,7 +204,7 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.ValueLteEnforcer,
           terms: toHex(maxValue, { size: 32 }),
-          args: '0x',
+          args: '0x00',
         },
       ]);
       const caveat = caveats[0];
@@ -225,7 +225,7 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.LimitedCallsEnforcer,
           terms: toHex(limit, { size: 32 }),
-          args: '0x',
+          args: '0x00',
         },
       ]);
       const caveat = caveats[0];
@@ -246,7 +246,7 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.IdEnforcer,
           terms: toHex(idValue, { size: 32 }),
-          args: '0x',
+          args: '0x00',
         },
       ]);
       const caveat = caveats[0];
@@ -267,7 +267,7 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.NonceEnforcer,
           terms: pad(nonce, { size: 32 }),
-          args: '0x',
+          args: '0x00',
         },
       ]);
       const caveat = caveats[0];
@@ -298,7 +298,7 @@ describe('createCaveatBuilder()', () => {
             toHex(afterThreshold, { size: 16 }),
             toHex(beforeThreshold, { size: 16 }),
           ]),
-          args: '0x',
+          args: '0x00',
         },
       ]);
       const caveat = caveats[0];
@@ -329,7 +329,7 @@ describe('createCaveatBuilder()', () => {
             toHex(afterThreshold, { size: 16 }),
             toHex(beforeThreshold, { size: 16 }),
           ]),
-          args: '0x',
+          args: '0x00',
         },
       ]);
       const caveat = caveats[0];
@@ -353,7 +353,7 @@ describe('createCaveatBuilder()', () => {
           enforcer:
             environment.caveatEnforcers.NativeTokenTransferAmountEnforcer,
           terms: toHex(maxAmount, { size: 32 }),
-          args: '0x',
+          args: '0x00',
         },
       ]);
 
@@ -384,7 +384,7 @@ describe('createCaveatBuilder()', () => {
             ['uint8', 'address', 'uint256'],
             [BalanceChangeType.Increase, recipient, minBalance],
           ),
-          args: '0x',
+          args: '0x00',
         },
       ]);
 
@@ -409,7 +409,7 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.NativeTokenPaymentEnforcer,
           terms: concat([recipient, toHex(amount, { size: 32 })]),
-          args: '0x',
+          args: '0x00',
         },
       ]);
       const caveat = caveats[0];
@@ -434,7 +434,7 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.ERC20TransferAmountEnforcer,
           terms: concat([tokenAddress, toHex(maxAmount, { size: 32 })]),
-          args: '0x',
+          args: '0x00',
         },
       ]);
       const caveat = caveats[0];
@@ -458,7 +458,7 @@ describe('createCaveatBuilder()', () => {
       {
         enforcer: environment.caveatEnforcers.RedeemerEnforcer,
         terms: redeemerAddress,
-        args: '0x',
+        args: '0x00',
       },
     ]);
     const caveat = caveats[0];
@@ -479,7 +479,7 @@ describe('createCaveatBuilder()', () => {
       {
         enforcer: environment.caveatEnforcers.ArgsEqualityCheckEnforcer,
         terms: args,
-        args: '0x',
+        args: '0x00',
       },
     ]);
     const caveat = caveats[0];

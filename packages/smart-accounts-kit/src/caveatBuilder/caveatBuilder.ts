@@ -103,7 +103,7 @@ export class CaveatBuilder<
   ): CaveatBuilder<TCaveatBuilderMap> {
     if (typeof nameOrCaveat === 'object') {
       const caveat = {
-        args: '0x' as const,
+        args: '0x00' as const,
         ...nameOrCaveat,
       };
 

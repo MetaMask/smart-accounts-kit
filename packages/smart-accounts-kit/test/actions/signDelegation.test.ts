@@ -56,7 +56,7 @@ describe('signDelegation Action', () => {
         {
           enforcer: randomAddress(),
           terms: '0x',
-          args: '0x',
+          args: '0x00',
         },
       ],
       salt: '0x123',

@@ -43,14 +43,14 @@ const erc20ScopeCaveats = [
   {
     enforcer: smartAccountEnvironment.caveatEnforcers.ValueLteEnforcer,
     terms: '0x0000000000000000000000000000000000000000000000000000000000000000',
-    args: '0x',
+    args: '0x00',
   },
   {
     enforcer:
       smartAccountEnvironment.caveatEnforcers.ERC20TransferAmountEnforcer,
     terms:
       '0x12345678901234567890123456789012345678900000000000000000000000000000000000000000000000000000000000000064',
-    args: '0x',
+    args: '0x00',
   },
 ];
 
@@ -58,7 +58,7 @@ const erc20ScopeCaveats = [
 const mockCaveat: Caveat = {
   enforcer: randomAddress('lowercase'),
   terms: '0x',
-  args: '0x',
+  args: '0x00',
 };
 
 describe('toDelegationStruct', () => {
@@ -93,7 +93,7 @@ describe('toDelegationStruct', () => {
         {
           enforcer: '0x1111111111111111111111111111111111111111',
           terms: '0x',
-          args: '0x',
+          args: '0x00',
         },
       ],
       salt: '0x123' as Hex,
@@ -109,7 +109,7 @@ describe('toDelegationStruct', () => {
         {
           enforcer: '0x1111111111111111111111111111111111111111',
           terms: '0x',
-          args: '0x',
+          args: '0x00',
         },
       ],
       salt: 291n,
@@ -126,7 +126,7 @@ describe('toDelegationStruct', () => {
         {
           enforcer: '0x1111111111111111111111111111111111111111',
           terms: '0x',
-          args: '0x',
+          args: '0x00',
         },
       ],
       salt: 123n,
@@ -211,7 +211,7 @@ describe('createDelegation', () => {
       {
         enforcer: '0x1111111111111111111111111111111111111111',
         terms: '0x',
-        args: '0x',
+        args: '0x00',
       },
     ];
 
@@ -232,7 +232,7 @@ describe('createDelegation', () => {
         {
           enforcer: '0x1111111111111111111111111111111111111111',
           terms: '0x',
-          args: '0x',
+          args: '0x00',
         },
       ],
       salt: '0x00',
@@ -380,7 +380,7 @@ describe('createOpenDelegation', () => {
       {
         enforcer: '0x1111111111111111111111111111111111111111',
         terms: '0x',
-        args: '0x',
+        args: '0x00',
       },
     ];
 
@@ -400,7 +400,7 @@ describe('createOpenDelegation', () => {
         {
           enforcer: '0x1111111111111111111111111111111111111111',
           terms: '0x',
-          args: '0x',
+          args: '0x00',
         },
       ],
       salt: '0x00',
@@ -499,7 +499,7 @@ describe('encodeDelegations', () => {
       {
         enforcer: '0x1111111111111111111111111111111111111111',
         terms: '0x',
-        args: '0x',
+        args: '0x00',
       },
     ],
     salt: '0x456' as Hex,
@@ -551,7 +551,7 @@ describe('decodeDelegations', () => {
       {
         enforcer: '0x1111111111111111111111111111111111111111',
         terms: '0x',
-        args: '0x',
+        args: '0x00',
       },
     ],
     salt: '0x456' as Hex,
@@ -603,7 +603,7 @@ describe('encodePermissionContexts', () => {
       {
         enforcer: '0x1111111111111111111111111111111111111111',
         terms: '0x',
-        args: '0x',
+        args: '0x00',
       },
     ],
     salt: '0x456' as Hex,
@@ -664,7 +664,7 @@ describe('decodePermissionContexts', () => {
       {
         enforcer: '0x1111111111111111111111111111111111111111',
         terms: '0x',
-        args: '0x',
+        args: '0x00',
       },
     ],
     salt: '0x456' as Hex,

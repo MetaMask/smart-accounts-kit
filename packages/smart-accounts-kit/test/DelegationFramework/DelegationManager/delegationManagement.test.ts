@@ -98,7 +98,7 @@ describe('DelegationManager - Delegation Management', () => {
       });
 
       expect(isHex(encodedData, { strict: true })).toBe(true);
-      expect(encodedData.length).toBe(1930);
+      expect(encodedData.length).toBe(2122);
     });
   });
 
@@ -123,7 +123,7 @@ describe('DelegationManager - Delegation Management', () => {
       });
 
       expect(isHex(encodedData, { strict: true })).toBe(true);
-      expect(encodedData.length).toBe(1930);
+      expect(encodedData.length).toBe(2122);
     });
   });
 
@@ -154,7 +154,7 @@ describe('DelegationManager - Delegation Management', () => {
       });
 
       expect(isHex(encodedData, { strict: true })).toBe(true);
-      expect(encodedData.length).toBe(2890);
+      expect(encodedData.length).toBe(3082);
     });
   });
 });

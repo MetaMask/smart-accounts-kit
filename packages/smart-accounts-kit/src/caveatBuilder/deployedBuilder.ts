@@ -61,6 +61,6 @@ export const deployedBuilder = (
   return {
     enforcer: DeployedEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

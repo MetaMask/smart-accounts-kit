@@ -14,7 +14,11 @@ import { signTypedData } from 'viem/accounts';
 import { type Caveats, resolveCaveats } from './caveatBuilder';
 import type { ScopeConfig } from './caveatBuilder/scope';
 import { CAVEAT_ABI_TYPE_COMPONENTS } from './caveats';
-import type { Delegation, SmartAccountsEnvironment } from './types';
+import type {
+  Delegation,
+  PermissionContext,
+  SmartAccountsEnvironment,
+} from './types';
 
 export {
   ANY_BENEFICIARY,
@@ -93,13 +97,16 @@ export type DelegationStruct = Omit<Delegation, 'salt'> & {
 /**
  * ABI Encodes an array of delegations.
  *
- * @param delegations - The delegations to encode.
+ * @param delegations - The delegations to encode, either as an array of delegations or the ABI encoding of the array of delegations.
  * @returns The encoded delegations.
  */
-export const encodeDelegations = (delegations: Delegation[]): Hex => {
-  const delegationStructs = delegations.map(toDelegationStruct);
+export const encodeDelegations = (delegations: PermissionContext): Hex => {
+  if (Array.isArray(delegations)) {
+    const delegationStructs = delegations.map(toDelegationStruct);
 
-  return encodeDelegationsCore(delegationStructs);
+    return encodeDelegationsCore(delegationStructs);
+  }
+  return delegations;
 };
 
 /**
@@ -119,12 +126,17 @@ export const encodePermissionContexts = (delegations: Delegation[][]) => {
 /**
  * Decodes an array of delegations from its ABI-encoded representation.
  *
- * @param encoded - The hex-encoded delegation array to decode.
+ * @param delegations - The delegations to decode, either as an array of delegations or its ABI-encoded hex representation.
  * @returns An array of decoded delegations.
  */
-export const decodeDelegations = (encoded: Hex): Delegation[] => {
+export const decodeDelegations = (
+  delegations: PermissionContext,
+): Delegation[] => {
+  if (Array.isArray(delegations)) {
+    return delegations;
+  }
   // decodeDelegationsCore returns DelegationStruct, so we need to map it back to Delegation
-  return decodeDelegationsCore(encoded).map(toDelegation);
+  return decodeDelegationsCore(delegations).map(toDelegation);
 };
 
 /**

@@ -1,7 +1,7 @@
-import { SimpleFactory, DelegationManager } from '@metamask/delegation-abis';
+import { DelegationManager, SimpleFactory } from '@metamask/delegation-abis';
 import type { Address, Chain, Hex, PublicClient, WalletClient } from 'viem';
 
-import { encodePermissionContexts } from './delegation';
+import { decodeDelegations, encodePermissionContexts } from './delegation';
 import type { ExecutionStruct, ExecutionMode } from './executions';
 import { encodeExecutionCalldatas } from './executions';
 import type { Delegation, ContractMetaData, Redemption } from './types';
@@ -57,7 +57,11 @@ export const redeemDelegations = async (
   const executionModes: ExecutionMode[] = [];
 
   redemptions.forEach((redemption) => {
-    permissionContexts.push(redemption.permissionContext);
+    const decodedPermissionContext = decodeDelegations(
+      redemption.permissionContext,
+    );
+
+    permissionContexts.push(decodedPermissionContext);
     executionsBatch.push(redemption.executions);
     executionModes.push(redemption.mode);
   });

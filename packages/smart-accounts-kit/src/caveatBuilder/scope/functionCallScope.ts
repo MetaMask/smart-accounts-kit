@@ -1,3 +1,4 @@
+import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import { hasProperties } from '../../utils';
 import type { AllowedCalldataBuilderConfig } from '../allowedCalldataBuilder';
@@ -9,7 +10,7 @@ import type { ExactCalldataBuilderConfig } from '../exactCalldataBuilder';
 import type { ValueLteBuilderConfig } from '../valueLteBuilder';
 
 type FunctionCallScopeBaseConfig = {
-  type: 'functionCall';
+  type: ScopeType.FunctionCall;
   allowedCalldata?: AllowedCalldataBuilderConfig[];
   exactCalldata?: ExactCalldataBuilderConfig;
   valueLte?: ValueLteBuilderConfig;

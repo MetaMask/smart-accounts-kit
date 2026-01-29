@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import { createErc20PeriodicCaveatBuilder } from '../../../src/caveatBuilder/scope/erc20PeriodicScope';
 import type { Erc20PeriodicScopeConfig } from '../../../src/caveatBuilder/scope/erc20PeriodicScope';
+import { ScopeType } from '../../../src/constants';
 import type { SmartAccountsEnvironment } from '../../../src/types';
 import { randomAddress } from '../../utils';
 
@@ -16,7 +17,7 @@ describe('createErc20PeriodicCaveatBuilder', () => {
 
   it('creates an ERC20 periodic transfer CaveatBuilder', () => {
     const config: Erc20PeriodicScopeConfig = {
-      type: 'erc20PeriodTransfer',
+      type: ScopeType.Erc20PeriodTransfer,
       tokenAddress: randomAddress(),
       periodAmount: 1000n,
       periodDuration: 1000,

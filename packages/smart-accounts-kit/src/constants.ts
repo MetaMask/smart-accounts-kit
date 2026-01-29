@@ -37,3 +37,19 @@ export enum TransferWindow {
   Quarterly = 7776000, // 60 * 60 * 24 * 90 (seconds)
   Yearly = 31536000, // 60 * 60 * 24 * 365 (seconds)
 }
+
+/**
+ * Scope types for configuring delegation permissions.
+ * Used with createCaveatBuilderFromScope to specify the type of permission scope.
+ */
+export enum ScopeType {
+  Erc20TransferAmount = 'erc20TransferAmount',
+  Erc20Streaming = 'erc20Streaming',
+  Erc20PeriodTransfer = 'erc20PeriodTransfer',
+  NativeTokenTransferAmount = 'nativeTokenTransferAmount',
+  NativeTokenStreaming = 'nativeTokenStreaming',
+  NativeTokenPeriodTransfer = 'nativeTokenPeriodTransfer',
+  Erc721Transfer = 'erc721Transfer',
+  OwnershipTransfer = 'ownershipTransfer',
+  FunctionCall = 'functionCall',
+}

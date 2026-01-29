@@ -1,13 +1,11 @@
+import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import { createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
-import type {
-  erc20TransferAmount,
-  Erc20TransferAmountBuilderConfig,
-} from '../erc20TransferAmountBuilder';
+import type { Erc20TransferAmountBuilderConfig } from '../erc20TransferAmountBuilder';
 
 export type Erc20TransferScopeConfig = {
-  type: typeof erc20TransferAmount;
+  type: ScopeType.Erc20TransferAmount;
 } & Erc20TransferAmountBuilderConfig;
 
 /**

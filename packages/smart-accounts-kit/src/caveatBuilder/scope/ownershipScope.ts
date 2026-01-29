@@ -1,14 +1,12 @@
+import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import { hasProperties } from '../../utils';
 import { createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
-import type {
-  ownershipTransfer,
-  OwnershipTransferBuilderConfig,
-} from '../ownershipTransferBuilder';
+import type { OwnershipTransferBuilderConfig } from '../ownershipTransferBuilder';
 
 type OwnershipScopeBaseConfig = {
-  type: typeof ownershipTransfer;
+  type: ScopeType.OwnershipTransfer;
 };
 
 export type OwnershipScopeConfig = OwnershipScopeBaseConfig &

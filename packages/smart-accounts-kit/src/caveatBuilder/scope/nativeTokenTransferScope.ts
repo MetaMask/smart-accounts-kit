@@ -1,15 +1,13 @@
+import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import type { AllowedCalldataBuilderConfig } from '../allowedCalldataBuilder';
 import { createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 import type { ExactCalldataBuilderConfig } from '../exactCalldataBuilder';
-import type {
-  nativeTokenTransferAmount,
-  NativeTokenTransferAmountBuilderConfig,
-} from '../nativeTokenTransferAmountBuilder';
+import type { NativeTokenTransferAmountBuilderConfig } from '../nativeTokenTransferAmountBuilder';
 
 export type NativeTokenTransferScopeConfig = {
-  type: typeof nativeTokenTransferAmount;
+  type: ScopeType.NativeTokenTransferAmount;
   allowedCalldata?: AllowedCalldataBuilderConfig[];
   exactCalldata?: ExactCalldataBuilderConfig;
 } & NativeTokenTransferAmountBuilderConfig;

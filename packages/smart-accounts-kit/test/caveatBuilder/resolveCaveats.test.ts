@@ -5,6 +5,7 @@ import type { CoreCaveatConfiguration } from '../../src/caveatBuilder/coreCaveat
 import { createCaveatBuilder } from '../../src/caveatBuilder/coreCaveatBuilder';
 import { resolveCaveats } from '../../src/caveatBuilder/resolveCaveats';
 import type { ScopeConfig } from '../../src/caveatBuilder/scope';
+import { ScopeType } from '../../src/constants';
 import type { Caveat, SmartAccountsEnvironment } from '../../src/types';
 import { randomAddress } from '../utils';
 
@@ -32,7 +33,7 @@ describe('resolveCaveats', () => {
   };
 
   const erc20Scope: ScopeConfig = {
-    type: 'erc20TransferAmount',
+    type: ScopeType.Erc20TransferAmount,
     tokenAddress: randomAddress(),
     maxAmount: 1000n,
   };
@@ -182,7 +183,7 @@ describe('resolveCaveats', () => {
   describe('scope', () => {
     it('should work with different scope types', () => {
       const erc721Scope: ScopeConfig = {
-        type: 'erc721Transfer',
+        type: ScopeType.Erc721Transfer,
         tokenAddress: randomAddress(),
         tokenId: 123n,
       };

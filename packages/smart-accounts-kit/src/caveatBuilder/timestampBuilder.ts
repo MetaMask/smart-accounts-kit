@@ -47,6 +47,6 @@ export const timestampBuilder = (
   return {
     enforcer: TimestampEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

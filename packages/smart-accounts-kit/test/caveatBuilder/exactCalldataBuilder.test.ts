@@ -32,7 +32,7 @@ describe('exactCalldataBuilder()', () => {
       expect(caveat.enforcer).to.equal(
         environment.caveatEnforcers.ExactCalldataEnforcer,
       );
-      expect(caveat.args).to.equal('0x');
+      expect(caveat.args).to.equal('0x00');
       expect(caveat.terms).to.equal(calldata);
     });
   });

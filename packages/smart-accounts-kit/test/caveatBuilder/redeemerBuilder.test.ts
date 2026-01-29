@@ -52,7 +52,7 @@ describe('redeemerBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.RedeemerEnforcer,
         terms: validAddress,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

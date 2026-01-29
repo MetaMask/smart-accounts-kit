@@ -84,7 +84,7 @@ describe('erc20PeriodTransferBuilder()', () => {
       expect(caveat.enforcer).to.equal(
         environment.caveatEnforcers.ERC20PeriodTransferEnforcer,
       );
-      expect(caveat.args).to.equal('0x');
+      expect(caveat.args).to.equal('0x00');
 
       // Verify terms encoding
       const expectedTerms = concat([

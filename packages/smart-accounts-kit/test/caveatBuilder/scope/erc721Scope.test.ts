@@ -28,7 +28,7 @@ describe('createErc721CaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.ERC721TransferEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat([
           config.tokenAddress,
           toHex(config.tokenId, { size: 32 }),

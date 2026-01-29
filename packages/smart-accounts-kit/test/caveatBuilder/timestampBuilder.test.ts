@@ -53,7 +53,7 @@ describe('timestampBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.TimestampEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -69,7 +69,7 @@ describe('timestampBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.TimestampEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

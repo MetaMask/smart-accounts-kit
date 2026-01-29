@@ -86,7 +86,7 @@ describe('deployedBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.DeployedEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

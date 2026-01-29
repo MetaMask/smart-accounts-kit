@@ -99,7 +99,7 @@ describe('exactCalldataBatchBuilder()', () => {
       expect(caveat.enforcer).to.equal(
         environment.caveatEnforcers.ExactCalldataBatchEnforcer,
       );
-      expect(caveat.args).to.equal('0x');
+      expect(caveat.args).to.equal('0x00');
 
       // Verify terms encoding
       const expectedTerms = encodeAbiParameters(

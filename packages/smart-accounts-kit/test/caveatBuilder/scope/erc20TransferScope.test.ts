@@ -29,13 +29,13 @@ describe('createErc20TransferCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.ValueLteEnforcer,
-        args: '0x',
+        args: '0x00',
         terms:
           '0x0000000000000000000000000000000000000000000000000000000000000000',
       },
       {
         enforcer: environment.caveatEnforcers.ERC20TransferAmountEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat([
           config.tokenAddress,
           toHex(config.maxAmount, { size: 32 }),

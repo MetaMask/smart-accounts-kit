@@ -136,7 +136,7 @@ describe('erc1155BalanceChangeBuilder', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ERC1155BalanceChangeEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -161,7 +161,7 @@ describe('erc1155BalanceChangeBuilder', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ERC1155BalanceChangeEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -186,7 +186,7 @@ describe('erc1155BalanceChangeBuilder', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ERC1155BalanceChangeEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
 

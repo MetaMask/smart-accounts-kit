@@ -39,6 +39,6 @@ export const nonceBuilder = (
   return {
     enforcer: NonceEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

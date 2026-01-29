@@ -60,7 +60,7 @@ describe('nativeTokenPeriodTransferBuilder()', () => {
       expect(caveat.enforcer).to.equal(
         environment.caveatEnforcers.NativeTokenPeriodTransferEnforcer,
       );
-      expect(caveat.args).to.equal('0x');
+      expect(caveat.args).to.equal('0x00');
 
       // Verify terms encoding
       const expectedTerms = concat([

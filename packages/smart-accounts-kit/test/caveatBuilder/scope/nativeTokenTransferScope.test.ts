@@ -32,12 +32,12 @@ describe('createNativeTokenTransferCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.ExactCalldataEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: '0x',
       },
       {
         enforcer: environment.caveatEnforcers.NativeTokenTransferAmountEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: toHex(config.maxAmount, { size: 32 }),
       },
     ]);
@@ -62,12 +62,12 @@ describe('createNativeTokenTransferCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.ExactCalldataEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: '0x1234abcd',
       },
       {
         enforcer: environment.caveatEnforcers.NativeTokenTransferAmountEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: toHex(config.maxAmount, { size: 32 }),
       },
     ]);
@@ -90,12 +90,12 @@ describe('createNativeTokenTransferCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.ExactCalldataEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: '0x',
       },
       {
         enforcer: environment.caveatEnforcers.NativeTokenTransferAmountEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: toHex(config.maxAmount, { size: 32 }),
       },
     ]);

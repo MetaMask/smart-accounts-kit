@@ -50,6 +50,6 @@ export const nativeTokenPaymentBuilder = (
   return {
     enforcer: NativeTokenPaymentEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

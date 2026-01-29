@@ -1,4 +1,5 @@
-import { type Address, isAddress, encodePacked } from 'viem';
+import { createERC721BalanceChangeTerms } from '@metamask/delegation-core';
+import { type Address, isAddress } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 import { BalanceChangeType } from './types';
@@ -59,10 +60,12 @@ export const erc721BalanceChangeBuilder = (
     throw new Error('Invalid changeType: must be either Increase or Decrease');
   }
 
-  const terms = encodePacked(
-    ['uint8', 'address', 'address', 'uint256'],
-    [changeType, tokenAddress, recipient, amount],
-  );
+  const terms = createERC721BalanceChangeTerms({
+    tokenAddress,
+    recipient,
+    amount,
+    changeType,
+  });
 
   const {
     caveatEnforcers: { ERC721BalanceChangeEnforcer },

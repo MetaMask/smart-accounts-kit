@@ -1,4 +1,5 @@
-import { maxUint256, toHex } from 'viem';
+import { createIdTerms } from '@metamask/delegation-core';
+import { maxUint256 } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 
@@ -47,7 +48,7 @@ export const idBuilder = (
     throw new Error('Invalid id: must be less than 2^256');
   }
 
-  const terms = toHex(idBigInt, { size: 32 });
+  const terms = createIdTerms({ id: idBigInt });
 
   const {
     caveatEnforcers: { IdEnforcer },

@@ -1,4 +1,5 @@
-import { concat, isAddress, isHex, pad, type Address, type Hex } from 'viem';
+import { createDeployedTerms } from '@metamask/delegation-core';
+import { isAddress, isHex, type Address, type Hex } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
@@ -48,7 +49,7 @@ export const deployedBuilder = (
     throw new Error('Invalid bytecode: must be a valid hexadecimal string');
   }
 
-  const terms = concat([contractAddress, pad(salt, { size: 32 }), bytecode]);
+  const terms = createDeployedTerms({ contractAddress, salt, bytecode });
 
   const {
     caveatEnforcers: { DeployedEnforcer },

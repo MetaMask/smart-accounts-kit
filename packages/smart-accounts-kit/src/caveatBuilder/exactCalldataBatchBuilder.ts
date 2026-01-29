@@ -1,4 +1,5 @@
-import { encodeAbiParameters, isAddress } from 'viem';
+import { createExactCalldataBatchTerms } from '@metamask/delegation-core';
+import { isAddress } from 'viem';
 
 import type { ExecutionStruct } from '../executions';
 import type { Caveat, SmartAccountsEnvironment } from '../types';
@@ -50,20 +51,7 @@ export const exactCalldataBatchBuilder = (
     }
   }
 
-  // Encode the executions using the approach implemented in ExecutionLib.sol encodeBatch()
-  const terms = encodeAbiParameters(
-    [
-      {
-        type: 'tuple[]',
-        components: [
-          { type: 'address', name: 'target' },
-          { type: 'uint256', name: 'value' },
-          { type: 'bytes', name: 'callData' },
-        ],
-      },
-    ],
-    [executions],
-  );
+  const terms = createExactCalldataBatchTerms({ executions });
 
   const {
     caveatEnforcers: { ExactCalldataBatchEnforcer },

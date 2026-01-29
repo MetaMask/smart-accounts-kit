@@ -1,3 +1,4 @@
+import { createArgsEqualityCheckTerms } from '@metamask/delegation-core';
 import { type Hex, isHex } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
@@ -38,7 +39,7 @@ export const argsEqualityCheckBuilder = (
 
   return {
     enforcer: ArgsEqualityCheckEnforcer,
-    terms: args,
+    terms: createArgsEqualityCheckTerms({ args }),
     args: '0x00',
   };
 };

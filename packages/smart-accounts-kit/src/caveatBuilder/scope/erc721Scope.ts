@@ -1,14 +1,12 @@
+import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import { hasProperties } from '../../utils';
 import { createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
-import type {
-  erc721Transfer,
-  Erc721TransferBuilderConfig,
-} from '../erc721TransferBuilder';
+import type { Erc721TransferBuilderConfig } from '../erc721TransferBuilder';
 
 export type Erc721ScopeBaseConfig = {
-  type: typeof erc721Transfer;
+  type: ScopeType.Erc721Transfer;
 };
 
 export type Erc721ScopeConfig = Erc721ScopeBaseConfig &

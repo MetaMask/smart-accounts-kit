@@ -36,7 +36,7 @@ export {
   getSmartAccountsEnvironment,
 } from './smartAccountsEnvironment';
 
-export { Implementation, TransferWindow } from './constants';
+export { Implementation, TransferWindow, ScopeType } from './constants';
 
 export { createExecution, ExecutionMode } from './executions';
 

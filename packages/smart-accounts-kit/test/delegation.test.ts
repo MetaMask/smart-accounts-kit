@@ -2,6 +2,7 @@ import { getAddress, type Address, type Hex } from 'viem';
 import { describe, it, expect } from 'vitest';
 
 import { randomAddress } from './utils';
+import { ScopeType } from '../src/constants';
 import {
   type DelegationStruct,
   ROOT_AUTHORITY,
@@ -27,7 +28,7 @@ const mockSignature =
   '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890' as const;
 
 const erc20Scope = {
-  type: 'erc20TransferAmount',
+  type: ScopeType.Erc20TransferAmount,
   tokenAddress: '0x1234567890123456789012345678901234567890',
   maxAmount: 100n,
 } as const;
@@ -165,6 +166,24 @@ describe('resolveAuthority', () => {
 });
 
 describe('createDelegation', () => {
+  it('creates a delegation with a scope type as a string', () => {
+    const result = createDelegation({
+      environment: smartAccountEnvironment,
+      scope: { ...erc20Scope, type: 'erc20TransferAmount' },
+      to: mockDelegate,
+      from: mockDelegator,
+    });
+
+    expect(result).to.deep.equal({
+      delegate: mockDelegate,
+      delegator: mockDelegator,
+      authority: ROOT_AUTHORITY,
+      caveats: [...erc20ScopeCaveats],
+      salt: '0x00',
+      signature: '0x',
+    });
+  });
+
   it('should create a basic delegation with root authority', () => {
     const result = createDelegation({
       environment: smartAccountEnvironment,

@@ -1,13 +1,11 @@
+import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import { createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
-import type {
-  erc20Streaming,
-  Erc20StreamingBuilderConfig,
-} from '../erc20StreamingBuilder';
+import type { Erc20StreamingBuilderConfig } from '../erc20StreamingBuilder';
 
 export type Erc20StreamingScopeConfig = {
-  type: typeof erc20Streaming;
+  type: ScopeType.Erc20Streaming;
 } & Erc20StreamingBuilderConfig;
 
 /**

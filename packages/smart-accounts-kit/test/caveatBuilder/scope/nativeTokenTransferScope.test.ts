@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import { createNativeTokenTransferCaveatBuilder } from '../../../src/caveatBuilder/scope/nativeTokenTransferScope';
 import type { NativeTokenTransferScopeConfig } from '../../../src/caveatBuilder/scope/nativeTokenTransferScope';
+import { ScopeType } from '../../../src/constants';
 import type { SmartAccountsEnvironment } from '../../../src/types';
 import { randomAddress } from '../../utils';
 
@@ -17,7 +18,7 @@ describe('createNativeTokenTransferCaveatBuilder', () => {
 
   it('creates a native token transfer CaveatBuilder with default empty calldata', () => {
     const config: NativeTokenTransferScopeConfig = {
-      type: 'nativeTokenTransferAmount',
+      type: ScopeType.NativeTokenTransferAmount,
       maxAmount: 1000n,
     };
 
@@ -44,7 +45,7 @@ describe('createNativeTokenTransferCaveatBuilder', () => {
 
   it('creates a native token transfer CaveatBuilder with exact calldata', () => {
     const config: NativeTokenTransferScopeConfig = {
-      type: 'nativeTokenTransferAmount',
+      type: ScopeType.NativeTokenTransferAmount,
       maxAmount: 1000n,
       exactCalldata: {
         calldata: '0x1234abcd',
@@ -74,7 +75,7 @@ describe('createNativeTokenTransferCaveatBuilder', () => {
 
   it('creates a native token transfer CaveatBuilder with empty allowedCalldata array (should fall back to default)', () => {
     const config: NativeTokenTransferScopeConfig = {
-      type: 'nativeTokenTransferAmount',
+      type: ScopeType.NativeTokenTransferAmount,
       maxAmount: 1000n,
       allowedCalldata: [], // Empty array should trigger fallback to default exactCalldata
     };
@@ -102,7 +103,7 @@ describe('createNativeTokenTransferCaveatBuilder', () => {
 
   it('creates a native token transfer CaveatBuilder with allowed calldata', () => {
     const config: NativeTokenTransferScopeConfig = {
-      type: 'nativeTokenTransferAmount',
+      type: ScopeType.NativeTokenTransferAmount,
       maxAmount: 1000n,
       allowedCalldata: [
         {

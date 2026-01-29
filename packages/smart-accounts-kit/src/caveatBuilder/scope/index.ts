@@ -34,18 +34,19 @@ import {
   createOwnershipCaveatBuilder,
   type OwnershipScopeConfig,
 } from './ownershipScope';
+import { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
-// Import caveat builder name constants
-import { erc20PeriodTransfer } from '../erc20PeriodTransferBuilder';
-import { erc20Streaming } from '../erc20StreamingBuilder';
-import { erc20TransferAmount } from '../erc20TransferAmountBuilder';
-import { erc721Transfer } from '../erc721TransferBuilder';
-import { nativeTokenPeriodTransfer } from '../nativeTokenPeriodTransferBuilder';
-import { nativeTokenStreaming } from '../nativeTokenStreamingBuilder';
-import { nativeTokenTransferAmount } from '../nativeTokenTransferAmountBuilder';
-import { ownershipTransfer } from '../ownershipTransferBuilder';
 
-export type ScopeConfig =
+// We want to allow the scope `type` to be passed as either an enum reference,
+// or the enum's string value this generic accepts a union of scope configs, and
+// converts them to an identical union except the `type` parameter is converted
+// to a union of `ScopeType.XXXX | `${ScopeType.XXXX}`.
+export type ConvertScopeConfigsToInputs<T extends { type: ScopeType }> =
+  T extends { type: ScopeType }
+    ? Omit<T, 'type'> & { type: T['type'] | `${T['type']}` }
+    : never;
+
+type ScopeConfigBase =
   | Erc20TransferScopeConfig
   | Erc20StreamingScopeConfig
   | Erc20PeriodicScopeConfig
@@ -56,32 +57,64 @@ export type ScopeConfig =
   | OwnershipScopeConfig
   | FunctionCallScopeConfig;
 
+export type ScopeConfig = ConvertScopeConfigsToInputs<ScopeConfigBase>;
+
+const normalizeScopeConfig = (config: ScopeConfig): ScopeConfigBase => {
+  return {
+    ...config,
+    type: config.type as ScopeType,
+  } as ScopeConfigBase;
+};
+
 export const createCaveatBuilderFromScope = (
   environment: SmartAccountsEnvironment,
   scopeConfig: ScopeConfig,
 ) => {
-  switch (scopeConfig.type) {
-    case erc20TransferAmount:
-      return createErc20TransferCaveatBuilder(environment, scopeConfig);
-    case erc20Streaming:
-      return createErc20StreamingCaveatBuilder(environment, scopeConfig);
-    case erc20PeriodTransfer:
-      return createErc20PeriodicCaveatBuilder(environment, scopeConfig);
-    case nativeTokenTransferAmount:
-      return createNativeTokenTransferCaveatBuilder(environment, scopeConfig);
-    case nativeTokenStreaming:
-      return createNativeTokenStreamingCaveatBuilder(environment, scopeConfig);
-    case nativeTokenPeriodTransfer:
-      return createNativeTokenPeriodicCaveatBuilder(environment, scopeConfig);
-    case erc721Transfer:
-      return createErc721CaveatBuilder(environment, scopeConfig);
-    case ownershipTransfer:
-      return createOwnershipCaveatBuilder(environment, scopeConfig);
-    case 'functionCall':
-      return createFunctionCallCaveatBuilder(environment, scopeConfig);
+  const normalizedScopeConfig = normalizeScopeConfig(scopeConfig);
+
+  switch (normalizedScopeConfig.type) {
+    case ScopeType.Erc20TransferAmount:
+      return createErc20TransferCaveatBuilder(
+        environment,
+        normalizedScopeConfig,
+      );
+    case ScopeType.Erc20Streaming:
+      return createErc20StreamingCaveatBuilder(
+        environment,
+        normalizedScopeConfig,
+      );
+    case ScopeType.Erc20PeriodTransfer:
+      return createErc20PeriodicCaveatBuilder(
+        environment,
+        normalizedScopeConfig,
+      );
+    case ScopeType.NativeTokenTransferAmount:
+      return createNativeTokenTransferCaveatBuilder(
+        environment,
+        normalizedScopeConfig,
+      );
+    case ScopeType.NativeTokenStreaming:
+      return createNativeTokenStreamingCaveatBuilder(
+        environment,
+        normalizedScopeConfig,
+      );
+    case ScopeType.NativeTokenPeriodTransfer:
+      return createNativeTokenPeriodicCaveatBuilder(
+        environment,
+        normalizedScopeConfig,
+      );
+    case ScopeType.Erc721Transfer:
+      return createErc721CaveatBuilder(environment, normalizedScopeConfig);
+    case ScopeType.OwnershipTransfer:
+      return createOwnershipCaveatBuilder(environment, normalizedScopeConfig);
+    case ScopeType.FunctionCall:
+      return createFunctionCallCaveatBuilder(
+        environment,
+        normalizedScopeConfig,
+      );
     default:
       // eslint-disable-next-line no-case-declarations
-      const exhaustivenessCheck: never = scopeConfig;
+      const exhaustivenessCheck: never = normalizedScopeConfig;
       throw new Error(
         `Invalid scope type: ${(exhaustivenessCheck as { type: string }).type}`,
       );

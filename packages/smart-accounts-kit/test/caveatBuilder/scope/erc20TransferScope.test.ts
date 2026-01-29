@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 
 import { createErc20TransferCaveatBuilder } from '../../../src/caveatBuilder/scope/erc20TransferScope';
 import type { Erc20TransferScopeConfig } from '../../../src/caveatBuilder/scope/erc20TransferScope';
+import { ScopeType } from '../../../src/constants';
 import type { SmartAccountsEnvironment } from '../../../src/types';
 import { randomAddress } from '../../utils';
 
@@ -16,7 +17,7 @@ describe('createErc20TransferCaveatBuilder', () => {
 
   it('creates an ERC20 transfer CaveatBuilder', () => {
     const config: Erc20TransferScopeConfig = {
-      type: 'erc20TransferAmount',
+      type: ScopeType.Erc20TransferAmount,
       tokenAddress: randomAddress(),
       maxAmount: 1000n,
     };

@@ -46,7 +46,7 @@ describe('nativeTokenPaymentBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.NativeTokenPaymentEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -62,7 +62,7 @@ describe('nativeTokenPaymentBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.NativeTokenPaymentEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

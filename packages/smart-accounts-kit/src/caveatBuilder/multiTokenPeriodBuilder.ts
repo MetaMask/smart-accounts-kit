@@ -91,6 +91,6 @@ export const multiTokenPeriodBuilder = (
   return {
     enforcer: MultiTokenPeriodEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

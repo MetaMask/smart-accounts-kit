@@ -55,6 +55,6 @@ export const nativeTokenStreamingBuilder = (
   return {
     enforcer: NativeTokenStreamingEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

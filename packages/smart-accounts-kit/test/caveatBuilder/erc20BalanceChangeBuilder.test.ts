@@ -81,7 +81,7 @@ describe('erc20BalanceChangeBuilder', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ERC20BalanceChangeEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -104,7 +104,7 @@ describe('erc20BalanceChangeBuilder', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ERC20BalanceChangeEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -127,7 +127,7 @@ describe('erc20BalanceChangeBuilder', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ERC20BalanceChangeEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

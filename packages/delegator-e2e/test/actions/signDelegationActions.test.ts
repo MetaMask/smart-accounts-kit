@@ -163,7 +163,7 @@ test('should handle delegation with additional caveats', async () => {
       {
         enforcer: '0x1111111111111111111111111111111111111111',
         terms: '0x1234',
-        args: '0x',
+        args: '0x00',
       },
     ],
   });

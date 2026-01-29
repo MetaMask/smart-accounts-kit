@@ -67,6 +67,6 @@ export const nativeBalanceChangeBuilder = (
   return {
     enforcer: NativeBalanceChangeEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

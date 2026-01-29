@@ -50,6 +50,6 @@ export const erc721TransferBuilder = (
   return {
     enforcer: ERC721TransferEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

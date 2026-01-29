@@ -67,6 +67,6 @@ export const erc20StreamingBuilder = (
   return {
     enforcer: ERC20StreamingEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

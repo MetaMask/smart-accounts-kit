@@ -59,6 +59,6 @@ export const erc20PeriodTransferBuilder = (
   return {
     enforcer: ERC20PeriodTransferEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

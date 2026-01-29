@@ -85,7 +85,7 @@ describe('allowedTargetsBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.AllowedTargetsEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -98,7 +98,7 @@ describe('allowedTargetsBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.AllowedTargetsEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

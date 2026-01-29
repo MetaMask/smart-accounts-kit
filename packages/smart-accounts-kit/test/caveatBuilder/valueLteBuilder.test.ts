@@ -39,7 +39,7 @@ describe('valueLteEnforcerBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ValueLteEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -51,7 +51,7 @@ describe('valueLteEnforcerBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ValueLteEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

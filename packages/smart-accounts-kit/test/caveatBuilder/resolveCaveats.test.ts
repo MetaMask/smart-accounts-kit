@@ -22,13 +22,13 @@ describe('resolveCaveats', () => {
   const mockCaveat1: Caveat = {
     enforcer: randomAddress(),
     terms: '0x01' as const,
-    args: '0x',
+    args: '0x00',
   };
 
   const mockCaveat2: Caveat = {
     enforcer: randomAddress(),
     terms: '0x02' as const,
-    args: '0x',
+    args: '0x00',
   };
 
   const erc20Scope: ScopeConfig = {

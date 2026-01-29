@@ -41,6 +41,6 @@ export const exactCalldataBuilder = (
   return {
     enforcer: ExactCalldataEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

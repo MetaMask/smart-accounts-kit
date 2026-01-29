@@ -76,6 +76,6 @@ export const exactCalldataBatchBuilder = (
   return {
     enforcer: ExactCalldataBatchEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

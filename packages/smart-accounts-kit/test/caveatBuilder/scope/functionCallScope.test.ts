@@ -32,17 +32,17 @@ describe('createFunctionCallCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.AllowedTargetsEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat(config.targets),
       },
       {
         enforcer: environment.caveatEnforcers.AllowedMethodsEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat(config.selectors as Hex[]),
       },
       {
         enforcer: environment.caveatEnforcers.ValueLteEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: toHex(0n, { size: 32 }),
       },
     ]);
@@ -64,22 +64,22 @@ describe('createFunctionCallCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.AllowedTargetsEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat(config.targets),
       },
       {
         enforcer: environment.caveatEnforcers.AllowedMethodsEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat(config.selectors as Hex[]),
       },
       {
         enforcer: environment.caveatEnforcers.ValueLteEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: toHex(0n, { size: 32 }),
       },
       {
         enforcer: environment.caveatEnforcers.AllowedCalldataEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat([
           toHex(allowedCalldata.startIndex, { size: 32 }),
           allowedCalldata.value,
@@ -104,22 +104,22 @@ describe('createFunctionCallCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.AllowedTargetsEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat(config.targets),
       },
       {
         enforcer: environment.caveatEnforcers.AllowedMethodsEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat(config.selectors as Hex[]),
       },
       {
         enforcer: environment.caveatEnforcers.ValueLteEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: toHex(0n, { size: 32 }),
       },
       {
         enforcer: environment.caveatEnforcers.ExactCalldataEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: exactCalldata.calldata,
       },
     ]);
@@ -140,17 +140,17 @@ describe('createFunctionCallCaveatBuilder', () => {
     expect(caveats).to.deep.equal([
       {
         enforcer: environment.caveatEnforcers.AllowedTargetsEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat(config.targets),
       },
       {
         enforcer: environment.caveatEnforcers.AllowedMethodsEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: concat(config.selectors as Hex[]),
       },
       {
         enforcer: environment.caveatEnforcers.ValueLteEnforcer,
-        args: '0x',
+        args: '0x00',
         terms: toHex(123n, { size: 32 }),
       },
     ]);

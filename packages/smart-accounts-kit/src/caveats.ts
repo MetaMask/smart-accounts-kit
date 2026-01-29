@@ -60,7 +60,7 @@ export const getCaveatArrayPacketHash = (input: Caveat[]): Hex => {
 export const createCaveat = (
   enforcer: Hex,
   terms: Hex,
-  args: Hex = '0x',
+  args: Hex = '0x00',
 ): Caveat => ({
   enforcer,
   terms,

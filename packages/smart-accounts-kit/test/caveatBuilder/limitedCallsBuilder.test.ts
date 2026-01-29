@@ -45,7 +45,7 @@ describe('limitedCallsBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.LimitedCallsEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -57,7 +57,7 @@ describe('limitedCallsBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.LimitedCallsEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

@@ -50,6 +50,8 @@ export const toDelegationStruct = (
     args: caveat.args,
   }));
 
+  // this is not strictly necessary anymore, as we default the salt to 0x00 but
+  // leaving in to maintain backwards compatibility
   const salt = delegation.salt === '0x' ? 0n : BigInt(delegation.salt);
 
   return {
@@ -239,7 +241,7 @@ export const createDelegation = (
     delegator: options.from,
     authority: resolveAuthority(options.parentDelegation),
     caveats: resolveCaveats(options),
-    salt: options.salt ?? '0x',
+    salt: options.salt ?? '0x00',
     signature: '0x',
   };
 };
@@ -258,7 +260,7 @@ export const createOpenDelegation = (
     delegator: options.from,
     authority: resolveAuthority(options.parentDelegation),
     caveats: resolveCaveats(options),
-    salt: options.salt ?? '0x',
+    salt: options.salt ?? '0x00',
     signature: '0x',
   };
 };

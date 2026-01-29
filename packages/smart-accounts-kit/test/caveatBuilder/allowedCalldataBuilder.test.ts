@@ -53,7 +53,7 @@ describe('allowedCalldataBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.AllowedCalldataEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

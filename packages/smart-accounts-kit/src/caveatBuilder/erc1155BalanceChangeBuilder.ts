@@ -83,6 +83,6 @@ export const erc1155BalanceChangeBuilder = (
   return {
     enforcer: ERC1155BalanceChangeEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

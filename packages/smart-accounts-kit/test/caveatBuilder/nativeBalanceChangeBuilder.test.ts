@@ -70,7 +70,7 @@ describe('nativeBalanceChangeBuilder', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.NativeBalanceChangeEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -91,7 +91,7 @@ describe('nativeBalanceChangeBuilder', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.NativeBalanceChangeEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -112,7 +112,7 @@ describe('nativeBalanceChangeBuilder', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.NativeBalanceChangeEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

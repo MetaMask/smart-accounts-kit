@@ -51,6 +51,6 @@ export const redeemerBuilder = (
   return {
     enforcer: RedeemerEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

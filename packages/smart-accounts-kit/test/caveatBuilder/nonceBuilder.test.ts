@@ -52,7 +52,7 @@ describe('nonceBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.NonceEnforcer,
         terms: pad(nonce, { size: 32 }),
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -63,7 +63,7 @@ describe('nonceBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.NonceEnforcer,
         terms: pad(nonce, { size: 32 }),
-        args: '0x',
+        args: '0x00',
       });
     });
   });

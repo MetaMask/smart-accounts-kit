@@ -80,6 +80,6 @@ export const specificActionERC20TransferBatchBuilder = (
   return {
     enforcer: SpecificActionERC20TransferBatchEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

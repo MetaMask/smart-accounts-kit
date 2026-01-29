@@ -59,7 +59,7 @@ describe('blockNumberBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.BlockNumberEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -80,7 +80,7 @@ describe('blockNumberBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.BlockNumberEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -101,7 +101,7 @@ describe('blockNumberBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.BlockNumberEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

@@ -75,6 +75,6 @@ export const erc721BalanceChangeBuilder = (
   return {
     enforcer: ERC721BalanceChangeEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

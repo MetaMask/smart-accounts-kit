@@ -89,7 +89,7 @@ describe('exactExecutionBuilder()', () => {
       expect(caveat.enforcer).to.equal(
         environment.caveatEnforcers.ExactExecutionEnforcer,
       );
-      expect(caveat.args).to.equal('0x');
+      expect(caveat.args).to.equal('0x00');
 
       // Verify terms encoding matches ExactExecutionEnforcer.sol:
       // - First 20 bytes: target address

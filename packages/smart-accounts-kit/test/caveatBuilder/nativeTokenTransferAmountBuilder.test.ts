@@ -35,7 +35,7 @@ describe('nativeTokenTransferAmountBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.NativeTokenTransferAmountEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -48,7 +48,7 @@ describe('nativeTokenTransferAmountBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.NativeTokenTransferAmountEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -61,7 +61,7 @@ describe('nativeTokenTransferAmountBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.NativeTokenTransferAmountEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

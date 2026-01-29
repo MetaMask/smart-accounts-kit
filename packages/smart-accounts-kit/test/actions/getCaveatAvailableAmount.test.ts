@@ -214,7 +214,7 @@ describe('getCaveatAvailableAmount', () => {
           {
             enforcer: '0x5678901234567890123456789012345678901234',
             terms: '0x1234567890abcdef',
-            args: '0x',
+            args: '0x00',
           },
         ],
       };
@@ -335,7 +335,7 @@ describe('getCaveatAvailableAmount', () => {
           {
             enforcer: '0x6789012345678901234567890123456789012345',
             terms: '0x1234567890abcdef',
-            args: '0x',
+            args: '0x00',
           },
         ],
       };
@@ -455,7 +455,7 @@ describe('getCaveatAvailableAmount', () => {
           {
             enforcer: '0x7890123456789012345678901234567890123456',
             terms: '0x1234567890abcdef',
-            args: '0x',
+            args: '0x00',
           },
         ],
       };
@@ -588,7 +588,7 @@ describe('getCaveatAvailableAmount', () => {
           {
             enforcer: '0x8901234567890123456789012345678901234567',
             terms: '0x1234567890abcdef',
-            args: '0x',
+            args: '0x00',
           },
         ],
       };

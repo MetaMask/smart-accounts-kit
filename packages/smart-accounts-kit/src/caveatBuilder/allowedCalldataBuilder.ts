@@ -44,6 +44,6 @@ export const allowedCalldataBuilder = (
   return {
     enforcer: AllowedCalldataEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

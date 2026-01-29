@@ -50,7 +50,7 @@ describe('multiTokenPeriodBuilder', () => {
     expect(result.enforcer).to.equal(
       mockEnvironment.caveatEnforcers.MultiTokenPeriodEnforcer,
     );
-    expect(result.args).to.equal('0x');
+    expect(result.args).to.equal('0x00');
   });
 
   it('should encode multiple token correctly', () => {
@@ -61,7 +61,7 @@ describe('multiTokenPeriodBuilder', () => {
     expect(result.enforcer).to.equal(
       mockEnvironment.caveatEnforcers.MultiTokenPeriodEnforcer,
     );
-    expect(result.args).to.equal('0x');
+    expect(result.args).to.equal('0x00');
     expect(result.terms).to.equal(
       concat([
         pad(mockConfig.token, { size: 20 }),

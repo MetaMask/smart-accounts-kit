@@ -57,7 +57,7 @@ describe('erc721TransferBuilder()', () => {
       expect({ ...caveat, terms: caveat.terms.toLowerCase() }).to.deep.equal({
         enforcer: environment.caveatEnforcers.ERC721TransferEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

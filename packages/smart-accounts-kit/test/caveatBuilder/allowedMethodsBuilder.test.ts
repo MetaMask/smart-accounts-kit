@@ -69,7 +69,7 @@ describe('allowedMethodsBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.AllowedMethodsEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -82,7 +82,7 @@ describe('allowedMethodsBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.AllowedMethodsEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -101,7 +101,7 @@ describe('allowedMethodsBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.AllowedMethodsEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -127,7 +127,7 @@ describe('allowedMethodsBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.AllowedMethodsEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -140,7 +140,7 @@ describe('allowedMethodsBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.AllowedMethodsEnforcer,
         terms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

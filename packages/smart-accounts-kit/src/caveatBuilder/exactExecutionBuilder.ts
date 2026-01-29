@@ -58,6 +58,6 @@ export const exactExecutionBuilder = (
   return {
     enforcer: ExactExecutionEnforcer,
     terms,
-    args: '0x',
+    args: '0x00',
   };
 };

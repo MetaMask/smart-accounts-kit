@@ -26,7 +26,7 @@ describe('ownershipTransferBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.OwnershipTransferEnforcer,
         terms: contractAddress,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

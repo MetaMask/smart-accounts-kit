@@ -58,7 +58,7 @@ describe('erc20TransferAmountBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ERC20TransferAmountEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
 
@@ -75,7 +75,7 @@ describe('erc20TransferAmountBuilder()', () => {
       expect(caveat).to.deep.equal({
         enforcer: environment.caveatEnforcers.ERC20TransferAmountEnforcer,
         terms: expectedTerms,
-        args: '0x',
+        args: '0x00',
       });
     });
   });

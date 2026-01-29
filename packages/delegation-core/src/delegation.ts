@@ -15,13 +15,14 @@ import type { CaveatStruct, DelegationStruct, Hex } from './types';
 /**
  * When designated as the delegate address in a delegation, this allows any beneficiary to redeem the delegation.
  */
-export const ANY_BENEFICIARY = '0x0000000000000000000000000000000000000a11';
+export const ANY_BENEFICIARY =
+  '0x0000000000000000000000000000000000000a11' as const;
 
 /**
  * To be used on a delegation as the root authority.
  */
 export const ROOT_AUTHORITY =
-  '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+  '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' as const;
 
 /**
  * The typehash for a delegation, used when generating a delegation hash.
@@ -29,7 +30,7 @@ export const ROOT_AUTHORITY =
  * keccak('Delegation(address delegate,address delegator,bytes32 authority,Caveat[] caveats,uint256 salt)Caveat(address enforcer,bytes terms)')
  */
 export const DELEGATION_TYPEHASH =
-  '0x88c1d2ecf185adf710588203a5f263f0ff61be0d33da39792cde19ba9aa4331e';
+  '0x88c1d2ecf185adf710588203a5f263f0ff61be0d33da39792cde19ba9aa4331e' as const;
 
 /**
  * The typehash for a caveat, used when generating a caveat hash.
@@ -37,7 +38,7 @@ export const DELEGATION_TYPEHASH =
  * keccak('Caveat(address enforcer,bytes terms)')
  */
 export const CAVEAT_TYPEHASH =
-  '0x80ad7e1b04ee6d994a125f4714ca0720908bd80ed16063ec8aee4b88e9253e2d';
+  '0x80ad7e1b04ee6d994a125f4714ca0720908bd80ed16063ec8aee4b88e9253e2d' as const;
 
 /**
  * The ABI types for an array of delegations.

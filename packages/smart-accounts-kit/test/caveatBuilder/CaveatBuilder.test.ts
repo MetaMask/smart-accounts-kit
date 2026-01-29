@@ -10,13 +10,13 @@ describe('CaveatBuilder', () => {
   const caveat1: Caveat = {
     enforcer: randomAddress(),
     terms: '0x0',
-    args: '0x',
+    args: '0x00',
   };
 
   const caveat2: Caveat = {
     enforcer: randomAddress(),
     terms: '0x0',
-    args: '0x',
+    args: '0x00',
   };
 
   describe('ctor', () => {
@@ -182,7 +182,7 @@ describe('CaveatBuilder', () => {
       (_environment: SmartAccountsEnvironment, arg: string) => ({
         enforcer: caveat1Address,
         terms: toHex(arg),
-        args: '0x' as const,
+        args: '0x00' as const,
       }),
     );
 
@@ -190,7 +190,7 @@ describe('CaveatBuilder', () => {
       (_environment: SmartAccountsEnvironment, arg: number) => ({
         enforcer: caveat2Address,
         terms: toHex(arg),
-        args: '0x' as const,
+        args: '0x00' as const,
       }),
     );
 
@@ -214,7 +214,7 @@ describe('CaveatBuilder', () => {
       const expectedCaveat = {
         enforcer: caveat1Address,
         terms: toHex('value'),
-        args: '0x',
+        args: '0x00',
       };
 
       expect(caveats).to.deep.equal([expectedCaveat]);
@@ -230,12 +230,12 @@ describe('CaveatBuilder', () => {
         {
           enforcer: caveat1Address,
           terms: toHex('value'),
-          args: '0x',
+          args: '0x00',
         },
         {
           enforcer: caveat1Address,
           terms: toHex('value2'),
-          args: '0x',
+          args: '0x00',
         },
       ];
 
@@ -252,12 +252,12 @@ describe('CaveatBuilder', () => {
         {
           enforcer: caveat1Address,
           terms: toHex('value'),
-          args: '0x',
+          args: '0x00',
         },
         {
           enforcer: caveat2Address,
           terms: toHex(1),
-          args: '0x',
+          args: '0x00',
         },
       ];
 
@@ -274,12 +274,12 @@ describe('CaveatBuilder', () => {
         {
           enforcer: caveat1Address,
           terms: toHex('value'),
-          args: '0x',
+          args: '0x00',
         },
         {
           enforcer: caveat2Address,
           terms: toHex(1),
-          args: '0x',
+          args: '0x00',
         },
       ];
 

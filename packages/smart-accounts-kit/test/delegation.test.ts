@@ -67,7 +67,7 @@ describe('toDelegationStruct', () => {
     const delegation: Delegation = {
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [mockCaveat],
       salt: '0x123' as Hex,
       signature: mockSignature,
@@ -77,7 +77,7 @@ describe('toDelegationStruct', () => {
     expect(result).to.deep.equal({
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [{ ...mockCaveat, enforcer: getAddress(mockCaveat.enforcer) }],
       salt: 291n,
       signature: mockSignature,
@@ -88,7 +88,7 @@ describe('toDelegationStruct', () => {
     const delegation: Delegation = {
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [
         {
           enforcer: '0x1111111111111111111111111111111111111111',
@@ -104,7 +104,7 @@ describe('toDelegationStruct', () => {
     expect(result).to.deep.equal({
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [
         {
           enforcer: '0x1111111111111111111111111111111111111111',
@@ -121,7 +121,7 @@ describe('toDelegationStruct', () => {
     const delegationStruct: DelegationStruct = {
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [
         {
           enforcer: '0x1111111111111111111111111111111111111111',
@@ -153,9 +153,9 @@ describe('resolveAuthority', () => {
     const parentDelegation: Delegation = {
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [mockCaveat],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     };
     const result = resolveAuthority(parentDelegation);
@@ -177,9 +177,9 @@ describe('createDelegation', () => {
     expect(result).to.deep.equal({
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats, mockCaveat],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -201,7 +201,7 @@ describe('createDelegation', () => {
       delegator: mockDelegator,
       authority: parentHash,
       caveats: [...erc20ScopeCaveats, mockCaveat],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -226,7 +226,7 @@ describe('createDelegation', () => {
     expect(result).to.deep.equal({
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [
         ...erc20ScopeCaveats,
         {
@@ -235,7 +235,7 @@ describe('createDelegation', () => {
           args: '0x',
         },
       ],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -251,9 +251,9 @@ describe('createDelegation', () => {
     expect(result).to.deep.equal({
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -271,7 +271,7 @@ describe('createDelegation', () => {
     expect(result).to.deep.equal({
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats, mockCaveat],
       salt: customSalt,
       signature: '0x',
@@ -289,9 +289,9 @@ describe('createDelegation', () => {
     expect(result).to.deep.equal({
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -308,9 +308,9 @@ describe('createDelegation', () => {
     expect(result).to.deep.equal({
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -327,9 +327,9 @@ describe('createDelegation', () => {
     expect(result).to.deep.equal({
       delegate: mockDelegate,
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -347,9 +347,9 @@ describe('createOpenDelegation', () => {
     expect(result).to.deep.equal({
       delegate: '0x0000000000000000000000000000000000000a11',
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats, mockCaveat],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -370,7 +370,7 @@ describe('createOpenDelegation', () => {
       delegator: mockDelegator,
       authority: parentHash,
       caveats: [...erc20ScopeCaveats, mockCaveat],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -394,7 +394,7 @@ describe('createOpenDelegation', () => {
     expect(result).to.deep.equal({
       delegate: '0x0000000000000000000000000000000000000a11',
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [
         ...erc20ScopeCaveats,
         {
@@ -403,7 +403,7 @@ describe('createOpenDelegation', () => {
           args: '0x',
         },
       ],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -420,7 +420,7 @@ describe('createOpenDelegation', () => {
     expect(result).to.deep.equal({
       delegate: '0x0000000000000000000000000000000000000a11',
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats, mockCaveat],
       salt: customSalt,
       signature: '0x',
@@ -437,9 +437,9 @@ describe('createOpenDelegation', () => {
     expect(result).to.deep.equal({
       delegate: '0x0000000000000000000000000000000000000a11',
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -455,9 +455,9 @@ describe('createOpenDelegation', () => {
     expect(result).to.deep.equal({
       delegate: '0x0000000000000000000000000000000000000a11',
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -473,9 +473,9 @@ describe('createOpenDelegation', () => {
     expect(result).to.deep.equal({
       delegate: '0x0000000000000000000000000000000000000a11',
       delegator: mockDelegator,
-      authority: ROOT_AUTHORITY as Hex,
+      authority: ROOT_AUTHORITY,
       caveats: [...erc20ScopeCaveats],
-      salt: '0x' as Hex,
+      salt: '0x00',
       signature: '0x',
     });
   });
@@ -485,7 +485,7 @@ describe('encodeDelegations', () => {
   const mockDelegation1: Delegation = {
     delegate: mockDelegate,
     delegator: mockDelegator,
-    authority: ROOT_AUTHORITY as Hex,
+    authority: ROOT_AUTHORITY,
     caveats: [mockCaveat],
     salt: '0x123' as Hex,
     signature: mockSignature,
@@ -494,7 +494,7 @@ describe('encodeDelegations', () => {
   const mockDelegation2: Delegation = {
     delegate: '0x2222222222222222222222222222222222222222',
     delegator: '0x3333333333333333333333333333333333333333',
-    authority: ROOT_AUTHORITY as Hex,
+    authority: ROOT_AUTHORITY,
     caveats: [
       {
         enforcer: '0x1111111111111111111111111111111111111111',
@@ -537,7 +537,7 @@ describe('decodeDelegations', () => {
   const mockDelegation1: Delegation = {
     delegate: mockDelegate,
     delegator: mockDelegator,
-    authority: ROOT_AUTHORITY as Hex,
+    authority: ROOT_AUTHORITY,
     caveats: [mockCaveat],
     salt: '0x123' as Hex,
     signature: mockSignature,
@@ -546,7 +546,7 @@ describe('decodeDelegations', () => {
   const mockDelegation2: Delegation = {
     delegate: '0x2222222222222222222222222222222222222222',
     delegator: '0x3333333333333333333333333333333333333333',
-    authority: ROOT_AUTHORITY as Hex,
+    authority: ROOT_AUTHORITY,
     caveats: [
       {
         enforcer: '0x1111111111111111111111111111111111111111',
@@ -589,7 +589,7 @@ describe('encodePermissionContexts', () => {
   const mockDelegation1: Delegation = {
     delegate: mockDelegate,
     delegator: mockDelegator,
-    authority: ROOT_AUTHORITY as Hex,
+    authority: ROOT_AUTHORITY,
     caveats: [mockCaveat],
     salt: '0x123' as Hex,
     signature: mockSignature,
@@ -598,7 +598,7 @@ describe('encodePermissionContexts', () => {
   const mockDelegation2: Delegation = {
     delegate: '0x2222222222222222222222222222222222222222',
     delegator: '0x3333333333333333333333333333333333333333',
-    authority: ROOT_AUTHORITY as Hex,
+    authority: ROOT_AUTHORITY,
     caveats: [
       {
         enforcer: '0x1111111111111111111111111111111111111111',
@@ -650,7 +650,7 @@ describe('decodePermissionContexts', () => {
   const mockDelegation1: Delegation = {
     delegate: mockDelegate,
     delegator: mockDelegator,
-    authority: ROOT_AUTHORITY as Hex,
+    authority: ROOT_AUTHORITY,
     caveats: [mockCaveat],
     salt: '0x123' as Hex,
     signature: mockSignature,
@@ -659,7 +659,7 @@ describe('decodePermissionContexts', () => {
   const mockDelegation2: Delegation = {
     delegate: '0x2222222222222222222222222222222222222222',
     delegator: '0x3333333333333333333333333333333333333333',
-    authority: ROOT_AUTHORITY as Hex,
+    authority: ROOT_AUTHORITY,
     caveats: [
       {
         enforcer: '0x1111111111111111111111111111111111111111',
@@ -714,7 +714,7 @@ describe('signDelegation', () => {
   const mockDelegation = {
     delegate: mockDelegate,
     delegator: mockDelegator,
-    authority: ROOT_AUTHORITY as Hex,
+    authority: ROOT_AUTHORITY,
     caveats: [mockCaveat],
     salt: '0x123' as Hex,
   };

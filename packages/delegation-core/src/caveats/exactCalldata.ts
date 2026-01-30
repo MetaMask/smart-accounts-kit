@@ -48,6 +48,10 @@ export function createExactCalldataTerms(
 ): Hex | Uint8Array {
   const { calldata } = terms;
 
+  if (calldata === undefined || calldata === null) {
+    throw new Error('Invalid calldata: calldata is required');
+  }
+
   if (typeof calldata === 'string' && !calldata.startsWith('0x')) {
     throw new Error('Invalid calldata: must be a hex string starting with 0x');
   }

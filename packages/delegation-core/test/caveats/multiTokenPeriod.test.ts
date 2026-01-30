@@ -61,6 +61,36 @@ describe('createMultiTokenPeriodTerms', () => {
     ).toThrow('Invalid period amount: must be greater than 0');
   });
 
+  it('throws for invalid start date (zero)', () => {
+    expect(() =>
+      createMultiTokenPeriodTerms({
+        tokenConfigs: [
+          {
+            token,
+            periodAmount: 1n,
+            periodDuration: 1,
+            startDate: 0,
+          },
+        ],
+      }),
+    ).toThrow('Invalid start date: must be greater than 0');
+  });
+
+  it('throws for invalid start date (negative)', () => {
+    expect(() =>
+      createMultiTokenPeriodTerms({
+        tokenConfigs: [
+          {
+            token,
+            periodAmount: 1n,
+            periodDuration: 1,
+            startDate: -1,
+          },
+        ],
+      }),
+    ).toThrow('Invalid start date: must be greater than 0');
+  });
+
   it('returns Uint8Array when bytes encoding is specified', () => {
     const result = createMultiTokenPeriodTerms(
       {

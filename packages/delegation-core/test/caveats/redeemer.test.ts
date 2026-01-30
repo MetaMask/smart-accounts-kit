@@ -14,6 +14,12 @@ describe('createRedeemerTerms', () => {
     );
   });
 
+  it('throws when redeemers is undefined', () => {
+    expect(() =>
+      createRedeemerTerms({} as Parameters<typeof createRedeemerTerms>[0]),
+    ).toThrow('Invalid redeemers: must specify at least one redeemer address');
+  });
+
   it('throws for empty redeemers', () => {
     expect(() => createRedeemerTerms({ redeemers: [] })).toThrow(
       'Invalid redeemers: must specify at least one redeemer address',

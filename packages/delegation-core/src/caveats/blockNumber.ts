@@ -47,6 +47,10 @@ export function createBlockNumberTerms(
 ): Hex | Uint8Array {
   const { afterThreshold, beforeThreshold } = terms;
 
+  if (afterThreshold < 0n || beforeThreshold < 0n) {
+    throw new Error('Invalid thresholds: block numbers must be non-negative');
+  }
+
   if (afterThreshold === 0n && beforeThreshold === 0n) {
     throw new Error(
       'Invalid thresholds: At least one of afterThreshold or beforeThreshold must be specified',

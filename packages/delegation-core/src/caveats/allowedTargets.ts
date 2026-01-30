@@ -47,7 +47,7 @@ export function createAllowedTargetsTerms(
 ): Hex | Uint8Array {
   const { targets } = terms;
 
-  if (targets.length === 0) {
+  if (!targets || targets.length === 0) {
     throw new Error(
       'Invalid targets: must provide at least one target address',
     );

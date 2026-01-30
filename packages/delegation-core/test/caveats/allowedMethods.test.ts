@@ -14,6 +14,14 @@ describe('createAllowedMethodsTerms', () => {
     expect(result).toStrictEqual('0xa9059cbb70a08231');
   });
 
+  it('throws when selectors is undefined', () => {
+    expect(() =>
+      createAllowedMethodsTerms(
+        {} as Parameters<typeof createAllowedMethodsTerms>[0],
+      ),
+    ).toThrow('Invalid selectors: must provide at least one selector');
+  });
+
   it('throws for empty selectors array', () => {
     expect(() => createAllowedMethodsTerms({ selectors: [] })).toThrow(
       'Invalid selectors: must provide at least one selector',

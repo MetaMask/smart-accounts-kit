@@ -47,7 +47,7 @@ export function createRedeemerTerms(
 ): Hex | Uint8Array {
   const { redeemers } = terms;
 
-  if (redeemers.length === 0) {
+  if (!redeemers || redeemers.length === 0) {
     throw new Error(
       'Invalid redeemers: must specify at least one redeemer address',
     );

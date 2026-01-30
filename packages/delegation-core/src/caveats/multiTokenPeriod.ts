@@ -78,6 +78,10 @@ export function createMultiTokenPeriodTerms(
       throw new Error('Invalid period duration: must be greater than 0');
     }
 
+    if (tokenConfig.startDate <= 0) {
+      throw new Error('Invalid start date: must be greater than 0');
+    }
+
     hexParts.push(
       tokenHex,
       `0x${toHexString({ value: tokenConfig.periodAmount, size: 32 })}`,

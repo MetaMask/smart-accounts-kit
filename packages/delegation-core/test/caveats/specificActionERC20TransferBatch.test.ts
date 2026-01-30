@@ -49,6 +49,18 @@ describe('createSpecificActionERC20TransferBatchTerms', () => {
     ).toThrow('Invalid amount: must be a positive number');
   });
 
+  it('throws when calldata string does not start with 0x', () => {
+    expect(() =>
+      createSpecificActionERC20TransferBatchTerms({
+        tokenAddress,
+        recipient,
+        amount: 1n,
+        target,
+        calldata: '1234' as `0x${string}`,
+      }),
+    ).toThrow('Invalid calldata: must be a hex string starting with 0x');
+  });
+
   it('returns Uint8Array when bytes encoding is specified', () => {
     const result = createSpecificActionERC20TransferBatchTerms(
       {

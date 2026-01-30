@@ -51,7 +51,7 @@ export function createAllowedMethodsTerms(
 ): Hex | Uint8Array {
   const { selectors } = terms;
 
-  if (selectors.length === 0) {
+  if (!selectors || selectors.length === 0) {
     throw new Error('Invalid selectors: must provide at least one selector');
   }
 

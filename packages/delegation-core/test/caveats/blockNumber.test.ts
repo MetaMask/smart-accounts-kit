@@ -14,6 +14,18 @@ describe('createBlockNumberTerms', () => {
     );
   });
 
+  it('throws when afterThreshold is negative', () => {
+    expect(() =>
+      createBlockNumberTerms({ afterThreshold: -1n, beforeThreshold: 10n }),
+    ).toThrow('Invalid thresholds: block numbers must be non-negative');
+  });
+
+  it('throws when beforeThreshold is negative', () => {
+    expect(() =>
+      createBlockNumberTerms({ afterThreshold: 5n, beforeThreshold: -1n }),
+    ).toThrow('Invalid thresholds: block numbers must be non-negative');
+  });
+
   it('throws when both thresholds are zero', () => {
     expect(() =>
       createBlockNumberTerms({ afterThreshold: 0n, beforeThreshold: 0n }),

@@ -14,6 +14,14 @@ describe('createAllowedTargetsTerms', () => {
     );
   });
 
+  it('throws when targets is undefined', () => {
+    expect(() =>
+      createAllowedTargetsTerms(
+        {} as Parameters<typeof createAllowedTargetsTerms>[0],
+      ),
+    ).toThrow('Invalid targets: must provide at least one target address');
+  });
+
   it('throws for empty targets array', () => {
     expect(() => createAllowedTargetsTerms({ targets: [] })).toThrow(
       'Invalid targets: must provide at least one target address',

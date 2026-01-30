@@ -70,13 +70,23 @@ export function createSpecificActionERC20TransferBatchTerms(
     'Invalid target: must be a valid address',
   );
 
+  let calldataHex: string;
+  if (typeof calldata === 'string') {
+    if (!calldata.startsWith('0x')) {
+      throw new Error(
+        'Invalid calldata: must be a hex string starting with 0x',
+      );
+    }
+    calldataHex = calldata;
+  } else {
+    calldataHex = bytesToHex(calldata);
+  }
+
   if (amount <= 0n) {
     throw new Error('Invalid amount: must be a positive number');
   }
 
   const amountHex = `0x${toHexString({ value: amount, size: 32 })}`;
-  const calldataHex =
-    typeof calldata === 'string' ? calldata : bytesToHex(calldata);
 
   const hexValue = concatHex([
     tokenAddressHex,

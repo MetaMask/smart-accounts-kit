@@ -84,11 +84,13 @@ describe('createExactCalldataTerms', () => {
   it('throws an error for undefined callData', () => {
     expect(() =>
       createExactCalldataTerms({ calldata: undefined as any }),
-    ).toThrow();
+    ).toThrow('Invalid calldata: calldata is required');
   });
 
   it('throws an error for null callData', () => {
-    expect(() => createExactCalldataTerms({ calldata: null as any })).toThrow();
+    expect(() => createExactCalldataTerms({ calldata: null as any })).toThrow(
+      'Invalid calldata: calldata is required',
+    );
   });
 
   it('throws an error for non-string non-Uint8Array callData', () => {

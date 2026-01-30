@@ -1,4 +1,5 @@
-import { isAddress, concat, toHex } from 'viem';
+import { createExactExecutionTerms } from '@metamask/delegation-core';
+import { isAddress } from 'viem';
 
 import type { ExecutionStruct } from '../executions';
 import type { Caveat, SmartAccountsEnvironment } from '../types';
@@ -41,11 +42,7 @@ export const exactExecutionBuilder = (
     throw new Error('Invalid calldata: must be a hex string starting with 0x');
   }
 
-  const terms = concat([
-    execution.target,
-    toHex(execution.value, { size: 32 }),
-    execution.callData,
-  ]);
+  const terms = createExactExecutionTerms({ execution });
 
   const {
     caveatEnforcers: { ExactExecutionEnforcer },

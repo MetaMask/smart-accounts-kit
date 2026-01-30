@@ -1,4 +1,5 @@
-import { type Address, encodePacked, isAddress } from 'viem';
+import { createNativeTokenPaymentTerms } from '@metamask/delegation-core';
+import { type Address, isAddress } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
@@ -37,7 +38,7 @@ export const nativeTokenPaymentBuilder = (
     throw new Error('Invalid recipient: must be a valid address');
   }
 
-  const terms = encodePacked(['address', 'uint256'], [recipient, amount]);
+  const terms = createNativeTokenPaymentTerms({ recipient, amount });
 
   const {
     caveatEnforcers: { NativeTokenPaymentEnforcer },

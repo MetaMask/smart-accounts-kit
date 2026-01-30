@@ -2,8 +2,8 @@ import { hexToBytes } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { createAllowedCalldataTerms } from '../../src/caveats/allowedCalldata';
+import { toHexString } from '../../src/internalUtils';
 import type { Hex } from '../../src/types';
-import { toHexString } from '../../src/utils';
 
 describe('createAllowedCalldataTerms', function () {
   const prefixWithIndex = (startIndex: number, value: Hex): Hex => {

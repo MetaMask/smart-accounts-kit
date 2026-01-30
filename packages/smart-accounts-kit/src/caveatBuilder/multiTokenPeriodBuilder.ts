@@ -1,5 +1,6 @@
+import { createMultiTokenPeriodTerms } from '@metamask/delegation-core';
 import type { Hex } from 'viem';
-import { concat, isAddress, pad, toHex } from 'viem';
+import { isAddress } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 
@@ -62,23 +63,9 @@ export const multiTokenPeriodBuilder = (
     }
   });
 
-  // Each config requires 116 bytes:
-  // - 20 bytes for token address
-  // - 32 bytes for periodAmount
-  // - 32 bytes for periodDuration
-  // - 32 bytes for startDate
-  const termsArray = config.tokenConfigs.reduce<Hex[]>(
-    (acc, { token, periodAmount, periodDuration, startDate }) => [
-      ...acc,
-      pad(token, { size: 20 }),
-      toHex(periodAmount, { size: 32 }),
-      toHex(periodDuration, { size: 32 }),
-      toHex(startDate, { size: 32 }),
-    ],
-    [],
-  );
-
-  const terms = concat(termsArray);
+  const terms = createMultiTokenPeriodTerms({
+    tokenConfigs: config.tokenConfigs,
+  });
 
   const {
     caveatEnforcers: { MultiTokenPeriodEnforcer },

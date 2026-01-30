@@ -1,4 +1,5 @@
-import { type Address, isAddress, toHex, concat } from 'viem';
+import { createERC721TransferTerms } from '@metamask/delegation-core';
+import { type Address, isAddress } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 
@@ -37,7 +38,7 @@ export const erc721TransferBuilder = (
     throw new Error('Invalid tokenId: must be a non-negative number');
   }
 
-  const terms = concat([tokenAddress, toHex(tokenId, { size: 32 })]);
+  const terms = createERC721TransferTerms({ tokenAddress, tokenId });
 
   const {
     caveatEnforcers: { ERC721TransferEnforcer },

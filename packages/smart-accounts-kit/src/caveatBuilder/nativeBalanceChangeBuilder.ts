@@ -1,4 +1,5 @@
-import { type Address, isAddress, encodePacked } from 'viem';
+import { createNativeBalanceChangeTerms } from '@metamask/delegation-core';
+import { type Address, isAddress } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 import { BalanceChangeType } from './types';
@@ -51,10 +52,11 @@ export const nativeBalanceChangeBuilder = (
     throw new Error('Invalid changeType: must be either Increase or Decrease');
   }
 
-  const terms = encodePacked(
-    ['uint8', 'address', 'uint256'],
-    [changeType, recipient, balance],
-  );
+  const terms = createNativeBalanceChangeTerms({
+    recipient,
+    balance,
+    changeType,
+  });
 
   const {
     caveatEnforcers: { NativeBalanceChangeEnforcer },

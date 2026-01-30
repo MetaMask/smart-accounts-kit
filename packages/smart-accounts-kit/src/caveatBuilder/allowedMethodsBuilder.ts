@@ -1,4 +1,5 @@
-import { isHex, concat, toFunctionSelector } from 'viem';
+import { createAllowedMethodsTerms } from '@metamask/delegation-core';
+import { isHex, toFunctionSelector } from 'viem';
 import type { AbiFunction, Hex } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
@@ -38,7 +39,7 @@ export const allowedMethodsBuilder = (
 
   const parsedSelectors = selectors.map(parseSelector);
 
-  const terms = concat(parsedSelectors);
+  const terms = createAllowedMethodsTerms({ selectors: parsedSelectors });
 
   const {
     caveatEnforcers: { AllowedMethodsEnforcer },

@@ -1,4 +1,5 @@
-import { type Address, concat, isAddress } from 'viem';
+import { createRedeemerTerms } from '@metamask/delegation-core';
+import { type Address, isAddress } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
@@ -38,7 +39,7 @@ export const redeemerBuilder = (
     }
   }
 
-  const terms = concat(redeemers);
+  const terms = createRedeemerTerms({ redeemers });
 
   const {
     caveatEnforcers: { RedeemerEnforcer },

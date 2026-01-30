@@ -1,4 +1,4 @@
-import { type Hex, toHex, pad } from 'viem';
+import { createLimitedCallsTerms } from '@metamask/delegation-core';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 
@@ -33,7 +33,7 @@ export const limitedCallsBuilder = (
     throw new Error('Invalid limit: must be a positive integer');
   }
 
-  const terms: Hex = pad(toHex(limit), { size: 32 });
+  const terms = createLimitedCallsTerms({ limit });
 
   const {
     caveatEnforcers: { LimitedCallsEnforcer },

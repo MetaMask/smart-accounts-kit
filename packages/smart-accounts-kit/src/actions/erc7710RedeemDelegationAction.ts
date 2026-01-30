@@ -17,16 +17,19 @@ import type {
   SmartAccount,
 } from 'viem/account-abstraction';
 
+import { encodeDelegations } from '../delegation';
 import {
   createExecution,
   encodeExecutionCalldatas,
   ExecutionMode,
 } from '../executions';
 import { getSmartAccountsEnvironment } from '../smartAccountsEnvironment';
-import type { Call } from '../types';
+import type { Call, PermissionContext } from '../types';
 
 export type DelegatedCall = Call &
-  OneOf<{ permissionsContext: Hex; delegationManager: Hex } | object>;
+  OneOf<
+    { permissionContext: PermissionContext; delegationManager: Hex } | object
+  >;
 
 export type SendTransactionWithDelegationParameters<
   TChain extends Chain | undefined = Chain | undefined,
@@ -35,7 +38,7 @@ export type SendTransactionWithDelegationParameters<
   TRequest extends SendTransactionRequest<TChain, TChainOverride> =
     SendTransactionRequest<TChain, TChainOverride>,
 > = SendTransactionParameters<TChain, TAccount, TChainOverride, TRequest> & {
-  permissionsContext: Hex;
+  permissionContext: PermissionContext;
   delegationManager: Hex;
 };
 
@@ -71,7 +74,7 @@ export async function sendTransactionWithDelegationAction<
     abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [
-      [args.permissionsContext],
+      [encodeDelegations(args.permissionContext)],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([executions]),
     ],
@@ -79,7 +82,7 @@ export async function sendTransactionWithDelegationAction<
 
   const {
     value: _value,
-    permissionsContext: _permissionsContext,
+    permissionContext: _permissionContext,
     delegationManager: _delegationManager,
     ...rest
   } = args;
@@ -127,7 +130,7 @@ export type SendUserOperationWithDelegationParameters<
  *         functionName: 'increment',
  *       }),
  *       value: 0n,
- *       permissionsContext: '0x...',
+ *       permissionContext: '0x...',
  *       delegationManager: '0x...',
  *     },
  *   ],
@@ -205,6 +208,22 @@ export async function sendUserOperationWithDelegationAction<
       ...parameters.calls,
     ];
   }
+
+  parameters.calls = parameters.calls.map((call) => {
+    if (!('permissionContext' in call)) {
+      return call;
+    }
+
+    const { permissionContext } = call;
+    if (!permissionContext) {
+      return call;
+    }
+
+    return {
+      ...call,
+      permissionContext: encodeDelegations(permissionContext),
+    };
+  });
 
   return client.sendUserOperation(
     parameters as unknown as SendUserOperationParameters,

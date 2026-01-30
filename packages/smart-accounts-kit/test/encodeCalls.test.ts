@@ -1,15 +1,25 @@
-import { DeleGatorCore } from '@metamask/delegation-abis';
-import type { Address } from 'viem';
+import { DeleGatorCore, DelegationManager } from '@metamask/delegation-abis';
+import type { Address, Hex } from 'viem';
 import { encodeFunctionData } from 'viem';
 import { describe, it, expect } from 'vitest';
 
+import type { DelegatedCall } from '../src/actions/erc7710RedeemDelegationAction';
+import { encodeDelegations } from '../src/delegation';
 import { encodeCallsForCaller } from '../src/encodeCalls';
 import { ExecutionMode, encodeExecutionCalldatas } from '../src/executions';
 import type { ExecutionStruct } from '../src/executions';
-import { type Call } from '../src/types';
+import { type Call, type Delegation } from '../src/types';
 
 describe('encodeCallsForCaller', () => {
   const caller: Address = '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC';
+  const delegation: Delegation = {
+    delegate: '0x1111111111111111111111111111111111111111',
+    delegator: '0x2222222222222222222222222222222222222222',
+    authority: `0x1111111111111111111111111111111111111111111111111111111111111111`,
+    caveats: [],
+    salt: `0x${'22'.repeat(32)}`,
+    signature: '0x',
+  };
 
   it('should return the call data directly for a single call to the delegator', async () => {
     const calls: Call[] = [
@@ -189,5 +199,184 @@ describe('encodeCallsForCaller', () => {
     });
 
     expect(encodedCalls).to.equal(expectedCalldata);
+  });
+
+  it('should encode delegated calls with an encoded permissionContext', async () => {
+    const permissionContext = `0x3333333333333333333333333333333333333333`;
+    const encodedPermissionContext = encodeDelegations(permissionContext);
+    const delegationManager: Address =
+      '0x3333333333333333333333333333333333333333';
+    const target: Address = '0x4444444444444444444444444444444444444444';
+
+    const calls: DelegatedCall[] = [
+      {
+        to: target,
+        data: '0xabcdef',
+        value: 100n,
+        permissionContext,
+        delegationManager,
+      },
+    ];
+
+    const encodedCalls = await encodeCallsForCaller(caller, calls);
+    const redemptionCalldata = encodeFunctionData({
+      abi: DelegationManager,
+      functionName: 'redeemDelegations',
+      args: [
+        [encodedPermissionContext],
+        [ExecutionMode.SingleDefault],
+        encodeExecutionCalldatas([
+          [
+            {
+              target,
+              value: 100n,
+              callData: '0xabcdef',
+            },
+          ],
+        ]),
+      ],
+    });
+
+    const expectedExecutionCalldatas = encodeExecutionCalldatas([
+      [
+        {
+          target: delegationManager,
+          value: 0n,
+          callData: redemptionCalldata,
+        },
+      ],
+    ]) as [Hex];
+
+    const expectedEncodedCalls = encodeFunctionData({
+      abi: DeleGatorCore,
+      functionName: 'execute',
+      args: [ExecutionMode.SingleDefault, expectedExecutionCalldatas[0]],
+    });
+
+    expect(encodedCalls).to.equal(expectedEncodedCalls);
+  });
+
+  it('should encode delegated calls with delegation arrays', async () => {
+    const delegationManager: Address =
+      '0x3333333333333333333333333333333333333333';
+    const target: Address = '0x4444444444444444444444444444444444444444';
+    const permissionContext = encodeDelegations([delegation]);
+
+    const calls: DelegatedCall[] = [
+      {
+        to: target,
+        data: '0xabcdef',
+        value: 100n,
+        permissionContext: [delegation],
+        delegationManager,
+      },
+    ];
+
+    const encodedCalls = await encodeCallsForCaller(caller, calls);
+    const redemptionCalldata = encodeFunctionData({
+      abi: DelegationManager,
+      functionName: 'redeemDelegations',
+      args: [
+        [permissionContext],
+        [ExecutionMode.SingleDefault],
+        encodeExecutionCalldatas([
+          [
+            {
+              target,
+              value: 100n,
+              callData: '0xabcdef',
+            },
+          ],
+        ]),
+      ],
+    });
+
+    const expectedExecutionCalldatas = encodeExecutionCalldatas([
+      [
+        {
+          target: delegationManager,
+          value: 0n,
+          callData: redemptionCalldata,
+        },
+      ],
+    ]) as [Hex];
+
+    const expectedEncodedCalls = encodeFunctionData({
+      abi: DeleGatorCore,
+      functionName: 'execute',
+      args: [ExecutionMode.SingleDefault, expectedExecutionCalldatas[0]],
+    });
+
+    expect(encodedCalls).to.equal(expectedEncodedCalls);
+  });
+
+  it('should encode mixed calls with a delegation array in batch execution', async () => {
+    const delegationManager: Address =
+      '0x3333333333333333333333333333333333333333';
+    const target: Address = '0x4444444444444444444444444444444444444444';
+    const otherTarget: Address = '0x5555555555555555555555555555555555555555';
+    const permissionContext = encodeDelegations([delegation]);
+
+    const calls: DelegatedCall[] = [
+      {
+        to: target,
+        data: '0xabcdef',
+        value: 100n,
+        permissionContext: [delegation],
+        delegationManager,
+      },
+      {
+        to: otherTarget,
+        data: '0x1234',
+        value: 0n,
+      },
+    ];
+
+    const encodedCalls = await encodeCallsForCaller(caller, calls);
+    const redemptionCalldata = encodeFunctionData({
+      abi: DelegationManager,
+      functionName: 'redeemDelegations',
+      args: [
+        [permissionContext],
+        [ExecutionMode.SingleDefault],
+        encodeExecutionCalldatas([
+          [
+            {
+              target,
+              value: 100n,
+              callData: '0xabcdef',
+            },
+          ],
+        ]),
+      ],
+    });
+
+    const expectedExecutions: ExecutionStruct[] = [
+      {
+        target: delegationManager,
+        value: 0n,
+        callData: redemptionCalldata,
+      },
+      {
+        target: otherTarget,
+        value: 0n,
+        callData: '0x1234',
+      },
+    ];
+
+    const expectedExecutionCalldata = encodeExecutionCalldatas([
+      expectedExecutions,
+    ])[0];
+    if (!expectedExecutionCalldata) {
+      throw new Error('expectedExecutionCalldata is not set');
+    }
+
+    const expectedEncodedCalls = encodeFunctionData({
+      abi: DeleGatorCore,
+      functionName: 'execute',
+      args: [ExecutionMode.BatchDefault, expectedExecutionCalldata],
+    });
+
+    expect(encodedCalls).to.equal(expectedEncodedCalls);
   });
 });

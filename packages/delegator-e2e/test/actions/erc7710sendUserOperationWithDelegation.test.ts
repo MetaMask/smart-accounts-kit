@@ -34,7 +34,7 @@ import { expectUserOperationToSucceed } from '../utils/assertions';
 let aliceSmartAccount: MetaMaskSmartAccount<Implementation.Hybrid>;
 let bobSmartAccount: MetaMaskSmartAccount<Implementation.Hybrid>;
 let aliceCounterContractAddress: Address;
-let permissionsContext: Hex;
+let permissionContext: Hex;
 let signedDelegation: Delegation;
 
 const bundlerClient = sponsoredBundlerClient.extend(erc7710BundlerActions());
@@ -81,7 +81,7 @@ beforeEach(async () => {
     signature: await aliceSmartAccount.signDelegation({ delegation }),
   };
 
-  permissionsContext = encodeDelegations([signedDelegation]);
+  permissionContext = encodeDelegations([signedDelegation]);
 });
 
 /*
@@ -114,7 +114,7 @@ test('maincase: Bob redeems the delegation in order to call increment() on the c
           functionName: 'increment',
         }),
         value: 0n,
-        permissionsContext,
+        permissionContext,
         delegationManager: aliceSmartAccount.environment.DelegationManager,
       },
     ],
@@ -158,7 +158,7 @@ test('Bob redeems the delegation in order to call increment() on the counter con
           functionName: 'increment',
         }),
         value: 0n,
-        permissionsContext,
+        permissionContext,
         delegationManager: aliceSmartAccount.environment.DelegationManager,
       },
       {
@@ -217,7 +217,7 @@ test('Bob redeems the delegation, and deploys Alices smart account via accountMe
           functionName: 'increment',
         }),
         value: 0n,
-        permissionsContext,
+        permissionContext,
         delegationManager: aliceSmartAccount.environment.DelegationManager,
       },
     ],
@@ -268,7 +268,7 @@ test('Bob redeems the delegation, with account metadata, even though Alices acco
           functionName: 'increment',
         }),
         value: 0n,
-        permissionsContext,
+        permissionContext,
         delegationManager: aliceSmartAccount.environment.DelegationManager,
       },
     ],

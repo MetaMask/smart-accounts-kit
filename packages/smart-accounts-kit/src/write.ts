@@ -1,37 +1,10 @@
-import { SimpleFactory, DelegationManager } from '@metamask/delegation-abis';
-import type { Address, Chain, Hex, PublicClient, WalletClient } from 'viem';
+import { DelegationManager } from '@metamask/delegation-abis';
+import type { Address, Chain, PublicClient, WalletClient } from 'viem';
 
-import { encodePermissionContexts } from './delegation';
+import { decodeDelegations, encodePermissionContexts } from './delegation';
 import type { ExecutionStruct, ExecutionMode } from './executions';
 import { encodeExecutionCalldatas } from './executions';
 import type { Delegation, ContractMetaData, Redemption } from './types';
-
-/**
- * Deploys a contract using the SimpleFactory contract.
- *
- * @param walletClient - The wallet client to use for deployment.
- * @param publicClient - The public client to use for simulation.
- * @param simpleFactoryAddress - The address of the SimpleFactory contract.
- * @param creationCode - The creation code for the contract to deploy.
- * @param salt - The salt to use for deterministic deployment.
- * @returns The transaction hash of the deployment.
- */
-export const deployWithSimpleFactory = async (
-  walletClient: WalletClient,
-  publicClient: PublicClient,
-  simpleFactoryAddress: Address,
-  creationCode: Hex,
-  salt: Hex,
-) => {
-  const { request } = await publicClient.simulateContract({
-    account: walletClient.account,
-    address: simpleFactoryAddress,
-    abi: SimpleFactory,
-    functionName: 'deploy',
-    args: [creationCode, salt],
-  });
-  return await walletClient.writeContract(request);
-};
 
 /**
  * Redeems a delegation to execute the provided executions.
@@ -57,7 +30,11 @@ export const redeemDelegations = async (
   const executionModes: ExecutionMode[] = [];
 
   redemptions.forEach((redemption) => {
-    permissionContexts.push(redemption.permissionContext);
+    const decodedPermissionContext = decodeDelegations(
+      redemption.permissionContext,
+    );
+
+    permissionContexts.push(decodedPermissionContext);
     executionsBatch.push(redemption.executions);
     executionModes.push(redemption.mode);
   });

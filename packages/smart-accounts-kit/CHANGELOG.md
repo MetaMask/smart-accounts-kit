@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **Breaking** Replace scope type strings with ScopeType enum ([#133](https://github.com/MetaMask/smart-accounts-kit/pull/133))
+- Allow scope type to be specified either as `ScopeType` enum, or string literal ([#133](https://github.com/MetaMask/smart-accounts-kit/pull/133))
 
 ## [0.4.0-beta.1]
 

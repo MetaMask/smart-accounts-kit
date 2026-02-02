@@ -36,7 +36,7 @@ import {
 } from './ownershipScope';
 import { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
-import { CoreCaveatBuilder } from '../coreCaveatBuilder';
+import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 
 // We want to allow the scope `type` to be passed as either an enum reference,
 // or the enum's string value this generic accepts a union of scope configs, and

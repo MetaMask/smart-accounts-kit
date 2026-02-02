@@ -36,6 +36,7 @@ import {
 } from './ownershipScope';
 import { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
+import { CoreCaveatBuilder } from '../coreCaveatBuilder';
 
 // We want to allow the scope `type` to be passed as either an enum reference,
 // or the enum's string value this generic accepts a union of scope configs, and
@@ -69,7 +70,7 @@ const normalizeScopeConfig = (config: ScopeConfig): ScopeConfigBase => {
 export const createCaveatBuilderFromScope = (
   environment: SmartAccountsEnvironment,
   scopeConfig: ScopeConfig,
-) => {
+): CoreCaveatBuilder => {
   const normalizedScopeConfig = normalizeScopeConfig(scopeConfig);
 
   switch (normalizedScopeConfig.type) {

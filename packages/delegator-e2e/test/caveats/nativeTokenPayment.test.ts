@@ -120,11 +120,11 @@ test('maincase: Bob redeems the delegation with a permissions context allowing p
     }),
   };
 
-  const permissionsContext = encodeDelegations([signedPaymentDelegation]);
+  const permissionContext = encodeDelegations([signedPaymentDelegation]);
 
   await runTest_expectSuccess(
     delegationRequiringNativeTokenPayment,
-    permissionsContext,
+    permissionContext,
     recipient,
     requiredValue,
   );
@@ -167,11 +167,11 @@ test('Bob attempts to redeem the delegation without an argsEqualityCheckEnforcer
     }),
   };
 
-  const permissionsContext = encodeDelegations([signedPaymentDelegation]);
+  const permissionContext = encodeDelegations([signedPaymentDelegation]);
 
   await runTest_expectFailure(
     delegationRequiringNativeTokenPayment,
-    permissionsContext,
+    permissionContext,
     recipient,
     'NativeTokenPaymentEnforcer:missing-argsEqualityCheckEnforcer',
   );
@@ -195,11 +195,11 @@ test('Bob attempts to redeem the delegation without providing a valid permission
     signature: '0x',
   };
 
-  const permissionsContext = '0x' as const;
+  const permissionContext = '0x' as const;
 
   await runTest_expectFailure(
     delegationRequiringNativeTokenPayment,
-    permissionsContext,
+    permissionContext,
     recipient,
     undefined, // The NativeTokenPaymentEnforcer rejects when it fails to decode the permissions context
   );
@@ -256,11 +256,11 @@ test('Bob attempts to redeem with invalid terms length', async () => {
     }),
   };
 
-  const permissionsContext = encodeDelegations([signedPaymentDelegation]);
+  const permissionContext = encodeDelegations([signedPaymentDelegation]);
 
   await runTest_expectFailure(
     delegationRequiringNativeTokenPayment,
-    permissionsContext,
+    permissionContext,
     recipient,
     'NativeTokenPaymentEnforcer:invalid-terms-length',
   );
@@ -286,11 +286,11 @@ test('Bob attempts to redeem with empty allowance delegations', async () => {
   };
 
   // Create empty allowance delegations array
-  const permissionsContext = encodeDelegations([]);
+  const permissionContext = encodeDelegations([]);
 
   await runTest_expectFailure(
     delegationRequiringNativeTokenPayment,
-    permissionsContext,
+    permissionContext,
     recipient,
     'NativeTokenPaymentEnforcer:invalid-allowance-delegations-length',
   );
@@ -298,7 +298,7 @@ test('Bob attempts to redeem with empty allowance delegations', async () => {
 
 const runTest_expectSuccess = async (
   delegation: Delegation,
-  permissionsContext: Hex,
+  permissionContext: Hex,
   recipient: Address,
   requiredValue: bigint,
 ) => {
@@ -306,7 +306,7 @@ const runTest_expectSuccess = async (
     address: recipient,
   });
 
-  const userOpHash = await submitUserOpForTest(delegation, permissionsContext);
+  const userOpHash = await submitUserOpForTest(delegation, permissionContext);
 
   const receipt = await sponsoredBundlerClient.waitForUserOperationReceipt({
     hash: userOpHash,
@@ -326,7 +326,7 @@ const runTest_expectSuccess = async (
 
 const runTest_expectFailure = async (
   delegation: Delegation,
-  permissionsContext: Hex,
+  permissionContext: Hex,
   recipient: Address,
   expectedError: string | undefined,
 ) => {
@@ -335,7 +335,7 @@ const runTest_expectFailure = async (
   });
 
   const rejects = expect(
-    submitUserOpForTest(delegation, permissionsContext),
+    submitUserOpForTest(delegation, permissionContext),
   ).rejects;
 
   if (expectedError) {
@@ -355,7 +355,7 @@ const runTest_expectFailure = async (
 
 const submitUserOpForTest = async (
   delegation: Delegation,
-  permissionsContext: Hex,
+  permissionContext: Hex,
 ) => {
   const signedDelegation = {
     ...delegation,
@@ -364,7 +364,7 @@ const submitUserOpForTest = async (
 
   // we need to assign the permissions context to the caveat in order for it to process the payment
   // here we assume that the first caveat is the nativeTokenPayment caveat
-  signedDelegation.caveats[0].args = permissionsContext;
+  signedDelegation.caveats[0].args = permissionContext;
 
   const execution = createExecution({
     target: zeroAddress,

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Introduce `PermissionContext` to represent a delegation chain (ABI-encoded `Hex` or decoded `Delegation[]`). ([#140](https://github.com/MetaMask/smart-accounts-kit/pull/140))
+  - **Breaking**: Replace usages of raw `Hex` _or_ `Delegation[]` with `PermissionContext`, and rename `permissionsContext` to `permissionContext` (note the singular "permission") where applicable:
+    - `SendTransactionWithDelegation`: `permissionsContext: Hex` → `permissionContext: PermissionContext`
+    - `SendUserOperationWithDelegation`: within `calls: DelegatedCall`, `permissionsContext: Hex` → `permissionContext: PermissionContext`
+    - `redeemDelegations`: parameter `Delegation[]` → `PermissionContext`
+    - `encodeDelegations` and `decodeDelegations` now accept `PermissionContext` (if the input is already the expected type, the input is returned)
+    - `encode`, `execute`, and `simulate` functions for `DelegationManager.redeemDelegations` from `@metamask/smart-accounts-kit/contracts`: parameter `delegations: Delegation[]` → `delegations: PermissionContext`
+
 ### Fixed
 
 - Allow scope type to be specified either as `ScopeType` enum, or string literal ([#133](https://github.com/MetaMask/smart-accounts-kit/pull/133))

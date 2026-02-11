@@ -121,6 +121,27 @@ const monadMainnetChain: Chain = {
   },
 };
 
+const tempoModeratoTestnetChain: Chain = {
+  id: 42431,
+  name: 'Tempo Testnet Moderato',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.moderato.tempo.xyz'],
+    },
+  },
+  // There is no concept of native currency on Tempo,
+  // which is one of the challenges of this implementation.
+  // Gas can be paid using pathUSD (TIP20/ERC20)
+  // from Tempo's faucet: https://docs.tempo.xyz/quickstart/faucet
+  // pathUSD gets selected automatically when it is in the account.
+  // Information as dispensed by chainlist:
+  nativeCurrency: {
+    name: 'USD',
+    symbol: 'USD',
+    decimals: 18,
+  },
+};
+
 const citreaTestnetChain: Chain = {
   id: 5115,
   name: 'Citrea Testnet',
@@ -194,6 +215,7 @@ export const chains = {
   sonicTestnet: sonicTestnetChain,
   monad: monadMainnetChain,
   megaEthMainnet: megaEthMainnetChain,
+  tempoModeratoTestnet: tempoModeratoTestnetChain,
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them

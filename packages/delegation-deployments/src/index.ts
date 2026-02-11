@@ -42,6 +42,7 @@ export const CHAIN_ID = {
   sepolia: 0xaa36a7,
   sonicTestnet: 0x3909,
   unichainSepolia: 0x515,
+  tempoModeratoTestnet: 0xa5bf,
   // decommissioned
   lineaGoerli: 0xe704,
 };
@@ -120,5 +121,6 @@ export const DELEGATOR_CONTRACTS: DeployedContracts = {
     [CHAIN_ID.seiTestnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.sonicTestnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.hoodiTestnet]: DEPLOYMENTS_1_3_0,
+    [CHAIN_ID.tempoModeratoTestnet]: DEPLOYMENTS_1_3_0,
   },
 };

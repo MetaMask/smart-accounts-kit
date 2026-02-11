@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- **Breaking** Remove `encodePermissionContexts` and `decodePermissionContexts` functions ([#145](https://github.com/MetaMask/smart-accounts-kit/pull/145))
+  - These wrapper functions provided minimal value and confusing terminology
+  - Use `delegations.map(encodeDelegations)` and `encoded.map(decodeDelegations)` instead
+
 ### Fixed
 
 - Allow scope type to be specified either as `ScopeType` enum, or string literal ([#133](https://github.com/MetaMask/smart-accounts-kit/pull/133))

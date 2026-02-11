@@ -103,20 +103,6 @@ export const encodeDelegations = (delegations: Delegation[]): Hex => {
 };
 
 /**
- * Abi encodes permission contexts.
- *
- * @param delegations - The delegation chains to encode.
- * @returns The encoded permission contexts.
- */
-export const encodePermissionContexts = (delegations: Delegation[][]) => {
-  const encodedDelegations = delegations.map((delegationChain) =>
-    encodeDelegations(delegationChain),
-  );
-
-  return encodedDelegations;
-};
-
-/**
  * Decodes an array of delegations from its ABI-encoded representation.
  *
  * @param encoded - The hex-encoded delegation array to decode.
@@ -125,18 +111,6 @@ export const encodePermissionContexts = (delegations: Delegation[][]) => {
 export const decodeDelegations = (encoded: Hex): Delegation[] => {
   // decodeDelegationsCore returns DelegationStruct, so we need to map it back to Delegation
   return decodeDelegationsCore(encoded).map(toDelegation);
-};
-
-/**
- * Decodes an array of encoded permission contexts into an array of delegation chains.
- *
- * @param encoded - The hex-encoded permission context to decode.
- * @returns An array of decoded delegations.
- */
-export const decodePermissionContexts = (encoded: Hex[]): Delegation[][] => {
-  const delegationChains = encoded.map(decodeDelegations);
-
-  return delegationChains;
 };
 
 /**

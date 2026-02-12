@@ -4,6 +4,9 @@ import { describe, it, expect } from 'vitest';
 import {
   encodeDelegations,
   decodeDelegations,
+  encodeDelegation,
+  decodeDelegation,
+  DELEGATION_ABI_TYPE,
   ROOT_AUTHORITY,
   hashDelegation,
 } from '../src/delegation';
@@ -445,6 +448,298 @@ describe('delegation', () => {
       expect(result[0]?.authority).toBeInstanceOf(Uint8Array);
       expect(result[0]?.signature).toBeInstanceOf(Uint8Array);
       expect(result[0]?.caveats).toEqual([]);
+    });
+  });
+
+  describe('DELEGATION_ABI_TYPE', () => {
+    it('is the correct ABI type string for a single delegation', () => {
+      expect(DELEGATION_ABI_TYPE).toBe(
+        '(address,address,bytes32,(address,bytes,bytes)[],uint256,bytes)',
+      );
+    });
+  });
+
+  describe('encodeDelegation', () => {
+    it('encodes single delegation with no caveats', () => {
+      const delegation: DelegationStruct = {
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xABCDEF0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [],
+        salt: 0x0n,
+        signature: '0x123456',
+      };
+
+      const result = encodeDelegation(delegation);
+
+      expect(result).toMatchInlineSnapshot(
+        `"0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000001234567890123456789012345678901234567890000000000000000000000000abcdef0123456789012345678901234567890123ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000031234560000000000000000000000000000000000000000000000000000000000"`,
+      );
+    });
+
+    it('encodes single delegation with caveats', () => {
+      const caveat: CaveatStruct = {
+        enforcer: '0x9999999999999999999999999999999999999999',
+        terms: '0xdeadbeef',
+        args: '0xcafebabe',
+      };
+
+      const delegation: DelegationStruct = {
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xABCDEF0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [caveat],
+        salt: 0x42n,
+        signature: '0x789abc',
+      };
+
+      const result = encodeDelegation(delegation);
+
+      expect(result).toMatchInlineSnapshot(
+        `"0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000001234567890123456789012345678901234567890000000000000000000000000abcdef0123456789012345678901234567890123ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000000000000000000000000000000000c0000000000000000000000000000000000000000000000000000000000000004200000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000200000000000000000000000009999999999999999999999999999999999999999000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000004deadbeef000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004cafebabe000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003789abc0000000000000000000000000000000000000000000000000000000000"`,
+      );
+    });
+
+    it('encodes as specified return type', () => {
+      const delegation: DelegationStruct = {
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xABCDEF0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [],
+        salt: 0x42n,
+        signature: '0x789abc',
+      };
+
+      const resultHex: string = encodeDelegation(delegation, { out: 'hex' });
+
+      expect(typeof resultHex).toBe('string');
+
+      const resultBytes: Uint8Array = encodeDelegation(delegation, {
+        out: 'bytes',
+      });
+
+      expect(resultBytes).toBeInstanceOf(Uint8Array);
+
+      let hexFromBytes = '0x';
+
+      for (const byte of resultBytes) {
+        hexFromBytes += byte.toString(16).padStart(2, '0');
+      }
+
+      expect(resultHex).toBe(hexFromBytes);
+    });
+
+    it('produces decodeable output consistent with encodeDelegations', () => {
+      const delegation: DelegationStruct = {
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xABCDEF0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [],
+        salt: 0x0n,
+        signature: '0x123456',
+      };
+
+      const singleDecoded = decodeDelegation(encodeDelegation(delegation));
+      const arrayDecoded = decodeDelegations(encodeDelegations([delegation]));
+
+      expect(singleDecoded).toStrictEqual(arrayDecoded[0]);
+    });
+  });
+
+  describe('decodeDelegation', () => {
+    it('decodes single delegation with no caveats', () => {
+      const delegation: DelegationStruct = {
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xABCDEF0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [],
+        salt: 0x0n,
+        signature: '0x123456',
+      };
+
+      const encoded = encodeDelegation(delegation);
+
+      const result = decodeDelegation(encoded);
+
+      expect(result).toStrictEqual({
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xabcdef0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [],
+        salt: 0n,
+        signature: '0x123456',
+      });
+    });
+
+    it('decodes single delegation with caveats', () => {
+      const caveat: CaveatStruct = {
+        enforcer: '0x9999999999999999999999999999999999999999',
+        terms: '0xdeadbeef',
+        args: '0xcafebabe',
+      };
+
+      const delegation: DelegationStruct = {
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xABCDEF0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [caveat],
+        salt: 0x42n,
+        signature: '0x789abc',
+      };
+
+      const encoded = encodeDelegation(delegation);
+
+      const result = decodeDelegation(encoded);
+
+      expect(result).toStrictEqual({
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xabcdef0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [
+          {
+            enforcer: '0x9999999999999999999999999999999999999999',
+            terms: '0xdeadbeef',
+            args: '0xcafebabe',
+          },
+        ],
+        salt: 66n,
+        signature: '0x789abc',
+      });
+    });
+
+    it('returns hex values by default', () => {
+      const delegation: DelegationStruct = {
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xABCDEF0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [],
+        salt: 0x42n,
+        signature: '0x789abc',
+      };
+
+      const encoded = encodeDelegation(delegation);
+
+      const result = decodeDelegation(encoded);
+
+      expect(typeof result.delegate).toBe('string');
+      expect((result.delegate as string).startsWith('0x')).toBe(true);
+    });
+
+    it('returns bytes when specified', () => {
+      const delegation: DelegationStruct = {
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xABCDEF0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [],
+        salt: 0x42n,
+        signature: '0x789abc',
+      };
+
+      const encoded = encodeDelegation(delegation);
+
+      const result = decodeDelegation(encoded, { out: 'bytes' });
+
+      expect(result.delegate).toBeInstanceOf(Uint8Array);
+      expect(result.delegator).toBeInstanceOf(Uint8Array);
+      expect(result.authority).toBeInstanceOf(Uint8Array);
+      expect(result.signature).toBeInstanceOf(Uint8Array);
+      expect(result.caveats).toEqual([]);
+    });
+
+    it('decodes Uint8Array input', () => {
+      const delegation: DelegationStruct = {
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xABCDEF0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [],
+        salt: 0x0n,
+        signature: '0x123456',
+      };
+
+      const encoded = encodeDelegation(delegation, { out: 'bytes' });
+
+      const result = decodeDelegation(encoded);
+
+      expect(result).toStrictEqual({
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xabcdef0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [],
+        salt: 0n,
+        signature: '0x123456',
+      });
+    });
+  });
+
+  describe('encodeDelegation and decodeDelegation, round trip', () => {
+    it('encode then decode produces same result', () => {
+      const originalDelegation: DelegationStruct = {
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xABCDEF0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [
+          {
+            enforcer: '0x9999999999999999999999999999999999999999',
+            terms: '0xdeadbeef',
+            args: '0xcafebabe',
+          },
+        ],
+        salt: 0x42n,
+        signature: '0x789abc',
+      };
+
+      const encoded = encodeDelegation(originalDelegation);
+      const decoded = decodeDelegation(encoded);
+
+      expect(decoded).toEqual({
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xabcdef0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [
+          {
+            enforcer: '0x9999999999999999999999999999999999999999',
+            terms: '0xdeadbeef',
+            args: '0xcafebabe',
+          },
+        ],
+        salt: 66n,
+        signature: '0x789abc',
+      });
+    });
+
+    it('encode then decode produces same result when encoding as bytes', () => {
+      const originalDelegation: DelegationStruct = {
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xABCDEF0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [
+          {
+            enforcer: '0x9999999999999999999999999999999999999999',
+            terms: '0xdeadbeef',
+            args: '0xcafebabe',
+          },
+        ],
+        salt: 0x42n,
+        signature: '0x789abc',
+      };
+
+      const encoded = encodeDelegation(originalDelegation, { out: 'bytes' });
+      const decoded = decodeDelegation(encoded);
+
+      expect(decoded).toEqual({
+        delegate: '0x1234567890123456789012345678901234567890',
+        delegator: '0xabcdef0123456789012345678901234567890123',
+        authority: ROOT_AUTHORITY,
+        caveats: [
+          {
+            enforcer: '0x9999999999999999999999999999999999999999',
+            terms: '0xdeadbeef',
+            args: '0xcafebabe',
+          },
+        ],
+        salt: 66n,
+        signature: '0x789abc',
+      });
     });
   });
 

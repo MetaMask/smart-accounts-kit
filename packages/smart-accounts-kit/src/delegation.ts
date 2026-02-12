@@ -8,7 +8,6 @@ import {
   DELEGATION_TYPEHASH,
   CAVEAT_TYPEHASH,
   ROOT_AUTHORITY,
-  DELEGATION_ABI_TYPE,
 } from '@metamask/delegation-core';
 import { hashMessage, toBytes, toHex, getAddress } from 'viem';
 import type { TypedData, AbiParameter, Address, Hex } from 'viem';

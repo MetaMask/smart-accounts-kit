@@ -1,7 +1,7 @@
 import { beforeEach, test, expect } from 'vitest';
 import {
   encodeExecutionCalldatas,
-  encodePermissionContexts,
+  encodeDelegations,
   createCaveatBuilder,
   getDelegationHashOffchain,
 } from '@metamask/smart-accounts-kit/utils';
@@ -126,7 +126,7 @@ const runTest_expectSuccess = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -198,7 +198,7 @@ const runTest_expectFailure = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -280,7 +280,7 @@ const runScopeTest_expectSuccess = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -351,7 +351,7 @@ const runScopeTest_expectFailure = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -499,7 +499,7 @@ test('Utility: getSpentAmount should track spending correctly before and after t
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -602,7 +602,7 @@ test('Caveat with exactCalldata: Bob successfully redeems with exact calldata ma
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -688,7 +688,7 @@ test('Caveat with exactCalldata: Bob fails to redeem with wrong calldata', async
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -747,7 +747,7 @@ test('Caveat with allowedCalldata: Bob successfully redeems with allowed calldat
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -833,7 +833,7 @@ test('Caveat with allowedCalldata: Bob fails to redeem with disallowed calldata 
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],

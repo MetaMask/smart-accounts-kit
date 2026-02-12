@@ -11,7 +11,7 @@ import {
 import {
   createCaveatBuilder,
   encodeExecutionCalldatas,
-  encodePermissionContexts,
+  encodeDelegations,
 } from '@metamask/smart-accounts-kit/utils';
 
 import {
@@ -100,7 +100,7 @@ const runTest_expectSuccess = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.BatchDefault],
       encodeExecutionCalldatas([actualExecutions]),
     ],
@@ -155,7 +155,7 @@ const runTest_expectFailure = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.BatchDefault],
       encodeExecutionCalldatas([actualExecutions]),
     ],

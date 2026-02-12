@@ -2,7 +2,6 @@ import { beforeEach, test, expect } from 'vitest';
 import {
   encodeDelegations,
   encodeExecutionCalldatas,
-  encodePermissionContexts,
   getDelegationHashOffchain,
   createCaveatBuilder,
 } from '@metamask/smart-accounts-kit/utils';
@@ -374,7 +373,7 @@ const submitUserOpForTest = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],

@@ -21,7 +21,7 @@ import {
   type UserOperationGasPriceResponse,
 } from '@metamask/smart-accounts-kit';
 import {
-  encodePermissionContexts,
+  encodeDelegations,
   encodeExecutionCalldatas,
 } from '@metamask/smart-accounts-kit/utils';
 import { INFURA_API_KEY, PIMLICO_API_KEY } from '../src/config.js';
@@ -344,7 +344,7 @@ test('complete delegation workflow with dynamic gas pricing', async () => {
     abi: delegateSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [[signedDelegation]].map(encodeDelegations),
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],

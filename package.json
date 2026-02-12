@@ -21,6 +21,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "generate:abi": "cd ./shared/abi/scripts && ./generate-abi.sh",
     "lint": "turbo lint",
+    "lint:fix": "turbo lint:fix",
     "test": "turbo run test --filter='!./packages/delegator-e2e'",
     "test:e2e": "turbo run test:e2e --filter='./packages/delegator-e2e'",
     "test:external": "cd packages/delegator-e2e && yarn test:external",

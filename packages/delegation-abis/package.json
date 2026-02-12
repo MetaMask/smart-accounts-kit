@@ -57,7 +57,8 @@
     "typecheck": "tsc --noEmit",
     "changelog:update": "../../scripts/update-changelog.sh @metamask/delegation-abis",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/delegation-abis",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "lint": ""
   },
   "publishConfig": {
     "access": "public",

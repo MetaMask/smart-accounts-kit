@@ -8,7 +8,7 @@ import {
   type MetaMaskSmartAccount,
 } from '@metamask/smart-accounts-kit';
 import {
-  encodePermissionContexts,
+  encodeDelegations,
   encodeExecutionCalldatas,
   getDelegationHashOffchain,
 } from '@metamask/smart-accounts-kit/utils';
@@ -111,7 +111,7 @@ test('delegation management lifecycle: create, disable, enable, and check status
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],

@@ -1,7 +1,7 @@
 import { beforeEach, test, expect, describe } from 'vitest';
 import {
   encodeExecutionCalldatas,
-  encodePermissionContexts,
+  encodeDelegations,
   createCaveatBuilder,
 } from '@metamask/smart-accounts-kit/utils';
 import {
@@ -154,7 +154,7 @@ describe('ERC20PeriodTransferEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -233,7 +233,7 @@ describe('ERC20PeriodTransferEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -310,7 +310,7 @@ describe('ERC20PeriodTransferEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -399,7 +399,7 @@ describe('ERC20StreamingEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -489,7 +489,7 @@ describe('ERC20StreamingEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -570,7 +570,7 @@ describe('ERC20StreamingEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -675,7 +675,7 @@ describe('MultiTokenPeriodEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -769,7 +769,7 @@ describe('MultiTokenPeriodEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -857,7 +857,7 @@ describe('MultiTokenPeriodEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -939,7 +939,7 @@ describe('NativeTokenPeriodTransferEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -1021,7 +1021,7 @@ describe('NativeTokenPeriodTransferEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -1092,7 +1092,7 @@ describe('NativeTokenPeriodTransferEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -1175,7 +1175,7 @@ describe('NativeTokenStreamingEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -1259,7 +1259,7 @@ describe('NativeTokenStreamingEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -1334,7 +1334,7 @@ describe('NativeTokenStreamingEnforcer', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],

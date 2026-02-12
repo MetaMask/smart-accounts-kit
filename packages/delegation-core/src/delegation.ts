@@ -47,6 +47,12 @@ const DELEGATION_ARRAY_ABI_TYPES =
   '(address,address,bytes32,(address,bytes,bytes)[],uint256,bytes)[]' as const;
 
 /**
+ * The ABI type for a single delegation.
+ */
+export const DELEGATION_ABI_TYPE =
+  '(address,address,bytes32,(address,bytes,bytes)[],uint256,bytes)' as const;
+
+/**
  * Encodes an array of delegations into a permission context.
  *
  * @param delegations - The delegations to encode.
@@ -95,6 +101,50 @@ export function encodeDelegations(
 
     result = encodeSingle(DELEGATION_ARRAY_ABI_TYPES, encodableStructs);
   }
+
+  return prepareResult(result, options);
+}
+
+/**
+ * Encodes a single delegation.
+ *
+ * @param delegation - The delegation to encode.
+ * @param options - Encoding options. Defaults to { out: 'hex' }.
+ * @returns The encoded delegation as a hex string (default) or Uint8Array.
+ */
+export function encodeDelegation(
+  delegation: DelegationStruct,
+  options?: EncodingOptions<'hex'>,
+): Hex;
+export function encodeDelegation(
+  delegation: DelegationStruct,
+  options: EncodingOptions<'bytes'>,
+): Uint8Array;
+/**
+ * Encodes a single delegation.
+ *
+ * @param delegation - The delegation to encode.
+ * @param options - Encoding options. Defaults to { out: 'hex' }.
+ * @returns The encoded delegation as a hex string (default) or Uint8Array.
+ */
+export function encodeDelegation(
+  delegation: DelegationStruct,
+  options: EncodingOptions<ResultValue> = defaultOptions,
+): Hex | Uint8Array {
+  const encodableStruct = [
+    delegation.delegate,
+    delegation.delegator,
+    delegation.authority,
+    delegation.caveats.map((caveat) => [
+      caveat.enforcer,
+      caveat.terms,
+      caveat.args,
+    ]),
+    delegation.salt,
+    delegation.signature,
+  ];
+
+  const result = encodeSingle(DELEGATION_ABI_TYPE, encodableStruct);
 
   return prepareResult(result, options);
 }
@@ -185,6 +235,44 @@ export function decodeDelegations(
   return decodedStructs.map((struct) =>
     delegationFromDecodedDelegation(struct, bytesLikeToHex),
   );
+}
+
+/**
+ * Decodes an encoded single delegation.
+ *
+ * @param encoded - The encoded delegation as a hex string or Uint8Array.
+ * @param options - Encoding options. Defaults to { out: 'hex' }.
+ * @returns The decoded delegation with types resolved based on options.
+ */
+export function decodeDelegation(
+  encoded: BytesLike,
+  options?: EncodingOptions<'hex'>,
+): DelegationStruct<Hex>;
+export function decodeDelegation(
+  encoded: BytesLike,
+  options: EncodingOptions<'bytes'>,
+): DelegationStruct<Uint8Array>;
+/**
+ * Decodes an encoded single delegation.
+ *
+ * @param encoded - The encoded delegation as a hex string or Uint8Array.
+ * @param options - Encoding options. Defaults to { out: 'hex' }.
+ * @returns The decoded delegation with types resolved based on options.
+ */
+export function decodeDelegation(
+  encoded: BytesLike,
+  options: EncodingOptions<ResultValue> = defaultOptions,
+): DelegationStruct<Hex> | DelegationStruct<Uint8Array> {
+  const decodedStruct = decodeSingle(
+    DELEGATION_ABI_TYPE,
+    encoded,
+    // return types cannot be inferred from complex ABI types, so we must assert the type
+  ) as DecodedDelegation;
+
+  if (options.out === 'bytes') {
+    return delegationFromDecodedDelegation(decodedStruct, bytesLikeToBytes);
+  }
+  return delegationFromDecodedDelegation(decodedStruct, bytesLikeToHex);
 }
 
 /**

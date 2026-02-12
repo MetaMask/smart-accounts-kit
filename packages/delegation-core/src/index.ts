@@ -41,9 +41,12 @@ export {
 export {
   encodeDelegations,
   decodeDelegations,
+  encodeDelegation,
+  decodeDelegation,
   hashDelegation,
   ROOT_AUTHORITY,
   ANY_BENEFICIARY,
   DELEGATION_TYPEHASH,
   CAVEAT_TYPEHASH,
+  DELEGATION_ABI_TYPE,
 } from './delegation';

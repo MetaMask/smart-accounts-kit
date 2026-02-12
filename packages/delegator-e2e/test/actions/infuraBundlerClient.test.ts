@@ -12,7 +12,7 @@ import {
   type InfuraBundlerClient,
 } from '@metamask/smart-accounts-kit';
 import {
-  encodePermissionContexts,
+  encodeDelegations,
   encodeExecutionCalldatas,
 } from '@metamask/smart-accounts-kit/utils';
 import { publicClient, gasPrice, deploySmartAccount } from '../utils/helpers';
@@ -114,7 +114,7 @@ test('infuraBundlerClient should work for delegation redemption', async () => {
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],

@@ -11,7 +11,7 @@ import {
 import {
   createCaveatBuilder,
   encodeExecutionCalldatas,
-  encodePermissionContexts,
+  encodeDelegations,
 } from '@metamask/smart-accounts-kit/utils';
 import { IdEnforcer } from '@metamask/smart-accounts-kit/contracts';
 
@@ -183,7 +183,7 @@ describe('IdEnforcer Contract Read Methods', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -274,7 +274,7 @@ describe('IdEnforcer Contract Read Methods', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedAliceDelegation]]),
+        [[signedAliceDelegation]].map(encodeDelegations),
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -387,7 +387,7 @@ describe('IdEnforcer Contract Read Methods', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -480,7 +480,7 @@ describe('IdEnforcer Contract Read Methods', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation1]]),
+        [[signedDelegation1]].map(encodeDelegations),
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution1]]),
       ],
@@ -547,7 +547,7 @@ describe('IdEnforcer Contract Read Methods', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation2]]),
+        [[signedDelegation2]].map(encodeDelegations),
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution2]]),
       ],

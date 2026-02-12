@@ -641,7 +641,9 @@ describe('encodeDelegation', () => {
   it('should produce decodeable output consistent with encodeDelegations', () => {
     const encoded = encodeDelegation(mockDelegation1);
     const singleDecoded = decodeDelegation(encoded);
-    const arrayDecoded = decodeDelegations(encodeDelegations([mockDelegation1]));
+    const arrayDecoded = decodeDelegations(
+      encodeDelegations([mockDelegation1]),
+    );
 
     expect(singleDecoded).to.deep.equal(arrayDecoded[0]);
   });

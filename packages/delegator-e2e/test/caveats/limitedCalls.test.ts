@@ -11,7 +11,7 @@ import {
 import {
   createCaveatBuilder,
   encodeExecutionCalldatas,
-  encodePermissionContexts,
+  encodeDelegations,
   getDelegationHashOffchain,
 } from '@metamask/smart-accounts-kit/utils';
 import { LimitedCallsEnforcer } from '@metamask/smart-accounts-kit/contracts';
@@ -140,7 +140,7 @@ const runTest = async (limit: number, runs: number) => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -273,7 +273,7 @@ describe('LimitedCallsEnforcer Contract Read Methods', () => {
         abi: bobSmartAccount.abi,
         functionName: 'redeemDelegations',
         args: [
-          encodePermissionContexts([[signedDelegation]]),
+          [encodeDelegations([signedDelegation])],
           [ExecutionMode.SingleDefault],
           encodeExecutionCalldatas([[execution]]),
         ],
@@ -362,7 +362,7 @@ describe('LimitedCallsEnforcer Contract Read Methods', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation1]]),
+        [[signedDelegation1]].map(encodeDelegations),
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],

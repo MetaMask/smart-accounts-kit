@@ -3,7 +3,7 @@ import type { Address, Client } from 'viem';
 import { encodeFunctionData } from 'viem';
 import { simulateContract, writeContract } from 'viem/actions';
 
-import { encodePermissionContexts } from '../../../delegation';
+import { encodeDelegations } from '../../../delegation';
 import { encodeExecutionCalldatas } from '../../../executions';
 import type { ExecutionMode, ExecutionStruct } from '../../../executions';
 import type { Delegation } from '../../../types';
@@ -37,7 +37,7 @@ export const simulate = async ({
     abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts(delegations),
+      delegations.map((delegationChain) => encodeDelegations(delegationChain)),
       modes,
       encodeExecutionCalldatas(executions),
     ],
@@ -71,7 +71,7 @@ export const encode = ({
     abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts(delegations),
+      delegations.map((delegationChain) => encodeDelegations(delegationChain)),
       modes,
       encodeExecutionCalldatas(executions),
     ],

@@ -14,7 +14,7 @@ import type {
 import {
   createCaveatBuilder,
   encodeExecutionCalldatas,
-  encodePermissionContexts,
+  encodeDelegations,
 } from '@metamask/smart-accounts-kit/utils';
 
 import {
@@ -125,7 +125,7 @@ describe('Ownership Transfer Caveat', () => {
     });
 
     const executionCallData = encodeExecutionCalldatas([[executions]]);
-    const permissionContexts = encodePermissionContexts([[signedDelegation]]);
+    const permissionContexts = [[signedDelegation]].map(encodeDelegations);
 
     const userOpCalldata = encodeFunctionData({
       abi: bobSmartAccount.abi,
@@ -200,7 +200,7 @@ describe('Ownership Transfer Caveat', () => {
     });
 
     const executionCallData = encodeExecutionCalldatas([[executions]]);
-    const permissionContexts = encodePermissionContexts([[signedDelegation]]);
+    const permissionContexts = [[signedDelegation]].map(encodeDelegations);
 
     const userOpCalldata = encodeFunctionData({
       abi: bobSmartAccount.abi,
@@ -285,7 +285,7 @@ describe('Ownership Transfer Caveat', () => {
     });
 
     const executionCallData = encodeExecutionCalldatas([[executions]]);
-    const permissionContexts = encodePermissionContexts([[signedDelegation]]);
+    const permissionContexts = [[signedDelegation]].map(encodeDelegations);
 
     const userOpCalldata = encodeFunctionData({
       abi: bobSmartAccount.abi,
@@ -354,7 +354,7 @@ describe('Ownership Transfer Caveat', () => {
     });
 
     const executionCallData = encodeExecutionCalldatas([[executions]]);
-    const permissionContexts = encodePermissionContexts([[signedDelegation]]);
+    const permissionContexts = [[signedDelegation]].map(encodeDelegations);
 
     const userOpCalldata = encodeFunctionData({
       abi: bobSmartAccount.abi,

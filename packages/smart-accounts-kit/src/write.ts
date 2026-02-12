@@ -1,7 +1,7 @@
 import { SimpleFactory, DelegationManager } from '@metamask/delegation-abis';
 import type { Address, Chain, Hex, PublicClient, WalletClient } from 'viem';
 
-import { encodePermissionContexts } from './delegation';
+import { encodeDelegations } from './delegation';
 import type { ExecutionStruct, ExecutionMode } from './executions';
 import { encodeExecutionCalldatas } from './executions';
 import type { Delegation, ContractMetaData, Redemption } from './types';
@@ -62,8 +62,9 @@ export const redeemDelegations = async (
     executionModes.push(redemption.mode);
   });
 
-  const encodedPermissionContexts =
-    encodePermissionContexts(permissionContexts);
+  const encodedPermissionContexts = permissionContexts.map((delegationChain) =>
+    encodeDelegations(delegationChain),
+  );
   const executionCalldatas = encodeExecutionCalldatas(executionsBatch);
 
   const { request } = await publicClient.simulateContract({

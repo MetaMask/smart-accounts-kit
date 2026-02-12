@@ -1,7 +1,7 @@
 import { beforeEach, test, expect, describe } from 'vitest';
 import {
   encodeExecutionCalldatas,
-  encodePermissionContexts,
+  encodeDelegations,
   createCaveatBuilder,
   getDelegationHashOffchain,
 } from '@metamask/smart-accounts-kit/utils';
@@ -136,7 +136,7 @@ const runTest_expectSuccess = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.BatchDefault],
       encodeExecutionCalldatas([executions]),
     ],
@@ -209,7 +209,7 @@ const runTest_expectFailure = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.BatchDefault],
       encodeExecutionCalldatas([executions]),
     ],
@@ -755,7 +755,7 @@ describe('SpecificActionERC20TransferBatchEnforcer Contract Read Methods', () =>
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.BatchDefault],
         encodeExecutionCalldatas([executions]),
       ],

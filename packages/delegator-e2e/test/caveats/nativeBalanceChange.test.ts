@@ -12,7 +12,7 @@ import {
 import {
   createCaveatBuilder,
   encodeExecutionCalldatas,
-  encodePermissionContexts,
+  encodeDelegations,
 } from '@metamask/smart-accounts-kit/utils';
 
 import {
@@ -158,7 +158,7 @@ test('Bob attempts to redeem with invalid terms length', async () => {
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -225,7 +225,7 @@ const testRun_expectSuccess = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -315,7 +315,7 @@ const testRun_expectFailure = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],

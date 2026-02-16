@@ -12,6 +12,8 @@ import {
   resolveAuthority,
   encodeDelegations,
   decodeDelegations,
+  encodeDelegation,
+  decodeDelegation,
   encodePermissionContexts,
   decodePermissionContexts,
   signDelegation,
@@ -601,6 +603,111 @@ describe('decodeDelegations', () => {
 
     expect(decoded).to.have.length(1);
     expect(decoded).to.deep.equal([mockDelegation2]);
+  });
+});
+
+describe('encodeDelegation', () => {
+  const mockDelegation1: Delegation = {
+    delegate: mockDelegate,
+    delegator: mockDelegator,
+    authority: ROOT_AUTHORITY,
+    caveats: [mockCaveat],
+    salt: '0x123' as Hex,
+    signature: mockSignature,
+  };
+
+  const mockDelegation2: Delegation = {
+    delegate: '0x2222222222222222222222222222222222222222',
+    delegator: '0x3333333333333333333333333333333333333333',
+    authority: ROOT_AUTHORITY,
+    caveats: [
+      {
+        enforcer: '0x1111111111111111111111111111111111111111',
+        terms: '0x',
+        args: '0x00',
+      },
+    ],
+    salt: '0x456' as Hex,
+    signature: mockSignature,
+  };
+
+  it('should encode a single delegation', () => {
+    const encoded = encodeDelegation(mockDelegation1);
+    const decoded = decodeDelegation(encoded);
+
+    expect(decoded).to.deep.equal(mockDelegation1);
+  });
+
+  it('should produce decodeable output consistent with encodeDelegations', () => {
+    const encoded = encodeDelegation(mockDelegation1);
+    const singleDecoded = decodeDelegation(encoded);
+    const arrayDecoded = decodeDelegations(
+      encodeDelegations([mockDelegation1]),
+    );
+
+    expect(singleDecoded).to.deep.equal(arrayDecoded[0]);
+  });
+
+  it('should handle delegations with caveats', () => {
+    const encoded = encodeDelegation(mockDelegation2);
+    const decoded = decodeDelegation(encoded);
+
+    expect(decoded).to.deep.equal(mockDelegation2);
+  });
+
+  it('should return a hex string', () => {
+    const encoded = encodeDelegation(mockDelegation1);
+
+    expect(encoded).to.be.a('string');
+    expect(encoded).to.match(/^0x[a-fA-F0-9]+$/u);
+  });
+});
+
+describe('decodeDelegation', () => {
+  const mockDelegation1: Delegation = {
+    delegate: mockDelegate,
+    delegator: mockDelegator,
+    authority: ROOT_AUTHORITY,
+    caveats: [mockCaveat],
+    salt: '0x123' as Hex,
+    signature: mockSignature,
+  };
+
+  const mockDelegation2: Delegation = {
+    delegate: '0x2222222222222222222222222222222222222222',
+    delegator: '0x3333333333333333333333333333333333333333',
+    authority: ROOT_AUTHORITY,
+    caveats: [
+      {
+        enforcer: '0x1111111111111111111111111111111111111111',
+        terms: '0x',
+        args: '0x00',
+      },
+    ],
+    salt: '0x456' as Hex,
+    signature: mockSignature,
+  };
+
+  it('should decode a single delegation', () => {
+    const encoded = encodeDelegation(mockDelegation1);
+    const decoded = decodeDelegation(encoded);
+
+    expect(decoded).to.deep.equal(mockDelegation1);
+  });
+
+  it('should handle delegations with caveats', () => {
+    const encoded = encodeDelegation(mockDelegation2);
+    const decoded = decodeDelegation(encoded);
+
+    expect(decoded).to.deep.equal(mockDelegation2);
+  });
+
+  it('should round-trip encode and decode', () => {
+    const encoded = encodeDelegation(mockDelegation1);
+    const decoded = decodeDelegation(encoded);
+    const reEncoded = encodeDelegation(decoded);
+
+    expect(reEncoded).to.equal(encoded);
   });
 });
 

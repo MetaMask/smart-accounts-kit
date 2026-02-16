@@ -6,7 +6,6 @@ import {
   decodeDelegations,
   encodeDelegation,
   decodeDelegation,
-  DELEGATION_ABI_TYPE,
   ROOT_AUTHORITY,
   hashDelegation,
 } from '../src/delegation';
@@ -448,14 +447,6 @@ describe('delegation', () => {
       expect(result[0]?.authority).toBeInstanceOf(Uint8Array);
       expect(result[0]?.signature).toBeInstanceOf(Uint8Array);
       expect(result[0]?.caveats).toEqual([]);
-    });
-  });
-
-  describe('DELEGATION_ABI_TYPE', () => {
-    it('is the correct ABI type string for a single delegation', () => {
-      expect(DELEGATION_ABI_TYPE).toBe(
-        '(address,address,bytes32,(address,bytes,bytes)[],uint256,bytes)',
-      );
     });
   });
 

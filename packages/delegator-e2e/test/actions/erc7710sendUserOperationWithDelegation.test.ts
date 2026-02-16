@@ -119,6 +119,7 @@ test('maincase: Bob redeems the delegation in order to call increment() on the c
       },
     ],
     ...gasPrice,
+    dependencies: [{ factory, factoryData }],
   });
 
   const receipt = await bundlerClient.waitForUserOperationReceipt({
@@ -187,7 +188,7 @@ test('Bob redeems the delegation in order to call increment() on the counter con
   expect(targetAddressBalance).toEqual(10n);
 });
 
-test('Bob redeems the delegation, and deploys Alices smart account via accountMetadata', async () => {
+test('Bob redeems the delegation, and deploys Alices smart account via dependencies', async () => {
   await fundAddress(bobSmartAccount.address);
 
   const counterContract = getContract({
@@ -236,7 +237,7 @@ test('Bob redeems the delegation, and deploys Alices smart account via accountMe
   expect(countAfter).toEqual(1n);
 });
 
-test('Bob redeems the delegation, with account metadata, even though Alices account is already deployed', async () => {
+test('Bob redeems the delegation, with dependencies, even though Alices account is already deployed', async () => {
   await fundAddress(bobSmartAccount.address);
 
   const counterContract = getContract({
@@ -287,7 +288,7 @@ test('Bob redeems the delegation, with account metadata, even though Alices acco
   expect(countAfter).toEqual(1n);
 });
 
-test('Bob calls sendUserOperationWithDelegation with the same accountMetadata multiple times', async () => {
+test('Bob calls sendUserOperationWithDelegation with the same dependencies multiple times', async () => {
   await fundAddress(bobSmartAccount.address);
 
   const { factory, factoryData } = await aliceSmartAccount.getFactoryArgs();
@@ -305,7 +306,7 @@ test('Bob calls sendUserOperationWithDelegation with the same accountMetadata mu
       },
     ],
     ...gasPrice,
-    accountMetadata: [
+    dependencies: [
       { factory, factoryData },
       { factory, factoryData },
     ],
@@ -331,7 +332,7 @@ test('Bob calls sendUserOperationWithDelegation with the same accountMetadata mu
   expect(aliceSmartAccountBalance).toEqual(10n);
 });
 
-// callData is disallowed, because if we attempt to re-encode with additional calls (ie accountMetadata)
+// callData is disallowed, because if we attempt to re-encode with additional calls (ie dependencies)
 // the inner call will be targetting a function on the smart account, which is likely attributed with
 // OnlyEntryPoint. Because it's calling from the smart account, it will fail.
 test.skip('Bob attempts to call sendUserOperationWithDelegation with callData specified', async () => {

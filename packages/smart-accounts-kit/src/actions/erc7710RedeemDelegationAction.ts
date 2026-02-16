@@ -59,6 +59,20 @@ export async function sendTransactionWithDelegationAction<
     );
   }
 
+  // Validate DelegationManager address
+  const chainId = client.chain?.id;
+  if (!chainId) {
+    throw new Error('Chain ID is not set');
+  }
+
+  const { DelegationManager: expectedDelegationManager } =
+    getSmartAccountsEnvironment(chainId);
+  if (!isAddressEqual(args.delegationManager, expectedDelegationManager)) {
+    throw new Error(
+      `Invalid DelegationManager: expected ${expectedDelegationManager} for chain ${chainId}, but got ${args.delegationManager}`,
+    );
+  }
+
   const executions = [
     createExecution({
       target: args.to,

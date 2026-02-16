@@ -49,7 +49,7 @@ const DELEGATION_ARRAY_ABI_TYPES =
 /**
  * The ABI type for a single delegation.
  */
-export const DELEGATION_ABI_TYPE =
+const DELEGATION_ABI_TYPE =
   '(address,address,bytes32,(address,bytes,bytes)[],uint256,bytes)' as const;
 
 /**

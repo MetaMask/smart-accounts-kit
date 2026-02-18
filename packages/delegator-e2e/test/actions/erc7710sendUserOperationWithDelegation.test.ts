@@ -119,7 +119,6 @@ test('maincase: Bob redeems the delegation in order to call increment() on the c
       },
     ],
     ...gasPrice,
-    dependencies: [{ factory, factoryData }],
   });
 
   const receipt = await bundlerClient.waitForUserOperationReceipt({
@@ -223,7 +222,7 @@ test('Bob redeems the delegation, and deploys Alices smart account via dependenc
       },
     ],
     ...gasPrice,
-    accountMetadata: [{ factory, factoryData }],
+    dependencies: [{ factory, factoryData }],
   });
 
   const receipt = await bundlerClient.waitForUserOperationReceipt({

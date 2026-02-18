@@ -132,15 +132,6 @@ export type PackedUserOperationStruct = {
   signature: Hex;
 };
 
-/**
- * Redemption data, including delegations, executions, and mode.
- */
-export type Redemption = {
-  permissionContext: Delegation[];
-  executions: ExecutionStruct[];
-  mode: ExecutionMode;
-};
-
 export type DeployParams<TImplementation extends Implementation> = {
   [Implementation.MultiSig]: MultiSigDeleGatorDeployParams;
   [Implementation.Hybrid]: HybridDeleGatorDeployParams;

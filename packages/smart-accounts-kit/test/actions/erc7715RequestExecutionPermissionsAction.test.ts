@@ -139,7 +139,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           permission: {
             type: 'native-token-stream' as const,
             data: {
-              amountPerSecond: 0x1n,
+              amountPerSecond: undefined as any,
               maxAmount: 2n,
               startTime: 2,
               justification: 'Test justification',

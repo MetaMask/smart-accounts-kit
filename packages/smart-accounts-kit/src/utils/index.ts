@@ -1,9 +1,12 @@
 export {
   encodeDelegations,
   decodeDelegations,
+  encodeDelegation,
+  decodeDelegation,
   toDelegationStruct,
   toDelegation,
   DELEGATION_ARRAY_ABI_TYPE,
+  DELEGATION_ABI_TYPE,
   DELEGATION_ABI_TYPE_COMPONENTS,
   DELEGATION_TYPEHASH,
   SIGNABLE_DELEGATION_TYPED_DATA,

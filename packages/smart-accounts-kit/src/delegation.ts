@@ -1,6 +1,8 @@
 import {
   encodeDelegations as encodeDelegationsCore,
   decodeDelegations as decodeDelegationsCore,
+  encodeDelegation as encodeDelegationCore,
+  decodeDelegation as decodeDelegationCore,
   hashDelegation,
   ANY_BENEFICIARY,
   DELEGATION_TYPEHASH,
@@ -103,6 +105,18 @@ export const encodeDelegations = (delegations: Delegation[]): Hex => {
 };
 
 /**
+ * ABI Encodes a single delegation.
+ *
+ * @param delegation - The delegation to encode.
+ * @returns The encoded delegation.
+ */
+export const encodeDelegation = (delegation: Delegation): Hex => {
+  const delegationStruct = toDelegationStruct(delegation);
+
+  return encodeDelegationCore(delegationStruct);
+};
+
+/**
  * Decodes an array of delegations from its ABI-encoded representation.
  *
  * @param encoded - The hex-encoded delegation array to decode.
@@ -111,6 +125,17 @@ export const encodeDelegations = (delegations: Delegation[]): Hex => {
 export const decodeDelegations = (encoded: Hex): Delegation[] => {
   // decodeDelegationsCore returns DelegationStruct, so we need to map it back to Delegation
   return decodeDelegationsCore(encoded).map(toDelegation);
+};
+
+/**
+ * Decodes a single delegation from its ABI-encoded representation.
+ *
+ * @param encoded - The hex-encoded delegation to decode.
+ * @returns The decoded delegation.
+ */
+export const decodeDelegation = (encoded: Hex): Delegation => {
+  // decodeDelegationCore returns DelegationStruct, so we need to map it back to Delegation
+  return toDelegation(decodeDelegationCore(encoded));
 };
 
 /**
@@ -135,6 +160,14 @@ export const SIGNABLE_DELEGATION_TYPED_DATA: TypedData = {
  */
 export const DELEGATION_ARRAY_ABI_TYPE: AbiParameter = {
   type: 'tuple[]',
+  components: DELEGATION_ABI_TYPE_COMPONENTS,
+} as const;
+
+/**
+ * The ABI type for a single delegation.
+ */
+export const DELEGATION_ABI_TYPE: AbiParameter = {
+  type: 'tuple',
   components: DELEGATION_ABI_TYPE_COMPONENTS,
 } as const;
 

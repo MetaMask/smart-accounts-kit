@@ -43,7 +43,9 @@
   "scripts": {
     "build": "yarn typecheck && tsup",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint . --cache --ext js,ts",
+    "lint": "yarn lint:eslint",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix",
     "changelog:update": "../../scripts/update-changelog.sh @metamask/7715-permission-types",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/7715-permission-types"
   },

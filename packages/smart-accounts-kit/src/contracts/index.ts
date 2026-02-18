@@ -52,5 +52,3 @@ export type {
   P256Owner,
   InitializedClient,
 } from '../DelegationFramework/types';
-
-export type { Redemption } from '../types';

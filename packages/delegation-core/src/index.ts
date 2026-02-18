@@ -41,6 +41,8 @@ export {
 export {
   encodeDelegations,
   decodeDelegations,
+  encodeDelegation,
+  decodeDelegation,
   hashDelegation,
   ROOT_AUTHORITY,
   ANY_BENEFICIARY,

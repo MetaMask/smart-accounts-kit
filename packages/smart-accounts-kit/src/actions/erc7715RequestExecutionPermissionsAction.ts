@@ -27,6 +27,7 @@ export type {
 type PermissionParameter = {
   type: string;
   data: Record<string, unknown>;
+  isAdjustmentAllowed: boolean;
 };
 
 /**
@@ -114,8 +115,6 @@ export type PermissionRequestParameter = {
   chainId: number;
   // The permission to grant to the user.
   permission: SupportedPermissionParams;
-  // Whether the caller allows the permission to be adjusted.
-  isAdjustmentAllowed: boolean;
   // Account to assign the permission to.
   to: Hex;
   // address from which the permission should be granted.
@@ -180,7 +179,8 @@ export async function erc7715RequestExecutionPermissionsAction(
 function formatPermissionsRequest(
   parameters: PermissionRequestParameter,
 ): PermissionRequest<PermissionTypes> {
-  const { chainId, from, expiry, isAdjustmentAllowed } = parameters;
+  const { chainId, from, expiry } = parameters;
+  const { isAdjustmentAllowed } = parameters.permission;
 
   const permissionFormatter = getPermissionFormatter(
     parameters.permission.type,
@@ -206,7 +206,6 @@ function formatPermissionsRequest(
     chainId: toHex(chainId),
     permission: permissionFormatter({
       permission: parameters.permission,
-      isAdjustmentAllowed,
     }),
     to: parameters.to,
     rules,
@@ -215,7 +214,6 @@ function formatPermissionsRequest(
 
 type PermissionFormatter = (params: {
   permission: PermissionParameter;
-  isAdjustmentAllowed: boolean;
 }) => PermissionTypes;
 
 /**
@@ -227,35 +225,30 @@ type PermissionFormatter = (params: {
 function getPermissionFormatter(permissionType: string): PermissionFormatter {
   switch (permissionType) {
     case 'native-token-stream':
-      return ({ permission, isAdjustmentAllowed }) =>
+      return ({ permission }) =>
         formatNativeTokenStreamPermission({
           permission: permission as NativeTokenStreamPermissionParameter,
-          isAdjustmentAllowed,
         });
     case 'erc20-token-stream':
-      return ({ permission, isAdjustmentAllowed }) =>
+      return ({ permission }) =>
         formatErc20TokenStreamPermission({
           permission: permission as Erc20TokenStreamPermissionParameter,
-          isAdjustmentAllowed,
         });
 
     case 'native-token-periodic':
-      return ({ permission, isAdjustmentAllowed }) =>
+      return ({ permission }) =>
         formatNativeTokenPeriodicPermission({
           permission: permission as NativeTokenPeriodicPermissionParameter,
-          isAdjustmentAllowed,
         });
     case 'erc20-token-periodic':
-      return ({ permission, isAdjustmentAllowed }) =>
+      return ({ permission }) =>
         formatErc20TokenPeriodicPermission({
           permission: permission as Erc20TokenPeriodicPermissionParameter,
-          isAdjustmentAllowed,
         });
     case 'erc20-token-revocation':
-      return ({ permission, isAdjustmentAllowed }) =>
+      return ({ permission }) =>
         formatErc20TokenRevocationPermission({
           permission: permission as Erc20TokenRevocationPermissionParameter,
-          isAdjustmentAllowed,
         });
     default:
       throw new Error(`Unsupported permission type: ${permissionType}`);
@@ -272,10 +265,8 @@ function getPermissionFormatter(permissionType: string): PermissionFormatter {
  */
 function formatNativeTokenStreamPermission({
   permission,
-  isAdjustmentAllowed,
 }: {
   permission: NativeTokenStreamPermissionParameter;
-  isAdjustmentAllowed: boolean;
 }): NativeTokenStreamPermission {
   const {
     data: {
@@ -285,6 +276,7 @@ function formatNativeTokenStreamPermission({
       startTime,
       amountPerSecond,
     },
+    isAdjustmentAllowed,
   } = permission;
 
   const optionalFields = {
@@ -322,10 +314,8 @@ function formatNativeTokenStreamPermission({
  */
 function formatErc20TokenStreamPermission({
   permission,
-  isAdjustmentAllowed,
 }: {
   permission: Erc20TokenStreamPermissionParameter;
-  isAdjustmentAllowed: boolean;
 }): Erc20TokenStreamPermission {
   const {
     data: {
@@ -336,6 +326,7 @@ function formatErc20TokenStreamPermission({
       maxAmount,
       justification,
     },
+    isAdjustmentAllowed,
   } = permission;
 
   const optionalFields = {
@@ -372,13 +363,12 @@ function formatErc20TokenStreamPermission({
  */
 function formatNativeTokenPeriodicPermission({
   permission,
-  isAdjustmentAllowed,
 }: {
   permission: NativeTokenPeriodicPermissionParameter;
-  isAdjustmentAllowed: boolean;
 }): NativeTokenPeriodicPermission {
   const {
     data: { periodAmount, periodDuration, startTime, justification },
+    isAdjustmentAllowed,
   } = permission;
 
   const optionalFields = {
@@ -409,10 +399,8 @@ function formatNativeTokenPeriodicPermission({
  */
 function formatErc20TokenPeriodicPermission({
   permission,
-  isAdjustmentAllowed,
 }: {
   permission: Erc20TokenPeriodicPermissionParameter;
-  isAdjustmentAllowed: boolean;
 }): Erc20TokenPeriodicPermission {
   const {
     data: {
@@ -422,6 +410,7 @@ function formatErc20TokenPeriodicPermission({
       startTime,
       justification,
     },
+    isAdjustmentAllowed,
   } = permission;
 
   const optionalFields = {
@@ -453,13 +442,12 @@ function formatErc20TokenPeriodicPermission({
  */
 function formatErc20TokenRevocationPermission({
   permission,
-  isAdjustmentAllowed,
 }: {
   permission: Erc20TokenRevocationPermissionParameter;
-  isAdjustmentAllowed: boolean;
 }): Erc20TokenRevocationPermission {
   const {
     data: { justification },
+    isAdjustmentAllowed,
   } = permission;
 
   const data = {

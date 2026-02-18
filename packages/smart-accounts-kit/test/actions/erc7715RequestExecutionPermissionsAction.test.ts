@@ -53,8 +53,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2,
             justification: 'Test justification',
           },
+          isAdjustmentAllowed: false,
         },
-        isAdjustmentAllowed: false,
         to: alice.address,
       };
       const parameters: RequestExecutionPermissionsParameters = [
@@ -112,8 +112,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2,
             justification: 'Test justification',
           },
+          isAdjustmentAllowed: false,
         },
-        isAdjustmentAllowed: false,
         to: alice.address,
       };
 
@@ -139,13 +139,13 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           permission: {
             type: 'native-token-stream' as const,
             data: {
-              amountPerSecond: undefined as any,
+              amountPerSecond: 0x1n,
               maxAmount: 2n,
               startTime: 2,
               justification: 'Test justification',
             },
+            isAdjustmentAllowed: false,
           },
-          isAdjustmentAllowed: false,
           to: alice.address,
         },
       ];
@@ -168,8 +168,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2,
             justification: undefined as any,
           },
+          isAdjustmentAllowed: false,
         },
-        isAdjustmentAllowed: false,
         to: alice.address,
       };
       const parameters: RequestExecutionPermissionsParameters = [
@@ -196,8 +196,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2,
             justification: 'Test justification',
           },
+          isAdjustmentAllowed: false,
         },
-        isAdjustmentAllowed: false,
         to: alice.address,
       };
 
@@ -252,8 +252,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
               startTime: 1,
               justification: 'Test justification',
             },
+            isAdjustmentAllowed: false,
           },
-          isAdjustmentAllowed: false,
           to: alice.address,
         },
       ];
@@ -276,8 +276,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
               amountPerSecond: 0x1n,
               justification: 'Test justification',
             },
+            isAdjustmentAllowed: false,
           },
-          isAdjustmentAllowed: false,
           to: alice.address,
         },
         {
@@ -289,8 +289,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
               amountPerSecond: 0x1n,
               justification: 'Test justification',
             },
+            isAdjustmentAllowed: false,
           },
-          isAdjustmentAllowed: false,
           to: bob.address,
         },
       ];
@@ -316,8 +316,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2,
             justification: 'Test justification',
           },
+          isAdjustmentAllowed: false,
         },
-        isAdjustmentAllowed: false,
         to: alice.address,
       };
       stubRequest.resolves(mockResponse);
@@ -368,8 +368,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2,
             justification: 'Test justification',
           },
+          isAdjustmentAllowed: false,
         },
-        isAdjustmentAllowed: false,
         to: alice.address,
       };
       stubRequest.resolves(mockResponse);
@@ -420,8 +420,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2,
             justification: 'Test justification',
           },
+          isAdjustmentAllowed: false,
         },
-        isAdjustmentAllowed: false,
         to: alice.address,
       };
       const parameters = [permissionRequest];
@@ -473,8 +473,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2,
             justification: 'Test justification',
           },
+          isAdjustmentAllowed: false,
         },
-        isAdjustmentAllowed: false,
         to: alice.address,
       };
       const parameters = [permissionRequest];
@@ -527,8 +527,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2,
             justification: 'Test justification',
           },
+          isAdjustmentAllowed: true,
         },
-        isAdjustmentAllowed: true,
         to: alice.address,
       } as const;
       stubRequest.resolves(mockResponse);
@@ -578,8 +578,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           data: {
             justification: 'Revoke stale allowance',
           },
+          isAdjustmentAllowed: true,
         },
-        isAdjustmentAllowed: true,
         to: alice.address,
       } as const;
       const parameters: RequestExecutionPermissionsParameters = [
@@ -626,8 +626,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         permission: {
           type: 'erc20-token-revocation' as const,
           data: {},
+          isAdjustmentAllowed: false,
         },
-        isAdjustmentAllowed: false,
         to: alice.address,
       };
       const parameters: RequestExecutionPermissionsParameters = [
@@ -679,8 +679,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2,
             justification: 'Test justification',
           },
+          isAdjustmentAllowed: true,
         },
-        isAdjustmentAllowed: true,
         to: alice.address,
       } as const;
       const parameters = [permissionRequest];
@@ -734,8 +734,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 1000,
             justification: 'Periodic native token test',
           },
+          isAdjustmentAllowed: true,
         },
-        isAdjustmentAllowed: true,
         to: alice.address,
       };
       const parameters = [permissionRequest];
@@ -790,8 +790,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2000,
             justification: 'Periodic erc20 token test',
           },
+          isAdjustmentAllowed: true,
         },
-        isAdjustmentAllowed: true,
         to: alice.address,
       } as const;
       const parameters = [permissionRequest];
@@ -846,8 +846,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           startTime: 2,
           justification: 'Test justification',
         },
+        isAdjustmentAllowed: false,
       },
-      isAdjustmentAllowed: false,
       to: alice.address,
     };
     const parameters: RequestExecutionPermissionsParameters = [
@@ -902,8 +902,8 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
             startTime: 2,
             justification: 'Test justification',
           },
+          isAdjustmentAllowed: false,
         },
-        isAdjustmentAllowed: false,
         to: alice.address,
       };
 

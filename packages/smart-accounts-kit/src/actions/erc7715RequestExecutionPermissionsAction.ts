@@ -180,7 +180,6 @@ function formatPermissionsRequest(
   parameters: PermissionRequestParameter,
 ): PermissionRequest<PermissionTypes> {
   const { chainId, from, expiry } = parameters;
-  const { isAdjustmentAllowed } = parameters.permission;
 
   const permissionFormatter = getPermissionFormatter(
     parameters.permission.type,
@@ -260,7 +259,6 @@ function getPermissionFormatter(permissionType: string): PermissionFormatter {
  *
  * @param permission - The native token stream permission to format.
  * @param permission.permission - The native token stream permission to format.
- * @param permission.isAdjustmentAllowed - Whether the permission is allowed to be adjusted.
  * @returns The formatted permission object.
  */
 function formatNativeTokenStreamPermission({
@@ -309,7 +307,6 @@ function formatNativeTokenStreamPermission({
  *
  * @param params - The parameters for formatting the ERC-20 token stream permission.
  * @param params.permission - The ERC-20 token stream permission parameter to format.
- * @param params.isAdjustmentAllowed - Whether adjustment of the stream is allowed.
  * @returns The formatted Erc20TokenStreamPermission object.
  */
 function formatErc20TokenStreamPermission({
@@ -358,7 +355,6 @@ function formatErc20TokenStreamPermission({
  *
  * @param params - The parameters for formatting the native token periodic permission.
  * @param params.permission - The native token periodic permission parameter to format.
- * @param params.isAdjustmentAllowed - Whether the permission is allowed to be adjusted.
  * @returns The formatted NativeTokenPeriodicPermission object.
  */
 function formatNativeTokenPeriodicPermission({
@@ -394,7 +390,6 @@ function formatNativeTokenPeriodicPermission({
  *
  * @param params - The parameters for formatting the ERC20 token periodic permission.
  * @param params.permission - The ERC20 token periodic permission parameter to format.
- * @param params.isAdjustmentAllowed - Whether the permission is allowed to be adjusted.
  * @returns The formatted Erc20TokenPeriodicPermission object.
  */
 function formatErc20TokenPeriodicPermission({
@@ -437,7 +432,6 @@ function formatErc20TokenPeriodicPermission({
  *
  * @param params - The parameters for formatting the ERC-20 token revocation permission.
  * @param params.permission - The ERC-20 token revocation permission parameter to format.
- * @param params.isAdjustmentAllowed - Whether the permission is allowed to be adjusted.
  * @returns The formatted Erc20TokenRevocationPermission object.
  */
 function formatErc20TokenRevocationPermission({

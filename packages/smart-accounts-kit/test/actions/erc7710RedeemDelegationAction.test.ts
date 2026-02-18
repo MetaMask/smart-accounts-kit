@@ -97,7 +97,7 @@ describe('erc7710RedeemDelegationAction', () => {
       );
     });
 
-    it('should append factory calls when accountMetadata is provided', async () => {
+    it('should append factory calls when dependencies is provided', async () => {
       const bundlerClient = createBundlerClient({
         transport: custom({ request: mockBundlerRequest }),
         chain,
@@ -115,7 +115,7 @@ describe('erc7710RedeemDelegationAction', () => {
         },
       ];
 
-      const accountMetadata = [
+      const dependencies = [
         {
           factory: simpleFactoryAddress,
           factoryData: randomBytes(128),
@@ -129,7 +129,7 @@ describe('erc7710RedeemDelegationAction', () => {
         {
           publicClient,
           calls,
-          accountMetadata,
+          dependencies,
         };
 
       await extendedBundlerClient.sendUserOperationWithDelegation(
@@ -140,13 +140,13 @@ describe('erc7710RedeemDelegationAction', () => {
         ...sendUserOperationWithDelegationArgs,
         calls: [
           {
-            to: accountMetadata[0]?.factory,
-            data: accountMetadata[0]?.factoryData,
+            to: dependencies[0]?.factory,
+            data: dependencies[0]?.factoryData,
             value: 0n,
           },
           {
-            to: accountMetadata[1]?.factory,
-            data: accountMetadata[1]?.factoryData,
+            to: dependencies[1]?.factory,
+            data: dependencies[1]?.factoryData,
             value: 0n,
           },
           ...calls,
@@ -154,7 +154,7 @@ describe('erc7710RedeemDelegationAction', () => {
       });
     });
 
-    it('should throw an error when SimpleFactory is provided as accountMetadata factory', async () => {
+    it('should throw an error when SimpleFactory is provided as dependencies factory', async () => {
       const bundlerClient = createBundlerClient({
         transport: custom({ request: mockBundlerRequest }),
         chain,
@@ -170,7 +170,7 @@ describe('erc7710RedeemDelegationAction', () => {
         },
       ];
 
-      const accountMetadata = [
+      const dependencies = [
         {
           factory: randomAddress(),
           factoryData: randomBytes(128),
@@ -181,10 +181,10 @@ describe('erc7710RedeemDelegationAction', () => {
         {
           publicClient,
           calls,
-          accountMetadata,
+          dependencies,
         };
 
-      const factoryAddress = accountMetadata[0]?.factory;
+      const factoryAddress = dependencies[0]?.factory;
 
       if (!factoryAddress) {
         throw new Error('factoryAddress is not set');
@@ -195,7 +195,7 @@ describe('erc7710RedeemDelegationAction', () => {
           sendUserOperationWithDelegationArgs,
         ),
       ).rejects.toThrow(
-        `Invalid accountMetadata: ${factoryAddress} is not allowed.`,
+        `Invalid dependency: ${factoryAddress} is not allowed.`,
       );
     });
 
@@ -217,7 +217,7 @@ describe('erc7710RedeemDelegationAction', () => {
         },
       ];
 
-      const accountMetadata = [
+      const dependencies = [
         {
           factory: simpleFactoryAddress,
           factoryData: randomBytes(128),
@@ -238,7 +238,7 @@ describe('erc7710RedeemDelegationAction', () => {
             Chain
           >,
           calls,
-          accountMetadata,
+          dependencies,
         };
 
       await extendedBundlerClient.sendUserOperationWithDelegation(
@@ -246,8 +246,8 @@ describe('erc7710RedeemDelegationAction', () => {
       );
 
       expect(mockPublicClient.call.firstCall.args[0]).to.deep.equal({
-        to: accountMetadata[0]?.factory,
-        data: accountMetadata[0]?.factoryData,
+        to: dependencies[0]?.factory,
+        data: dependencies[0]?.factoryData,
       });
 
       expect(sendUserOperationStub.firstCall.args[0]).to.deep.equal({

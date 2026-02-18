@@ -1,10 +1,7 @@
-import { SimpleFactory, DelegationManager } from '@metamask/delegation-abis';
+import { SimpleFactory } from '@metamask/delegation-abis';
 import type { Address, Chain, Hex, PublicClient, WalletClient } from 'viem';
 
-import { encodePermissionContexts } from './delegation';
-import type { ExecutionStruct, ExecutionMode } from './executions';
-import { encodeExecutionCalldatas } from './executions';
-import type { Delegation, ContractMetaData } from './types';
+import type { ContractMetaData } from './types';
 
 /**
  * Deploys a contract using the SimpleFactory contract.

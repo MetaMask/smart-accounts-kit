@@ -23,7 +23,6 @@ import type {
 import type { Prettify } from 'viem/chains';
 
 import type { Implementation } from './constants';
-import type { ExecutionMode, ExecutionStruct } from './executions';
 
 /**
  * Represents a caveat that restricts or conditions a delegation.

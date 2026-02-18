@@ -22,7 +22,7 @@ import {
   type PartialSignature,
 } from '@metamask/smart-accounts-kit';
 import {
-  encodePermissionContexts,
+  encodeDelegations,
   encodeExecutionCalldatas,
 } from '@metamask/smart-accounts-kit/utils';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
@@ -123,7 +123,7 @@ test('maincase: Bob increments the counter with a delegation from Alice', async 
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -232,7 +232,7 @@ test("Bob attempts to increment the counter with a delegation from Alice that do
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -335,7 +335,7 @@ test('Bob increments the counter with a delegation from a multisig account', asy
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],

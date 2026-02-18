@@ -5,8 +5,6 @@ export {
   decodeDelegation,
   toDelegationStruct,
   toDelegation,
-  encodePermissionContexts,
-  decodePermissionContexts,
   DELEGATION_ARRAY_ABI_TYPE,
   DELEGATION_ABI_TYPE,
   DELEGATION_ABI_TYPE_COMPONENTS,

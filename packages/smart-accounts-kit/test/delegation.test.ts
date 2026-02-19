@@ -552,7 +552,10 @@ describe('encodeDelegations', () => {
   });
 
   it('returns the specified delegations when they are already encoded', () => {
-    const alreadyEncoded = encodeDelegations([mockDelegation1, mockDelegation2]);
+    const alreadyEncoded = encodeDelegations([
+      mockDelegation1,
+      mockDelegation2,
+    ]);
     const encoded = encodeDelegations(alreadyEncoded);
 
     expect(encoded).toStrictEqual(alreadyEncoded);
@@ -561,7 +564,9 @@ describe('encodeDelegations', () => {
   it('validates invalid hex', () => {
     const invalidHex = 'not-a-hex-string' as Hex;
 
-    expect(() => encodeDelegations(invalidHex)).toThrow('Invalid delegations - must be an array of delegations or a hex string');
+    expect(() => encodeDelegations(invalidHex)).toThrow(
+      'Invalid delegations - must be an array of delegations or a hex string',
+    );
   });
 });
 
@@ -627,7 +632,9 @@ describe('decodeDelegations', () => {
   it('validates invalid hex', () => {
     const invalidHex = 'not-a-hex-string' as Hex;
 
-    expect(() => decodeDelegations(invalidHex)).toThrow('Invalid delegations - must be an array of delegations or a hex string');
+    expect(() => decodeDelegations(invalidHex)).toThrow(
+      'Invalid delegations - must be an array of delegations or a hex string',
+    );
   });
 });
 

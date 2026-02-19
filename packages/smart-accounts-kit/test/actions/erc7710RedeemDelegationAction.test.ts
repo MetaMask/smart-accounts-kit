@@ -3,6 +3,7 @@ import { stub } from 'sinon';
 import type {
   Account,
   Chain,
+  Hex,
   PublicClient,
   Transport,
   WalletClient,
@@ -38,7 +39,6 @@ import type {
   MetaMaskSmartAccount,
 } from '../../src/types';
 import { randomAddress, randomBytes } from '../utils';
-import { Hex } from 'webauthn-p256';
 
 describe('erc7710RedeemDelegationAction', () => {
   const createDelegation = (): Delegation => ({
@@ -58,7 +58,7 @@ describe('erc7710RedeemDelegationAction', () => {
     const owner = privateKeyToAccount(generatePrivateKey());
     let metaMaskSmartAccount: MetaMaskSmartAccount<Implementation.MultiSig>;
 
-    let expectedDelegationManager: Hex = "0x";
+    let expectedDelegationManager: Hex;
 
     beforeEach(async () => {
       mockBundlerRequest.reset();
@@ -373,7 +373,7 @@ describe('erc7710RedeemDelegationAction', () => {
     let walletClient: WalletClient<Transport, Chain, Account>;
     let account: Account;
 
-    let expectedDelegationManager: Hex = "0x";
+    let expectedDelegationManager: Hex;
 
     beforeEach(async () => {
       expectedDelegationManager = randomAddress();
@@ -437,7 +437,7 @@ describe('erc7710RedeemDelegationAction', () => {
 
       const { delegationManager } = args;
 
-    const expectedArgs = {
+      const expectedArgs = {
         account,
         chain,
         to: delegationManager,

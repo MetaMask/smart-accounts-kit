@@ -112,8 +112,10 @@ export const encodeDelegations = (delegations: PermissionContext): Hex => {
   if (isHex(delegations)) {
     return delegations;
   }
-  
-  throw new Error('Invalid delegations - must be an array of delegations or a hex string');
+
+  throw new Error(
+    'Invalid delegations - must be an array of delegations or a hex string',
+  );
 };
 
 /**
@@ -145,7 +147,9 @@ export const decodeDelegations = (
     return decodeDelegationsCore(delegations).map(toDelegation);
   }
 
-  throw new Error('Invalid delegations - must be an array of delegations or a hex string');
+  throw new Error(
+    'Invalid delegations - must be an array of delegations or a hex string',
+  );
 };
 
 /**
@@ -186,7 +190,7 @@ export const DELEGATION_ARRAY_ABI_TYPE: AbiParameter = {
 
 /**
  * The ABI type for a single delegation.
-*/
+ */
 export const DELEGATION_ABI_TYPE: AbiParameter = {
   type: 'tuple',
   components: DELEGATION_ABI_TYPE_COMPONENTS,

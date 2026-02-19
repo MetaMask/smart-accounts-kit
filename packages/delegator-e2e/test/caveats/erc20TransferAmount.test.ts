@@ -3,7 +3,7 @@ import {
   encodeExecutionCalldatas,
   encodeDelegations,
   createCaveatBuilder,
-  getDelegationHashOffchain,
+  hashDelegation,
 } from '@metamask/smart-accounts-kit/utils';
 import {
   createExecution,
@@ -357,7 +357,7 @@ describe('ERC20TransferAmountEnforcer Utilities E2E Tests', () => {
     };
 
     // Get delegation hash and delegation manager
-    const delegationHash = getDelegationHashOffchain(signedDelegation);
+    const delegationHash = hashDelegation(signedDelegation);
     const delegationManager = aliceSmartAccount.environment.DelegationManager;
 
     // Check spent amount before any transfers (should be 0)
@@ -526,7 +526,7 @@ describe('ERC20TransferAmountEnforcer Utilities E2E Tests', () => {
     };
 
     // Get delegation hash and delegation manager
-    const delegationHash = getDelegationHashOffchain(signedDelegation);
+    const delegationHash = hashDelegation(signedDelegation);
     const delegationManager = aliceSmartAccount.environment.DelegationManager;
 
     // Check spent amount before transfer (should be 0)
@@ -655,7 +655,7 @@ describe('ERC20TransferAmountEnforcer Utilities E2E Tests', () => {
       throw new Error('No caveats found in delegation');
     }
 
-    const delegationHash = getDelegationHashOffchain(signedDelegation);
+    const delegationHash = hashDelegation(signedDelegation);
     const delegationManager = aliceSmartAccount.environment.DelegationManager;
 
     // Test getTermsInfo utility vs manual decoding

@@ -1,6 +1,6 @@
 import type { Address, Hex, Client } from 'viem';
 
-import { getDelegationHashOffchain } from '../delegation';
+import { hashDelegation } from '../delegation';
 import * as ERC20PeriodTransferEnforcer from '../DelegationFramework/ERC20PeriodTransferEnforcer';
 import * as ERC20StreamingEnforcer from '../DelegationFramework/ERC20StreamingEnforcer';
 import * as MultiTokenPeriodEnforcer from '../DelegationFramework/MultiTokenPeriodEnforcer';
@@ -133,7 +133,7 @@ export async function getErc20PeriodTransferEnforcerAvailableAmount(
     environment,
   });
 
-  const delegationHash = getDelegationHashOffchain(params.delegation);
+  const delegationHash = hashDelegation(params.delegation);
   const { terms } = findMatchingCaveat({
     delegation: params.delegation,
     enforcerAddress,
@@ -169,7 +169,7 @@ export async function getErc20StreamingEnforcerAvailableAmount(
     environment,
   });
 
-  const delegationHash = getDelegationHashOffchain(params.delegation);
+  const delegationHash = hashDelegation(params.delegation);
   const { terms } = findMatchingCaveat({
     delegation: params.delegation,
     enforcerAddress,
@@ -205,7 +205,7 @@ export async function getMultiTokenPeriodEnforcerAvailableAmount(
     environment,
   });
 
-  const delegationHash = getDelegationHashOffchain(params.delegation);
+  const delegationHash = hashDelegation(params.delegation);
   const { terms, args } = findMatchingCaveat({
     delegation: params.delegation,
     enforcerAddress,
@@ -242,7 +242,7 @@ export async function getNativeTokenPeriodTransferEnforcerAvailableAmount(
     environment,
   });
 
-  const delegationHash = getDelegationHashOffchain(params.delegation);
+  const delegationHash = hashDelegation(params.delegation);
   const { terms } = findMatchingCaveat({
     delegation: params.delegation,
     enforcerAddress,
@@ -278,7 +278,7 @@ export async function getNativeTokenStreamingEnforcerAvailableAmount(
     environment,
   });
 
-  const delegationHash = getDelegationHashOffchain(params.delegation);
+  const delegationHash = hashDelegation(params.delegation);
   const { terms } = findMatchingCaveat({
     delegation: params.delegation,
     enforcerAddress,

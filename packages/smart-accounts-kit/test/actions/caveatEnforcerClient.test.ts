@@ -21,7 +21,7 @@ import {
   ERC20StreamingEnforcer,
   NativeTokenStreamingEnforcer,
 } from '../../src/contracts';
-import { getDelegationHashOffchain } from '../../src/delegation';
+import { hashDelegation } from '../../src/delegation';
 import type { SmartAccountsEnvironment } from '../../src/types';
 import { randomAddress, randomBytes } from '../utils';
 
@@ -125,7 +125,7 @@ describe('Caveat Enforcer Client', () => {
       terms,
     });
 
-    const delegationHash = getDelegationHashOffchain(params.delegation);
+    const delegationHash = hashDelegation(params.delegation);
 
     const result =
       await caveatClient.getErc20PeriodTransferEnforcerAvailableAmount(params);
@@ -162,7 +162,7 @@ describe('Caveat Enforcer Client', () => {
       args,
     });
 
-    const delegationHash = getDelegationHashOffchain(params.delegation);
+    const delegationHash = hashDelegation(params.delegation);
 
     const result =
       await caveatClient.getMultiTokenPeriodEnforcerAvailableAmount(params);
@@ -195,7 +195,7 @@ describe('Caveat Enforcer Client', () => {
       terms,
     });
 
-    const delegationHash = getDelegationHashOffchain(params.delegation);
+    const delegationHash = hashDelegation(params.delegation);
 
     const result =
       await caveatClient.getErc20StreamingEnforcerAvailableAmount(params);
@@ -229,7 +229,7 @@ describe('Caveat Enforcer Client', () => {
       terms,
     });
 
-    const delegationHash = getDelegationHashOffchain(params.delegation);
+    const delegationHash = hashDelegation(params.delegation);
 
     const result =
       await caveatClient.getNativeTokenPeriodTransferEnforcerAvailableAmount(
@@ -264,7 +264,7 @@ describe('Caveat Enforcer Client', () => {
       terms,
     });
 
-    const delegationHash = getDelegationHashOffchain(params.delegation);
+    const delegationHash = hashDelegation(params.delegation);
 
     const result =
       await caveatClient.getNativeTokenStreamingEnforcerAvailableAmount(params);

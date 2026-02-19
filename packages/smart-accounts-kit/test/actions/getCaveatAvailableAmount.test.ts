@@ -10,7 +10,7 @@ import {
   getNativeTokenPeriodTransferEnforcerAvailableAmount,
   getNativeTokenStreamingEnforcerAvailableAmount,
 } from '../../src/actions/getCaveatAvailableAmount';
-import { getDelegationHashOffchain } from '../../src/delegation';
+import { hashDelegation } from '../../src/delegation';
 import type { SmartAccountsEnvironment, Delegation } from '../../src/types';
 
 // Mock the contract read functions
@@ -112,7 +112,7 @@ describe('getCaveatAvailableAmount', () => {
         { delegation },
       );
 
-      const delegationHash = getDelegationHashOffchain(delegation);
+      const delegationHash = hashDelegation(delegation);
 
       expect(result).toEqual(mockResult);
       expect(read).toHaveBeenCalledWith({
@@ -240,7 +240,7 @@ describe('getCaveatAvailableAmount', () => {
         client,
         contractAddress:
           environment.caveatEnforcers.ERC20PeriodTransferEnforcer,
-        delegationHash: getDelegationHashOffchain(delegationWithErc20Caveat),
+        delegationHash: hashDelegation(delegationWithErc20Caveat),
         delegationManager: environment.DelegationManager,
         terms: delegationWithErc20Caveat.caveats[0]?.terms,
       });
@@ -359,9 +359,7 @@ describe('getCaveatAvailableAmount', () => {
         client,
         contractAddress: environment.caveatEnforcers.ERC20StreamingEnforcer,
         delegationManager: environment.DelegationManager,
-        delegationHash: getDelegationHashOffchain(
-          delegationWithErc20StreamingCaveat,
-        ),
+        delegationHash: hashDelegation(delegationWithErc20StreamingCaveat),
         terms: delegationWithErc20StreamingCaveat.caveats[0]?.terms,
       });
     });
@@ -481,9 +479,7 @@ describe('getCaveatAvailableAmount', () => {
         client,
         contractAddress:
           environment.caveatEnforcers.NativeTokenPeriodTransferEnforcer,
-        delegationHash: getDelegationHashOffchain(
-          delegationWithNativeTokenCaveat,
-        ),
+        delegationHash: hashDelegation(delegationWithNativeTokenCaveat),
         delegationManager: environment.DelegationManager,
         terms: delegationWithNativeTokenCaveat.caveats[0]?.terms,
       });
@@ -613,7 +609,7 @@ describe('getCaveatAvailableAmount', () => {
         contractAddress:
           environment.caveatEnforcers.NativeTokenStreamingEnforcer,
         delegationManager: environment.DelegationManager,
-        delegationHash: getDelegationHashOffchain(
+        delegationHash: hashDelegation(
           delegationWithNativeTokenStreamingCaveat,
         ),
         terms: delegationWithNativeTokenStreamingCaveat.caveats[0]?.terms,

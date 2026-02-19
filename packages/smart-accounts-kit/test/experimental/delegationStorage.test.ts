@@ -9,7 +9,7 @@ import {
   RequestType,
   UNSIGNED_DELEGATION,
 } from './delegationStorageTestData';
-import { getDelegationHashOffchain } from '../../src/delegation';
+import { hashDelegation } from '../../src/delegation';
 import {
   DelegationStorageClient,
   DelegationStorageEnvironment,
@@ -94,9 +94,7 @@ describe('DelegationStorageClient', () => {
         fetcher: mockFetch,
       });
 
-      const leafDelegationHash = getDelegationHashOffchain(
-        MOCK_SIGNED_DELEGATION,
-      );
+      const leafDelegationHash = hashDelegation(MOCK_SIGNED_DELEGATION);
 
       await delegationStore.getDelegationChain(leafDelegationHash);
 
@@ -122,9 +120,7 @@ describe('DelegationStorageClient', () => {
         fetcher: mockFetch,
       });
 
-      const leafDelegationHash = getDelegationHashOffchain(
-        MOCK_SIGNED_DELEGATION,
-      );
+      const leafDelegationHash = hashDelegation(MOCK_SIGNED_DELEGATION);
 
       const delegations =
         await delegationStore.getDelegationChain(leafDelegationHash);
@@ -152,9 +148,7 @@ describe('DelegationStorageClient', () => {
         fetcher: mockFetch,
       });
 
-      const leafDelegationHash = getDelegationHashOffchain(
-        MOCK_SIGNED_DELEGATION,
-      );
+      const leafDelegationHash = hashDelegation(MOCK_SIGNED_DELEGATION);
 
       const delegations = await delegationStore.getDelegationChain(
         MOCK_SIGNED_DELEGATION,
@@ -305,7 +299,7 @@ describe('DelegationStorageClient', () => {
         MOCK_SIGNED_DELEGATION,
       );
       expect(delegationHash).toStrictEqual(
-        getDelegationHashOffchain(MOCK_SIGNED_DELEGATION),
+        hashDelegation(MOCK_SIGNED_DELEGATION),
       );
     });
 

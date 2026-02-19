@@ -12,7 +12,7 @@ import {
   createCaveatBuilder,
   encodeExecutionCalldatas,
   encodeDelegations,
-  getDelegationHashOffchain,
+  hashDelegation,
 } from '@metamask/smart-accounts-kit/utils';
 import { LimitedCallsEnforcer } from '@metamask/smart-accounts-kit/contracts';
 
@@ -209,7 +209,7 @@ describe('LimitedCallsEnforcer Contract Read Methods', () => {
     };
 
     // Calculate delegation hash
-    const delegationHash = getDelegationHashOffchain(delegation);
+    const delegationHash = hashDelegation(delegation);
 
     const callCount = await LimitedCallsEnforcer.read.callCounts({
       client: publicClient,
@@ -244,7 +244,7 @@ describe('LimitedCallsEnforcer Contract Read Methods', () => {
     };
 
     // Calculate delegation hash
-    const delegationHash = getDelegationHashOffchain(delegation);
+    const delegationHash = hashDelegation(delegation);
 
     // Check initial call count
     let callCount = await LimitedCallsEnforcer.read.callCounts({
@@ -342,8 +342,8 @@ describe('LimitedCallsEnforcer Contract Read Methods', () => {
     };
 
     // Calculate delegation hashes
-    const delegationHash1 = getDelegationHashOffchain(delegation1);
-    const delegationHash2 = getDelegationHashOffchain(delegation2);
+    const delegationHash1 = hashDelegation(delegation1);
+    const delegationHash2 = hashDelegation(delegation2);
 
     // Redeem delegation1 once
     const newCount = hexToBigInt(randomBytes(32));
@@ -432,7 +432,7 @@ describe('LimitedCallsEnforcer Contract Read Methods', () => {
     expect(decodedLimit).toBe(BigInt(limit));
 
     // Calculate delegation hash
-    const delegationHash = getDelegationHashOffchain(delegation);
+    const delegationHash = hashDelegation(delegation);
 
     // Test callCounts with real delegation hash
     const initialCallCount = await LimitedCallsEnforcer.read.callCounts({

@@ -1,7 +1,4 @@
-import {
-  ROOT_AUTHORITY,
-  getDelegationHashOffchain,
-} from '../../src/delegation';
+import { ROOT_AUTHORITY, hashDelegation } from '../../src/delegation';
 import type { Delegation } from '../../src/types';
 
 export const TEST_ACCOUNT = '0x0E9bBA6e2D962645c5FB1064d86cc6dE6050739C';
@@ -80,7 +77,7 @@ export const createDelegationStoreAPIFetchResponse = (
       if (!data) {
         throw new Error('Data is required to create a response');
       }
-      json = { delegationHash: getDelegationHashOffchain(data) };
+      json = { delegationHash: hashDelegation(data) };
       break;
     case RequestType.PERSIST_SIGNED_DELEGATION_FAILED_REQUEST:
       json = { delegationHash: '0x-miss-match-delegation-hash' };

@@ -3,7 +3,7 @@ import {
   decodeDelegations as decodeDelegationsCore,
   encodeDelegation as encodeDelegationCore,
   decodeDelegation as decodeDelegationCore,
-  hashDelegation,
+  hashDelegation as hashDelegationCore,
   ANY_BENEFICIARY,
   DELEGATION_TYPEHASH,
   CAVEAT_TYPEHASH,
@@ -189,10 +189,10 @@ export const prepDelegationHashForPasskeySign = (delegationHash: Hex) => {
  * @param input - The delegation to get the hash for.
  * @returns The hash of the delegation parameters.
  */
-export const getDelegationHashOffchain = (input: Delegation): Hex => {
+export const hashDelegation = (input: Delegation): Hex => {
   const delegationStruct = toDelegationStruct(input);
 
-  return hashDelegation(delegationStruct);
+  return hashDelegationCore(delegationStruct);
 };
 
 type BaseCreateDelegationOptions = {
@@ -231,7 +231,7 @@ export const resolveAuthority = (parentDelegation?: Delegation | Hex): Hex => {
     return parentDelegation;
   }
 
-  return getDelegationHashOffchain(parentDelegation);
+  return hashDelegation(parentDelegation);
 };
 
 /**

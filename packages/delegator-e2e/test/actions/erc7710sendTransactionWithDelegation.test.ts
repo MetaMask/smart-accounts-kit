@@ -29,7 +29,7 @@ import {
 } from 'viem';
 import {
   encodeDelegations,
-  getDelegationHashOffchain,
+  hashDelegation,
 } from '@metamask/smart-accounts-kit/utils';
 
 import CounterMetadata from '../utils/counter/metadata.json';
@@ -147,7 +147,7 @@ test('Bob redelegates to Carol, who redeems the delegation to call increment() o
   const redelegation: Delegation = {
     delegate: carol.address,
     delegator: bob.address,
-    authority: getDelegationHashOffchain(signedDelegation),
+    authority: hashDelegation(signedDelegation),
     salt: '0x0',
     caveats: [],
     signature: '0x',

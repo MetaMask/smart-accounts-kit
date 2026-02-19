@@ -1,54 +1,31 @@
-import { DelegationManager } from '@metamask/delegation-abis';
-import type { Address, Chain, PublicClient, WalletClient } from 'viem';
+import { SimpleFactory } from '@metamask/delegation-abis';
+import type { Address, Chain, Hex, PublicClient, WalletClient } from 'viem';
 
-import { decodeDelegations, encodePermissionContexts } from './delegation';
-import type { ExecutionStruct, ExecutionMode } from './executions';
-import { encodeExecutionCalldatas } from './executions';
-import type { Delegation, ContractMetaData, Redemption } from './types';
+import type { ContractMetaData } from './types';
 
 /**
- * Redeems a delegation to execute the provided executions.
+ * Deploys a contract using the SimpleFactory contract.
  *
- * @param walletClient - The wallet client to use for redemption.
+ * @param walletClient - The wallet client to use for deployment.
  * @param publicClient - The public client to use for simulation.
- * @param delegationManagerAddress - The address of the DelegationManager contract.
- * @param redemptions - The redemptions to execute, containing permission contexts, executions, and modes.
- * @returns The transaction hash of the redemption.
+ * @param simpleFactoryAddress - The address of the SimpleFactory contract.
+ * @param creationCode - The creation code for the contract to deploy.
+ * @param salt - The salt to use for deterministic deployment.
+ * @returns The transaction hash of the deployment.
  */
-export const redeemDelegations = async (
+export const deployWithSimpleFactory = async (
   walletClient: WalletClient,
   publicClient: PublicClient,
-  delegationManagerAddress: Address,
-  redemptions: Redemption[],
+  simpleFactoryAddress: Address,
+  creationCode: Hex,
+  salt: Hex,
 ) => {
-  if (redemptions.length === 0) {
-    throw new Error('RedeemDelegations invalid zero redemptions');
-  }
-
-  const permissionContexts: Delegation[][] = [];
-  const executionsBatch: ExecutionStruct[][] = [];
-  const executionModes: ExecutionMode[] = [];
-
-  redemptions.forEach((redemption) => {
-    const decodedPermissionContext = decodeDelegations(
-      redemption.permissionContext,
-    );
-
-    permissionContexts.push(decodedPermissionContext);
-    executionsBatch.push(redemption.executions);
-    executionModes.push(redemption.mode);
-  });
-
-  const encodedPermissionContexts =
-    encodePermissionContexts(permissionContexts);
-  const executionCalldatas = encodeExecutionCalldatas(executionsBatch);
-
   const { request } = await publicClient.simulateContract({
     account: walletClient.account,
-    address: delegationManagerAddress,
-    abi: DelegationManager,
-    functionName: 'redeemDelegations',
-    args: [encodedPermissionContexts, executionModes, executionCalldatas],
+    address: simpleFactoryAddress,
+    abi: SimpleFactory,
+    functionName: 'deploy',
+    args: [creationCode, salt],
   });
   return await walletClient.writeContract(request);
 };

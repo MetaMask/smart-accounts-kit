@@ -1,4 +1,5 @@
-import { concat, isAddress, toHex, type Address, type Hex } from 'viem';
+import { createSpecificActionERC20TransferBatchTerms } from '@metamask/delegation-core';
+import { isAddress, type Address, type Hex } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
@@ -59,13 +60,13 @@ export const specificActionERC20TransferBatchBuilder = (
     throw new Error('Invalid amount: must be a positive number');
   }
 
-  const terms = concat([
+  const terms = createSpecificActionERC20TransferBatchTerms({
     tokenAddress,
     recipient,
-    toHex(amount, { size: 32 }),
+    amount,
     target,
     calldata,
-  ]);
+  });
 
   const {
     caveatEnforcers: { SpecificActionERC20TransferBatchEnforcer },

@@ -1,6 +1,8 @@
 import {
   encodeDelegations as encodeDelegationsCore,
   decodeDelegations as decodeDelegationsCore,
+  encodeDelegation as encodeDelegationCore,
+  decodeDelegation as decodeDelegationCore,
   hashDelegation,
   ANY_BENEFICIARY,
   DELEGATION_TYPEHASH,
@@ -110,17 +112,15 @@ export const encodeDelegations = (delegations: PermissionContext): Hex => {
 };
 
 /**
- * Abi encodes permission contexts.
+ * ABI Encodes a single delegation.
  *
- * @param delegations - The delegation chains to encode.
- * @returns The encoded permission contexts.
+ * @param delegation - The delegation to encode.
+ * @returns The encoded delegation.
  */
-export const encodePermissionContexts = (delegations: Delegation[][]) => {
-  const encodedDelegations = delegations.map((delegationChain) =>
-    encodeDelegations(delegationChain),
-  );
+export const encodeDelegation = (delegation: Delegation): Hex => {
+  const delegationStruct = toDelegationStruct(delegation);
 
-  return encodedDelegations;
+  return encodeDelegationCore(delegationStruct);
 };
 
 /**
@@ -140,15 +140,14 @@ export const decodeDelegations = (
 };
 
 /**
- * Decodes an array of encoded permission contexts into an array of delegation chains.
+ * Decodes a single delegation from its ABI-encoded representation.
  *
- * @param encoded - The hex-encoded permission context to decode.
- * @returns An array of decoded delegations.
+ * @param encoded - The hex-encoded delegation to decode.
+ * @returns The decoded delegation.
  */
-export const decodePermissionContexts = (encoded: Hex[]): Delegation[][] => {
-  const delegationChains = encoded.map(decodeDelegations);
-
-  return delegationChains;
+export const decodeDelegation = (encoded: Hex): Delegation => {
+  // decodeDelegationCore returns DelegationStruct, so we need to map it back to Delegation
+  return toDelegation(decodeDelegationCore(encoded));
 };
 
 /**
@@ -173,6 +172,14 @@ export const SIGNABLE_DELEGATION_TYPED_DATA: TypedData = {
  */
 export const DELEGATION_ARRAY_ABI_TYPE: AbiParameter = {
   type: 'tuple[]',
+  components: DELEGATION_ABI_TYPE_COMPONENTS,
+} as const;
+
+/**
+ * The ABI type for a single delegation.
+*/
+export const DELEGATION_ABI_TYPE: AbiParameter = {
+  type: 'tuple',
   components: DELEGATION_ABI_TYPE_COMPONENTS,
 } as const;
 

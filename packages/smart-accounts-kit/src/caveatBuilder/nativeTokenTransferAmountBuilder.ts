@@ -1,4 +1,4 @@
-import { encodePacked } from 'viem';
+import { createNativeTokenTransferAmountTerms } from '@metamask/delegation-core';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
@@ -29,7 +29,7 @@ export const nativeTokenTransferAmountBuilder = (
     throw new Error('Invalid maxAmount: must be zero or positive');
   }
 
-  const terms = encodePacked(['uint256'], [maxAmount]);
+  const terms = createNativeTokenTransferAmountTerms({ maxAmount });
 
   const {
     caveatEnforcers: { NativeTokenTransferAmountEnforcer },

@@ -7,7 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Uncategorized
+### Added
+
+- Add terms builders for all enforcers implemented in @metamask/smart-accounts-kit ([#139](https://github.com/metamask/smart-accounts-kit/pull/139))
+  - `createAllowedMethodsTerms`
+  - `createAllowedTargetsTerms`
+  - `createArgsEqualityCheckTerms`
+  - `createBlockNumberTerms`
+  - `createDeployedTerms`
+  - `createERC1155BalanceChangeTerms`
+  - `createERC20BalanceChangeTerms`
+  - `createERC20TransferAmountTerms`
+  - `createERC721BalanceChangeTerms`
+  - `createERC721TransferTerms`
+  - `createExactCalldataBatchTerms`
+  - `createExactExecutionTerms`
+  - `createExactExecutionBatchTerms`
+  - `createIdTerms`
+  - `createLimitedCallsTerms`
+  - `createMultiTokenPeriodTerms`
+  - `createNativeBalanceChangeTerms`
+  - `createNativeTokenPaymentTerms`
+  - `createNativeTokenTransferAmountTerms`
+  - `createOwnershipTransferTerms`
+  - `createRedeemerTerms`
+  - `createSpecificActionERC20TransferBatchTerms`
+
+### Fixed
 
 - Resolve yarn peer dependency warnings ([#123](https://github.com/metamask/smart-accounts-kit/pull/123))
 

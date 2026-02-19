@@ -12,8 +12,8 @@ import {
   resolveAuthority,
   encodeDelegations,
   decodeDelegations,
-  encodePermissionContexts,
-  decodePermissionContexts,
+  encodeDelegation,
+  decodeDelegation,
   signDelegation,
 } from '../src/delegation';
 import type {
@@ -604,7 +604,7 @@ describe('decodeDelegations', () => {
   });
 });
 
-describe('encodePermissionContexts', () => {
+describe('encodeDelegation', () => {
   const mockDelegation1: Delegation = {
     delegate: mockDelegate,
     delegator: mockDelegator,
@@ -629,43 +629,39 @@ describe('encodePermissionContexts', () => {
     signature: mockSignature,
   };
 
-  it('should encode a single permission context', () => {
-    const permissionContexts = [[mockDelegation1]];
-    const encoded = encodePermissionContexts(permissionContexts);
-    const decoded = decodePermissionContexts(encoded);
+  it('should encode a single delegation', () => {
+    const encoded = encodeDelegation(mockDelegation1);
+    const decoded = decodeDelegation(encoded);
 
-    expect(decoded).to.have.length(1);
-    expect(decoded).to.deep.equal([[mockDelegation1]]);
+    expect(decoded).to.deep.equal(mockDelegation1);
   });
 
-  it('should encode multiple permission contexts', () => {
-    const permissionContexts = [[mockDelegation1], [mockDelegation2]];
-    const encoded = encodePermissionContexts(permissionContexts);
-    const decoded = decodePermissionContexts(encoded);
+  it('should produce decodeable output consistent with encodeDelegations', () => {
+    const encoded = encodeDelegation(mockDelegation1);
+    const singleDecoded = decodeDelegation(encoded);
+    const arrayDecoded = decodeDelegations(
+      encodeDelegations([mockDelegation1]),
+    );
 
-    expect(decoded).to.have.length(2);
-    expect(decoded).to.deep.equal([[mockDelegation1], [mockDelegation2]]);
+    expect(singleDecoded).to.deep.equal(arrayDecoded[0]);
   });
 
-  it('should handle permission contexts with multiple delegations', () => {
-    const permissionContexts = [[mockDelegation1, mockDelegation2]];
-    const encoded = encodePermissionContexts(permissionContexts);
-    const decoded = decodePermissionContexts(encoded);
+  it('should handle delegations with caveats', () => {
+    const encoded = encodeDelegation(mockDelegation2);
+    const decoded = decodeDelegation(encoded);
 
-    expect(decoded).to.have.length(1);
-    expect(decoded).to.deep.equal([[mockDelegation1, mockDelegation2]]);
+    expect(decoded).to.deep.equal(mockDelegation2);
   });
 
-  it('should handle empty permission contexts', () => {
-    const permissionContexts: Delegation[][] = [];
-    const encoded = encodePermissionContexts(permissionContexts);
-    const decoded = decodePermissionContexts(encoded);
+  it('should return a hex string', () => {
+    const encoded = encodeDelegation(mockDelegation1);
 
-    expect(decoded).to.have.length(0);
+    expect(encoded).to.be.a('string');
+    expect(encoded).to.match(/^0x[a-fA-F0-9]+$/u);
   });
 });
 
-describe('decodePermissionContexts', () => {
+describe('decodeDelegation', () => {
   const mockDelegation1: Delegation = {
     delegate: mockDelegate,
     delegator: mockDelegator,
@@ -690,39 +686,26 @@ describe('decodePermissionContexts', () => {
     signature: mockSignature,
   };
 
-  it('should decode a single permission context', () => {
-    const permissionContexts = [[mockDelegation1]];
-    const encoded = encodePermissionContexts(permissionContexts);
-    const decoded = decodePermissionContexts(encoded);
+  it('should decode a single delegation', () => {
+    const encoded = encodeDelegation(mockDelegation1);
+    const decoded = decodeDelegation(encoded);
 
-    expect(decoded).to.have.length(1);
-    expect(decoded).to.deep.equal([[mockDelegation1]]);
+    expect(decoded).to.deep.equal(mockDelegation1);
   });
 
-  it('should decode multiple permission contexts', () => {
-    const permissionContexts = [[mockDelegation1], [mockDelegation2]];
-    const encoded = encodePermissionContexts(permissionContexts);
-    const decoded = decodePermissionContexts(encoded);
+  it('should handle delegations with caveats', () => {
+    const encoded = encodeDelegation(mockDelegation2);
+    const decoded = decodeDelegation(encoded);
 
-    expect(decoded).to.have.length(2);
-    expect(decoded).to.deep.equal([[mockDelegation1], [mockDelegation2]]);
+    expect(decoded).to.deep.equal(mockDelegation2);
   });
 
-  it('should handle permission contexts with multiple delegations', () => {
-    const permissionContexts = [[mockDelegation1, mockDelegation2]];
-    const encoded = encodePermissionContexts(permissionContexts);
-    const decoded = decodePermissionContexts(encoded);
+  it('should round-trip encode and decode', () => {
+    const encoded = encodeDelegation(mockDelegation1);
+    const decoded = decodeDelegation(encoded);
+    const reEncoded = encodeDelegation(decoded);
 
-    expect(decoded).to.have.length(1);
-    expect(decoded).to.deep.equal([[mockDelegation1, mockDelegation2]]);
-  });
-
-  it('should handle empty permission contexts', () => {
-    const permissionContexts: Delegation[][] = [];
-    const encoded = encodePermissionContexts(permissionContexts);
-    const decoded = decodePermissionContexts(encoded);
-
-    expect(decoded).to.have.length(0);
+    expect(reEncoded).to.equal(encoded);
   });
 });
 

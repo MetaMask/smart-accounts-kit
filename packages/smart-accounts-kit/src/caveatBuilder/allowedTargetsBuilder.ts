@@ -1,4 +1,5 @@
-import { concat, isAddress, type Address } from 'viem';
+import { createAllowedTargetsTerms } from '@metamask/delegation-core';
+import { isAddress, type Address } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
@@ -41,7 +42,7 @@ export const allowedTargetsBuilder = (
     throw new Error('Invalid targets: must be valid addresses');
   }
 
-  const terms = concat(targets);
+  const terms = createAllowedTargetsTerms({ targets });
 
   const {
     caveatEnforcers: { AllowedTargetsEnforcer },

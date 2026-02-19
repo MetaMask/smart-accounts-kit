@@ -23,7 +23,6 @@ import type {
 import type { Prettify } from 'viem/chains';
 
 import type { Implementation } from './constants';
-import type { ExecutionMode, ExecutionStruct } from './executions';
 
 /**
  * Represents a caveat that restricts or conditions a delegation.
@@ -140,15 +139,6 @@ export type PackedUserOperationStruct = {
   gasFees: Hex; // concatenation of maxPriorityFee (16 bytes) and maxFeePerGas (16 bytes)
   paymasterAndData: Hex; // concatenation of paymaster fields (or empty)
   signature: Hex;
-};
-
-/**
- * Redemption data, including delegations, executions, and mode.
- */
-export type Redemption = {
-  permissionContext: PermissionContext;
-  executions: ExecutionStruct[];
-  mode: ExecutionMode;
 };
 
 export type DeployParams<TImplementation extends Implementation> = {

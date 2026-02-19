@@ -1,5 +1,6 @@
 import { type BytesLike, isHexString, bytesToHex } from '@metamask/utils';
 
+import { toHexString } from '../internalUtils';
 import {
   defaultOptions,
   prepareResult,
@@ -7,7 +8,6 @@ import {
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
-import { toHexString } from '../utils';
 
 /**
  * Terms for configuring a periodic transfer allowance of ERC20 tokens.

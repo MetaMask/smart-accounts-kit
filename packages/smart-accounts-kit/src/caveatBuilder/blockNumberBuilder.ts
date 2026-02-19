@@ -1,4 +1,4 @@
-import { concat, toHex } from 'viem';
+import { createBlockNumberTerms } from '@metamask/delegation-core';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 
@@ -43,14 +43,7 @@ export const blockNumberBuilder = (
     );
   }
 
-  const terms = concat([
-    toHex(afterThreshold, {
-      size: 16,
-    }),
-    toHex(beforeThreshold, {
-      size: 16,
-    }),
-  ]);
+  const terms = createBlockNumberTerms({ afterThreshold, beforeThreshold });
 
   const {
     caveatEnforcers: { BlockNumberEnforcer },

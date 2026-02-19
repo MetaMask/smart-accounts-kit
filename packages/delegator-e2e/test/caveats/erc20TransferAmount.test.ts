@@ -1,7 +1,7 @@
 import { beforeEach, test, expect, describe } from 'vitest';
 import {
   encodeExecutionCalldatas,
-  encodePermissionContexts,
+  encodeDelegations,
   createCaveatBuilder,
   getDelegationHashOffchain,
 } from '@metamask/smart-accounts-kit/utils';
@@ -139,7 +139,7 @@ const runTest_expectSuccess = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -234,7 +234,7 @@ const runTest_expectFailure = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -395,7 +395,7 @@ describe('ERC20TransferAmountEnforcer Utilities E2E Tests', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution1]]),
       ],
@@ -452,7 +452,7 @@ describe('ERC20TransferAmountEnforcer Utilities E2E Tests', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution2]]),
       ],
@@ -580,7 +580,7 @@ describe('ERC20TransferAmountEnforcer Utilities E2E Tests', () => {
       abi: bobSmartAccount.abi,
       functionName: 'redeemDelegations',
       args: [
-        encodePermissionContexts([[signedDelegation]]),
+        [encodeDelegations([signedDelegation])],
         [ExecutionMode.SingleDefault],
         encodeExecutionCalldatas([[execution]]),
       ],
@@ -791,7 +791,7 @@ const runScopeTest_expectSuccess = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],
@@ -882,7 +882,7 @@ const runScopeTest_expectFailure = async (
     abi: bobSmartAccount.abi,
     functionName: 'redeemDelegations',
     args: [
-      encodePermissionContexts([[signedDelegation]]),
+      [encodeDelegations([signedDelegation])],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[execution]]),
     ],

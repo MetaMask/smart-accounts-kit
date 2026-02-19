@@ -1,5 +1,6 @@
 import { bytesToHex, remove0x, type BytesLike } from '@metamask/utils';
 
+import { toHexString } from '../internalUtils';
 import {
   defaultOptions,
   prepareResult,
@@ -7,7 +8,6 @@ import {
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
-import { toHexString } from '../utils';
 
 /**
  * Terms for configuring an AllowedCalldata caveat.

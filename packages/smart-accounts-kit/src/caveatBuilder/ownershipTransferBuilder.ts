@@ -1,3 +1,4 @@
+import { createOwnershipTransferTerms } from '@metamask/delegation-core';
 import { type Address, isAddress } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
@@ -29,7 +30,7 @@ export const ownershipTransferBuilder = (
     throw new Error('Invalid contractAddress: must be a valid address');
   }
 
-  const terms = contractAddress;
+  const terms = createOwnershipTransferTerms({ contractAddress });
 
   const {
     caveatEnforcers: { OwnershipTransferEnforcer },

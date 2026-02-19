@@ -37,7 +37,7 @@ export const simulate = async ({
     abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [
-      delegations.map((delegation) => encodeDelegations(delegation)),
+      delegations.map((delegationChain) => encodeDelegations(delegationChain)),
       modes,
       encodeExecutionCalldatas(executions),
     ],
@@ -71,7 +71,7 @@ export const encode = ({
     abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [
-      delegations.map((delegation) => encodeDelegations(delegation)),
+      delegations.map((delegationChain) => encodeDelegations(delegationChain)),
       modes,
       encodeExecutionCalldatas(executions),
     ],

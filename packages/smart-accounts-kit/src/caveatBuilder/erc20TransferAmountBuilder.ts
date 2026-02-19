@@ -1,5 +1,6 @@
+import { createERC20TransferAmountTerms } from '@metamask/delegation-core';
 import type { Address } from 'viem';
-import { concat, isAddress, toHex } from 'viem';
+import { isAddress } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
@@ -38,7 +39,7 @@ export const erc20TransferAmountBuilder = (
     throw new Error('Invalid maxAmount: must be a positive number');
   }
 
-  const terms = concat([tokenAddress, toHex(maxAmount, { size: 32 })]);
+  const terms = createERC20TransferAmountTerms({ tokenAddress, maxAmount });
 
   const {
     caveatEnforcers: { ERC20TransferAmountEnforcer },

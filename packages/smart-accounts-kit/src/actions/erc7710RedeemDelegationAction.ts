@@ -62,6 +62,20 @@ export async function sendTransactionWithDelegationAction<
     );
   }
 
+  // Validate DelegationManager address
+  const chainId = client.chain?.id;
+  if (!chainId) {
+    throw new Error('Chain ID is not set');
+  }
+
+  const { DelegationManager: expectedDelegationManager } =
+    getSmartAccountsEnvironment(chainId);
+  if (!isAddressEqual(args.delegationManager, expectedDelegationManager)) {
+    throw new Error(
+      `Invalid DelegationManager: expected ${expectedDelegationManager} for chain ${chainId}, but got ${args.delegationManager}`,
+    );
+  }
+
   const executions = [
     createExecution({
       target: args.to,
@@ -100,7 +114,7 @@ export type SendUserOperationWithDelegationParameters<
   TAccount extends SmartAccount | undefined = SmartAccount | undefined,
   TAccountOverride extends SmartAccount | undefined = SmartAccount | undefined,
 > = SendUserOperationParameters<TAccount, TAccountOverride, DelegatedCall[]> & {
-  accountMetadata?: { factory: Hex; factoryData: Hex }[];
+  dependencies?: { factory: Hex; factoryData: Hex }[];
   calls: DelegatedCall[];
   publicClient: PublicClient<Transport, Chain>;
 };
@@ -134,7 +148,7 @@ export type SendUserOperationWithDelegationParameters<
  *       delegationManager: '0x...',
  *     },
  *   ],
- *   accountMetadata: [{ factory: '0x...', factoryData: '0x...' }], // Optional: for deploying accounts
+ *   dependencies: [{ factory: '0x...', factoryData: '0x...' }], // Optional: for deploying accounts
  * })
  */
 export async function sendUserOperationWithDelegationAction<
@@ -147,7 +161,7 @@ export async function sendUserOperationWithDelegationAction<
     TAccountOverride
   >,
 ) {
-  if (parameters.accountMetadata) {
+  if (parameters.dependencies) {
     const { publicClient } = parameters;
 
     const includedAccountKeys: Record<Hex, boolean> = {};
@@ -160,29 +174,24 @@ export async function sendUserOperationWithDelegationAction<
 
     const { SimpleFactory } = getSmartAccountsEnvironment(chainId);
 
-    const uniqueAccountMetadatas = parameters.accountMetadata.filter(
-      (accountMetadata) => {
-        if (!isAddressEqual(accountMetadata.factory, SimpleFactory)) {
-          throw new Error(
-            `Invalid accountMetadata: ${accountMetadata.factory} is not allowed.`,
-          );
-        }
+    const uniqueDependencies = parameters.dependencies.filter((dependency) => {
+      if (!isAddressEqual(dependency.factory, SimpleFactory)) {
+        throw new Error(
+          `Invalid dependency: ${dependency.factory} is not allowed.`,
+        );
+      }
 
-        // ensure that factory calls are not duplicated
-        const accountKey = concat([
-          accountMetadata.factory,
-          accountMetadata.factoryData,
-        ]);
-        const isDuplicate = includedAccountKeys[accountKey];
+      // ensure that factory calls are not duplicated
+      const accountKey = concat([dependency.factory, dependency.factoryData]);
+      const isDuplicate = includedAccountKeys[accountKey];
 
-        includedAccountKeys[accountKey] = true;
-        return !isDuplicate;
-      },
-    );
+      includedAccountKeys[accountKey] = true;
+      return !isDuplicate;
+    });
 
     const factoryCalls = (
       await Promise.all(
-        uniqueAccountMetadatas.map(async ({ factory, factoryData }) => {
+        uniqueDependencies.map(async ({ factory, factoryData }) => {
           const isDeployed = await publicClient
             .call({
               to: factory,

@@ -108,7 +108,7 @@ describe('erc7710RedeemDelegationAction', () => {
       );
     });
 
-    it('should append factory calls when accountMetadata is provided', async () => {
+    it('should append factory calls when dependencies is provided', async () => {
       const bundlerClient = createBundlerClient({
         transport: custom({ request: mockBundlerRequest }),
         chain,
@@ -126,7 +126,7 @@ describe('erc7710RedeemDelegationAction', () => {
         },
       ];
 
-      const accountMetadata = [
+      const dependencies = [
         {
           factory: simpleFactoryAddress,
           factoryData: randomBytes(128),
@@ -140,7 +140,7 @@ describe('erc7710RedeemDelegationAction', () => {
         {
           publicClient,
           calls,
-          accountMetadata,
+          dependencies,
         };
 
       await extendedBundlerClient.sendUserOperationWithDelegation(
@@ -151,13 +151,13 @@ describe('erc7710RedeemDelegationAction', () => {
         ...sendUserOperationWithDelegationArgs,
         calls: [
           {
-            to: accountMetadata[0]?.factory,
-            data: accountMetadata[0]?.factoryData,
+            to: dependencies[0]?.factory,
+            data: dependencies[0]?.factoryData,
             value: 0n,
           },
           {
-            to: accountMetadata[1]?.factory,
-            data: accountMetadata[1]?.factoryData,
+            to: dependencies[1]?.factory,
+            data: dependencies[1]?.factoryData,
             value: 0n,
           },
           ...calls,
@@ -217,7 +217,7 @@ describe('erc7710RedeemDelegationAction', () => {
 
       const sendUserOperationStub = stub(bundlerClient, 'sendUserOperation');
       const delegationChain = [createDelegation()];
-      const encodedPermissionsContext = encodeDelegations(delegationChain);
+      const encodedPermissionContext = encodeDelegations(delegationChain);
       const alreadyEncoded = `0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`;
 
       const sendUserOperationWithDelegationArgs: SendUserOperationWithDelegationParameters =
@@ -252,7 +252,7 @@ describe('erc7710RedeemDelegationAction', () => {
         calls: [
           {
             ...sendUserOperationWithDelegationArgs.calls[0],
-            permissionContext: encodedPermissionsContext,
+            permissionContext: encodedPermissionContext,
           },
           sendUserOperationWithDelegationArgs.calls[1],
           sendUserOperationWithDelegationArgs.calls[2],
@@ -260,7 +260,7 @@ describe('erc7710RedeemDelegationAction', () => {
       });
     });
 
-    it('should throw an error when SimpleFactory is provided as accountMetadata factory', async () => {
+    it('should throw an error when SimpleFactory is provided as dependencies factory', async () => {
       const bundlerClient = createBundlerClient({
         transport: custom({ request: mockBundlerRequest }),
         chain,
@@ -276,7 +276,7 @@ describe('erc7710RedeemDelegationAction', () => {
         },
       ];
 
-      const accountMetadata = [
+      const dependencies = [
         {
           factory: randomAddress(),
           factoryData: randomBytes(128),
@@ -287,10 +287,10 @@ describe('erc7710RedeemDelegationAction', () => {
         {
           publicClient,
           calls,
-          accountMetadata,
+          dependencies,
         };
 
-      const factoryAddress = accountMetadata[0]?.factory;
+      const factoryAddress = dependencies[0]?.factory;
 
       if (!factoryAddress) {
         throw new Error('factoryAddress is not set');
@@ -301,7 +301,7 @@ describe('erc7710RedeemDelegationAction', () => {
           sendUserOperationWithDelegationArgs,
         ),
       ).rejects.toThrow(
-        `Invalid accountMetadata: ${factoryAddress} is not allowed.`,
+        `Invalid dependency: ${factoryAddress} is not allowed.`,
       );
     });
 
@@ -323,7 +323,7 @@ describe('erc7710RedeemDelegationAction', () => {
         },
       ];
 
-      const accountMetadata = [
+      const dependencies = [
         {
           factory: simpleFactoryAddress,
           factoryData: randomBytes(128),
@@ -344,7 +344,7 @@ describe('erc7710RedeemDelegationAction', () => {
             Chain
           >,
           calls,
-          accountMetadata,
+          dependencies,
         };
 
       await extendedBundlerClient.sendUserOperationWithDelegation(
@@ -352,8 +352,8 @@ describe('erc7710RedeemDelegationAction', () => {
       );
 
       expect(mockPublicClient.call.firstCall.args[0]).to.deep.equal({
-        to: accountMetadata[0]?.factory,
-        data: accountMetadata[0]?.factoryData,
+        to: dependencies[0]?.factory,
+        data: dependencies[0]?.factoryData,
       });
 
       expect(sendUserOperationStub.firstCall.args[0]).to.deep.equal({
@@ -383,6 +383,11 @@ describe('erc7710RedeemDelegationAction', () => {
 
       const sendTransaction = stub(walletClient, 'sendTransaction');
 
+      const expectedDelegationManager = randomAddress();
+      overrideDeployedEnvironment(chain.id, '1.3.0', {
+        DelegationManager: expectedDelegationManager,
+      } as any as SmartAccountsEnvironment);
+
       const args: SendTransactionWithDelegationParameters = {
         account,
         chain,
@@ -390,7 +395,7 @@ describe('erc7710RedeemDelegationAction', () => {
         value: 0n,
         data: randomBytes(128),
         permissionContext: randomBytes(128),
-        delegationManager: randomAddress(),
+        delegationManager: expectedDelegationManager,
       };
 
       await extendedWalletClient.sendTransactionWithDelegation(args);
@@ -459,6 +464,11 @@ describe('erc7710RedeemDelegationAction', () => {
 
       const sendTransaction = stub(walletClient, 'sendTransaction');
 
+      const expectedDelegationManager = randomAddress();
+      overrideDeployedEnvironment(chain.id, '1.3.0', {
+        DelegationManager: expectedDelegationManager,
+      } as any as SmartAccountsEnvironment);
+
       const args: SendTransactionWithDelegationParameters = {
         account,
         chain,
@@ -466,7 +476,7 @@ describe('erc7710RedeemDelegationAction', () => {
         value: 100n,
         data: randomBytes(128),
         permissionContext: randomBytes(128),
-        delegationManager: randomAddress(),
+        delegationManager: expectedDelegationManager,
       };
 
       await extendedWalletClient.sendTransactionWithDelegation(args);
@@ -528,6 +538,54 @@ describe('erc7710RedeemDelegationAction', () => {
         to: args.delegationManager,
         data: redeemDelegationCallData,
       });
+    });
+
+    it('should throw an error when DelegationManager does not match expected address for the chain', async () => {
+      const extendedWalletClient = walletClient.extend(erc7710WalletActions());
+
+      const expectedDelegationManager = randomAddress();
+      const invalidDelegationManager = randomAddress();
+
+      overrideDeployedEnvironment(chain.id, '1.3.0', {
+        DelegationManager: expectedDelegationManager,
+      } as any as SmartAccountsEnvironment);
+
+      await expect(
+        extendedWalletClient.sendTransactionWithDelegation({
+          account,
+          chain,
+          to: randomAddress(),
+          value: 0n,
+          data: randomBytes(128),
+          permissionContext: randomBytes(128),
+          delegationManager: invalidDelegationManager,
+        }),
+      ).rejects.toThrow(
+        `Invalid DelegationManager: expected ${expectedDelegationManager} for chain ${chain.id}, but got ${invalidDelegationManager}`,
+      );
+    });
+
+    it('should throw an error when chain ID is not set', async () => {
+      const walletClientWithoutChain = createWalletClient({
+        account,
+        transport: custom({ request: async () => '0x' }),
+      });
+
+      const extendedWalletClient = walletClientWithoutChain.extend(
+        erc7710WalletActions(),
+      );
+
+      await expect(
+        extendedWalletClient.sendTransactionWithDelegation({
+          account,
+          chain: undefined,
+          to: randomAddress(),
+          value: 0n,
+          data: randomBytes(128),
+          permissionContext: randomBytes(128),
+          delegationManager: randomAddress(),
+        }),
+      ).rejects.toThrow('Chain ID is not set');
     });
   });
 });

@@ -38,6 +38,7 @@ import type {
   MetaMaskSmartAccount,
 } from '../../src/types';
 import { randomAddress, randomBytes } from '../utils';
+import { Hex } from 'webauthn-p256';
 
 describe('erc7710RedeemDelegationAction', () => {
   const createDelegation = (): Delegation => ({
@@ -57,10 +58,15 @@ describe('erc7710RedeemDelegationAction', () => {
     const owner = privateKeyToAccount(generatePrivateKey());
     let metaMaskSmartAccount: MetaMaskSmartAccount<Implementation.MultiSig>;
 
+    let expectedDelegationManager: Hex = "0x";
+
     beforeEach(async () => {
       mockBundlerRequest.reset();
+      expectedDelegationManager = randomAddress();
+
       overrideDeployedEnvironment(chain.id, '1.3.0', {
         SimpleFactory: simpleFactoryAddress,
+        DelegationManager: expectedDelegationManager,
         implementations: {
           MultiSigDeleGatorImpl: randomAddress(),
         },
@@ -186,7 +192,7 @@ describe('erc7710RedeemDelegationAction', () => {
               to: randomAddress(),
               value: 0n,
               permissionContext: delegationChain,
-              delegationManager: randomAddress(),
+              delegationManager: expectedDelegationManager,
             },
           ],
         };
@@ -228,13 +234,13 @@ describe('erc7710RedeemDelegationAction', () => {
               to: randomAddress(),
               value: 0n,
               permissionContext: delegationChain,
-              delegationManager: randomAddress(),
+              delegationManager: expectedDelegationManager,
             },
             {
               to: randomAddress(),
               value: 0n,
               permissionContext: alreadyEncoded,
-              delegationManager: randomAddress(),
+              delegationManager: expectedDelegationManager,
             },
             {
               to: randomAddress(),
@@ -367,7 +373,15 @@ describe('erc7710RedeemDelegationAction', () => {
     let walletClient: WalletClient<Transport, Chain, Account>;
     let account: Account;
 
+    let expectedDelegationManager: Hex = "0x";
+
     beforeEach(async () => {
+      expectedDelegationManager = randomAddress();
+
+      overrideDeployedEnvironment(chain.id, '1.3.0', {
+        DelegationManager: expectedDelegationManager,
+      } as any as SmartAccountsEnvironment);
+
       const transport = custom({ request: async () => '0x' });
 
       account = privateKeyToAccount(generatePrivateKey());
@@ -382,11 +396,6 @@ describe('erc7710RedeemDelegationAction', () => {
       const extendedWalletClient = walletClient.extend(erc7710WalletActions());
 
       const sendTransaction = stub(walletClient, 'sendTransaction');
-
-      const expectedDelegationManager = randomAddress();
-      overrideDeployedEnvironment(chain.id, '1.3.0', {
-        DelegationManager: expectedDelegationManager,
-      } as any as SmartAccountsEnvironment);
 
       const args: SendTransactionWithDelegationParameters = {
         account,
@@ -428,7 +437,7 @@ describe('erc7710RedeemDelegationAction', () => {
 
       const { delegationManager } = args;
 
-      const expectedArgs = {
+    const expectedArgs = {
         account,
         chain,
         to: delegationManager,
@@ -452,7 +461,7 @@ describe('erc7710RedeemDelegationAction', () => {
           value: 0n,
           data: randomBytes(128),
           permissionContext: randomBytes(128),
-          delegationManager: randomAddress(),
+          delegationManager: expectedDelegationManager,
         }),
       ).rejects.toThrow(
         '`to` is required. `sendTransactionWithDelegation` cannot be used to deploy contracts.',
@@ -463,11 +472,6 @@ describe('erc7710RedeemDelegationAction', () => {
       const extendedWalletClient = walletClient.extend(erc7710WalletActions());
 
       const sendTransaction = stub(walletClient, 'sendTransaction');
-
-      const expectedDelegationManager = randomAddress();
-      overrideDeployedEnvironment(chain.id, '1.3.0', {
-        DelegationManager: expectedDelegationManager,
-      } as any as SmartAccountsEnvironment);
 
       const args: SendTransactionWithDelegationParameters = {
         account,
@@ -508,7 +512,7 @@ describe('erc7710RedeemDelegationAction', () => {
         value: 0n,
         data: randomBytes(128),
         permissionContext: delegationChain,
-        delegationManager: randomAddress(),
+        delegationManager: expectedDelegationManager,
       };
 
       await extendedWalletClient.sendTransactionWithDelegation(args);
@@ -543,12 +547,7 @@ describe('erc7710RedeemDelegationAction', () => {
     it('should throw an error when DelegationManager does not match expected address for the chain', async () => {
       const extendedWalletClient = walletClient.extend(erc7710WalletActions());
 
-      const expectedDelegationManager = randomAddress();
       const invalidDelegationManager = randomAddress();
-
-      overrideDeployedEnvironment(chain.id, '1.3.0', {
-        DelegationManager: expectedDelegationManager,
-      } as any as SmartAccountsEnvironment);
 
       await expect(
         extendedWalletClient.sendTransactionWithDelegation({
@@ -583,7 +582,7 @@ describe('erc7710RedeemDelegationAction', () => {
           value: 0n,
           data: randomBytes(128),
           permissionContext: randomBytes(128),
-          delegationManager: randomAddress(),
+          delegationManager: expectedDelegationManager,
         }),
       ).rejects.toThrow('Chain ID is not set');
     });

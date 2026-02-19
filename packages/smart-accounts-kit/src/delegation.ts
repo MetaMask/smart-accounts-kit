@@ -9,7 +9,7 @@ import {
   CAVEAT_TYPEHASH,
   ROOT_AUTHORITY,
 } from '@metamask/delegation-core';
-import { toHex, getAddress } from 'viem';
+import { toHex, getAddress, isHex } from 'viem';
 import type { TypedData, AbiParameter, Address, Hex } from 'viem';
 import { signTypedData } from 'viem/accounts';
 
@@ -108,7 +108,12 @@ export const encodeDelegations = (delegations: PermissionContext): Hex => {
 
     return encodeDelegationsCore(delegationStructs);
   }
-  return delegations;
+
+  if (isHex(delegations)) {
+    return delegations;
+  }
+  
+  throw new Error('Invalid delegations - must be an array of delegations or a hex string');
 };
 
 /**
@@ -135,8 +140,12 @@ export const decodeDelegations = (
   if (Array.isArray(delegations)) {
     return delegations;
   }
-  // decodeDelegationsCore returns DelegationStruct, so we need to map it back to Delegation
-  return decodeDelegationsCore(delegations).map(toDelegation);
+
+  if (isHex(delegations)) {
+    return decodeDelegationsCore(delegations).map(toDelegation);
+  }
+
+  throw new Error('Invalid delegations - must be an array of delegations or a hex string');
 };
 
 /**

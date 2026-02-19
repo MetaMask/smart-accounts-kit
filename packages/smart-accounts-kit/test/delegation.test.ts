@@ -550,6 +550,19 @@ describe('encodeDelegations', () => {
     expect(decoded).to.have.length(1);
     expect(decoded).to.deep.equal([mockDelegation2]);
   });
+
+  it('returns the specified delegations when they are already encoded', () => {
+    const alreadyEncoded = encodeDelegations([mockDelegation1, mockDelegation2]);
+    const encoded = encodeDelegations(alreadyEncoded);
+
+    expect(encoded).toStrictEqual(alreadyEncoded);
+  });
+
+  it('validates invalid hex', () => {
+    const invalidHex = 'not-a-hex-string' as Hex;
+
+    expect(() => encodeDelegations(invalidHex)).toThrow('Invalid delegations - must be an array of delegations or a hex string');
+  });
 });
 
 describe('decodeDelegations', () => {
@@ -601,6 +614,20 @@ describe('decodeDelegations', () => {
 
     expect(decoded).to.have.length(1);
     expect(decoded).to.deep.equal([mockDelegation2]);
+  });
+
+  it('returns the specified delegations when they are already decoded', () => {
+    const alreadyDecoded = [mockDelegation1, mockDelegation2];
+    const decoded = decodeDelegations(alreadyDecoded);
+    const encoded = encodeDelegations(decoded);
+
+    expect(encoded).toStrictEqual(encodeDelegations(alreadyDecoded));
+  });
+
+  it('validates invalid hex', () => {
+    const invalidHex = 'not-a-hex-string' as Hex;
+
+    expect(() => decodeDelegations(invalidHex)).toThrow('Invalid delegations - must be an array of delegations or a hex string');
   });
 });
 

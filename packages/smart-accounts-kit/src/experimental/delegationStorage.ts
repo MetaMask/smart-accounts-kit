@@ -1,6 +1,6 @@
 import { type Hex, toHex } from 'viem';
 
-import { getDelegationHashOffchain } from '../delegation';
+import { hashDelegation } from '../delegation';
 import type { Delegation } from '../types';
 
 type ErrorResponse = {
@@ -102,7 +102,7 @@ export class DelegationStorageClient {
     const leafDelegationHash =
       typeof leafDelegationOrDelegationHash === 'string'
         ? leafDelegationOrDelegationHash
-        : getDelegationHashOffchain(leafDelegationOrDelegationHash);
+        : hashDelegation(leafDelegationOrDelegationHash);
 
     const response = await this.#fetcher(
       `${this.#apiUrl}/delegation/chain/${leafDelegationHash}`,
@@ -171,7 +171,7 @@ export class DelegationStorageClient {
       throw new Error('Delegation must be signed to be stored');
     }
 
-    const delegationHash = getDelegationHashOffchain(delegation);
+    const delegationHash = hashDelegation(delegation);
 
     const body = JSON.stringify(
       {

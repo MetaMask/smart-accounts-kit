@@ -12,7 +12,7 @@ export {
   SIGNABLE_DELEGATION_TYPED_DATA,
 } from '../delegation';
 
-export { getDelegationHashOffchain } from '../delegation';
+export { hashDelegation } from '../delegation';
 
 export type { DelegationStruct } from '../delegation';
 

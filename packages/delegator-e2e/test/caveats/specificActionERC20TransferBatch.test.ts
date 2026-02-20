@@ -3,7 +3,7 @@ import {
   encodeExecutionCalldatas,
   encodeDelegations,
   createCaveatBuilder,
-  getDelegationHashOffchain,
+  hashDelegation,
 } from '@metamask/smart-accounts-kit/utils';
 import {
   Implementation,
@@ -676,7 +676,7 @@ describe('SpecificActionERC20TransferBatchEnforcer Contract Read Methods', () =>
       signature: '0x',
     };
 
-    const delegationHash = getDelegationHashOffchain(delegation);
+    const delegationHash = hashDelegation(delegation);
 
     const isUsed =
       await SpecificActionERC20TransferBatchEnforcer.read.usedDelegations({
@@ -738,7 +738,7 @@ describe('SpecificActionERC20TransferBatchEnforcer Contract Read Methods', () =>
       },
     ];
 
-    const delegationHash = getDelegationHashOffchain(delegation);
+    const delegationHash = hashDelegation(delegation);
 
     // Check that delegation is unused before execution
     let isUsed =
@@ -827,8 +827,8 @@ describe('SpecificActionERC20TransferBatchEnforcer Contract Read Methods', () =>
       signature: '0x',
     };
 
-    const delegationHash1 = getDelegationHashOffchain(delegation1);
-    const delegationHash2 = getDelegationHashOffchain(delegation2);
+    const delegationHash1 = hashDelegation(delegation1);
+    const delegationHash2 = hashDelegation(delegation2);
 
     // Both delegations should be unused initially
     const isUsed1 =

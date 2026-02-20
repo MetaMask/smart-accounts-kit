@@ -3,7 +3,7 @@ import {
   encodeExecutionCalldatas,
   encodeDelegations,
   createCaveatBuilder,
-  getDelegationHashOffchain,
+  hashDelegation,
 } from '@metamask/smart-accounts-kit/utils';
 import {
   createExecution,
@@ -471,7 +471,7 @@ test('Utility: getSpentAmount should track spending correctly before and after t
     }),
   };
 
-  const delegationHash = getDelegationHashOffchain(signedDelegation);
+  const delegationHash = hashDelegation(signedDelegation);
 
   // Check initial spent amount
   const initialSpent =

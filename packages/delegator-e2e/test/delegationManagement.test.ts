@@ -10,7 +10,7 @@ import {
 import {
   encodeDelegations,
   encodeExecutionCalldatas,
-  getDelegationHashOffchain,
+  hashDelegation,
 } from '@metamask/smart-accounts-kit/utils';
 import {
   DeleGatorCore,
@@ -93,7 +93,7 @@ test('delegation management lifecycle: create, disable, enable, and check status
     signature: await aliceSmartAccount.signDelegation({ delegation }),
   };
 
-  const delegationHash = getDelegationHashOffchain(delegation);
+  const delegationHash = hashDelegation(delegation);
 
   // Step 2: Verify Bob can use the delegation initially
   const countBefore = await aliceCounter.read.count();
@@ -370,7 +370,7 @@ test('disabling non-existent delegation should succeed silently', async () => {
   expectUserOperationToSucceed(receipt);
 
   // Verify the delegation is now disabled
-  const delegationHash = getDelegationHashOffchain(delegation);
+  const delegationHash = hashDelegation(delegation);
   const isDisabled = await DelegationManager.read.disabledDelegations({
     client: publicClient,
     contractAddress: aliceSmartAccount.environment.DelegationManager,
@@ -404,8 +404,8 @@ test('can check delegation status using disabledDelegations', async () => {
     },
   });
 
-  const delegationHash1 = getDelegationHashOffchain(delegation1);
-  const delegationHash2 = getDelegationHashOffchain(delegation2);
+  const delegationHash1 = hashDelegation(delegation1);
+  const delegationHash2 = hashDelegation(delegation2);
 
   // Initially, both delegations should not be disabled
   let isDisabled1 = await DelegationManager.read.disabledDelegations({

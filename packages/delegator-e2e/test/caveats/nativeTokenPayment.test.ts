@@ -2,7 +2,7 @@ import { beforeEach, test, expect } from 'vitest';
 import {
   encodeDelegations,
   encodeExecutionCalldatas,
-  getDelegationHashOffchain,
+  hashDelegation,
   createCaveatBuilder,
 } from '@metamask/smart-accounts-kit/utils';
 import {
@@ -92,9 +92,7 @@ test('maincase: Bob redeems the delegation with a permissions context allowing p
     signature: '0x',
   };
 
-  const delegationHash = getDelegationHashOffchain(
-    delegationRequiringNativeTokenPayment,
-  );
+  const delegationHash = hashDelegation(delegationRequiringNativeTokenPayment);
 
   const args = concat([delegationHash, bobSmartAccount.address]);
 
@@ -228,9 +226,7 @@ test('Bob attempts to redeem with invalid terms length', async () => {
     signature: '0x',
   };
 
-  const delegationHash = getDelegationHashOffchain(
-    delegationRequiringNativeTokenPayment,
-  );
+  const delegationHash = hashDelegation(delegationRequiringNativeTokenPayment);
 
   const args = concat([delegationHash, bobSmartAccount.address]);
 

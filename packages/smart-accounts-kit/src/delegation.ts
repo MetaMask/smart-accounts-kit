@@ -9,14 +9,18 @@ import {
   CAVEAT_TYPEHASH,
   ROOT_AUTHORITY,
 } from '@metamask/delegation-core';
-import { hashMessage, toBytes, toHex, getAddress } from 'viem';
+import { toHex, getAddress, isHex } from 'viem';
 import type { TypedData, AbiParameter, Address, Hex } from 'viem';
 import { signTypedData } from 'viem/accounts';
 
 import { type Caveats, resolveCaveats } from './caveatBuilder';
 import type { ScopeConfig } from './caveatBuilder/scope';
 import { CAVEAT_ABI_TYPE_COMPONENTS } from './caveats';
-import type { Delegation, SmartAccountsEnvironment } from './types';
+import type {
+  Delegation,
+  PermissionContext,
+  SmartAccountsEnvironment,
+} from './types';
 
 export {
   ANY_BENEFICIARY,
@@ -95,13 +99,23 @@ export type DelegationStruct = Omit<Delegation, 'salt'> & {
 /**
  * ABI Encodes an array of delegations.
  *
- * @param delegations - The delegations to encode.
+ * @param delegations - The delegations to encode, either as an array of delegations or the ABI encoding of the array of delegations.
  * @returns The encoded delegations.
  */
-export const encodeDelegations = (delegations: Delegation[]): Hex => {
-  const delegationStructs = delegations.map(toDelegationStruct);
+export const encodeDelegations = (delegations: PermissionContext): Hex => {
+  if (Array.isArray(delegations)) {
+    const delegationStructs = delegations.map(toDelegationStruct);
 
-  return encodeDelegationsCore(delegationStructs);
+    return encodeDelegationsCore(delegationStructs);
+  }
+
+  if (isHex(delegations)) {
+    return delegations;
+  }
+
+  throw new Error(
+    'Invalid delegations - must be an array of delegations or a hex string',
+  );
 };
 
 /**
@@ -119,12 +133,23 @@ export const encodeDelegation = (delegation: Delegation): Hex => {
 /**
  * Decodes an array of delegations from its ABI-encoded representation.
  *
- * @param encoded - The hex-encoded delegation array to decode.
+ * @param delegations - The delegations to decode, either as an array of delegations or its ABI-encoded hex representation.
  * @returns An array of decoded delegations.
  */
-export const decodeDelegations = (encoded: Hex): Delegation[] => {
-  // decodeDelegationsCore returns DelegationStruct, so we need to map it back to Delegation
-  return decodeDelegationsCore(encoded).map(toDelegation);
+export const decodeDelegations = (
+  delegations: PermissionContext,
+): Delegation[] => {
+  if (Array.isArray(delegations)) {
+    return delegations;
+  }
+
+  if (isHex(delegations)) {
+    return decodeDelegationsCore(delegations).map(toDelegation);
+  }
+
+  throw new Error(
+    'Invalid delegations - must be an array of delegations or a hex string',
+  );
 };
 
 /**
@@ -170,18 +195,6 @@ export const DELEGATION_ABI_TYPE: AbiParameter = {
   type: 'tuple',
   components: DELEGATION_ABI_TYPE_COMPONENTS,
 } as const;
-
-/**
- * Prepares a delegation hash for passkey signing.
- *
- * @param delegationHash - The delegation hash to prepare.
- * @returns The prepared hash for passkey signing.
- */
-export const prepDelegationHashForPasskeySign = (delegationHash: Hex) => {
-  return hashMessage({
-    raw: toBytes(delegationHash),
-  });
-};
 
 /**
  * Gets a delegation hash offchain.

@@ -3,6 +3,7 @@ import { encodeFunctionData } from 'viem';
 import type { Address, Hex } from 'viem';
 
 import type { DelegatedCall } from './actions/erc7710RedeemDelegationAction';
+import { encodeDelegations } from './delegation';
 import {
   execute,
   executeWithMode,
@@ -15,17 +16,17 @@ import {
 import type { Call } from './types';
 
 /**
- * Checks if a call is a delegated call by checking for the presence of permissionsContext and delegationManager.
+ * Checks if a call is a delegated call by checking for the presence of permissionContext and delegationManager.
  *
  * @param call - The call to check.
  * @returns True if the call is a delegated call, false otherwise.
  */
 const isDelegatedCall = (call: Call): call is DelegatedCall => {
-  return 'permissionsContext' in call && 'delegationManager' in call;
+  return 'permissionContext' in call && 'delegationManager' in call;
 };
 
 /**
- * If there's a single call with permissionsContext and delegationManager,
+ * If there's a single call with permissionContext and delegationManager,
  * processes it as a delegated call.
  *
  * @param call - The call to process.
@@ -35,7 +36,7 @@ const isDelegatedCall = (call: Call): call is DelegatedCall => {
  */
 const processDelegatedCall = (call: DelegatedCall) => {
   const {
-    permissionsContext,
+    permissionContext,
     delegationManager,
     to: target,
     value,
@@ -44,15 +45,17 @@ const processDelegatedCall = (call: DelegatedCall) => {
 
   const callAsExecution = createExecution({ target, value, callData });
 
-  if (!permissionsContext) {
+  if (!permissionContext) {
     return callAsExecution;
   }
+
+  const encodedPermissionsContext = encodeDelegations(permissionContext);
 
   const redeemCalldata = encodeFunctionData({
     abi: DelegationManager,
     functionName: 'redeemDelegations',
     args: [
-      [permissionsContext],
+      [encodedPermissionsContext],
       [ExecutionMode.SingleDefault],
       encodeExecutionCalldatas([[callAsExecution]]),
     ],

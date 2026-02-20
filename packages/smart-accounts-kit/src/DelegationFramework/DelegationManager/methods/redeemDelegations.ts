@@ -6,11 +6,11 @@ import { simulateContract, writeContract } from 'viem/actions';
 import { encodeDelegations } from '../../../delegation';
 import { encodeExecutionCalldatas } from '../../../executions';
 import type { ExecutionMode, ExecutionStruct } from '../../../executions';
-import type { Delegation } from '../../../types';
+import type { PermissionContext } from '../../../types';
 import type { InitializedClient } from '../../types';
 
 export type EncodeRedeemDelegationsParameters = {
-  delegations: Delegation[][];
+  delegations: PermissionContext[];
   modes: ExecutionMode[];
   executions: ExecutionStruct[][];
 };

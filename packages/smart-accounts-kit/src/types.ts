@@ -64,6 +64,16 @@ export type Delegation = {
 };
 
 /**
+ * A permission context describing delegation authority.
+ *
+ * Either a decoded delegation chain (`Delegation[]`) or its ABI-encoded hex
+ * representation. When multiple delegations are provided, each delegation's
+ * `authority` should reference the hash of the delegation it inherits from,
+ * and the list should be ordered from leaf (most recent delegate) to root.
+ */
+export type PermissionContext = Delegation[] | Hex;
+
+/**
  * A version agnostic blob of contract addresses required for the DeleGator system to function.
  */
 export type SmartAccountsEnvironment = {

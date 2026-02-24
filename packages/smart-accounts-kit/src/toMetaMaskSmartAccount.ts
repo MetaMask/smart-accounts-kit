@@ -133,7 +133,7 @@ export async function toMetaMaskSmartAccount<
       signature: '0x',
     });
 
-    const signature = signer.signTypedData({
+    const signature = await signer.signTypedData({
       domain: {
         chainId: chainId ?? chain.id,
         name: 'DelegationManager',

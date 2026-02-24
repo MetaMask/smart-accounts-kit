@@ -203,7 +203,7 @@ export class DelegationStorageClient {
     }
 
     if (responseData.delegationHash !== delegationHash) {
-      throw Error(
+      throw new Error(
         'Failed to store the Delegation, the hash returned from the MM delegation storage API does not match the hash of the delegation',
       );
     }

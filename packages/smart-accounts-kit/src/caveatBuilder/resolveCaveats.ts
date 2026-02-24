@@ -1,9 +1,17 @@
+import { CaveatType } from '../constants';
 import type { CaveatBuilder } from './caveatBuilder';
 import type { CoreCaveatConfiguration } from './coreCaveatBuilder';
 import { createCaveatBuilderFromScope, type ScopeConfig } from './scope';
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
 export type Caveats = CaveatBuilder | (Caveat | CoreCaveatConfiguration)[];
+
+// Helper to normalize caveat type to its enum representation
+const normalizeCaveatType = (type: string | CaveatType): CaveatType => {
+  return Object.values(CaveatType).includes(type as CaveatType)
+    ? (type as CaveatType)
+    : (type as CaveatType);
+};
 
 /**
  * Resolves the array of Caveat from a Caveats argument.
@@ -35,7 +43,8 @@ export const resolveCaveats = ({
         try {
           if ('type' in caveat) {
             const { type, ...config } = caveat;
-            scopeCaveatBuilder.addCaveat(type, config);
+            const normalizedType = normalizeCaveatType(type as string);
+            scopeCaveatBuilder.addCaveat(normalizedType, config);
           } else {
             scopeCaveatBuilder.addCaveat(caveat);
           }

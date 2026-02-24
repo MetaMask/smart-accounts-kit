@@ -1,7 +1,11 @@
 // Core Caveat Builder
 export { createCaveatBuilder } from './coreCaveatBuilder';
 
-export type { CoreCaveatBuilder } from './coreCaveatBuilder';
+export type {
+  CoreCaveatBuilder,
+  CoreCaveatConfiguration,
+  ConvertCaveatConfigsToInputs,
+} from './coreCaveatBuilder';
 
 // Caveat Builder implementation
 export type { CaveatBuilderConfig } from './caveatBuilder';

@@ -1,3 +1,4 @@
+import { CaveatType } from '../constants';
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
 type CaveatWithOptionalArgs = Omit<Caveat, 'args'> & {
@@ -6,6 +7,17 @@ type CaveatWithOptionalArgs = Omit<Caveat, 'args'> & {
 
 const INSECURE_UNRESTRICTED_DELEGATION_ERROR_MESSAGE =
   'No caveats found. If you definitely want to create an empty caveat collection, set `allowInsecureUnrestrictedDelegation` to `true`.';
+
+// Helper to normalize caveat type names to their enum representation
+const normalizeCaveatName = (
+  name: string | CaveatType,
+): CaveatType | string => {
+  // If it's already a CaveatType enum value, return as-is
+  // Otherwise, return the string value
+  return Object.values(CaveatType).includes(name as CaveatType)
+    ? (name as CaveatType)
+    : name;
+};
 
 type CaveatBuilderMap = {
   [key: string]: (
@@ -111,7 +123,8 @@ export class CaveatBuilder<
 
       return this;
     }
-    const name = nameOrCaveat;
+    const normalizedName = normalizeCaveatName(nameOrCaveat as string);
+    const name = normalizedName as TEnforcerName;
 
     const func = this.#enforcerBuilders[name];
     if (typeof func === 'function') {

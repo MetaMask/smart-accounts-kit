@@ -1,3 +1,4 @@
+import type { CaveatType } from '../constants';
 import type { SmartAccountsEnvironment } from '../types';
 import {
   allowedCalldata,
@@ -129,6 +130,15 @@ type CoreCaveatMap = {
  */
 export type CoreCaveatBuilder = CaveatBuilder<CoreCaveatMap>;
 
+// We want to allow the caveat `type` to be passed as either an enum reference,
+// or the enum's string value. This generic accepts a union of caveat configs, and
+// converts them to an identical union except the `type` parameter is converted
+// to a union of `CaveatType.XXXX | `${CaveatType.XXXX}`.
+export type ConvertCaveatConfigsToInputs<T extends { type: string }> =
+  T extends { type: infer TType extends string }
+    ? Omit<T, 'type'> & { type: TType | CaveatType }
+    : never;
+
 type ExtractCaveatMapType<TCaveatBuilder extends CaveatBuilder<any>> =
   TCaveatBuilder extends CaveatBuilder<infer TCaveatMap> ? TCaveatMap : never;
 type ExtractedCoreMap = ExtractCaveatMapType<CoreCaveatBuilder>;
@@ -144,11 +154,13 @@ export type CaveatConfiguration<
   CaveatMap = ExtractCaveatMapType<TCaveatBuilder>,
 > =
   CaveatMap extends Record<string, (...args: any[]) => any>
-    ? {
-        [TType in keyof CaveatMap]: {
-          type: TType;
-        } & Parameters<CaveatMap[TType]>[1];
-      }[keyof CaveatMap]
+    ? ConvertCaveatConfigsToInputs<
+        {
+          [TType in keyof CaveatMap]: {
+            type: TType extends string ? TType : never;
+          } & Parameters<CaveatMap[TType]>[1];
+        }[keyof CaveatMap]
+      >
     : never;
 
 export type CoreCaveatConfiguration = CaveatConfiguration<CoreCaveatBuilder>;

@@ -1,17 +1,10 @@
-import { CaveatType } from '../constants';
+import { validateCaveatType } from '../utils';
 import type { CaveatBuilder } from './caveatBuilder';
 import type { CoreCaveatConfiguration } from './coreCaveatBuilder';
 import { createCaveatBuilderFromScope, type ScopeConfig } from './scope';
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
 export type Caveats = CaveatBuilder | (Caveat | CoreCaveatConfiguration)[];
-
-// Helper to normalize caveat type to its enum representation
-const normalizeCaveatType = (type: string | CaveatType): CaveatType => {
-  return Object.values(CaveatType).includes(type as CaveatType)
-    ? (type as CaveatType)
-    : (type as CaveatType);
-};
 
 /**
  * Resolves the array of Caveat from a Caveats argument.
@@ -39,17 +32,19 @@ export const resolveCaveats = ({
         scopeCaveatBuilder.addCaveat(caveat);
       });
     } else if (Array.isArray(caveats)) {
-      caveats.forEach((caveat) => {
+      caveats.forEach((caveat, index) => {
         try {
           if ('type' in caveat) {
             const { type, ...config } = caveat;
-            const normalizedType = normalizeCaveatType(type as string);
+            const normalizedType = validateCaveatType(type as string);
             scopeCaveatBuilder.addCaveat(normalizedType, config);
           } else {
             scopeCaveatBuilder.addCaveat(caveat);
           }
         } catch (error) {
-          throw new Error(`Invalid caveat: ${(error as Error).message}`);
+          throw new Error(
+            `Error processing caveats[${index}]: ${(error as Error).message}`,
+          );
         }
       });
     }

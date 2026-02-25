@@ -1,5 +1,4 @@
 import type { Caveat, SmartAccountsEnvironment } from '../types';
-import { validateCaveatType } from '../utils';
 
 type CaveatWithOptionalArgs = Omit<Caveat, 'args'> & {
   args?: Caveat['args'];
@@ -112,7 +111,7 @@ export class CaveatBuilder<
 
       return this;
     }
-    const name = validateCaveatType(nameOrCaveat as string) as TEnforcerName;
+    const name = nameOrCaveat;
 
     const func = this.#enforcerBuilders[name];
     if (typeof func === 'function') {
@@ -122,10 +121,7 @@ export class CaveatBuilder<
 
       return this;
     }
-    throw new Error(
-      `Enforcer for caveat type "${String(name)}" is not registered. ` +
-        'This may indicate a misconfigured CaveatBuilder.',
-    );
+    throw new Error(`Function "${String(name)}" does not exist.`);
   }
 
   /**

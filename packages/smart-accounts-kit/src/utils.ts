@@ -3,12 +3,13 @@ import { type Hex, isHex, toHex } from 'viem';
 import { CaveatType } from './constants';
 
 /**
- * Validates and returns a caveat type, throwing an error if invalid.
- * Accepts both CaveatType enum values and their string representations.
+ * Validates that a caveat type is a recognized CaveatType enum value.
+ * Only validates against standard CaveatType enum values.
+ * Custom caveat types registered via CaveatBuilder.extend() bypass this validation.
  *
  * @param type - The caveat type to validate (either enum value or string).
  * @returns The validated caveat type.
- * @throws {Error} If the caveat type is not recognized.
+ * @throws {Error} If the caveat type is not a recognized CaveatType enum value.
  */
 export function validateCaveatType(type: string | CaveatType): CaveatType {
   const validTypes = Object.values(CaveatType);

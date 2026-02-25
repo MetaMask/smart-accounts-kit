@@ -5,7 +5,6 @@ import type {
   NativeTokenPeriodicPermission,
   NativeTokenStreamPermission,
   PermissionRequest,
-  PermissionResponse,
   PermissionTypes,
   Rule,
   Hex,
@@ -14,7 +13,11 @@ import { toHex } from 'viem';
 import type { Address } from 'viem';
 
 import { isDefined, toHexOrThrow } from '../utils';
-import type { MetaMaskExtensionClient } from './erc7715Types';
+import { convertRpcPermissionResponsesToDeveloper } from './erc7715GetGrantedExecutionPermissionsAction';
+import type {
+  GetGrantedExecutionPermissionsResult,
+  MetaMaskExtensionClient,
+} from './erc7715Types';
 
 export type {
   GetGrantedExecutionPermissionsResult,
@@ -136,7 +139,7 @@ export type RequestExecutionPermissionsParameters =
  * Return type for the request execution permissions action.
  */
 export type RequestExecutionPermissionsReturnType =
-  PermissionResponse<PermissionTypes>[];
+  GetGrantedExecutionPermissionsResult;
 
 /**
  * Grants permissions according to EIP-7715 specification.
@@ -167,7 +170,7 @@ export async function erc7715RequestExecutionPermissionsAction(
     throw new Error('Failed to grant permissions');
   }
 
-  return result;
+  return convertRpcPermissionResponsesToDeveloper(result);
 }
 
 /**

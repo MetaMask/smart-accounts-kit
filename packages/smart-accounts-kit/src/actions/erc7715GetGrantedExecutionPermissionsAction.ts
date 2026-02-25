@@ -42,17 +42,18 @@ export async function erc7715GetGrantedExecutionPermissionsAction(
     throw new Error('Failed to get granted execution permissions');
   }
 
-  return convertGrantedPermissionsResult(result);
+  return convertRpcPermissionResponsesToDeveloper(result);
 }
 
 /**
- * Converts the RPC response from hex to user-friendly types.
+ * Converts RPC permission responses from hex to user-friendly types.
  * Converts chainId from hex to number, and token amounts from hex to bigint.
  *
  * @param result - The result from the RPC call with hex values.
  * @returns The converted result with user-friendly types.
+ * @internal
  */
-function convertGrantedPermissionsResult(
+export function convertRpcPermissionResponsesToDeveloper(
   result: RpcGetGrantedExecutionPermissionsResult,
 ): GetGrantedExecutionPermissionsResult {
   return result.map((permission) => convertPermissionResponse(permission));

@@ -25,10 +25,47 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     request: stubRequest,
   } as unknown as Client;
 
-  // the response object is passed verbatim back to the caller, so the actual data doesn't matter
-  const mockResponse = [
+  // RPC response format (hex chainId, hex amounts) - matches wallet_requestExecutionPermissions return type
+  const mockRpcResponse = [
     {
-      success: true,
+      chainId: '0x7a69',
+      from: '0x1234567890123456789012345678901234567890',
+      to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+      permission: {
+        type: 'native-token-stream',
+        isAdjustmentAllowed: true,
+        data: {
+          amountPerSecond: '0x1',
+          maxAmount: '0x2',
+          startTime: 1234567890,
+        },
+      },
+      context: '0x1234567890abcdef',
+      dependencies: [],
+      delegationManager: '0x0987654321098765432109876543210987654321',
+      rules: [],
+    },
+  ];
+
+  // Developer format (numeric chainId, bigint amounts) - what the action returns after conversion
+  const expectedResult = [
+    {
+      chainId: 0x7a69,
+      from: '0x1234567890123456789012345678901234567890',
+      to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+      permission: {
+        type: 'native-token-stream',
+        isAdjustmentAllowed: true,
+        data: {
+          amountPerSecond: 0x1n,
+          maxAmount: 0x2n,
+          startTime: 1234567890,
+        },
+      },
+      context: '0x1234567890abcdef',
+      dependencies: [],
+      delegationManager: '0x0987654321098765432109876543210987654321',
+      rules: [],
     },
   ];
 
@@ -61,7 +98,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         permissionRequest,
       ];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       const result = await erc7715RequestExecutionPermissionsAction(
         mockClient,
@@ -96,7 +133,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         ],
       });
-      expect(result).to.deep.equal(mockResponse);
+      expect(result).to.deep.equal(expectedResult);
     });
 
     it('should set retryCount to 0', async () => {
@@ -120,7 +157,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       const parameters: RequestExecutionPermissionsParameters = [
         permissionRequest,
       ];
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -176,7 +213,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         permissionRequest,
       ];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await expect(
         erc7715RequestExecutionPermissionsAction(mockClient, parameters),
@@ -202,7 +239,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       };
 
       const parameters = [permissionRequest];
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -264,7 +301,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     });
 
     it('should handle multiple permission requests', async () => {
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       const parameters: RequestExecutionPermissionsParameters = [
         {
@@ -300,7 +337,251 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         parameters,
       );
 
-      expect(result).to.deep.equal(mockResponse);
+      expect(result).to.deep.equal(expectedResult);
+    });
+
+    describe('permission type mapping (RPC hex → developer bigint/number)', () => {
+      const basePermissionFields = {
+        chainId: '0x1',
+        from: '0x1234567890123456789012345678901234567890',
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        context: '0x1234567890abcdef',
+        dependencies: [] as { factory: string; factoryData: string }[],
+        delegationManager: '0x0987654321098765432109876543210987654321',
+        rules: [] as { type: string; data: Record<string, unknown> }[],
+      };
+
+      const minimalParameters: RequestExecutionPermissionsParameters = [
+        {
+          chainId: 1,
+          permission: {
+            type: 'native-token-stream',
+            data: { amountPerSecond: 0x1n },
+            isAdjustmentAllowed: false,
+          },
+          to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        },
+      ];
+
+      it('returns native-token-stream with amountPerSecond, initialAmount, maxAmount as bigint', async () => {
+        const rpcPermission = {
+          ...basePermissionFields,
+          permission: {
+            type: 'native-token-stream',
+            isAdjustmentAllowed: true,
+            data: {
+              amountPerSecond: '0x64',
+              initialAmount: '0x0',
+              maxAmount: '0xde0b6b3a7640000',
+              startTime: 1700000000,
+            },
+          },
+        };
+        stubRequest.resolves([rpcPermission]);
+
+        const result = await erc7715RequestExecutionPermissionsAction(
+          mockClient,
+          minimalParameters,
+        );
+
+        expect(result).to.have.length(1);
+
+        const [permission] = result;
+
+        expect(permission).toStrictEqual({
+          chainId: 0x1,
+          to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          from: '0x1234567890123456789012345678901234567890',
+          context: '0x1234567890abcdef',
+          dependencies: [],
+          rules: [],
+          delegationManager: '0x0987654321098765432109876543210987654321',
+          permission: {
+            type: 'native-token-stream',
+            isAdjustmentAllowed: true,
+            data: {
+              amountPerSecond: 0x64n,
+              initialAmount: 0x0n,
+              maxAmount: 0xde0b6b3a7640000n,
+              startTime: 1700000000,
+            },
+          },
+        });
+      });
+
+      it('returns native-token-periodic with periodAmount as bigint', async () => {
+        const rpcPermission = {
+          ...basePermissionFields,
+          permission: {
+            type: 'native-token-periodic',
+            isAdjustmentAllowed: false,
+            data: {
+              periodAmount: '0x2386f26fc10000',
+              periodDuration: 86400,
+              startTime: 1700000000,
+            },
+          },
+        };
+        stubRequest.resolves([rpcPermission]);
+
+        const result = await erc7715RequestExecutionPermissionsAction(
+          mockClient,
+          minimalParameters,
+        );
+
+        expect(result).to.have.length(1);
+
+        const [permission] = result;
+
+        expect(permission).toStrictEqual({
+          chainId: 0x1,
+          to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          from: '0x1234567890123456789012345678901234567890',
+          context: '0x1234567890abcdef',
+          dependencies: [],
+          rules: [],
+          delegationManager: '0x0987654321098765432109876543210987654321',
+          permission: {
+            type: 'native-token-periodic',
+            isAdjustmentAllowed: false,
+            data: {
+              periodAmount: 0x2386f26fc10000n,
+              periodDuration: 86400,
+              startTime: 1700000000,
+            },
+          },
+        });
+      });
+
+      it('returns erc20-token-stream with amountPerSecond, initialAmount, maxAmount as bigint', async () => {
+        const rpcPermission = {
+          ...basePermissionFields,
+          permission: {
+            type: 'erc20-token-stream',
+            isAdjustmentAllowed: true,
+            data: {
+              amountPerSecond: '0xde0b6b3a7640000',
+              initialAmount: '0x1',
+              maxAmount: '0x2',
+              tokenAddress: '0x1234567890123456789012345678901234567890',
+            },
+          },
+        };
+        stubRequest.resolves([rpcPermission]);
+
+        const result = await erc7715RequestExecutionPermissionsAction(
+          mockClient,
+          minimalParameters,
+        );
+
+        expect(result).to.have.length(1);
+
+        const [permission] = result;
+
+        expect(permission).toStrictEqual({
+          chainId: 0x1,
+          to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          from: '0x1234567890123456789012345678901234567890',
+          context: '0x1234567890abcdef',
+          dependencies: [],
+          rules: [],
+          delegationManager: '0x0987654321098765432109876543210987654321',
+          permission: {
+            type: 'erc20-token-stream',
+            isAdjustmentAllowed: true,
+            data: {
+              amountPerSecond: 0xde0b6b3a7640000n,
+              initialAmount: 0x1n,
+              maxAmount: 0x2n,
+              tokenAddress: '0x1234567890123456789012345678901234567890',
+            },
+          },
+        });
+      });
+
+      it('returns erc20-token-periodic with periodAmount as bigint', async () => {
+        const rpcPermission = {
+          ...basePermissionFields,
+          permission: {
+            type: 'erc20-token-periodic',
+            isAdjustmentAllowed: false,
+            data: {
+              periodAmount: '0x52b7d2dcc80cd2e4000000',
+              periodDuration: 604800,
+              tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+            },
+          },
+        };
+        stubRequest.resolves([rpcPermission]);
+
+        const result = await erc7715RequestExecutionPermissionsAction(
+          mockClient,
+          minimalParameters,
+        );
+
+        expect(result).to.have.length(1);
+
+        const [permission] = result;
+
+        expect(permission).toStrictEqual({
+          chainId: 0x1,
+          to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          from: '0x1234567890123456789012345678901234567890',
+          context: '0x1234567890abcdef',
+          dependencies: [],
+          rules: [],
+          delegationManager: '0x0987654321098765432109876543210987654321',
+          permission: {
+            type: 'erc20-token-periodic',
+            isAdjustmentAllowed: false,
+            data: {
+              periodAmount: 0x52b7d2dcc80cd2e4000000n,
+              periodDuration: 604800,
+              tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+            },
+          },
+        });
+      });
+
+      it('returns erc20-token-revocation preserving data (no hex amounts)', async () => {
+        const rpcPermission = {
+          ...basePermissionFields,
+          permission: {
+            type: 'erc20-token-revocation',
+            isAdjustmentAllowed: true,
+            data: {
+              justification: 'Revoking unused allowance',
+            },
+          },
+        };
+        stubRequest.resolves([rpcPermission]);
+
+        const result = await erc7715RequestExecutionPermissionsAction(
+          mockClient,
+          minimalParameters,
+        );
+
+        expect(result).to.have.length(1);
+
+        const [permission] = result;
+
+        expect(permission).toStrictEqual({
+          chainId: 0x1,
+          to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          from: '0x1234567890123456789012345678901234567890',
+          context: '0x1234567890abcdef',
+          dependencies: [],
+          rules: [],
+          delegationManager: '0x0987654321098765432109876543210987654321',
+          permission: {
+            type: 'erc20-token-revocation',
+            isAdjustmentAllowed: true,
+            data: {
+              justification: 'Revoking unused allowance',
+            },
+          },
+        });
+      });
     });
 
     it('should not specify isAdjustmentAllowed when not specified in the request', async () => {
@@ -320,7 +601,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         },
         to: alice.address,
       };
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
       await erc7715RequestExecutionPermissionsAction(mockClient, [
         permissionRequest,
       ]);
@@ -372,7 +653,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         },
         to: alice.address,
       };
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
       await (erc7715RequestExecutionPermissionsAction as any)(mockClient, [
         permissionRequest,
       ] as any);
@@ -426,7 +707,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       };
       const parameters = [permissionRequest];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -479,7 +760,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       };
       const parameters = [permissionRequest];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -531,7 +812,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         },
         to: alice.address,
       } as const;
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await (erc7715RequestExecutionPermissionsAction as any)(mockClient, [
         permissionRequest,
@@ -585,7 +866,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       const parameters: RequestExecutionPermissionsParameters = [
         permissionRequest,
       ];
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -634,7 +915,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         permissionRequest,
       ];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -685,7 +966,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       } as const;
       const parameters = [permissionRequest];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -740,7 +1021,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       };
       const parameters = [permissionRequest];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -796,7 +1077,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       } as const;
       const parameters = [permissionRequest];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -854,7 +1135,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       permissionRequest,
     ];
 
-    stubRequest.resolves(mockResponse);
+    stubRequest.resolves(mockRpcResponse);
 
     await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -907,7 +1188,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         to: alice.address,
       };
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       const parameters: RequestExecutionPermissionsParameters = [
         permissionRequest,

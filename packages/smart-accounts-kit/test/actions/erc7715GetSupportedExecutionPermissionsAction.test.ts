@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
   erc7715ProviderActions,
-  type GetSupportedExecutionPermissionsResult,
+  type RpcGetSupportedExecutionPermissionsResult,
 } from '../../src/actions';
 import { erc7715GetSupportedExecutionPermissionsAction } from '../../src/actions/erc7715GetSupportedExecutionPermissionsAction';
 
@@ -15,7 +15,7 @@ describe('erc7715GetSupportedExecutionPermissionsAction', () => {
     request: stubRequest,
   } as unknown as Client;
 
-  const mockResponse: GetSupportedExecutionPermissionsResult = {
+  const mockResponse: RpcGetSupportedExecutionPermissionsResult = {
     'native-token-allowance': {
       chainIds: ['0x1', '0x89'],
       ruleTypes: ['expiry'],
@@ -46,7 +46,20 @@ describe('erc7715GetSupportedExecutionPermissionsAction', () => {
         method: 'wallet_getSupportedExecutionPermissions',
         params: [],
       });
-      expect(result).to.deep.equal(mockResponse);
+      expect(result).to.deep.equal({
+        'native-token-allowance': {
+          chainIds: [1, 137],
+          ruleTypes: ['expiry'],
+        },
+        'erc20-token-allowance': {
+          chainIds: [1],
+          ruleTypes: [],
+        },
+        'erc721-token-allowance': {
+          chainIds: [1],
+          ruleTypes: ['expiry'],
+        },
+      });
     });
 
     it('should set retryCount to 0', async () => {
@@ -77,7 +90,7 @@ describe('erc7715GetSupportedExecutionPermissionsAction', () => {
     });
 
     it('should return empty object when wallet supports no permissions', async () => {
-      const emptyResponse: GetSupportedExecutionPermissionsResult = {};
+      const emptyResponse: RpcGetSupportedExecutionPermissionsResult = {};
       stubRequest.resolves(emptyResponse);
 
       const result =
@@ -87,7 +100,7 @@ describe('erc7715GetSupportedExecutionPermissionsAction', () => {
     });
 
     it('should handle response with multiple chain IDs', async () => {
-      const multiChainResponse: GetSupportedExecutionPermissionsResult = {
+      const multiChainResponse: RpcGetSupportedExecutionPermissionsResult = {
         'native-token-stream': {
           chainIds: ['0x1', '0x89', '0xa4b1', '0x2105'],
           ruleTypes: ['expiry', 'usage-limit'],
@@ -98,7 +111,12 @@ describe('erc7715GetSupportedExecutionPermissionsAction', () => {
       const result =
         await erc7715GetSupportedExecutionPermissionsAction(mockClient);
 
-      expect(result).to.deep.equal(multiChainResponse);
+      expect(result).to.deep.equal({
+        'native-token-stream': {
+          chainIds: [1, 137, 42161, 8453],
+          ruleTypes: ['expiry', 'usage-limit'],
+        },
+      });
     });
   });
 

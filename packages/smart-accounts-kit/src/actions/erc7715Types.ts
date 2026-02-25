@@ -1,21 +1,117 @@
 import type {
-  PermissionTypes,
-  PermissionRequest,
-  PermissionResponse,
+  PermissionTypes as RpcPermissionTypes,
+  PermissionRequest as RpcPermissionRequest,
+  PermissionResponse as RpcPermissionResponse,
 } from '@metamask/7715-permission-types';
-import type { Client, Account, RpcSchema, Transport, Chain } from 'viem';
+import type {
+  Client,
+  Account,
+  Hex,
+  RpcSchema,
+  Transport,
+  Chain,
+  Address,
+} from 'viem';
+
+// =============================================================================
+// Developer-facing types
+// These types represent the public API. Use bigint, number, Hex, and Address for
+// developer-friendly values. These are the only types consumers of this package
+// need to work with.
+// =============================================================================
+
+type BasePermission = {
+  type: string;
+  isAdjustmentAllowed: boolean;
+  data: Record<string, unknown>;
+};
 
 /**
- * Represents the supported execution permissions for a specific permission type.
+ * Native token stream permission.
+ */
+export type NativeTokenStreamPermission = BasePermission & {
+  type: 'native-token-stream';
+  data: {
+    initialAmount?: bigint;
+    maxAmount?: bigint;
+    amountPerSecond: bigint;
+    startTime?: number;
+    justification?: string;
+  };
+};
+
+/**
+ * Native token periodic permission.
+ */
+export type NativeTokenPeriodicPermission = BasePermission & {
+  type: 'native-token-periodic';
+  data: {
+    periodAmount: bigint;
+    periodDuration: number;
+    startTime?: number;
+    justification?: string;
+  };
+};
+
+/**
+ * ERC-20 token stream permission.
+ */
+export type Erc20TokenStreamPermission = BasePermission & {
+  type: 'erc20-token-stream';
+  data: {
+    initialAmount?: bigint;
+    maxAmount?: bigint;
+    amountPerSecond: bigint;
+    startTime?: number;
+    tokenAddress: Address;
+    justification?: string;
+  };
+};
+
+/**
+ * ERC-20 token periodic permission.
+ */
+export type Erc20TokenPeriodicPermission = BasePermission & {
+  type: 'erc20-token-periodic';
+  data: {
+    periodAmount: bigint;
+    periodDuration: number;
+    startTime?: number;
+    tokenAddress: Address;
+    justification?: string;
+  };
+};
+
+/**
+ * ERC-20 token revocation permission.
+ */
+export type Erc20TokenRevocationPermission = BasePermission & {
+  type: 'erc20-token-revocation';
+  data: {
+    justification?: string;
+  };
+};
+
+/**
+ * Permission types.
+ */
+export type PermissionTypes =
+  | NativeTokenStreamPermission
+  | NativeTokenPeriodicPermission
+  | Erc20TokenStreamPermission
+  | Erc20TokenPeriodicPermission
+  | Erc20TokenRevocationPermission;
+
+/**
+ * Supported execution permissions for a specific permission type.
  */
 export type SupportedPermissionInfo = {
-  chainIds: `0x${string}`[];
+  chainIds: number[];
   ruleTypes: string[];
 };
 
 /**
  * Result type for the getSupportedExecutionPermissions action.
- * A record keyed by permission type containing supported chain IDs and rule types.
  */
 export type GetSupportedExecutionPermissionsResult = Record<
   string,
@@ -24,10 +120,62 @@ export type GetSupportedExecutionPermissionsResult = Record<
 
 /**
  * Result type for the getGrantedExecutionPermissions action.
- * An array of permission responses representing all granted permissions that are not yet revoked.
  */
 export type GetGrantedExecutionPermissionsResult =
   PermissionResponse<PermissionTypes>[];
+
+/**
+ * Permission request.
+ */
+export type PermissionRequest<TPermission extends PermissionTypes> = {
+  chainId: number;
+  from?: Hex;
+  to: Hex;
+  permission: TPermission;
+  rules?: Record<string, unknown>[] | null;
+};
+
+/**
+ * Permission response.
+ */
+export type PermissionResponse<TPermission extends PermissionTypes> =
+  PermissionRequest<TPermission> & {
+    context: Hex;
+    dependencies: {
+      factory: Address;
+      factoryData: Hex;
+    }[];
+    delegationManager: Address;
+  };
+
+// =============================================================================
+// RPC types (internal)
+// These types represent the wire format for JSON-RPC calls. Use Hex strings
+// for chain IDs and token amounts. Used internally when communicating with
+// the wallet; not exposed to package consumers.
+// =============================================================================
+
+/**
+ * RPC format: supported execution permissions for a specific permission type.
+ */
+export type RpcSupportedPermissionInfo = {
+  chainIds: Hex[];
+  ruleTypes: string[];
+};
+
+/**
+ * RPC format: result type for the getSupportedExecutionPermissions action.
+ */
+export type RpcGetSupportedExecutionPermissionsResult = Record<
+  string,
+  RpcSupportedPermissionInfo
+>;
+
+/**
+ * RPC format: result type for the getGrantedExecutionPermissions action.
+ */
+export type RpcGetGrantedExecutionPermissionsResult =
+  RpcPermissionResponse<RpcPermissionTypes>[];
 
 /**
  * RPC schema for ERC-7715 execution permission methods.
@@ -37,26 +185,24 @@ export type GetGrantedExecutionPermissionsResult =
  * - `wallet_getSupportedExecutionPermissions`: Gets supported permission types.
  * - `wallet_getGrantedExecutionPermissions`: Gets all granted permissions.
  */
-/* eslint-disable @typescript-eslint/naming-convention */
 export type MetaMaskExtensionSchema = RpcSchema &
   [
     {
       Method: 'wallet_requestExecutionPermissions';
-      Params: PermissionRequest<PermissionTypes>[];
-      ReturnType: PermissionResponse<PermissionTypes>[];
+      Params: RpcPermissionRequest<RpcPermissionTypes>[];
+      ReturnType: RpcPermissionResponse<RpcPermissionTypes>[];
     },
     {
       Method: 'wallet_getSupportedExecutionPermissions';
       Params: [];
-      ReturnType: GetSupportedExecutionPermissionsResult;
+      ReturnType: RpcGetSupportedExecutionPermissionsResult;
     },
     {
       Method: 'wallet_getGrantedExecutionPermissions';
       Params: [];
-      ReturnType: GetGrantedExecutionPermissionsResult;
+      ReturnType: RpcGetGrantedExecutionPermissionsResult;
     },
   ];
-/* eslint-enable @typescript-eslint/naming-convention */
 
 /**
  * A Viem client extended with ERC-7715 execution permission RPC methods.

@@ -22,6 +22,7 @@ export type {
   MetaMaskExtensionClient,
   MetaMaskExtensionSchema,
   SupportedPermissionInfo,
+  PermissionTypes,
 } from './erc7715Types';
 
 type PermissionParameter = {

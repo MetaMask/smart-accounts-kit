@@ -67,6 +67,15 @@ export {
   type GetSupportedExecutionPermissionsResult,
   type GetGrantedExecutionPermissionsResult,
   type SupportedPermissionInfo,
+  type PermissionTypes,
+  type NativeTokenStreamPermission,
+  type NativeTokenPeriodicPermission,
+  type Erc20TokenStreamPermission,
+  type Erc20TokenPeriodicPermission,
+  type Erc20TokenRevocationPermission,
+  type RpcGetSupportedExecutionPermissionsResult,
+  type RpcGetGrantedExecutionPermissionsResult,
+  type RpcSupportedPermissionInfo,
 } from './erc7715Types';
 
 export type { DelegatedCall } from './erc7710RedeemDelegationAction';

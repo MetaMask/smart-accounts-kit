@@ -9,7 +9,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
   erc7715ProviderActions,
-  type GetGrantedExecutionPermissionsResult,
+  type RpcGetGrantedExecutionPermissionsResult,
 } from '../../src/actions';
 import { erc7715GetGrantedExecutionPermissionsAction } from '../../src/actions/erc7715GetGrantedExecutionPermissionsAction';
 
@@ -44,7 +44,9 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
     delegationManager: '0x0987654321098765432109876543210987654321',
   };
 
-  const mockResponse: GetGrantedExecutionPermissionsResult = [mockPermission];
+  const mockResponse: RpcGetGrantedExecutionPermissionsResult = [
+    mockPermission,
+  ];
 
   beforeEach(() => {
     stubRequest.reset();
@@ -62,7 +64,19 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
         method: 'wallet_getGrantedExecutionPermissions',
         params: [],
       });
-      expect(result).to.deep.equal(mockResponse);
+      expect(result).to.deep.equal([
+        {
+          ...mockPermission,
+          chainId: 1,
+          permission: {
+            ...mockPermission.permission,
+            data: {
+              ...mockPermission.permission.data,
+              amountPerSecond: 1n,
+            },
+          },
+        },
+      ]);
     });
 
     it('should set retryCount to 0', async () => {
@@ -93,7 +107,7 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
     });
 
     it('should return empty array when no permissions are granted', async () => {
-      const emptyResponse: GetGrantedExecutionPermissionsResult = [];
+      const emptyResponse: RpcGetGrantedExecutionPermissionsResult = [];
       stubRequest.resolves(emptyResponse);
 
       const result =
@@ -126,7 +140,7 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
           rules: [],
         };
 
-      const multiplePermissions: GetGrantedExecutionPermissionsResult = [
+      const multiplePermissions: RpcGetGrantedExecutionPermissionsResult = [
         mockPermission,
         secondPermission,
       ];
@@ -135,8 +149,11 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
       const result =
         await erc7715GetGrantedExecutionPermissionsAction(mockClient);
 
-      expect(result).to.deep.equal(multiplePermissions);
       expect(result).to.have.length(2);
+      expect(result[0].chainId).to.equal(1);
+      expect(result[0].permission.data.amountPerSecond).to.equal(1n);
+      expect(result[1].chainId).to.equal(137);
+      expect(result[1].permission.data.amountPerSecond).to.equal(2n);
     });
   });
 

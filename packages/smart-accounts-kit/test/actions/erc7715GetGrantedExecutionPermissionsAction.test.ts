@@ -150,10 +150,10 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
         await erc7715GetGrantedExecutionPermissionsAction(mockClient);
 
       expect(result).to.have.length(2);
-      expect(result[0].chainId).to.equal(1);
-      expect(result[0].permission.data.amountPerSecond).to.equal(1n);
-      expect(result[1].chainId).to.equal(137);
-      expect(result[1].permission.data.amountPerSecond).to.equal(2n);
+      expect(result[0]?.chainId).to.equal(1);
+      expect(result[0]?.permission.data.amountPerSecond).to.equal(1n);
+      expect(result[1]?.chainId).to.equal(137);
+      expect(result[1]?.permission.data.amountPerSecond).to.equal(2n);
     });
   });
 

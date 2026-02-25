@@ -1,4 +1,3 @@
-import type { CaveatType } from '../constants';
 import type { SmartAccountsEnvironment } from '../types';
 import {
   allowedCalldata,
@@ -134,9 +133,12 @@ export type CoreCaveatBuilder = CaveatBuilder<CoreCaveatMap>;
 // or the enum's string value. This generic accepts a union of caveat configs, and
 // converts them to an identical union except the `type` parameter is converted
 // to a union of `CaveatType.XXXX | `${CaveatType.XXXX}`.
+// We preserve the discriminated union pattern by using T['type'] instead of
+// expanding to the full CaveatType enum, which ensures TypeScript can narrow
+// by the type field.
 export type ConvertCaveatConfigsToInputs<T extends { type: string }> =
-  T extends { type: infer TType extends string }
-    ? Omit<T, 'type'> & { type: TType | CaveatType }
+  T extends { type: string }
+    ? Omit<T, 'type'> & { type: T['type'] | `${T['type']}` }
     : never;
 
 type ExtractCaveatMapType<TCaveatBuilder extends CaveatBuilder<any>> =

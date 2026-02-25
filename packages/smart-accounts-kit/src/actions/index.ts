@@ -54,10 +54,11 @@ export {
   erc7715RequestExecutionPermissionsAction as requestExecutionPermissions,
   type MetaMaskExtensionClient,
   type MetaMaskExtensionSchema,
-  type PermissionRequestParameter,
   type RequestExecutionPermissionsParameters,
   type RequestExecutionPermissionsReturnType,
 } from './erc7715RequestExecutionPermissionsAction';
+
+export type { PermissionRequestParameter } from './erc7715Types';
 
 export { erc7715GetSupportedExecutionPermissionsAction as getSupportedExecutionPermissions } from './erc7715GetSupportedExecutionPermissionsAction';
 

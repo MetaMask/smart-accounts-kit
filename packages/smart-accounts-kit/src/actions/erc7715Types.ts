@@ -103,6 +103,17 @@ export type PermissionTypes =
   | Erc20TokenRevocationPermission;
 
 /**
+ * Parameters for a single permission request (input to requestExecutionPermissions).
+ */
+export type PermissionRequestParameter = {
+  chainId: number;
+  permission: PermissionTypes;
+  to: Hex;
+  from?: Address | undefined | null;
+  expiry?: number | undefined | null;
+};
+
+/**
  * Supported execution permissions for a specific permission type.
  */
 export type SupportedPermissionInfo = {

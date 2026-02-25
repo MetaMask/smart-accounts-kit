@@ -14,7 +14,6 @@ export type { GetSupportedExecutionPermissionsResult } from './erc7715Types';
  * @description
  * This function queries the wallet for the permission types it supports.
  * The result is keyed by permission type and includes the supported chain IDs and rule types.
- * Chain IDs are converted from hex to numbers for easier use.
  * @example
  * ```typescript
  * const supported = await erc7715GetSupportedExecutionPermissionsAction(client);

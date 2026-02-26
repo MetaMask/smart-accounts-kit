@@ -1,7 +1,10 @@
+import { rpcSupportedPermissionsToDeveloper } from './erc7715Mapping';
 import type {
   GetSupportedExecutionPermissionsResult,
   MetaMaskExtensionClient,
 } from './erc7715Types';
+
+export type { GetSupportedExecutionPermissionsResult } from './erc7715Types';
 
 /**
  * Retrieves the supported execution permission types from the wallet according to EIP-7715 specification.
@@ -17,11 +20,11 @@ import type {
  * // Returns:
  * // {
  * //   "native-token-allowance": {
- * //     "chainIds": ["0x1", "0x89"],
+ * //     "chainIds": [1, 137],
  * //     "ruleTypes": ["expiry"]
  * //   },
  * //   "erc20-token-allowance": {
- * //     "chainIds": ["0x1"],
+ * //     "chainIds": [1],
  * //     "ruleTypes": []
  * //   }
  * // }
@@ -42,5 +45,5 @@ export async function erc7715GetSupportedExecutionPermissionsAction(
     throw new Error('Failed to get supported execution permissions');
   }
 
-  return result;
+  return rpcSupportedPermissionsToDeveloper(result);
 }

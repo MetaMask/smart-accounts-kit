@@ -54,10 +54,11 @@ export {
   erc7715RequestExecutionPermissionsAction as requestExecutionPermissions,
   type MetaMaskExtensionClient,
   type MetaMaskExtensionSchema,
-  type PermissionRequestParameter,
   type RequestExecutionPermissionsParameters,
   type RequestExecutionPermissionsReturnType,
 } from './erc7715RequestExecutionPermissionsAction';
+
+export type { PermissionRequestParameter } from './erc7715Types';
 
 export { erc7715GetSupportedExecutionPermissionsAction as getSupportedExecutionPermissions } from './erc7715GetSupportedExecutionPermissionsAction';
 
@@ -67,6 +68,15 @@ export {
   type GetSupportedExecutionPermissionsResult,
   type GetGrantedExecutionPermissionsResult,
   type SupportedPermissionInfo,
+  type PermissionTypes,
+  type NativeTokenStreamPermission,
+  type NativeTokenPeriodicPermission,
+  type Erc20TokenStreamPermission,
+  type Erc20TokenPeriodicPermission,
+  type Erc20TokenRevocationPermission,
+  type RpcGetSupportedExecutionPermissionsResult,
+  type RpcGetGrantedExecutionPermissionsResult,
+  type RpcSupportedPermissionInfo,
 } from './erc7715Types';
 
 export type { DelegatedCall } from './erc7710RedeemDelegationAction';

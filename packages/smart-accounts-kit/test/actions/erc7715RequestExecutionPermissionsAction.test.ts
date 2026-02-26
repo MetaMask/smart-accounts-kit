@@ -25,10 +25,47 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     request: stubRequest,
   } as unknown as Client;
 
-  // the response object is passed verbatim back to the caller, so the actual data doesn't matter
-  const mockResponse = [
+  // RPC response format (hex chainId, hex amounts) - matches wallet_requestExecutionPermissions return type
+  const mockRpcResponse = [
     {
-      success: true,
+      chainId: '0x7a69',
+      from: '0x1234567890123456789012345678901234567890',
+      to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+      permission: {
+        type: 'native-token-stream',
+        isAdjustmentAllowed: true,
+        data: {
+          amountPerSecond: '0x1',
+          maxAmount: '0x2',
+          startTime: 1234567890,
+        },
+      },
+      context: '0x1234567890abcdef',
+      dependencies: [],
+      delegationManager: '0x0987654321098765432109876543210987654321',
+      rules: [],
+    },
+  ];
+
+  // Developer format (numeric chainId, bigint amounts) - what the action returns after conversion
+  const expectedResult = [
+    {
+      chainId: 0x7a69,
+      from: '0x1234567890123456789012345678901234567890',
+      to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+      permission: {
+        type: 'native-token-stream',
+        isAdjustmentAllowed: true,
+        data: {
+          amountPerSecond: 0x1n,
+          maxAmount: 0x2n,
+          startTime: 1234567890,
+        },
+      },
+      context: '0x1234567890abcdef',
+      dependencies: [],
+      delegationManager: '0x0987654321098765432109876543210987654321',
+      rules: [],
     },
   ];
 
@@ -61,7 +98,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         permissionRequest,
       ];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       const result = await erc7715RequestExecutionPermissionsAction(
         mockClient,
@@ -96,7 +133,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
           },
         ],
       });
-      expect(result).to.deep.equal(mockResponse);
+      expect(result).to.deep.equal(expectedResult);
     });
 
     it('should set retryCount to 0', async () => {
@@ -120,7 +157,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       const parameters: RequestExecutionPermissionsParameters = [
         permissionRequest,
       ];
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -176,7 +213,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         permissionRequest,
       ];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await expect(
         erc7715RequestExecutionPermissionsAction(mockClient, parameters),
@@ -202,7 +239,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       };
 
       const parameters = [permissionRequest];
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -264,7 +301,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
     });
 
     it('should handle multiple permission requests', async () => {
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       const parameters: RequestExecutionPermissionsParameters = [
         {
@@ -300,7 +337,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         parameters,
       );
 
-      expect(result).to.deep.equal(mockResponse);
+      expect(result).to.deep.equal(expectedResult);
     });
 
     it('should not specify isAdjustmentAllowed when not specified in the request', async () => {
@@ -320,7 +357,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         },
         to: alice.address,
       };
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
       await erc7715RequestExecutionPermissionsAction(mockClient, [
         permissionRequest,
       ]);
@@ -372,7 +409,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         },
         to: alice.address,
       };
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
       await (erc7715RequestExecutionPermissionsAction as any)(mockClient, [
         permissionRequest,
       ] as any);
@@ -426,7 +463,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       };
       const parameters = [permissionRequest];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -479,7 +516,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       };
       const parameters = [permissionRequest];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -531,7 +568,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         },
         to: alice.address,
       } as const;
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await (erc7715RequestExecutionPermissionsAction as any)(mockClient, [
         permissionRequest,
@@ -585,7 +622,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       const parameters: RequestExecutionPermissionsParameters = [
         permissionRequest,
       ];
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -634,7 +671,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         permissionRequest,
       ];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -685,7 +722,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       } as const;
       const parameters = [permissionRequest];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -740,7 +777,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       };
       const parameters = [permissionRequest];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -796,7 +833,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       } as const;
       const parameters = [permissionRequest];
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -854,7 +891,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       permissionRequest,
     ];
 
-    stubRequest.resolves(mockResponse);
+    stubRequest.resolves(mockRpcResponse);
 
     await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
 
@@ -907,7 +944,7 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         to: alice.address,
       };
 
-      stubRequest.resolves(mockResponse);
+      stubRequest.resolves(mockRpcResponse);
 
       const parameters: RequestExecutionPermissionsParameters = [
         permissionRequest,

@@ -1,7 +1,10 @@
+import { permissionResponsesFromRpc } from './erc7715Mapping';
 import type {
   GetGrantedExecutionPermissionsResult,
   MetaMaskExtensionClient,
 } from './erc7715Types';
+
+export type { GetGrantedExecutionPermissionsResult } from './erc7715Types';
 
 /**
  * Retrieves all previously granted execution permissions from the wallet according to EIP-7715 specification.
@@ -15,7 +18,7 @@ import type {
  * @example
  * ```typescript
  * const grantedPermissions = await erc7715GetGrantedExecutionPermissionsAction(client);
- * // Returns an array of PermissionResponse objects
+ * // Returns an array of PermissionResponse objects with user-friendly types
  * ```
  */
 export async function erc7715GetGrantedExecutionPermissionsAction(
@@ -33,5 +36,5 @@ export async function erc7715GetGrantedExecutionPermissionsAction(
     throw new Error('Failed to get granted execution permissions');
   }
 
-  return result;
+  return permissionResponsesFromRpc(result);
 }

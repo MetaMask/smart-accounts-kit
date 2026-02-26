@@ -24,6 +24,8 @@ export const CHAIN_ID = {
   sonic: 0x92,
   unichain: 0x82,
   megaEthMainnet: 0x10e6,
+  celo: 0xa4ec,
+  ronin: 0x7e4,
   // Testnets
   bscTestnet: 0x61,
   arbitrumSepolia: 0x66eee,
@@ -42,6 +44,8 @@ export const CHAIN_ID = {
   sepolia: 0xaa36a7,
   sonicTestnet: 0x3909,
   unichainSepolia: 0x515,
+  celoSepolia: 0xaa044c,
+  roninSaigon: 0x31769,
   // decommissioned
   lineaGoerli: 0xe704,
 };
@@ -102,6 +106,8 @@ export const DELEGATOR_CONTRACTS: DeployedContracts = {
     [CHAIN_ID.sonic]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.monad]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.megaEthMainnet]: DEPLOYMENTS_1_3_0,
+    [CHAIN_ID.celo]: DEPLOYMENTS_1_3_0,
+    [CHAIN_ID.ronin]: DEPLOYMENTS_1_3_0,
     // Testnets
     [CHAIN_ID.bscTestnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.citreaTestnet]: DEPLOYMENTS_1_3_0,
@@ -120,5 +126,7 @@ export const DELEGATOR_CONTRACTS: DeployedContracts = {
     [CHAIN_ID.seiTestnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.sonicTestnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.hoodiTestnet]: DEPLOYMENTS_1_3_0,
+    [CHAIN_ID.celoSepolia]: DEPLOYMENTS_1_3_0,
+    [CHAIN_ID.roninSaigon]: DEPLOYMENTS_1_3_0,
   },
 };

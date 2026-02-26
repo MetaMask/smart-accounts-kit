@@ -181,6 +181,21 @@ const sonicTestnetChain: Chain = {
   },
 };
 
+const roninSaigonChain: Chain = {
+  id: 202601,
+  name: 'Ronin Saigon',
+  rpcUrls: {
+    default: {
+      http: ['https://ronin-saigon.drpc.org'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Ronin',
+    symbol: 'RON',
+    decimals: 18,
+  },
+};
+
 export const chains = {
   ...allChains,
   megaEthTestNet: megaEthTestNetChain,
@@ -194,6 +209,7 @@ export const chains = {
   sonicTestnet: sonicTestnetChain,
   monad: monadMainnetChain,
   megaEthMainnet: megaEthMainnetChain,
+  roninSaigon: roninSaigonChain
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them
@@ -214,92 +230,140 @@ const latestVersion = Object.keys(DELEGATOR_CONTRACTS).reduce(
   '0.0.0',
 );
 
-console.log(`Testing version ${latestVersion}`);
-console.log();
-
 const latestContracts = DELEGATOR_CONTRACTS[latestVersion];
 
 if (latestContracts === undefined) {
   throw new Error(`No contracts found for version ${latestVersion}`);
 }
 
-const chainIds = Object.keys(latestContracts);
+const allChainIds = Object.keys(latestContracts);
 
+// Optional: filter by chain IDs from argv (e.g. yarn validate-latest-contracts 0x7e4,0xa4ec)
+const chainIdArg = process.argv.slice(2).flatMap((arg) => arg.split(',')).map((s) => s.trim()).filter(Boolean);
+const chainIdsToValidate =
+  chainIdArg.length === 0
+    ? allChainIds
+    : (() => {
+        const set = new Set(
+          chainIdArg.map((s) => (s.startsWith('0x') ? parseInt(s, 16) : parseInt(s, 10))),
+        );
+        return allChainIds.filter((id) => set.has(parseInt(id, 10)));
+      })();
+
+if (chainIdArg.length > 0 && chainIdsToValidate.length === 0) {
+  throw new Error(`No matching chains for: ${chainIdArg.join(', ')}`);
+}
+
+const chainIds = chainIdsToValidate;
+
+console.log(`Testing version ${latestVersion}`);
+if (chainIdArg.length > 0) {
+  const chainNames = chainIds.map((idStr) => {
+    const id = parseInt(idStr, 10);
+    const ch = Object.values(chains).find((c) => c.id === id);
+    return ch ? ch.name : `0x${id.toString(16)}`;
+  });
+  console.log(`Chains: ${chainNames.join(', ')}`);
+}
+console.log();
+
+const CHAIN_TIMEOUT_MS = 60_000;
 let hasFailed = false;
 
 const allChainsDone = chainIds.map(async (chainIdAsString) => {
   const chainId = parseInt(chainIdAsString, 10);
+  const chainIdHex = `0x${chainId.toString(16)}`;
 
-  const contracts = latestContracts[chainId];
+  const run = async () => {
+    const contracts = latestContracts[chainId];
 
-  if (contracts === undefined) {
-    throw new Error(`No contracts found for chainId ${chainId}`);
-  }
-
-  const transport = http(rpcUrlOverrides[chainId]);
-
-  const chain = Object.values(chains).find(({ id }) => id === chainId);
-
-  if (!chain) {
-    hasFailed = true;
-
-    console.error(`Chain configuration not found for chainId ${chainId}`);
-    return;
-  }
-
-  const publicClient = createPublicClient({
-    chain,
-    transport,
-  });
-
-  const actualChainId = await publicClient.getChainId();
-
-  if (actualChainId !== chainId) {
-    // this is only possible if a custom chain configuration is used, and incorrectly configured.
-    console.error(
-      `ChainId mismatch for ${chain.name}: ${actualChainId} !== ${chainId}`,
-    );
-    hasFailed = true;
-    return;
-  }
-
-  const contractNames = Object.keys(contracts);
-  let hasThisChainFailed = false;
-  const allContractsDone = contractNames.map(async (contractName) => {
-    const contractAddress = contracts[contractName];
-
-    if (contractAddress === undefined) {
-      throw new Error(
-        `No contract address found for contractName ${contractName}`,
-      );
+    if (contracts === undefined) {
+      throw new Error(`No contracts found for chainId ${chainIdHex}`);
     }
 
-    try {
-      const code = await publicClient.getCode({ address: contractAddress });
+    const transport = http(rpcUrlOverrides[chainId]);
 
-      if (code === undefined) {
+    const chain = Object.values(chains).find(({ id }) => id === chainId);
+
+    if (!chain) {
+      hasFailed = true;
+
+      console.error(`Chain configuration not found for chainId ${chainIdHex}`);
+      return;
+    }
+
+    const publicClient = createPublicClient({
+      chain,
+      transport,
+    });
+
+    const actualChainId = await publicClient.getChainId();
+
+    if (actualChainId !== chainId) {
+      // this is only possible if a custom chain configuration is used, and incorrectly configured.
+      console.error(
+        `ChainId mismatch for ${chain.name}: 0x${actualChainId.toString(16)} !== ${chainIdHex}`,
+      );
+      hasFailed = true;
+      return;
+    }
+
+    const contractNames = Object.keys(contracts);
+    let hasThisChainFailed = false;
+    const allContractsDone = contractNames.map(async (contractName) => {
+      const contractAddress = contracts[contractName];
+
+      if (contractAddress === undefined) {
+        throw new Error(
+          `No contract address found for contractName ${contractName}`,
+        );
+      }
+
+      try {
+        const code = await publicClient.getCode({ address: contractAddress });
+
+        if (code === undefined) {
+          console.error(
+            `${chain.name}: ${contractName} is not deployed at ${contractAddress}`,
+          );
+          hasThisChainFailed = true;
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
         console.error(
-          `${chain.name}: ${contractName} is not deployed at ${contractAddress}`,
+          `RPC Request failed for ${chain.name}: ${contractName} - ${errorMessage}`,
         );
         hasThisChainFailed = true;
       }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      console.error(
-        `RPC Request failed for ${chain.name}: ${contractName} - ${errorMessage}`,
-      );
-      hasThisChainFailed = true;
+    });
+
+    await Promise.all(allContractsDone);
+
+    if (hasThisChainFailed) {
+      hasFailed = true;
+      console.error(`${chain.name} failed`);
+    } else {
+      console.log(`${chain.name} succeeded`);
     }
+  };
+
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<void>((_, reject) => {
+    timeoutId = setTimeout(
+      () => reject(new Error(`Timeout after ${CHAIN_TIMEOUT_MS / 1000}s`)),
+      CHAIN_TIMEOUT_MS,
+    );
   });
 
-  await Promise.all(allContractsDone);
-
-  if (hasThisChainFailed) {
+  try {
+    await Promise.race([run(), timeout]);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Chain ${chainIdHex}: ${errorMessage}`);
     hasFailed = true;
-    console.error(`${chain.name} failed`);
-  } else {
-    console.log(`${chain.name} succeeded`);
+  } finally {
+    if (timeoutId !== undefined) clearTimeout(timeoutId);
   }
 });
 

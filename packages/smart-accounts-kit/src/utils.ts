@@ -1,6 +1,6 @@
 import { type Hex, isHex, toHex } from 'viem';
 
-import { CaveatType } from './constants';
+import { CaveatType } from './caveatBuilder/coreCaveatBuilder';
 
 /**
  * Validates that a caveat type is a recognized CaveatType enum value.
@@ -8,17 +8,17 @@ import { CaveatType } from './constants';
  * Custom caveat types registered via CaveatBuilder.extend() bypass this validation.
  *
  * @param type - The caveat type to validate (either enum value or string).
- * @returns The validated caveat type.
  * @throws {Error} If the caveat type is not a recognized CaveatType enum value.
  */
-export function validateCaveatType(type: string | CaveatType): CaveatType {
+export function validateCaveatType(
+  type: string | CaveatType,
+): asserts type is CaveatType {
   const validTypes = Object.values(CaveatType);
   if (!validTypes.includes(type as CaveatType)) {
     throw new Error(
       `Invalid caveat type: "${type}". Valid types are: ${validTypes.join(', ')}`,
     );
   }
-  return type as CaveatType;
 }
 
 /**

@@ -37,12 +37,7 @@ export {
   getSmartAccountsEnvironment,
 } from './smartAccountsEnvironment';
 
-export {
-  Implementation,
-  TransferWindow,
-  ScopeType,
-  CaveatType,
-} from './constants';
+export { Implementation, TransferWindow, ScopeType } from './constants';
 
 export { createExecution, ExecutionMode } from './executions';
 
@@ -51,6 +46,8 @@ export type { ExecutionStruct, CreateExecutionArgs } from './executions';
 export type { Caveats } from './caveatBuilder';
 
 export { createCaveat } from './caveats';
+
+export { CaveatType } from './caveatBuilder';
 
 export { BalanceChangeType } from './caveatBuilder/types';
 

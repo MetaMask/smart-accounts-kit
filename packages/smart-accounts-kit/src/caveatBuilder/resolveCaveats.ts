@@ -36,8 +36,8 @@ export const resolveCaveats = ({
         try {
           if ('type' in caveat) {
             const { type, ...config } = caveat;
-            const normalizedType = validateCaveatType(type as string);
-            scopeCaveatBuilder.addCaveat(normalizedType, config);
+            validateCaveatType(type);
+            scopeCaveatBuilder.addCaveat(type, config);
           } else {
             scopeCaveatBuilder.addCaveat(caveat);
           }

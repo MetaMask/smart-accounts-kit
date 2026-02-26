@@ -145,7 +145,6 @@ type CoreCaveatMap = {
   [CaveatType.Erc20Streaming]: typeof erc20StreamingBuilder;
   [CaveatType.NativeTokenStreaming]: typeof nativeTokenStreamingBuilder;
   [CaveatType.Erc721Transfer]: typeof erc721TransferBuilder;
-  [CaveatType.NativeTokenStreaming]: typeof nativeTokenStreamingBuilder;
   [CaveatType.NativeTokenTransferAmount]: typeof nativeTokenTransferAmountBuilder;
   [CaveatType.NativeBalanceChange]: typeof nativeBalanceChangeBuilder;
   [CaveatType.Redeemer]: typeof redeemerBuilder;

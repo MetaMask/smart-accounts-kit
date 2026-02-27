@@ -10,6 +10,7 @@ import {
 } from '@metamask/smart-accounts-kit';
 import {
   createCaveatBuilder,
+  CaveatType,
   encodeExecutionCalldatas,
   encodeDelegations,
 } from '@metamask/smart-accounts-kit/utils';
@@ -140,7 +141,7 @@ const runTest_expectSuccess = async (
     salt: '0x0',
     caveats: caveats
       .reduce((builder, caveat) => {
-        builder.addCaveat('allowedCalldata', {
+        builder.addCaveat(CaveatType.AllowedCalldata, {
           startIndex: caveat.from,
           value: caveat.calldata,
         });
@@ -218,7 +219,7 @@ const runTest_expectFailure = async (
     salt: '0x0',
     caveats: caveats
       .reduce((builder, caveat) => {
-        builder.addCaveat('allowedCalldata', {
+        builder.addCaveat(CaveatType.AllowedCalldata, {
           startIndex: caveat.from,
           value: caveat.calldata,
         });

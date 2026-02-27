@@ -99,7 +99,7 @@ const runTest_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('erc20TransferAmount', {
+      .addCaveat(CaveatType.Erc20TransferAmount, {
         tokenAddress: erc20TokenAddress,
         maxAmount,
       })
@@ -194,7 +194,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('erc20TransferAmount', {
+      .addCaveat(CaveatType.Erc20TransferAmount, {
         tokenAddress: erc20TokenAddress,
         maxAmount,
       })
@@ -286,7 +286,7 @@ describe('ERC20TransferAmountEnforcer Utilities E2E Tests', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x0',
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('erc20TransferAmount', {
+        .addCaveat(CaveatType.Erc20TransferAmount, {
           tokenAddress: erc20TokenAddress,
           maxAmount,
         })
@@ -341,7 +341,7 @@ describe('ERC20TransferAmountEnforcer Utilities E2E Tests', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x0',
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('erc20TransferAmount', {
+        .addCaveat(CaveatType.Erc20TransferAmount, {
           tokenAddress: erc20TokenAddress,
           maxAmount,
         })
@@ -510,7 +510,7 @@ describe('ERC20TransferAmountEnforcer Utilities E2E Tests', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x1', // Different salt to avoid conflicts
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('erc20TransferAmount', {
+        .addCaveat(CaveatType.Erc20TransferAmount, {
           tokenAddress: erc20TokenAddress,
           maxAmount,
         })
@@ -635,7 +635,7 @@ describe('ERC20TransferAmountEnforcer Utilities E2E Tests', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x2', // Different salt
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('erc20TransferAmount', {
+        .addCaveat(CaveatType.Erc20TransferAmount, {
           tokenAddress: erc20TokenAddress,
           maxAmount,
         })

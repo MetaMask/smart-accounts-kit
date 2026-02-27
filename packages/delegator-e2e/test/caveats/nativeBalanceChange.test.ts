@@ -11,6 +11,7 @@ import {
 } from '@metamask/smart-accounts-kit';
 import {
   createCaveatBuilder,
+  CaveatType,
   encodeExecutionCalldatas,
   encodeDelegations,
 } from '@metamask/smart-accounts-kit/utils';
@@ -123,7 +124,7 @@ test('Bob attempts to redeem with invalid terms length', async () => {
   const { environment } = aliceSmartAccount;
 
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('nativeBalanceChange', {
+    .addCaveat(CaveatType.NativeBalanceChange, {
       recipient,
       balance: requiredIncrease,
       changeType: BalanceChangeType.Increase,
@@ -200,7 +201,7 @@ const testRun_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeBalanceChange', {
+      .addCaveat(CaveatType.NativeBalanceChange, {
         recipient: target,
         balance: requiredChange,
         changeType,
@@ -290,7 +291,7 @@ const testRun_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeBalanceChange', {
+      .addCaveat(CaveatType.NativeBalanceChange, {
         recipient: target,
         balance: requiredChange,
         changeType,

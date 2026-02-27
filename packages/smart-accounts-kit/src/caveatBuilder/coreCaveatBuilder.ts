@@ -12,6 +12,7 @@ import {
 import { blockNumber, blockNumberBuilder } from './blockNumberBuilder';
 import type { CaveatBuilderConfig } from './caveatBuilder';
 import { CaveatBuilder } from './caveatBuilder';
+import type { CaveatType } from './caveatType';
 import { deployed, deployedBuilder } from './deployedBuilder';
 import {
   erc1155BalanceChange,
@@ -84,45 +85,6 @@ import {
 import { timestamp, timestampBuilder } from './timestampBuilder';
 import { valueLte, valueLteBuilder } from './valueLteBuilder';
 
-/**
- * Caveat types for enforcer functions used in delegations.
- * Can be used when defining caveats either via CaveatBuilder.addCaveat
- * or in the caveats array in createDelegation.
- */
-export enum CaveatType {
-  AllowedMethods = 'allowedMethods',
-  AllowedTargets = 'allowedTargets',
-  Deployed = 'deployed',
-  AllowedCalldata = 'allowedCalldata',
-  Erc20BalanceChange = 'erc20BalanceChange',
-  Erc721BalanceChange = 'erc721BalanceChange',
-  Erc1155BalanceChange = 'erc1155BalanceChange',
-  ValueLte = 'valueLte',
-  LimitedCalls = 'limitedCalls',
-  Id = 'id',
-  Nonce = 'nonce',
-  Timestamp = 'timestamp',
-  BlockNumber = 'blockNumber',
-  Erc20TransferAmount = 'erc20TransferAmount',
-  Erc20Streaming = 'erc20Streaming',
-  NativeTokenStreaming = 'nativeTokenStreaming',
-  Erc721Transfer = 'erc721Transfer',
-  NativeTokenTransferAmount = 'nativeTokenTransferAmount',
-  NativeBalanceChange = 'nativeBalanceChange',
-  Redeemer = 'redeemer',
-  NativeTokenPayment = 'nativeTokenPayment',
-  ArgsEqualityCheck = 'argsEqualityCheck',
-  SpecificActionERC20TransferBatch = 'specificActionERC20TransferBatch',
-  Erc20PeriodTransfer = 'erc20PeriodTransfer',
-  NativeTokenPeriodTransfer = 'nativeTokenPeriodTransfer',
-  ExactCalldataBatch = 'exactCalldataBatch',
-  ExactCalldata = 'exactCalldata',
-  ExactExecution = 'exactExecution',
-  ExactExecutionBatch = 'exactExecutionBatch',
-  MultiTokenPeriod = 'multiTokenPeriod',
-  OwnershipTransfer = 'ownershipTransfer',
-}
-
 // While we could derive CoreCaveatMap from the createCaveatBuilder function,
 // doing so would significantly complicate type resolution. By explicitly
 // declaring the return type of createCaveatBuilder, we ensure the caveat
@@ -167,6 +129,9 @@ type CoreCaveatMap = {
  * caveat builders available for use.
  */
 export type CoreCaveatBuilder = CaveatBuilder<CoreCaveatMap>;
+
+// Re-export CaveatType for convenience
+export { CaveatType } from './caveatType';
 
 // We want to allow the caveat `type` to be passed as either an enum reference,
 // or the enum's string value. This generic accepts a union of caveat configs, and

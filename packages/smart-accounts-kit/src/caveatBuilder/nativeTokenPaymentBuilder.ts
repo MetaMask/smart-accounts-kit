@@ -2,8 +2,9 @@ import { createNativeTokenPaymentTerms } from '@metamask/delegation-core';
 import { type Address, isAddress } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const nativeTokenPayment = 'nativeTokenPayment';
+export const nativeTokenPayment = CaveatType.NativeTokenPayment;
 
 export type NativeTokenPaymentBuilderConfig = {
   /**

@@ -2,8 +2,9 @@ import { createAllowedTargetsTerms } from '@metamask/delegation-core';
 import { isAddress, type Address } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const allowedTargets = 'allowedTargets';
+export const allowedTargets = CaveatType.AllowedTargets;
 
 export type AllowedTargetsBuilderConfig = {
   /**

@@ -81,7 +81,7 @@ const runTest_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('exactCalldata', { calldata })
+      .addCaveat(CaveatType.ExactCalldata, { calldata })
       .build(),
     signature: '0x',
   };
@@ -141,7 +141,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('exactCalldata', { calldata: expectedCalldata })
+      .addCaveat(CaveatType.ExactCalldata, { calldata: expectedCalldata })
       .build(),
     signature: '0x',
   };

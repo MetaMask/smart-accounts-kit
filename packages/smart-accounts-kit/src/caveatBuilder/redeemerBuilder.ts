@@ -2,8 +2,9 @@ import { createRedeemerTerms } from '@metamask/delegation-core';
 import { type Address, isAddress } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const redeemer = 'redeemer';
+export const redeemer = CaveatType.Redeemer;
 
 export type RedeemerBuilderConfig = {
   /**

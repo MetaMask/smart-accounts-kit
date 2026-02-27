@@ -2,7 +2,11 @@ import { concat, encodePacked, isAddress, pad, toHex } from 'viem';
 import type { Address } from 'viem/accounts';
 import { expect, describe, it } from 'vitest';
 
-import { createCaveatBuilder, CaveatBuilder } from '../../src/caveatBuilder';
+import {
+  createCaveatBuilder,
+  CaveatBuilder,
+  CaveatType,
+} from '../../src/caveatBuilder';
 import { BalanceChangeType } from '../../src/caveatBuilder/types';
 import type { SmartAccountsEnvironment } from '../../src/types';
 import { randomAddress, randomBytes } from '../utils';
@@ -61,7 +65,7 @@ describe('createCaveatBuilder()', () => {
       const selectors = [randomBytes(4), randomBytes(4)];
 
       const caveats = builder
-        .addCaveat('allowedMethods', { selectors })
+        .addCaveat(CaveatType.AllowedMethods, { selectors })
         .build();
 
       expect(caveats).to.deep.equal([
@@ -84,7 +88,9 @@ describe('createCaveatBuilder()', () => {
 
       const targets: [Address, Address] = [randomAddress(), randomAddress()];
 
-      const caveats = builder.addCaveat('allowedTargets', { targets }).build();
+      const caveats = builder
+        .addCaveat(CaveatType.AllowedTargets, { targets })
+        .build();
 
       expect(caveats).to.deep.equal([
         {
@@ -110,7 +116,7 @@ describe('createCaveatBuilder()', () => {
       const bytecode = randomBytes(256);
 
       const caveats = builder
-        .addCaveat('deployed', { contractAddress, salt, bytecode })
+        .addCaveat(CaveatType.Deployed, { contractAddress, salt, bytecode })
         .build();
 
       expect(caveats).to.deep.equal([
@@ -136,7 +142,7 @@ describe('createCaveatBuilder()', () => {
       const startIndex = Math.floor(Math.random() * 2 ** 32);
 
       const caveats = builder
-        .addCaveat('allowedCalldata', { startIndex, value })
+        .addCaveat(CaveatType.AllowedCalldata, { startIndex, value })
         .build();
 
       expect(caveats).to.deep.equal([
@@ -165,7 +171,7 @@ describe('createCaveatBuilder()', () => {
       );
 
       const caveats = builder
-        .addCaveat('erc20BalanceChange', {
+        .addCaveat(CaveatType.Erc20BalanceChange, {
           tokenAddress,
           recipient,
           balance,
@@ -198,7 +204,9 @@ describe('createCaveatBuilder()', () => {
         Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
       );
 
-      const caveats = builder.addCaveat('valueLte', { maxValue }).build();
+      const caveats = builder
+        .addCaveat(CaveatType.ValueLte, { maxValue })
+        .build();
 
       expect(caveats).to.deep.equal([
         {
@@ -219,7 +227,9 @@ describe('createCaveatBuilder()', () => {
       const builder = createCaveatBuilder(environment);
 
       const limit = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-      const caveats = builder.addCaveat('limitedCalls', { limit }).build();
+      const caveats = builder
+        .addCaveat(CaveatType.LimitedCalls, { limit })
+        .build();
 
       expect(caveats).to.deep.equal([
         {
@@ -240,7 +250,7 @@ describe('createCaveatBuilder()', () => {
       const builder = createCaveatBuilder(environment);
 
       const idValue = BigInt(Math.floor(Math.random() * 2 ** 32));
-      const caveats = builder.addCaveat('id', { id: idValue }).build();
+      const caveats = builder.addCaveat(CaveatType.Id, { id: idValue }).build();
 
       expect(caveats).to.deep.equal([
         {
@@ -261,7 +271,7 @@ describe('createCaveatBuilder()', () => {
       const builder = createCaveatBuilder(environment);
 
       const nonce = randomBytes(16);
-      const caveats = builder.addCaveat('nonce', { nonce }).build();
+      const caveats = builder.addCaveat(CaveatType.Nonce, { nonce }).build();
 
       expect(caveats).to.deep.equal([
         {
@@ -285,7 +295,7 @@ describe('createCaveatBuilder()', () => {
       const beforeThreshold = 2000;
 
       const caveats = builder
-        .addCaveat('timestamp', {
+        .addCaveat(CaveatType.Timestamp, {
           afterThreshold,
           beforeThreshold,
         })
@@ -316,7 +326,7 @@ describe('createCaveatBuilder()', () => {
       const beforeThreshold = 2000n;
 
       const caveats = builder
-        .addCaveat('blockNumber', {
+        .addCaveat(CaveatType.BlockNumber, {
           afterThreshold,
           beforeThreshold,
         })
@@ -345,7 +355,7 @@ describe('createCaveatBuilder()', () => {
       const maxAmount = 1000000000000000000n; // 1 ETH in wei
 
       const caveats = builder
-        .addCaveat('nativeTokenTransferAmount', { maxAmount })
+        .addCaveat(CaveatType.NativeTokenTransferAmount, { maxAmount })
         .build();
 
       expect(caveats).to.deep.equal([
@@ -371,7 +381,7 @@ describe('createCaveatBuilder()', () => {
       const minBalance = 500000000000000000n; // 0.5 ETH in wei
 
       const caveats = builder
-        .addCaveat('nativeBalanceChange', {
+        .addCaveat(CaveatType.NativeBalanceChange, {
           recipient,
           balance: minBalance,
           changeType: BalanceChangeType.Increase,
@@ -402,7 +412,7 @@ describe('createCaveatBuilder()', () => {
       const recipient = randomAddress('lowercase');
 
       const caveats = builder
-        .addCaveat('nativeTokenPayment', { recipient, amount })
+        .addCaveat(CaveatType.NativeTokenPayment, { recipient, amount })
         .build();
 
       expect(caveats).to.deep.equal([
@@ -427,7 +437,7 @@ describe('createCaveatBuilder()', () => {
       const maxAmount = 2000n;
 
       const caveats = builder
-        .addCaveat('erc20TransferAmount', { tokenAddress, maxAmount })
+        .addCaveat(CaveatType.Erc20TransferAmount, { tokenAddress, maxAmount })
         .build();
 
       expect(caveats).to.deep.equal([
@@ -451,7 +461,7 @@ describe('createCaveatBuilder()', () => {
     const redeemerAddress = randomAddress();
 
     const caveats = builder
-      .addCaveat('redeemer', { redeemers: [redeemerAddress] })
+      .addCaveat(CaveatType.Redeemer, { redeemers: [redeemerAddress] })
       .build();
 
     expect(caveats).to.deep.equal([
@@ -473,7 +483,9 @@ describe('createCaveatBuilder()', () => {
     const builder = createCaveatBuilder(environment);
     const args = '0x1234567890';
 
-    const caveats = builder.addCaveat('argsEqualityCheck', { args }).build();
+    const caveats = builder
+      .addCaveat(CaveatType.ArgsEqualityCheck, { args })
+      .build();
 
     expect(caveats).to.deep.equal([
       {

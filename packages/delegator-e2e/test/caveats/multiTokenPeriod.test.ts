@@ -127,7 +127,7 @@ const runTest_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('multiTokenPeriod', { tokenConfigs: configs })
+      .addCaveat(CaveatType.MultiTokenPeriod, { tokenConfigs: configs })
       .build(),
     signature: '0x',
   };
@@ -215,7 +215,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('multiTokenPeriod', { tokenConfigs: configs })
+      .addCaveat(CaveatType.MultiTokenPeriod, { tokenConfigs: configs })
       .build(),
     signature: '0x',
   };

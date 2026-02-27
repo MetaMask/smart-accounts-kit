@@ -15,7 +15,7 @@ import type {
   MetaMaskSmartAccount,
   Delegation,
 } from '@metamask/smart-accounts-kit';
-import { createCaveatBuilder } from '@metamask/smart-accounts-kit/utils';
+import { createCaveatBuilder, CaveatType } from '@metamask/smart-accounts-kit/utils';
 import {
   gasPrice,
   sponsoredBundlerClient,
@@ -146,7 +146,7 @@ const runTest_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('allowedMethods', { selectors: allowedMethods })
+      .addCaveat(CaveatType.AllowedMethods, { selectors: allowedMethods })
       .build(),
     signature: '0x',
   };
@@ -216,7 +216,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('allowedMethods', { selectors: allowedMethods })
+      .addCaveat(CaveatType.AllowedMethods, { selectors: allowedMethods })
       .build(),
     signature: '0x',
   };

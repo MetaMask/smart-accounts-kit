@@ -2,8 +2,9 @@ import { createERC20StreamingTerms } from '@metamask/delegation-core';
 import { type Address } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
+import { CaveatType } from './caveatType';
 
-export const erc20Streaming = 'erc20Streaming';
+export const erc20Streaming = CaveatType.Erc20Streaming;
 
 export type Erc20StreamingBuilderConfig = {
   /**

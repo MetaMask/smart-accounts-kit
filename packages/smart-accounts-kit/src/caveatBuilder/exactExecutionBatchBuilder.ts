@@ -3,8 +3,9 @@ import { isAddress } from 'viem';
 
 import type { ExecutionStruct } from '../executions';
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const exactExecutionBatch = 'exactExecutionBatch';
+export const exactExecutionBatch = CaveatType.ExactExecutionBatch;
 
 export type ExactExecutionBatchBuilderConfig = {
   /**

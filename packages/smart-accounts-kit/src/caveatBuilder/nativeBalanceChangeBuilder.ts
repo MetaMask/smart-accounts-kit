@@ -2,9 +2,10 @@ import { createNativeBalanceChangeTerms } from '@metamask/delegation-core';
 import { type Address, isAddress } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
+import { CaveatType } from './caveatType';
 import { BalanceChangeType } from './types';
 
-export const nativeBalanceChange = 'nativeBalanceChange';
+export const nativeBalanceChange = CaveatType.NativeBalanceChange;
 
 export type NativeBalanceChangeBuilderConfig = {
   /**

@@ -325,7 +325,7 @@ test('Bob attempts to redeem with invalid terms length', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('nativeTokenStreaming', {
+    .addCaveat(CaveatType.NativeTokenStreaming, {
       initialAmount,
       maxAmount,
       amountPerSecond,
@@ -394,7 +394,7 @@ test('Bob attempts to redeem with invalid max amount', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('nativeTokenStreaming', {
+    .addCaveat(CaveatType.NativeTokenStreaming, {
       initialAmount,
       maxAmount: initialAmount + 1n, // we need a valid maxAmount
       amountPerSecond,
@@ -467,7 +467,7 @@ test('Bob attempts to redeem with zero start time', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('nativeTokenStreaming', {
+    .addCaveat(CaveatType.NativeTokenStreaming, {
       initialAmount,
       maxAmount,
       amountPerSecond,
@@ -548,7 +548,7 @@ const runTest_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('nativeTokenStreaming', {
+      .addCaveat(CaveatType.NativeTokenStreaming, {
         initialAmount,
         maxAmount,
         amountPerSecond,
@@ -630,7 +630,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('nativeTokenStreaming', {
+      .addCaveat(CaveatType.NativeTokenStreaming, {
         initialAmount,
         maxAmount,
         amountPerSecond,
@@ -892,13 +892,13 @@ test('Caveat with exactCalldata: Bob successfully redeems with exact calldata ma
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenStreaming', {
+      .addCaveat(CaveatType.NativeTokenStreaming, {
         initialAmount,
         maxAmount,
         amountPerSecond,
         startTime,
       })
-      .addCaveat('exactCalldata', { calldata: exactCalldata })
+      .addCaveat(CaveatType.ExactCalldata, { calldata: exactCalldata })
       .build(),
     signature: '0x',
   };
@@ -986,13 +986,13 @@ test('Caveat with exactCalldata: Bob fails to redeem with wrong calldata', async
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenStreaming', {
+      .addCaveat(CaveatType.NativeTokenStreaming, {
         initialAmount,
         maxAmount,
         amountPerSecond,
         startTime,
       })
-      .addCaveat('exactCalldata', { calldata: exactCalldata })
+      .addCaveat(CaveatType.ExactCalldata, { calldata: exactCalldata })
       .build(),
     signature: '0x',
   };
@@ -1053,13 +1053,13 @@ test('Caveat with allowedCalldata: Bob successfully redeems with allowed calldat
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenStreaming', {
+      .addCaveat(CaveatType.NativeTokenStreaming, {
         initialAmount,
         maxAmount,
         amountPerSecond,
         startTime,
       })
-      .addCaveat('allowedCalldata', allowedCalldata)
+      .addCaveat(CaveatType.AllowedCalldata, allowedCalldata)
       .build(),
     signature: '0x',
   };
@@ -1146,13 +1146,13 @@ test('Caveat with allowedCalldata: Bob fails to redeem with disallowed calldata 
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenStreaming', {
+      .addCaveat(CaveatType.NativeTokenStreaming, {
         initialAmount,
         maxAmount,
         amountPerSecond,
         startTime,
       })
-      .addCaveat('allowedCalldata', allowedCalldata)
+      .addCaveat(CaveatType.AllowedCalldata, allowedCalldata)
       .build(),
     signature: '0x',
   };

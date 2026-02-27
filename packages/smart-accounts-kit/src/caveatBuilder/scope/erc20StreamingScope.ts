@@ -1,6 +1,6 @@
 import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
-import { createCaveatBuilder } from '../coreCaveatBuilder';
+import { CaveatType, createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 import type { Erc20StreamingBuilderConfig } from '../erc20StreamingBuilder';
 
@@ -22,10 +22,10 @@ export function createErc20StreamingCaveatBuilder(
   config: Erc20StreamingScopeConfig,
 ): CoreCaveatBuilder {
   return createCaveatBuilder(environment)
-    .addCaveat('valueLte', {
+    .addCaveat(CaveatType.ValueLte, {
       maxValue: 0n,
     })
-    .addCaveat('erc20Streaming', {
+    .addCaveat(CaveatType.Erc20Streaming, {
       tokenAddress: config.tokenAddress,
       initialAmount: config.initialAmount,
       maxAmount: config.maxAmount,

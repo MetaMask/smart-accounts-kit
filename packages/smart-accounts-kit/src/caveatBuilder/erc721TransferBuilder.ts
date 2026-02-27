@@ -2,8 +2,9 @@ import { createERC721TransferTerms } from '@metamask/delegation-core';
 import { type Address, isAddress } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
+import { CaveatType } from './caveatType';
 
-export const erc721Transfer = 'erc721Transfer';
+export const erc721Transfer = CaveatType.Erc721Transfer;
 
 export type Erc721TransferBuilderConfig = {
   /**

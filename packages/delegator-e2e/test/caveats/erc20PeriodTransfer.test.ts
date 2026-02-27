@@ -111,7 +111,7 @@ const runTest_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('erc20PeriodTransfer', {
+      .addCaveat(CaveatType.Erc20PeriodTransfer, {
         tokenAddress: erc20TokenAddress,
         periodAmount,
         periodDuration,
@@ -196,7 +196,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('erc20PeriodTransfer', {
+      .addCaveat(CaveatType.Erc20PeriodTransfer, {
         tokenAddress: erc20TokenAddress,
         periodAmount,
         periodDuration,
@@ -342,7 +342,7 @@ test('Bob attempts to redeem with invalid terms length', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('erc20PeriodTransfer', {
+    .addCaveat(CaveatType.Erc20PeriodTransfer, {
       tokenAddress: erc20TokenAddress,
       periodAmount,
       periodDuration,
@@ -414,7 +414,7 @@ test('Bob attempts to redeem with invalid execution length', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('erc20PeriodTransfer', {
+    .addCaveat(CaveatType.Erc20PeriodTransfer, {
       tokenAddress: erc20TokenAddress,
       periodAmount,
       periodDuration,
@@ -488,7 +488,7 @@ test('Bob attempts to redeem with invalid contract', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('erc20PeriodTransfer', {
+    .addCaveat(CaveatType.Erc20PeriodTransfer, {
       tokenAddress: erc20TokenAddress,
       periodAmount,
       periodDuration,
@@ -558,7 +558,7 @@ test('Bob attempts to redeem with invalid method', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('erc20PeriodTransfer', {
+    .addCaveat(CaveatType.Erc20PeriodTransfer, {
       tokenAddress: erc20TokenAddress,
       periodAmount,
       periodDuration,
@@ -628,7 +628,7 @@ test('Bob attempts to redeem with zero start date', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('erc20PeriodTransfer', {
+    .addCaveat(CaveatType.Erc20PeriodTransfer, {
       tokenAddress: erc20TokenAddress,
       periodAmount,
       periodDuration,
@@ -705,7 +705,7 @@ test('Bob attempts to redeem with zero period amount', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('erc20PeriodTransfer', {
+    .addCaveat(CaveatType.Erc20PeriodTransfer, {
       tokenAddress: erc20TokenAddress,
       periodAmount: 1n, // we need a valid period amount to pass validation
       periodDuration,
@@ -783,7 +783,7 @@ test('Bob attempts to redeem with zero period duration', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('erc20PeriodTransfer', {
+    .addCaveat(CaveatType.Erc20PeriodTransfer, {
       tokenAddress: erc20TokenAddress,
       periodAmount,
       periodDuration: 1, // we need a valid period duration to pass validation
@@ -861,7 +861,7 @@ test('Bob attempts to redeem before start date', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('erc20PeriodTransfer', {
+    .addCaveat(CaveatType.Erc20PeriodTransfer, {
       tokenAddress: erc20TokenAddress,
       periodAmount,
       periodDuration,

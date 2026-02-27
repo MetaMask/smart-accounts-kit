@@ -1,8 +1,9 @@
 import { createNativeTokenStreamingTerms } from '@metamask/delegation-core';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
+import { CaveatType } from './caveatType';
 
-export const nativeTokenStreaming = 'nativeTokenStreaming';
+export const nativeTokenStreaming = CaveatType.NativeTokenStreaming;
 
 export type NativeTokenStreamingBuilderConfig = {
   /**

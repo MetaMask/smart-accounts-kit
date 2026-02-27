@@ -1,8 +1,9 @@
 import { createNativeTokenPeriodTransferTerms } from '@metamask/delegation-core';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const nativeTokenPeriodTransfer = 'nativeTokenPeriodTransfer';
+export const nativeTokenPeriodTransfer = CaveatType.NativeTokenPeriodTransfer;
 
 export type NativeTokenPeriodTransferBuilderConfig = {
   /**

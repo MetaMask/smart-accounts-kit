@@ -1,7 +1,7 @@
 import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import type { AllowedCalldataBuilderConfig } from '../allowedCalldataBuilder';
-import { createCaveatBuilder } from '../coreCaveatBuilder';
+import { CaveatType, createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 import type { ExactCalldataBuilderConfig } from '../exactCalldataBuilder';
 import type { NativeTokenStreamingBuilderConfig } from '../nativeTokenStreamingBuilder';
@@ -46,19 +46,19 @@ export function createNativeTokenStreamingCaveatBuilder(
   // Add calldata restrictions
   if (allowedCalldata && allowedCalldata.length > 0) {
     allowedCalldata.forEach((calldataConfig) => {
-      caveatBuilder.addCaveat('allowedCalldata', calldataConfig);
+      caveatBuilder.addCaveat(CaveatType.AllowedCalldata, calldataConfig);
     });
   } else if (exactCalldata) {
-    caveatBuilder.addCaveat('exactCalldata', exactCalldata);
+    caveatBuilder.addCaveat(CaveatType.ExactCalldata, exactCalldata);
   } else {
     // Default behavior: only allow empty calldata
-    caveatBuilder.addCaveat('exactCalldata', {
+    caveatBuilder.addCaveat(CaveatType.ExactCalldata, {
       calldata: '0x',
     });
   }
 
   // Add native token streaming restriction
-  caveatBuilder.addCaveat('nativeTokenStreaming', {
+  caveatBuilder.addCaveat(CaveatType.NativeTokenStreaming, {
     initialAmount,
     maxAmount,
     amountPerSecond,

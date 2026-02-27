@@ -105,7 +105,7 @@ const runTest_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenTransferAmount', { maxAmount: allowance })
+      .addCaveat(CaveatType.NativeTokenTransferAmount, { maxAmount: allowance })
       .build(),
     signature: '0x',
   };
@@ -177,7 +177,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenTransferAmount', { maxAmount: allowance })
+      .addCaveat(CaveatType.NativeTokenTransferAmount, { maxAmount: allowance })
       .build(),
     signature: '0x',
   };
@@ -392,7 +392,7 @@ test('Utility: getTermsInfo should correctly decode terms from a real delegation
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenTransferAmount', {
+      .addCaveat(CaveatType.NativeTokenTransferAmount, {
         maxAmount,
       })
       .build(),
@@ -459,7 +459,7 @@ test('Utility: getSpentAmount should track spending correctly before and after t
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenTransferAmount', { maxAmount })
+      .addCaveat(CaveatType.NativeTokenTransferAmount, { maxAmount })
       .build(),
     signature: '0x',
   };
@@ -579,8 +579,8 @@ test('Caveat with exactCalldata: Bob successfully redeems with exact calldata ma
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenTransferAmount', { maxAmount: allowance })
-      .addCaveat('exactCalldata', { calldata: exactCalldata })
+      .addCaveat(CaveatType.NativeTokenTransferAmount, { maxAmount: allowance })
+      .addCaveat(CaveatType.ExactCalldata, { calldata: exactCalldata })
       .build(),
     signature: '0x',
   };
@@ -665,8 +665,8 @@ test('Caveat with exactCalldata: Bob fails to redeem with wrong calldata', async
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenTransferAmount', { maxAmount: allowance })
-      .addCaveat('exactCalldata', { calldata: exactCalldata })
+      .addCaveat(CaveatType.NativeTokenTransferAmount, { maxAmount: allowance })
+      .addCaveat(CaveatType.ExactCalldata, { calldata: exactCalldata })
       .build(),
     signature: '0x',
   };
@@ -724,8 +724,8 @@ test('Caveat with allowedCalldata: Bob successfully redeems with allowed calldat
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenTransferAmount', { maxAmount: allowance })
-      .addCaveat('allowedCalldata', { startIndex: 0, value: allowedCalldata })
+      .addCaveat(CaveatType.NativeTokenTransferAmount, { maxAmount: allowance })
+      .addCaveat(CaveatType.AllowedCalldata, { startIndex: 0, value: allowedCalldata })
       .build(),
     signature: '0x',
   };
@@ -810,8 +810,8 @@ test('Caveat with allowedCalldata: Bob fails to redeem with disallowed calldata 
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenTransferAmount', { maxAmount: allowance })
-      .addCaveat('allowedCalldata', { startIndex: 0, value: allowedCalldata })
+      .addCaveat(CaveatType.NativeTokenTransferAmount, { maxAmount: allowance })
+      .addCaveat(CaveatType.AllowedCalldata, { startIndex: 0, value: allowedCalldata })
       .build(),
     signature: '0x',
   };

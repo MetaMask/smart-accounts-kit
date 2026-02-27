@@ -2,8 +2,9 @@ import { createERC20TokenPeriodTransferTerms } from '@metamask/delegation-core';
 import type { Address } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const erc20PeriodTransfer = 'erc20PeriodTransfer';
+export const erc20PeriodTransfer = CaveatType.Erc20PeriodTransfer;
 
 export type Erc20PeriodTransferBuilderConfig = {
   /**

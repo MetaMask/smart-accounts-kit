@@ -623,7 +623,7 @@ describe('MultiTokenPeriodEnforcer', () => {
       delegator: aliceSmartAccount.address,
       authority: ROOT_AUTHORITY as Address,
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('multiTokenPeriod', {
+        .addCaveat(CaveatType.MultiTokenPeriod, {
           tokenConfigs: [
             {
               token: erc20TokenAddress,
@@ -721,7 +721,7 @@ describe('MultiTokenPeriodEnforcer', () => {
       delegator: aliceSmartAccount.address,
       authority: ROOT_AUTHORITY as Address,
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('multiTokenPeriod', {
+        .addCaveat(CaveatType.MultiTokenPeriod, {
           tokenConfigs: [
             {
               token: erc20TokenAddress,
@@ -809,7 +809,7 @@ describe('MultiTokenPeriodEnforcer', () => {
       delegator: aliceSmartAccount.address,
       authority: ROOT_AUTHORITY as Address,
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('multiTokenPeriod', {
+        .addCaveat(CaveatType.MultiTokenPeriod, {
           tokenConfigs: [
             {
               token: erc20TokenAddress,
@@ -1507,7 +1507,7 @@ describe('Individual action functions vs client extension methods', () => {
       delegator: aliceSmartAccount.address,
       authority: ROOT_AUTHORITY as Address,
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('multiTokenPeriod', {
+        .addCaveat(CaveatType.MultiTokenPeriod, {
           tokenConfigs: [
             {
               token: erc20TokenAddress,

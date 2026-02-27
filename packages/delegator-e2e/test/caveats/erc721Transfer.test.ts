@@ -13,6 +13,7 @@ import type {
 } from '@metamask/smart-accounts-kit';
 import {
   createCaveatBuilder,
+  CaveatType,
   encodeExecutionCalldatas,
   encodeDelegations,
 } from '@metamask/smart-accounts-kit/utils';
@@ -95,7 +96,7 @@ const runTest_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('erc721Transfer', {
+      .addCaveat(CaveatType.Erc721Transfer, {
         tokenAddress,
         tokenId,
       })
@@ -195,7 +196,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('erc721Transfer', {
+      .addCaveat(CaveatType.Erc721Transfer, {
         tokenAddress,
         tokenId: allowedTokenId,
       })

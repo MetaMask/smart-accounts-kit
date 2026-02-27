@@ -84,7 +84,7 @@ test('maincase: Bob redeems the delegation with a permissions context allowing p
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenPayment', {
+      .addCaveat(CaveatType.NativeTokenPayment, {
         recipient,
         amount: requiredValue,
       })
@@ -103,7 +103,7 @@ test('maincase: Bob redeems the delegation with a permissions context allowing p
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('argsEqualityCheck', {
+      .addCaveat(CaveatType.ArgsEqualityCheck, {
         args,
       })
       .build(),
@@ -137,7 +137,7 @@ test('Bob attempts to redeem the delegation without an argsEqualityCheckEnforcer
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenPayment', {
+      .addCaveat(CaveatType.NativeTokenPayment, {
         recipient,
         amount: requiredValue,
       })
@@ -184,7 +184,7 @@ test('Bob attempts to redeem the delegation without providing a valid permission
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenPayment', {
+      .addCaveat(CaveatType.NativeTokenPayment, {
         recipient,
         amount: requiredValue,
       })
@@ -208,7 +208,7 @@ test('Bob attempts to redeem with invalid terms length', async () => {
   const { environment } = aliceSmartAccount;
 
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('nativeTokenPayment', {
+    .addCaveat(CaveatType.NativeTokenPayment, {
       recipient,
       amount: requiredValue,
     })
@@ -237,7 +237,7 @@ test('Bob attempts to redeem with invalid terms length', async () => {
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('argsEqualityCheck', {
+      .addCaveat(CaveatType.ArgsEqualityCheck, {
         args,
       })
       .build(),
@@ -272,7 +272,7 @@ test('Bob attempts to redeem with empty allowance delegations', async () => {
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('nativeTokenPayment', {
+      .addCaveat(CaveatType.NativeTokenPayment, {
         recipient,
         amount: requiredValue,
       })

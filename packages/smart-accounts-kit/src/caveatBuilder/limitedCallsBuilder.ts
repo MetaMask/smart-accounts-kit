@@ -1,8 +1,9 @@
 import { createLimitedCallsTerms } from '@metamask/delegation-core';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
+import { CaveatType } from './caveatType';
 
-export const limitedCalls = 'limitedCalls';
+export const limitedCalls = CaveatType.LimitedCalls;
 
 export type LimitedCallsBuilderConfig = {
   /**

@@ -140,7 +140,7 @@ describe('CaveatType enum usage patterns', () => {
         .build();
 
       const stringResult = builderWithString
-        .addCaveat('allowedMethods', { selectors })
+        .addCaveat(CaveatType.AllowedMethods, { selectors })
         .build();
 
       // Both should produce the same result
@@ -409,11 +409,11 @@ describe('CaveatType enum usage patterns', () => {
       const builder = createCaveatBuilder(environment);
 
       // This should also compile without errors
-      builder.addCaveat('allowedMethods', {
+      builder.addCaveat(CaveatType.AllowedMethods, {
         selectors: ['0x12345678'],
       });
-      builder.addCaveat('valueLte', { maxValue: 1000n });
-      builder.addCaveat('allowedTargets', {
+      builder.addCaveat(CaveatType.ValueLte, { maxValue: 1000n });
+      builder.addCaveat(CaveatType.AllowedTargets, {
         targets: [randomAddress()],
       });
 

@@ -2,8 +2,9 @@ import { createExactCalldataTerms } from '@metamask/delegation-core';
 import type { Hex } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const exactCalldata = 'exactCalldata';
+export const exactCalldata = CaveatType.ExactCalldata;
 
 export type ExactCalldataBuilderConfig = {
   /**

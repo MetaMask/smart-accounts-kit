@@ -3,6 +3,7 @@ import type { Hex } from 'viem';
 import { isAddress } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
+import { CaveatType } from './caveatType';
 
 export type TokenPeriodConfig = {
   /**
@@ -27,7 +28,7 @@ export type MultiTokenPeriodBuilderConfig = {
   tokenConfigs: TokenPeriodConfig[];
 };
 
-export const multiTokenPeriod = 'multiTokenPeriod';
+export const multiTokenPeriod = CaveatType.MultiTokenPeriod;
 
 /**
  * Creates a caveat for the MultiTokenPeriodEnforcer.

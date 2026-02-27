@@ -14,6 +14,7 @@ import type {
 } from '@metamask/smart-accounts-kit';
 import {
   createCaveatBuilder,
+  CaveatType,
   encodeExecutionCalldatas,
   encodeDelegations,
 } from '@metamask/smart-accounts-kit/utils';
@@ -393,7 +394,7 @@ test('Bob attempts to redeem with invalid terms length', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('erc20Streaming', {
+    .addCaveat(CaveatType.Erc20Streaming, {
       tokenAddress: erc20TokenAddress,
       initialAmount,
       maxAmount,
@@ -469,7 +470,7 @@ test('Bob attempts to redeem with maxAmount less than initialAmount', async () =
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('erc20Streaming', {
+    .addCaveat(CaveatType.Erc20Streaming, {
       tokenAddress: erc20TokenAddress,
       initialAmount,
       maxAmount: initialAmount + 1n, // we need a valid maxAmount
@@ -551,7 +552,7 @@ test('Bob attempts to redeem with zero start time', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('erc20Streaming', {
+    .addCaveat(CaveatType.Erc20Streaming, {
       tokenAddress: erc20TokenAddress,
       initialAmount,
       maxAmount,
@@ -640,7 +641,7 @@ const runTest_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('erc20Streaming', {
+      .addCaveat(CaveatType.Erc20Streaming, {
         tokenAddress: erc20TokenAddress,
         initialAmount,
         maxAmount,
@@ -731,7 +732,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('erc20Streaming', {
+      .addCaveat(CaveatType.Erc20Streaming, {
         tokenAddress: erc20TokenAddress,
         initialAmount,
         maxAmount,

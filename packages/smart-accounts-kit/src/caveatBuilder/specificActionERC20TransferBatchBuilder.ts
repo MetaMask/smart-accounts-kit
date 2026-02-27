@@ -2,9 +2,10 @@ import { createSpecificActionERC20TransferBatchTerms } from '@metamask/delegatio
 import { isAddress, type Address, type Hex } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
 export const specificActionERC20TransferBatch =
-  'specificActionERC20TransferBatch';
+  CaveatType.SpecificActionERC20TransferBatch;
 
 export type SpecificActionErc20TransferBatchBuilderConfig = {
   /**

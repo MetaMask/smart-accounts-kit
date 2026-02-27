@@ -4,7 +4,7 @@ import { hasProperties } from '../../utils';
 import type { AllowedCalldataBuilderConfig } from '../allowedCalldataBuilder';
 import type { AllowedMethodsBuilderConfig } from '../allowedMethodsBuilder';
 import type { AllowedTargetsBuilderConfig } from '../allowedTargetsBuilder';
-import { createCaveatBuilder } from '../coreCaveatBuilder';
+import { CaveatType, createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 import type { ExactCalldataBuilderConfig } from '../exactCalldataBuilder';
 import type { ValueLteBuilderConfig } from '../valueLteBuilder';
@@ -54,16 +54,16 @@ export function createFunctionCallCaveatBuilder(
   const valueLteConfig = config.valueLte ?? { maxValue: 0n };
 
   const caveatBuilder = createCaveatBuilder(environment)
-    .addCaveat('allowedTargets', { targets })
-    .addCaveat('allowedMethods', { selectors })
-    .addCaveat('valueLte', valueLteConfig);
+    .addCaveat(CaveatType.AllowedTargets, { targets })
+    .addCaveat(CaveatType.AllowedMethods, { selectors })
+    .addCaveat(CaveatType.ValueLte, valueLteConfig);
 
   if (allowedCalldata && allowedCalldata.length > 0) {
     allowedCalldata.forEach((calldataConfig) => {
-      caveatBuilder.addCaveat('allowedCalldata', calldataConfig);
+      caveatBuilder.addCaveat(CaveatType.AllowedCalldata, calldataConfig);
     });
   } else if (exactCalldata) {
-    caveatBuilder.addCaveat('exactCalldata', exactCalldata);
+    caveatBuilder.addCaveat(CaveatType.ExactCalldata, exactCalldata);
   }
 
   return caveatBuilder;

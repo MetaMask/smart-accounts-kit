@@ -10,6 +10,7 @@ import {
 } from '@metamask/smart-accounts-kit';
 import {
   createCaveatBuilder,
+  CaveatType,
   encodeExecutionCalldatas,
   encodeDelegations,
   hashDelegation,
@@ -111,7 +112,7 @@ const runTest = async (limit: number, runs: number) => {
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('limitedCalls', { limit })
+      .addCaveat(CaveatType.LimitedCalls, { limit })
       .build(),
     signature: '0x',
   };
@@ -203,7 +204,7 @@ describe('LimitedCallsEnforcer Contract Read Methods', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x0',
       caveats: createCaveatBuilder(environment)
-        .addCaveat('limitedCalls', { limit })
+        .addCaveat(CaveatType.LimitedCalls, { limit })
         .build(),
       signature: '0x',
     };
@@ -231,7 +232,7 @@ describe('LimitedCallsEnforcer Contract Read Methods', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x0',
       caveats: createCaveatBuilder(environment)
-        .addCaveat('limitedCalls', { limit })
+        .addCaveat(CaveatType.LimitedCalls, { limit })
         .build(),
       signature: '0x',
     };
@@ -318,7 +319,7 @@ describe('LimitedCallsEnforcer Contract Read Methods', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x1',
       caveats: createCaveatBuilder(environment)
-        .addCaveat('limitedCalls', { limit })
+        .addCaveat(CaveatType.LimitedCalls, { limit })
         .build(),
       signature: '0x',
     };
@@ -329,7 +330,7 @@ describe('LimitedCallsEnforcer Contract Read Methods', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x2',
       caveats: createCaveatBuilder(environment)
-        .addCaveat('limitedCalls', { limit })
+        .addCaveat(CaveatType.LimitedCalls, { limit })
         .build(),
       signature: '0x',
     };
@@ -412,7 +413,7 @@ describe('LimitedCallsEnforcer Contract Read Methods', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x42',
       caveats: createCaveatBuilder(environment)
-        .addCaveat('limitedCalls', { limit })
+        .addCaveat(CaveatType.LimitedCalls, { limit })
         .build(),
       signature: '0x',
     };

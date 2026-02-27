@@ -114,7 +114,7 @@ const runTest_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('specificActionERC20TransferBatch', {
+      .addCaveat(CaveatType.SpecificActionERC20TransferBatch, {
         tokenAddress,
         recipient,
         amount,
@@ -187,7 +187,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('specificActionERC20TransferBatch', {
+      .addCaveat(CaveatType.SpecificActionERC20TransferBatch, {
         tokenAddress,
         recipient,
         amount,
@@ -665,7 +665,7 @@ describe('SpecificActionERC20TransferBatchEnforcer Contract Read Methods', () =>
       authority: ROOT_AUTHORITY,
       salt: '0x123',
       caveats: createCaveatBuilder(environment)
-        .addCaveat('specificActionERC20TransferBatch', {
+        .addCaveat(CaveatType.SpecificActionERC20TransferBatch, {
           tokenAddress: erc20TokenAddress,
           recipient: bobSmartAccount.address,
           amount: parseEther('1'),
@@ -703,7 +703,7 @@ describe('SpecificActionERC20TransferBatchEnforcer Contract Read Methods', () =>
       authority: ROOT_AUTHORITY,
       salt: '0x456',
       caveats: createCaveatBuilder(environment)
-        .addCaveat('specificActionERC20TransferBatch', {
+        .addCaveat(CaveatType.SpecificActionERC20TransferBatch, {
           tokenAddress: erc20TokenAddress,
           recipient: bobSmartAccount.address,
           amount: transferAmount,
@@ -799,7 +799,7 @@ describe('SpecificActionERC20TransferBatchEnforcer Contract Read Methods', () =>
       authority: ROOT_AUTHORITY,
       salt: '0x111',
       caveats: createCaveatBuilder(environment)
-        .addCaveat('specificActionERC20TransferBatch', {
+        .addCaveat(CaveatType.SpecificActionERC20TransferBatch, {
           tokenAddress: erc20TokenAddress,
           recipient: bobSmartAccount.address,
           amount: parseEther('1'),
@@ -816,7 +816,7 @@ describe('SpecificActionERC20TransferBatchEnforcer Contract Read Methods', () =>
       authority: ROOT_AUTHORITY,
       salt: '0x222', // Different salt = different delegation hash
       caveats: createCaveatBuilder(environment)
-        .addCaveat('specificActionERC20TransferBatch', {
+        .addCaveat(CaveatType.SpecificActionERC20TransferBatch, {
           tokenAddress: erc20TokenAddress,
           recipient: bobSmartAccount.address,
           amount: parseEther('1'),

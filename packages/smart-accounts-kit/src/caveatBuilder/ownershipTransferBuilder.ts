@@ -2,8 +2,9 @@ import { createOwnershipTransferTerms } from '@metamask/delegation-core';
 import { type Address, isAddress } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
+import { CaveatType } from './caveatType';
 
-export const ownershipTransfer = 'ownershipTransfer';
+export const ownershipTransfer = CaveatType.OwnershipTransfer;
 
 export type OwnershipTransferBuilderConfig = {
   /**

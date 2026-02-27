@@ -1,8 +1,9 @@
 import { createTimestampTerms } from '@metamask/delegation-core';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const timestamp = 'timestamp';
+export const timestamp = CaveatType.Timestamp;
 
 export type TimestampBuilderConfig = {
   /**

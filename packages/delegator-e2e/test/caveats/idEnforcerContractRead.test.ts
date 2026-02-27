@@ -10,6 +10,7 @@ import {
 } from '@metamask/smart-accounts-kit';
 import {
   createCaveatBuilder,
+  CaveatType,
   encodeExecutionCalldatas,
   encodeDelegations,
 } from '@metamask/smart-accounts-kit/utils';
@@ -145,7 +146,7 @@ describe('IdEnforcer Contract Read Methods', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x0',
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('id', { id })
+        .addCaveat(CaveatType.Id, { id })
         .build(),
       signature: '0x',
     };
@@ -246,7 +247,7 @@ describe('IdEnforcer Contract Read Methods', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x0',
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('id', { id })
+        .addCaveat(CaveatType.Id, { id })
         .build(),
       signature: '0x',
     };
@@ -360,7 +361,7 @@ describe('IdEnforcer Contract Read Methods', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x0',
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('id', { id: id2 })
+        .addCaveat(CaveatType.Id, { id: id2 })
         .build(),
       signature: '0x',
     };
@@ -452,7 +453,7 @@ describe('IdEnforcer Contract Read Methods', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x0',
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('id', { id })
+        .addCaveat(CaveatType.Id, { id })
         .build(),
       signature: '0x',
     };
@@ -520,7 +521,7 @@ describe('IdEnforcer Contract Read Methods', () => {
       authority: ROOT_AUTHORITY,
       salt: '0x1', // Different salt
       caveats: createCaveatBuilder(aliceSmartAccount.environment)
-        .addCaveat('id', { id })
+        .addCaveat(CaveatType.Id, { id })
         .build(),
       signature: '0x',
     };

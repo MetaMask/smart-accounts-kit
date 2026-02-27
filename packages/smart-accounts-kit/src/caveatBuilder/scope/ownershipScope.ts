@@ -1,7 +1,7 @@
 import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import { hasProperties } from '../../utils';
-import { createCaveatBuilder } from '../coreCaveatBuilder';
+import { CaveatType, createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 import type { OwnershipTransferBuilderConfig } from '../ownershipTransferBuilder';
 
@@ -38,7 +38,7 @@ export function createOwnershipCaveatBuilder(
   }
 
   const caveatBuilder = createCaveatBuilder(environment).addCaveat(
-    'ownershipTransfer',
+    CaveatType.OwnershipTransfer,
     config,
   );
 

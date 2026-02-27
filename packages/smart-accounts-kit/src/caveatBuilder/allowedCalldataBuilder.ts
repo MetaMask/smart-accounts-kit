@@ -2,8 +2,9 @@ import { createAllowedCalldataTerms } from '@metamask/delegation-core';
 import { type Hex } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
+import { CaveatType } from './caveatType';
 
-export const allowedCalldata = 'allowedCalldata';
+export const allowedCalldata = CaveatType.AllowedCalldata;
 
 export type AllowedCalldataBuilderConfig = {
   /**

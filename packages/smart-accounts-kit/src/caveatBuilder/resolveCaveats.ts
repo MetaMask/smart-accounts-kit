@@ -1,4 +1,3 @@
-import { validateCaveatType } from '../utils';
 import type { CaveatBuilder } from './caveatBuilder';
 import type { CoreCaveatConfiguration } from './coreCaveatBuilder';
 import { createCaveatBuilderFromScope, type ScopeConfig } from './scope';
@@ -36,8 +35,8 @@ export const resolveCaveats = ({
         try {
           if ('type' in caveat) {
             const { type, ...config } = caveat;
-            validateCaveatType(type);
-            scopeCaveatBuilder.addCaveat(type, config);
+            // Type assertion: addCaveat validates at runtime and throws if enforcer doesn't exist
+            (scopeCaveatBuilder.addCaveat as any)(type, config);
           } else {
             scopeCaveatBuilder.addCaveat(caveat);
           }

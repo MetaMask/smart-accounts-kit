@@ -3,8 +3,9 @@ import { isHex, toFunctionSelector } from 'viem';
 import type { AbiFunction, Hex } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const allowedMethods = 'allowedMethods';
+export const allowedMethods = CaveatType.AllowedMethods;
 
 export type MethodSelector = Hex | string | AbiFunction;
 

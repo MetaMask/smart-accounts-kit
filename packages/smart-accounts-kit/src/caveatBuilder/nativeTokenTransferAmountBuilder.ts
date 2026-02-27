@@ -1,8 +1,9 @@
 import { createNativeTokenTransferAmountTerms } from '@metamask/delegation-core';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const nativeTokenTransferAmount = 'nativeTokenTransferAmount';
+export const nativeTokenTransferAmount = CaveatType.NativeTokenTransferAmount;
 
 export type NativeTokenTransferAmountBuilderConfig = {
   /**

@@ -3,8 +3,9 @@ import type { Address } from 'viem';
 import { isAddress } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const erc20TransferAmount = 'erc20TransferAmount';
+export const erc20TransferAmount = CaveatType.Erc20TransferAmount;
 
 export type Erc20TransferAmountBuilderConfig = {
   /**

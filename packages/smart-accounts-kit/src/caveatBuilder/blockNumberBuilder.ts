@@ -1,8 +1,9 @@
 import { createBlockNumberTerms } from '@metamask/delegation-core';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
+import { CaveatType } from './caveatType';
 
-export const blockNumber = 'blockNumber';
+export const blockNumber = CaveatType.BlockNumber;
 
 export type BlockNumberBuilderConfig = {
   /**

@@ -2,8 +2,9 @@ import { createDeployedTerms } from '@metamask/delegation-core';
 import { isAddress, isHex, type Address, type Hex } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const deployed = 'deployed';
+export const deployed = CaveatType.Deployed;
 
 export type DeployedBuilderConfig = {
   /**

@@ -1,6 +1,6 @@
 import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
-import { createCaveatBuilder } from '../coreCaveatBuilder';
+import { CaveatType, createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 import type { Erc20PeriodTransferBuilderConfig } from '../erc20PeriodTransferBuilder';
 
@@ -22,10 +22,10 @@ export function createErc20PeriodicCaveatBuilder(
   config: Erc20PeriodicScopeConfig,
 ): CoreCaveatBuilder {
   return createCaveatBuilder(environment)
-    .addCaveat('valueLte', {
+    .addCaveat(CaveatType.ValueLte, {
       maxValue: 0n,
     })
-    .addCaveat('erc20PeriodTransfer', {
+    .addCaveat(CaveatType.Erc20PeriodTransfer, {
       tokenAddress: config.tokenAddress,
       periodAmount: config.periodAmount,
       periodDuration: config.periodDuration,

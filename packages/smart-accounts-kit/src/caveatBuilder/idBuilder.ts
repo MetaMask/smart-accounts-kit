@@ -2,6 +2,7 @@ import { createIdTerms } from '@metamask/delegation-core';
 import { maxUint256 } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
+import { CaveatType } from './caveatType';
 
 export type IdBuilderConfig = {
   /**
@@ -10,7 +11,7 @@ export type IdBuilderConfig = {
   id: bigint | number;
 };
 
-export const id = 'id';
+export const id = CaveatType.Id;
 
 /**
  * Builds a caveat struct for the IdEnforcer.

@@ -2,7 +2,10 @@ import { describe, it, expect } from 'vitest';
 
 import { CaveatBuilder } from '../../src/caveatBuilder/caveatBuilder';
 import type { CoreCaveatConfiguration } from '../../src/caveatBuilder/coreCaveatBuilder';
-import { createCaveatBuilder } from '../../src/caveatBuilder/coreCaveatBuilder';
+import {
+  createCaveatBuilder,
+  CaveatType,
+} from '../../src/caveatBuilder/coreCaveatBuilder';
 import { resolveCaveats } from '../../src/caveatBuilder/resolveCaveats';
 import type { ScopeConfig } from '../../src/caveatBuilder/scope';
 import { ScopeType } from '../../src/constants';
@@ -75,7 +78,7 @@ describe('resolveCaveats', () => {
       const caveatBuilder = createCaveatBuilder(environment, {
         allowInsecureUnrestrictedDelegation: true,
       });
-      caveatBuilder.addCaveat('allowedMethods', {
+      caveatBuilder.addCaveat(CaveatType.AllowedMethods, {
         selectors: ['0x12345678'],
       });
 
@@ -237,7 +240,7 @@ describe('resolveCaveats', () => {
           scope: erc20Scope,
           caveats: [invalidType as any],
         });
-      }).to.throw('Invalid caveat');
+      }).to.throw('does not exist');
     });
   });
 });

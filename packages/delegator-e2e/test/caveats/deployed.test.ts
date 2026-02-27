@@ -10,6 +10,7 @@ import {
 } from '@metamask/smart-accounts-kit';
 import {
   createCaveatBuilder,
+  CaveatType,
   encodeExecutionCalldatas,
   encodeDelegations,
 } from '@metamask/smart-accounts-kit/utils';
@@ -160,7 +161,7 @@ const runTest_expectSuccess = async (deployedAddress: Hex, salt: Hex) => {
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('deployed', {
+      .addCaveat(CaveatType.Deployed, {
         contractAddress: deployedAddress,
         salt,
         bytecode: CounterMetadata.bytecode.object as Hex,
@@ -247,7 +248,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('deployed', {
+      .addCaveat(CaveatType.Deployed, {
         contractAddress: deployedAddress,
         salt,
         bytecode: CounterMetadata.bytecode.object as Hex,

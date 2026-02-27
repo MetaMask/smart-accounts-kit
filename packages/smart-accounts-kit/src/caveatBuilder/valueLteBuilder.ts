@@ -1,8 +1,9 @@
 import { createValueLteTerms } from '@metamask/delegation-core';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
+import { CaveatType } from './caveatType';
 
-export const valueLte = 'valueLte';
+export const valueLte = CaveatType.ValueLte;
 
 export type ValueLteBuilderConfig = {
   /**

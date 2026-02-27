@@ -96,7 +96,7 @@ const runTest_expectSuccess = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('nativeTokenPeriodTransfer', {
+      .addCaveat(CaveatType.NativeTokenPeriodTransfer, {
         periodAmount,
         periodDuration,
         startDate,
@@ -170,7 +170,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('nativeTokenPeriodTransfer', {
+      .addCaveat(CaveatType.NativeTokenPeriodTransfer, {
         periodAmount,
         periodDuration,
         startDate,
@@ -301,7 +301,7 @@ test('Bob attempts to redeem with invalid terms length', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('nativeTokenPeriodTransfer', {
+    .addCaveat(CaveatType.NativeTokenPeriodTransfer, {
       periodAmount,
       periodDuration,
       startDate,
@@ -366,7 +366,7 @@ test('Bob attempts to redeem with zero start date', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('nativeTokenPeriodTransfer', {
+    .addCaveat(CaveatType.NativeTokenPeriodTransfer, {
       periodAmount,
       periodDuration,
       startDate: currentTime, // valid start date
@@ -435,7 +435,7 @@ test('Bob attempts to redeem with zero period amount', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('nativeTokenPeriodTransfer', {
+    .addCaveat(CaveatType.NativeTokenPeriodTransfer, {
       periodAmount: 1n, // valid period amount
       periodDuration,
       startDate,
@@ -504,7 +504,7 @@ test('Bob attempts to redeem with zero period duration', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('nativeTokenPeriodTransfer', {
+    .addCaveat(CaveatType.NativeTokenPeriodTransfer, {
       periodAmount,
       periodDuration: 3600, // valid period duration
       startDate,
@@ -573,7 +573,7 @@ test('Bob attempts to redeem before start date', async () => {
 
   const { environment } = aliceSmartAccount;
   const caveats = createCaveatBuilder(environment)
-    .addCaveat('nativeTokenPeriodTransfer', {
+    .addCaveat(CaveatType.NativeTokenPeriodTransfer, {
       periodAmount,
       periodDuration,
       startDate,
@@ -799,12 +799,12 @@ test('Caveat with exactCalldata: Bob successfully redeems with exact calldata ma
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenPeriodTransfer', {
+      .addCaveat(CaveatType.NativeTokenPeriodTransfer, {
         periodAmount,
         periodDuration,
         startDate,
       })
-      .addCaveat('exactCalldata', { calldata: exactCalldata })
+      .addCaveat(CaveatType.ExactCalldata, { calldata: exactCalldata })
       .build(),
     signature: '0x',
   };
@@ -891,12 +891,12 @@ test('Caveat with exactCalldata: Bob fails to redeem with wrong calldata', async
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenPeriodTransfer', {
+      .addCaveat(CaveatType.NativeTokenPeriodTransfer, {
         periodAmount,
         periodDuration,
         startDate,
       })
-      .addCaveat('exactCalldata', { calldata: exactCalldata })
+      .addCaveat(CaveatType.ExactCalldata, { calldata: exactCalldata })
       .build(),
     signature: '0x',
   };
@@ -956,12 +956,12 @@ test('Caveat with allowedCalldata: Bob successfully redeems with allowed calldat
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenPeriodTransfer', {
+      .addCaveat(CaveatType.NativeTokenPeriodTransfer, {
         periodAmount,
         periodDuration,
         startDate,
       })
-      .addCaveat('allowedCalldata', allowedCalldata)
+      .addCaveat(CaveatType.AllowedCalldata, allowedCalldata)
       .build(),
     signature: '0x',
   };
@@ -1047,12 +1047,12 @@ test('Caveat with allowedCalldata: Bob fails to redeem with disallowed calldata 
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(aliceSmartAccount.environment)
-      .addCaveat('nativeTokenPeriodTransfer', {
+      .addCaveat(CaveatType.NativeTokenPeriodTransfer, {
         periodAmount,
         periodDuration,
         startDate,
       })
-      .addCaveat('allowedCalldata', allowedCalldata)
+      .addCaveat(CaveatType.AllowedCalldata, allowedCalldata)
       .build(),
     signature: '0x',
   };

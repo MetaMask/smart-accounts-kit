@@ -10,6 +10,7 @@ import {
 } from '@metamask/smart-accounts-kit';
 import {
   createCaveatBuilder,
+  CaveatType,
   encodeExecutionCalldatas,
   encodeDelegations,
 } from '@metamask/smart-accounts-kit/utils';
@@ -114,7 +115,7 @@ const runTest_expectSuccess = async (idValue: number) => {
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('id', { id: idValue })
+      .addCaveat(CaveatType.Id, { id: idValue })
       .build(),
     signature: '0x',
   };
@@ -187,7 +188,7 @@ const runTest_expectFailure = async (
     authority: ROOT_AUTHORITY,
     salt: '0x0',
     caveats: createCaveatBuilder(environment)
-      .addCaveat('id', { id: idValue })
+      .addCaveat(CaveatType.Id, { id: idValue })
       .build(),
     signature: '0x',
   };

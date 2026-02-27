@@ -1,7 +1,7 @@
 import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import { hasProperties } from '../../utils';
-import { createCaveatBuilder } from '../coreCaveatBuilder';
+import { CaveatType, createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 import type { Erc721TransferBuilderConfig } from '../erc721TransferBuilder';
 
@@ -38,7 +38,7 @@ export function createErc721CaveatBuilder(
   }
 
   const caveatBuilder = createCaveatBuilder(environment).addCaveat(
-    'erc721Transfer',
+    CaveatType.Erc721Transfer,
     config,
   );
 

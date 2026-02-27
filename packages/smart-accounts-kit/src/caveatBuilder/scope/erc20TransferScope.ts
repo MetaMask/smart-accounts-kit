@@ -1,6 +1,6 @@
 import type { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
-import { createCaveatBuilder } from '../coreCaveatBuilder';
+import { CaveatType, createCaveatBuilder } from '../coreCaveatBuilder';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 import type { Erc20TransferAmountBuilderConfig } from '../erc20TransferAmountBuilder';
 
@@ -22,10 +22,10 @@ export function createErc20TransferCaveatBuilder(
   config: Erc20TransferScopeConfig,
 ): CoreCaveatBuilder {
   return createCaveatBuilder(environment)
-    .addCaveat('valueLte', {
+    .addCaveat(CaveatType.ValueLte, {
       maxValue: 0n,
     })
-    .addCaveat('erc20TransferAmount', {
+    .addCaveat(CaveatType.Erc20TransferAmount, {
       tokenAddress: config.tokenAddress,
       maxAmount: config.maxAmount,
     });

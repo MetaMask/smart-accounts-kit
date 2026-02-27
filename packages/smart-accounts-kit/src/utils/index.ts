@@ -42,4 +42,8 @@ export {
 
 export type { CoreCaveatBuilder, CaveatBuilderConfig } from '../caveatBuilder';
 
-export { createCaveatBuilder, CaveatBuilder } from '../caveatBuilder';
+export {
+  createCaveatBuilder,
+  CaveatBuilder,
+  CaveatType,
+} from '../caveatBuilder';

@@ -209,7 +209,7 @@ export const chains = {
   sonicTestnet: sonicTestnetChain,
   monad: monadMainnetChain,
   megaEthMainnet: megaEthMainnetChain,
-  roninSaigon: roninSaigonChain
+  roninSaigon: roninSaigonChain,
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them
@@ -239,15 +239,27 @@ if (latestContracts === undefined) {
 const allChainIds = Object.keys(latestContracts);
 
 // Optional: filter by chain IDs from argv (e.g. yarn validate-latest-contracts 0x7e4,0xa4ec)
-const chainIdArg = process.argv.slice(2).flatMap((arg) => arg.split(',')).map((s) => s.trim()).filter(Boolean);
+// eslint-disable-next-line no-restricted-globals
+const chainIdArg = process.argv
+  .slice(2)
+  .flatMap((arg) => arg.split(','))
+  .map((chainIdStr) => chainIdStr.trim())
+  .filter((chainIdStr) => chainIdStr.length > 0);
+
 const chainIdsToValidate =
   chainIdArg.length === 0
     ? allChainIds
-    : (() => {
-        const set = new Set(
-          chainIdArg.map((s) => (s.startsWith('0x') ? parseInt(s, 16) : parseInt(s, 10))),
+    : ((): string[] => {
+        const set = new Set<number>(
+          chainIdArg.map((chainIdStr) =>
+            chainIdStr.startsWith('0x')
+              ? parseInt(chainIdStr, 16)
+              : parseInt(chainIdStr, 10),
+          ),
         );
-        return allChainIds.filter((id) => set.has(parseInt(id, 10)));
+        return allChainIds.filter((chainIdStr) =>
+          set.has(parseInt(chainIdStr, 10)),
+        );
       })();
 
 if (chainIdArg.length > 0 && chainIdsToValidate.length === 0) {
@@ -258,10 +270,10 @@ const chainIds = chainIdsToValidate;
 
 console.log(`Testing version ${latestVersion}`);
 if (chainIdArg.length > 0) {
-  const chainNames = chainIds.map((idStr) => {
-    const id = parseInt(idStr, 10);
-    const ch = Object.values(chains).find((c) => c.id === id);
-    return ch ? ch.name : `0x${id.toString(16)}`;
+  const chainNames = chainIds.map((chainIdStr) => {
+    const chainId = parseInt(chainIdStr, 10);
+    const chain = Object.values(chains).find(({ id }) => id === chainId);
+    return chain ? chain.name : `0x${chainId.toString(16)}`;
   });
   console.log(`Chains: ${chainNames.join(', ')}`);
 }
@@ -274,7 +286,7 @@ const allChainsDone = chainIds.map(async (chainIdAsString) => {
   const chainId = parseInt(chainIdAsString, 10);
   const chainIdHex = `0x${chainId.toString(16)}`;
 
-  const run = async () => {
+  const run = async (): Promise<void> => {
     const contracts = latestContracts[chainId];
 
     if (contracts === undefined) {
@@ -349,7 +361,7 @@ const allChainsDone = chainIds.map(async (chainIdAsString) => {
   };
 
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  const timeout = new Promise<void>((_, reject) => {
+  const timeout = new Promise<void>((_resolve, reject) => {
     timeoutId = setTimeout(
       () => reject(new Error(`Timeout after ${CHAIN_TIMEOUT_MS / 1000}s`)),
       CHAIN_TIMEOUT_MS,
@@ -363,7 +375,9 @@ const allChainsDone = chainIds.map(async (chainIdAsString) => {
     console.error(`Chain ${chainIdHex}: ${errorMessage}`);
     hasFailed = true;
   } finally {
-    if (timeoutId !== undefined) clearTimeout(timeoutId);
+    if (timeoutId !== undefined) {
+      clearTimeout(timeoutId);
+    }
   }
 });
 

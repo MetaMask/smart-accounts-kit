@@ -30,3 +30,8 @@ yarn validate-latest-contracts
 
 This will identify the latest version of the contracts, iterate the supported chains, and check that code is deployed at the specified address.
 
+You can also validate specific chains by providing the chainId as a comma separated list (chains may be decimal, or 0x prefixed hexadecimal):
+
+```
+yarn validate-latest-contracts 0x01,0xe708
+```

@@ -133,17 +133,18 @@ export type CoreCaveatBuilder = CaveatBuilder<CoreCaveatMap>;
 // Re-export CaveatType for convenience
 export { CaveatType } from './caveatType';
 
-// We want to allow the caveat `type` to be passed as either an enum reference,
-// or the enum's string value. This generic accepts a union of caveat configs, and
-// converts them to an identical union except the `type` parameter is converted
-// to a union of `CaveatType.XXXX | `${CaveatType.XXXX}`.
-// We preserve the discriminated union pattern by using T['type'] instead of
-// expanding to the full CaveatType enum, which ensures TypeScript can narrow
-// by the type field.
-export type ConvertCaveatConfigsToInputs<T extends { type: string }> =
-  T extends { type: string }
-    ? Omit<T, 'type'> & { type: T['type'] | `${T['type']}` }
+// Shared utility for allowing enum or string value for discriminated union types.
+// This converts a config type to accept both the enum value and its string representation.
+// We preserve the discriminated union pattern by using TConfig['type'] instead of
+// expanding to the full enum, which ensures TypeScript can narrow by the type field.
+export type ConvertEnumConfigToInputs<TConfig extends { type: string }> =
+  TConfig extends { type: string }
+    ? Omit<TConfig, 'type'> & { type: TConfig['type'] | `${TConfig['type']}` }
     : never;
+
+// Backward compatibility alias for caveat configs
+export type ConvertCaveatConfigsToInputs<TConfig extends { type: string }> =
+  ConvertEnumConfigToInputs<TConfig>;
 
 type ExtractCaveatMapType<TCaveatBuilder extends CaveatBuilder<any>> =
   TCaveatBuilder extends CaveatBuilder<infer TCaveatMap> ? TCaveatMap : never;
@@ -160,7 +161,7 @@ export type CaveatConfiguration<
   CaveatMap = ExtractCaveatMapType<TCaveatBuilder>,
 > =
   CaveatMap extends Record<string, (...args: any[]) => any>
-    ? ConvertCaveatConfigsToInputs<
+    ? ConvertEnumConfigToInputs<
         {
           [TType in keyof CaveatMap]: {
             type: TType extends string ? TType : never;

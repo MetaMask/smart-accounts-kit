@@ -12,6 +12,7 @@ import {
   createCaveatBuilder,
   encodeDelegations,
   encodeExecutionCalldatas,
+  CaveatType,
 } from '@metamask/smart-accounts-kit/utils';
 import {
   gasPrice,

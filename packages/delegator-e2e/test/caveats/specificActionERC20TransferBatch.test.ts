@@ -4,6 +4,7 @@ import {
   encodeDelegations,
   createCaveatBuilder,
   hashDelegation,
+  CaveatType,
 } from '@metamask/smart-accounts-kit/utils';
 import {
   Implementation,

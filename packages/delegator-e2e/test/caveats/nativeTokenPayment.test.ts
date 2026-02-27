@@ -4,6 +4,7 @@ import {
   encodeExecutionCalldatas,
   hashDelegation,
   createCaveatBuilder,
+  CaveatType,
 } from '@metamask/smart-accounts-kit/utils';
 import {
   createExecution,

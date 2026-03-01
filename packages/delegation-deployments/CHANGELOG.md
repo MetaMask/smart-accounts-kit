@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Resolve yarn peer dependency warnings ([#123](https://github.com/metamask/smart-accounts-kit/pull/123))
 
+### Added
+
+- Add chain deployment for Celo and Ronin mainnet and testnets ([#173](https://github.com/MetaMask/smart-accounts-kit/pull/173))
+
 ## [0.16.0]
 
 ### Added

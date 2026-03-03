@@ -126,6 +126,12 @@ export async function toMetaMaskSmartAccount<
   };
 
   const signDelegation = async (delegationParams: SignDelegationParams) => {
+    if (!signer) {
+      throw new Error(
+        'Cannot sign delegation: signer not provided. Specify a signer in toMetaMaskSmartAccount() to perform signing operations.',
+      );
+    }
+
     const { delegation, chainId } = delegationParams;
 
     const delegationStruct = toDelegationStruct({
@@ -149,6 +155,12 @@ export async function toMetaMaskSmartAccount<
   };
 
   const signUserOperation = async (userOpParams: SignUserOperationParams) => {
+    if (!signer) {
+      throw new Error(
+        'Cannot sign user operation: signer not provided. Specify a signer in toMetaMaskSmartAccount() to perform signing operations.',
+      );
+    }
+
     const { chainId } = userOpParams;
 
     const packedUserOp = toPackedUserOperation({
@@ -185,6 +197,24 @@ export async function toMetaMaskSmartAccount<
   const encodeCalls = async (calls: readonly Call[]) =>
     encodeCallsForCaller(address, calls);
 
+  const signerMethods = signer ?? {
+    signMessage: async () => {
+      throw new Error(
+        'Cannot sign message: signer not provided. Specify a signer in toMetaMaskSmartAccount() to perform signing operations.',
+      );
+    },
+    signTypedData: async () => {
+      throw new Error(
+        'Cannot sign typed data: signer not provided. Specify a signer in toMetaMaskSmartAccount() to perform signing operations.',
+      );
+    },
+    getStubSignature: async () => {
+      throw new Error(
+        'Cannot get stub signature: signer not provided. Specify a signer in toMetaMaskSmartAccount() to perform signing operations.',
+      );
+    },
+  };
+
   const smartAccount = await toSmartAccount({
     abi,
     client,
@@ -196,7 +226,7 @@ export async function toMetaMaskSmartAccount<
     getNonce,
     signUserOperation,
     signDelegation,
-    ...signer,
+    ...signerMethods,
   });
 
   // Override isDeployed only for EIP-7702 implementation to check proper delegation code

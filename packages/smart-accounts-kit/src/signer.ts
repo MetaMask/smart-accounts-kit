@@ -206,20 +206,32 @@ const resolveStateless7702Signer = (
   throw new Error('Invalid signer config');
 };
 
-export const resolveSigner = <TImplementation extends Implementation>(config: {
+export function resolveSigner<TImplementation extends Implementation>(config: {
   implementation: TImplementation;
   signer: SignerConfigByImplementation<TImplementation>;
-}): InternalSigner => {
-  const { implementation } = config;
+}): InternalSigner;
+
+export function resolveSigner<TImplementation extends Implementation>(config: {
+  implementation: TImplementation;
+  signer?: SignerConfigByImplementation<TImplementation>;
+}): InternalSigner | null;
+
+export function resolveSigner<TImplementation extends Implementation>(config: {
+  implementation: TImplementation;
+  signer?: SignerConfigByImplementation<TImplementation>;
+}): InternalSigner | null {
+  const { implementation, signer } = config;
+
+  if (!signer) {
+    return null;
+  }
 
   if (implementation === Implementation.Hybrid) {
-    return resolveHybridSigner(config.signer as HybridSignerConfig);
+    return resolveHybridSigner(signer as HybridSignerConfig);
   } else if (implementation === Implementation.MultiSig) {
-    return resolveMultiSigSigner(config.signer as MultiSigSignerConfig);
+    return resolveMultiSigSigner(signer as MultiSigSignerConfig);
   } else if (implementation === Implementation.Stateless7702) {
-    return resolveStateless7702Signer(
-      config.signer as Stateless7702SignerConfig,
-    );
+    return resolveStateless7702Signer(signer as Stateless7702SignerConfig);
   }
   throw new Error(`Implementation type '${implementation}' not supported`);
-};
+}

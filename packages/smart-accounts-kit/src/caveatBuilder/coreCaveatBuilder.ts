@@ -133,19 +133,6 @@ export type CoreCaveatBuilder = CaveatBuilder<CoreCaveatMap>;
 // Re-export CaveatType and related types for convenience
 export { CaveatType, type CaveatTypeParam } from './caveatType';
 
-// Shared utility for allowing enum or string value for discriminated union types.
-// This converts a config type to accept both the enum value and its string representation.
-// We preserve the discriminated union pattern by using TConfig['type'] instead of
-// expanding to the full enum, which ensures TypeScript can narrow by the type field.
-export type ConvertEnumConfigToInputs<TConfig extends { type: string }> =
-  TConfig extends { type: string }
-    ? Omit<TConfig, 'type'> & { type: TConfig['type'] | `${TConfig['type']}` }
-    : never;
-
-// Backward compatibility alias for caveat configs
-export type ConvertCaveatConfigsToInputs<TConfig extends { type: string }> =
-  ConvertEnumConfigToInputs<TConfig>;
-
 type ExtractCaveatMapType<TCaveatBuilder extends CaveatBuilder<any>> =
   TCaveatBuilder extends CaveatBuilder<infer TCaveatMap> ? TCaveatMap : never;
 type ExtractedCoreMap = ExtractCaveatMapType<CoreCaveatBuilder>;
@@ -156,12 +143,19 @@ export type CaveatConfigurations = {
   } & Parameters<ExtractedCoreMap[TType]>[1];
 }[keyof ExtractedCoreMap];
 
+// Convert a config type to accept both the enum value and its string representation,
+// while preserving the discriminated union pattern.
+type ConvertCaveatConfigToInputs<TConfig extends { type: string }> =
+  TConfig extends { type: string }
+    ? Omit<TConfig, 'type'> & { type: TConfig['type'] | `${TConfig['type']}` }
+    : never;
+
 export type CaveatConfiguration<
   TCaveatBuilder extends CaveatBuilder<any>,
   CaveatMap = ExtractCaveatMapType<TCaveatBuilder>,
 > =
   CaveatMap extends Record<string, (...args: any[]) => any>
-    ? ConvertEnumConfigToInputs<
+    ? ConvertCaveatConfigToInputs<
         {
           [TType in keyof CaveatMap]: {
             type: TType extends string ? TType : never;

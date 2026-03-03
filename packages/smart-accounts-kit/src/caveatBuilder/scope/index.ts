@@ -36,15 +36,16 @@ import {
 } from './ownershipScope';
 import { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
-import type {
-  CoreCaveatBuilder,
-  ConvertEnumConfigToInputs,
-} from '../coreCaveatBuilder';
+import type { CoreCaveatBuilder } from '../coreCaveatBuilder';
 
 // We want to allow the scope `type` to be passed as either an enum reference,
-// or the enum's string value. This uses the shared enum config conversion utility.
+// or the enum's string value this generic accepts a union of scope configs, and
+// converts them to an identical union except the `type` parameter is converted
+// to a union of `ScopeType.XXXX | `${ScopeType.XXXX}`.
 export type ConvertScopeConfigsToInputs<TConfig extends { type: ScopeType }> =
-  ConvertEnumConfigToInputs<TConfig>;
+  TConfig extends { type: ScopeType }
+    ? Omit<TConfig, 'type'> & { type: TConfig['type'] | `${TConfig['type']}` }
+    : never;
 
 type ScopeConfigBase =
   | Erc20TransferScopeConfig

@@ -1,4 +1,5 @@
 import type { CaveatBuilder } from './caveatBuilder';
+import type { CaveatTypeParam } from './caveatType';
 import type { CoreCaveatConfiguration } from './coreCaveatBuilder';
 import { createCaveatBuilderFromScope, type ScopeConfig } from './scope';
 import type { Caveat, SmartAccountsEnvironment } from '../types';
@@ -35,8 +36,9 @@ export const resolveCaveats = ({
         try {
           if ('type' in caveat) {
             const { type, ...config } = caveat;
-            // Type assertion: addCaveat validates at runtime and throws if enforcer doesn't exist
-            (scopeCaveatBuilder.addCaveat as any)(type, config);
+            // Safe type cast: CaveatTypeParam accepts both enum and string forms
+            // addCaveat validates at runtime and throws if enforcer doesn't exist
+            scopeCaveatBuilder.addCaveat(type as CaveatTypeParam, config);
           } else {
             scopeCaveatBuilder.addCaveat(caveat);
           }

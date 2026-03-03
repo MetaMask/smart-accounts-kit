@@ -130,8 +130,8 @@ type CoreCaveatMap = {
  */
 export type CoreCaveatBuilder = CaveatBuilder<CoreCaveatMap>;
 
-// Re-export CaveatType for convenience
-export { CaveatType } from './caveatType';
+// Re-export CaveatType and related types for convenience
+export { CaveatType, type CaveatTypeParam } from './caveatType';
 
 // Shared utility for allowing enum or string value for discriminated union types.
 // This converts a config type to accept both the enum value and its string representation.

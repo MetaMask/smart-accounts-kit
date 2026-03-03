@@ -36,3 +36,11 @@ export enum CaveatType {
   MultiTokenPeriod = 'multiTokenPeriod',
   OwnershipTransfer = 'ownershipTransfer',
 }
+
+/**
+ * Represents a caveat type that can be either the enum value or its string representation.
+ * This allows both forms:
+ * - CaveatType.AllowedMethods (enum)
+ * - 'allowedMethods' (string literal)
+ */
+export type CaveatTypeParam = CaveatType | `${CaveatType}`;

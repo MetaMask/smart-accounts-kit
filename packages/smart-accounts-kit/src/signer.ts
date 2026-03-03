@@ -206,16 +206,40 @@ const resolveStateless7702Signer = (
   throw new Error('Invalid signer config');
 };
 
+/**
+ * Resolve a signer from a configuration object.
+ *
+ * @param config - The configuration object.
+ * @param config.implementation - The implementation type.
+ * @param config.signer - The signer configuration object.
+ * @returns The resolved signer.
+ */
 export function resolveSigner<TImplementation extends Implementation>(config: {
   implementation: TImplementation;
   signer: SignerConfigByImplementation<TImplementation>;
 }): InternalSigner;
 
+/**
+ * Resolve a signer from a configuration object. If no signer is provided, return null.
+ *
+ * @param config - The configuration object.
+ * @param config.implementation - The implementation type.
+ * @param config.signer - The signer configuration object.
+ * @returns The resolved signer or null if no signer is provided.
+ */
 export function resolveSigner<TImplementation extends Implementation>(config: {
   implementation: TImplementation;
   signer?: SignerConfigByImplementation<TImplementation>;
 }): InternalSigner | null;
 
+/**
+ * Resolve a signer from a configuration object. If no signer is provided, return null.
+ *
+ * @param config - The configuration object.
+ * @param config.implementation - The implementation type.
+ * @param config.signer - The signer configuration object.
+ * @returns The resolved signer or null if no signer is provided.
+ */
 export function resolveSigner<TImplementation extends Implementation>(config: {
   implementation: TImplementation;
   signer?: SignerConfigByImplementation<TImplementation>;

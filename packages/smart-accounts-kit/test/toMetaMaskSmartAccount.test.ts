@@ -255,14 +255,13 @@ describe('MetaMaskSmartAccount', () => {
       const delegation = {
         delegate: alice.address,
         delegator: bob.address,
-        authority: '0x0000000000000000000000000000000000000000000000000000000000000000' as const,
+        authority:
+          '0x0000000000000000000000000000000000000000000000000000000000000000' as const,
         caveats: [],
         salt: '0x0000000000000000000000000000000000000000000000000000000000000000' as const,
       };
 
-      await expect(
-        smartAccount.signDelegation({ delegation }),
-      ).rejects.toThrow(
+      await expect(smartAccount.signDelegation({ delegation })).rejects.toThrow(
         'Cannot sign delegation: signer not provided. Specify a signer in toMetaMaskSmartAccount() to perform signing operations.',
       );
     });

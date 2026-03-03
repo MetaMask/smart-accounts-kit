@@ -140,7 +140,7 @@ describe('CaveatType enum usage patterns', () => {
         .build();
 
       const stringResult = builderWithString
-        .addCaveat(CaveatType.AllowedMethods, { selectors })
+        .addCaveat('allowedMethods', { selectors })
         .build();
 
       // Both should produce the same result
@@ -408,12 +408,12 @@ describe('CaveatType enum usage patterns', () => {
     it('should allow string literals in addCaveat', () => {
       const builder = createCaveatBuilder(environment);
 
-      // This should also compile without errors
-      builder.addCaveat(CaveatType.AllowedMethods, {
+      // String literals (backward compatibility): addCaveat accepts CaveatTypeParam
+      builder.addCaveat('allowedMethods', {
         selectors: ['0x12345678'],
       });
-      builder.addCaveat(CaveatType.ValueLte, { maxValue: 1000n });
-      builder.addCaveat(CaveatType.AllowedTargets, {
+      builder.addCaveat('valueLte', { maxValue: 1000n });
+      builder.addCaveat('allowedTargets', {
         targets: [randomAddress()],
       });
 

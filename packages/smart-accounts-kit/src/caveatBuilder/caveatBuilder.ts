@@ -1,5 +1,4 @@
 import type { Caveat, SmartAccountsEnvironment } from '../types';
-import type { CaveatTypeParam } from './caveatType';
 
 type CaveatWithOptionalArgs = Omit<Caveat, 'args'> & {
   args?: Caveat['args'];
@@ -89,21 +88,22 @@ export class CaveatBuilder<
   /**
    * Adds a caveat using a named enforcer function.
    *
-   * Supports both enum and string literal forms:
+   * Only accepts caveat types that are registered on this builder (keys of TCaveatBuilderMap).
+   * Supports both enum and string literal when the builder includes that enforcer, e.g.:
    * - caveatBuilder.addCaveat(CaveatType.AllowedMethods, { ... })
    * - caveatBuilder.addCaveat('allowedMethods', { ... })
    *
-   * @param name - The name of the enforcer function to use (enum or string).
+   * @param name - The name of the enforcer function to use (must be registered on this builder).
    * @param config - The configuration to pass to the enforcer function.
    * @returns The CaveatBuilder instance for chaining.
    */
   addCaveat<TEnforcerName extends keyof TCaveatBuilderMap>(
-    name: TEnforcerName | CaveatTypeParam,
+    name: TEnforcerName,
     config: Parameters<TCaveatBuilderMap[TEnforcerName]>[1],
   ): CaveatBuilder<TCaveatBuilderMap>;
 
   addCaveat<TEnforcerName extends keyof TCaveatBuilderMap>(
-    nameOrCaveat: TEnforcerName | CaveatTypeParam | CaveatWithOptionalArgs,
+    nameOrCaveat: TEnforcerName | CaveatWithOptionalArgs,
     config?: Parameters<TCaveatBuilderMap[TEnforcerName]>[1],
   ): CaveatBuilder<TCaveatBuilderMap> {
     if (typeof nameOrCaveat === 'object') {

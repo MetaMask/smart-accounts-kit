@@ -12,7 +12,7 @@ import {
 import { blockNumber, blockNumberBuilder } from './blockNumberBuilder';
 import type { CaveatBuilderConfig } from './caveatBuilder';
 import { CaveatBuilder } from './caveatBuilder';
-import type { CaveatType } from './caveatType';
+import type { CaveatType, CaveatTypeParam } from './caveatType';
 import { deployed, deployedBuilder } from './deployedBuilder';
 import {
   erc1155BalanceChange,
@@ -127,8 +127,22 @@ type CoreCaveatMap = {
  * A caveat builder type that includes all core caveat types pre-configured.
  * This type represents a fully configured caveat builder with all the standard
  * caveat builders available for use.
+ *
+ * The addCaveat(name, config) overload is widened to accept CaveatTypeParam
+ * (enum or string literal) so that both CaveatType.AllowedMethods and
+ * 'allowedMethods' are accepted. Extended builders keep strict keyof Map typing.
  */
-export type CoreCaveatBuilder = CaveatBuilder<CoreCaveatMap>;
+/** Union of all core caveat config types (for the CaveatTypeParam-accepting overload). */
+type CoreCaveatConfigUnion = {
+  [K in keyof CoreCaveatMap]: Parameters<CoreCaveatMap[K]>[1];
+}[keyof CoreCaveatMap];
+
+export type CoreCaveatBuilder = CaveatBuilder<CoreCaveatMap> & {
+  addCaveat(
+    name: CaveatTypeParam,
+    config: CoreCaveatConfigUnion,
+  ): CoreCaveatBuilder;
+};
 
 // Re-export CaveatType and related types for convenience
 export { CaveatType, type CaveatTypeParam } from './caveatType';

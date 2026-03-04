@@ -78,6 +78,13 @@ test('maincase: Bob redeems the delegation with the exact calldata', async () =>
   await runTest_expectSuccess(newCount, [{ from: 4, calldata }]);
 });
 
+test('maincase (string literal): Bob redeems the delegation with the exact calldata', async () => {
+  const calldata = randomBytes(32);
+  const newCount = hexToBigInt(calldata);
+
+  await runTest_expectSuccess(newCount, [{ from: 4, calldata }], 'allowedCalldata');
+});
+
 test('Bob redeems the delegation where the delegation requires a substring of the calldata', async () => {
   const calldata = randomBytes(32);
   const newCount = hexToBigInt(calldata);
@@ -87,6 +94,19 @@ test('Bob redeems the delegation where the delegation requires a substring of th
   await runTest_expectSuccess(newCount, [
     { from: 4, calldata: requiredCalldata },
   ]);
+});
+
+test('Bob redeems the delegation where the delegation requires a substring of the calldata (string literal)', async () => {
+  const calldata = randomBytes(32);
+  const newCount = hexToBigInt(calldata);
+
+  const requiredCalldata = slice(calldata, 0, 34);
+
+  await runTest_expectSuccess(
+    newCount,
+    [{ from: 4, calldata: requiredCalldata }],
+    'allowedCalldata',
+  );
 });
 
 test('Bob redeems the delegation where the calldata matches multiple caveats', async () => {
@@ -100,6 +120,23 @@ test('Bob redeems the delegation where the calldata matches multiple caveats', a
     { from: 4, calldata: firstSlice },
     { from: 24, calldata: secondSlice },
   ]);
+});
+
+test('Bob redeems the delegation where the calldata matches multiple caveats (string literal)', async () => {
+  const calldata = randomBytes(32);
+  const newCount = hexToBigInt(calldata);
+
+  const firstSlice = slice(calldata, 0, 34);
+  const secondSlice = slice(calldata, 20);
+
+  await runTest_expectSuccess(
+    newCount,
+    [
+      { from: 4, calldata: firstSlice },
+      { from: 24, calldata: secondSlice },
+    ],
+    'allowedCalldata',
+  );
 });
 
 test('Bob attempts to redeem the delegation with incorrect calldata', async () => {
@@ -118,6 +155,23 @@ test('Bob attempts to redeem the delegation with incorrect calldata', async () =
   );
 });
 
+test('Bob attempts to redeem the delegation with incorrect calldata (string literal)', async () => {
+  const newCount = 1n;
+
+  const executedCalldata = encodeFunctionData({
+    abi: aliceCounter.abi,
+    functionName: 'setCount',
+    args: [newCount],
+  });
+
+  await runTest_expectFailure(
+    executedCalldata,
+    [{ from: 0, calldata: randomBytes(32) }],
+    'AllowedCalldataEnforcer:invalid-calldata',
+    'allowedCalldata',
+  );
+});
+
 test('Bob attempts to redeem the delegation with no calldata', async () => {
   const executedCalldata = '0x';
 
@@ -128,9 +182,21 @@ test('Bob attempts to redeem the delegation with no calldata', async () => {
   );
 });
 
+test('Bob attempts to redeem the delegation with no calldata (string literal)', async () => {
+  const executedCalldata = '0x';
+
+  await runTest_expectFailure(
+    executedCalldata,
+    [{ from: 0, calldata: randomBytes(32) }],
+    'AllowedCalldataEnforcer:invalid-calldata',
+    'allowedCalldata',
+  );
+});
+
 const runTest_expectSuccess = async (
   newCount: bigint,
   caveats: { from: number; calldata: Hex }[],
+  caveatForm: typeof CaveatType.AllowedCalldata | 'allowedCalldata' = CaveatType.AllowedCalldata,
 ) => {
   const { environment } = aliceSmartAccount;
 
@@ -141,7 +207,7 @@ const runTest_expectSuccess = async (
     salt: '0x0',
     caveats: caveats
       .reduce((builder, caveat) => {
-        builder.addCaveat(CaveatType.AllowedCalldata, {
+        builder.addCaveat(caveatForm, {
           startIndex: caveat.from,
           value: caveat.calldata,
         });
@@ -209,6 +275,7 @@ const runTest_expectFailure = async (
   executedCalldata: Hex,
   caveats: { from: number; calldata: Hex }[],
   expectedError: string,
+  caveatForm: typeof CaveatType.AllowedCalldata | 'allowedCalldata' = CaveatType.AllowedCalldata,
 ) => {
   const { environment } = aliceSmartAccount;
 
@@ -219,7 +286,7 @@ const runTest_expectFailure = async (
     salt: '0x0',
     caveats: caveats
       .reduce((builder, caveat) => {
-        builder.addCaveat(CaveatType.AllowedCalldata, {
+        builder.addCaveat(caveatForm, {
           startIndex: caveat.from,
           value: caveat.calldata,
         });

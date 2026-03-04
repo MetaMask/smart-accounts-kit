@@ -421,6 +421,16 @@ describe('CaveatType enum usage patterns', () => {
       expect(caveats).to.have.lengthOf(3);
     });
 
+    it('should reject wrong config for string literal caveat type at compile time', () => {
+      const builder = createCaveatBuilder(environment);
+
+      // Type-only assertion: wrong config must be a compile error (never executed).
+      if (false as boolean) {
+        // @ts-expect-error - wrong config for 'allowedMethods' (expects selectors, not maxValue)
+        builder.addCaveat('allowedMethods', { maxValue: 1000n });
+      }
+    });
+
     it('should allow CaveatType enum in caveats array', () => {
       const scope = {
         type: ScopeType.Erc20TransferAmount as const,

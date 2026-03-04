@@ -132,15 +132,24 @@ type CoreCaveatMap = {
  * (enum or string literal) so that both CaveatType.AllowedMethods and
  * 'allowedMethods' are accepted. Extended builders keep strict keyof Map typing.
  */
-/** Union of all core caveat config types (for the CaveatTypeParam-accepting overload). */
-type CoreCaveatConfigUnion = {
+/**
+ * Maps each caveat type (enum and string literal) to its config type.
+ * Ensures addCaveat(name, config) is type-checked per caveat even when
+ * using string literals (e.g. 'allowedMethods'), preserving backward
+ * compatibility and preventing wrong-config-at-runtime regressions.
+ */
+type CoreCaveatParamToConfig = {
   [K in keyof CoreCaveatMap]: Parameters<CoreCaveatMap[K]>[1];
-}[keyof CoreCaveatMap];
+} & {
+  [K in CaveatType as `${K}`]: K extends keyof CoreCaveatMap
+    ? Parameters<CoreCaveatMap[K]>[1]
+    : never;
+};
 
 export type CoreCaveatBuilder = CaveatBuilder<CoreCaveatMap> & {
-  addCaveat(
-    name: CaveatTypeParam,
-    config: CoreCaveatConfigUnion,
+  addCaveat<TKey extends CaveatTypeParam>(
+    name: TKey,
+    config: CoreCaveatParamToConfig[TKey],
   ): CoreCaveatBuilder;
 };
 

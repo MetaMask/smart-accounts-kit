@@ -123,10 +123,8 @@ type _CoreCaveatMap = {
   ownershipTransfer: typeof ownershipTransferBuilder;
 };
 
-type CaveatMapLookup<Key extends keyof _CoreCaveatMap> = _CoreCaveatMap[Key];
-
 type CoreCaveatMap = _CoreCaveatMap & {
-  [K in CaveatType as `${K}`]: CaveatMapLookup<`${K}`>;
+  [K in CaveatType as `${K}`]: _CoreCaveatMap[`${K}`];
 };
 
 /**

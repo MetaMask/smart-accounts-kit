@@ -1,4 +1,4 @@
-import type { SmartAccountsEnvironment } from '../types';
+import type { Caveat, SmartAccountsEnvironment } from '../types';
 import {
   allowedCalldata,
   allowedCalldataBuilder,
@@ -12,6 +12,7 @@ import {
 import { blockNumber, blockNumberBuilder } from './blockNumberBuilder';
 import type { CaveatBuilderConfig } from './caveatBuilder';
 import { CaveatBuilder } from './caveatBuilder';
+import type { CaveatTypeParam } from './caveatType';
 import { deployed, deployedBuilder } from './deployedBuilder';
 import {
   erc1155BalanceChange,
@@ -120,7 +121,7 @@ type CoreCaveatMap = {
   exactExecutionBatch: typeof exactExecutionBatchBuilder;
   multiTokenPeriod: typeof multiTokenPeriodBuilder;
   ownershipTransfer: typeof ownershipTransferBuilder;
-};
+} & Record<CaveatTypeParam, (...args: any[]) => Caveat>;
 
 /**
  * A caveat builder type that includes all core caveat types pre-configured.

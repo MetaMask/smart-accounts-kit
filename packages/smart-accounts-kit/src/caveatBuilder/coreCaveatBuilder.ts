@@ -123,8 +123,8 @@ type _CoreCaveatMap = {
   ownershipTransfer: typeof ownershipTransferBuilder;
 };
 
-type CaveatMapLookup<Key extends string> = Key extends keyof CoreCaveatMap
-  ? CoreCaveatMap[Key]
+type CaveatMapLookup<Key extends string> = Key extends keyof _CoreCaveatMap
+  ? _CoreCaveatMap[Key]
   : (...args: any[]) => Caveat;
 
 type CoreCaveatMap = _CoreCaveatMap & {

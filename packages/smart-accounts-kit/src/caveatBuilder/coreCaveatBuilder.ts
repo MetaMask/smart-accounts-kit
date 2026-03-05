@@ -83,7 +83,7 @@ import {
 } from './specificActionERC20TransferBatchBuilder';
 import { timestamp, timestampBuilder } from './timestampBuilder';
 import { valueLte, valueLteBuilder } from './valueLteBuilder';
-import type { CaveatType } from 'src/constants';
+import type { CaveatType } from '../constants';
 
 // While we could derive CoreCaveatMap from the createCaveatBuilder function,
 // doing so would significantly complicate type resolution. By explicitly

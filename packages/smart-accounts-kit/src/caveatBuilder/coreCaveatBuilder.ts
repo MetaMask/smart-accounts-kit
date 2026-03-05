@@ -89,7 +89,7 @@ import type { CaveatType } from 'src/constants';
 // doing so would significantly complicate type resolution. By explicitly
 // declaring the return type of createCaveatBuilder, we ensure the caveat
 // map remains synchronized with the actual implementation.
-type CoreCaveatMap = {
+type _CoreCaveatMap = {
   allowedMethods: typeof allowedMethodsBuilder;
   allowedTargets: typeof allowedTargetsBuilder;
   deployed: typeof deployedBuilder;
@@ -121,7 +121,15 @@ type CoreCaveatMap = {
   exactExecutionBatch: typeof exactExecutionBatchBuilder;
   multiTokenPeriod: typeof multiTokenPeriodBuilder;
   ownershipTransfer: typeof ownershipTransferBuilder;
-} & Record<CaveatType | `${CaveatType}`, (...args: any[]) => Caveat>;
+};
+
+type CaveatMapLookup<Key extends string> = Key extends keyof CoreCaveatMap
+  ? CoreCaveatMap[Key]
+  : (...args: any[]) => Caveat;
+
+type CoreCaveatMap = _CoreCaveatMap & {
+  [K in CaveatType as `${K}`]: CaveatMapLookup<`${K}`>;
+};
 
 /**
  * A caveat builder type that includes all core caveat types pre-configured.

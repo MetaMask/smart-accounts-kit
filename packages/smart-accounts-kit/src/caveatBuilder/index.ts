@@ -12,4 +12,3 @@ export { CaveatBuilder } from './caveatBuilder';
 export type { Caveats } from './resolveCaveats';
 
 export { resolveCaveats } from './resolveCaveats';
-export { CaveatType } from './caveatType';

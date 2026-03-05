@@ -12,7 +12,6 @@ import {
 import { blockNumber, blockNumberBuilder } from './blockNumberBuilder';
 import type { CaveatBuilderConfig } from './caveatBuilder';
 import { CaveatBuilder } from './caveatBuilder';
-import type { CaveatTypeParam } from './caveatType';
 import { deployed, deployedBuilder } from './deployedBuilder';
 import {
   erc1155BalanceChange,
@@ -84,6 +83,7 @@ import {
 } from './specificActionERC20TransferBatchBuilder';
 import { timestamp, timestampBuilder } from './timestampBuilder';
 import { valueLte, valueLteBuilder } from './valueLteBuilder';
+import type { CaveatType } from 'src/constants';
 
 // While we could derive CoreCaveatMap from the createCaveatBuilder function,
 // doing so would significantly complicate type resolution. By explicitly
@@ -121,7 +121,7 @@ type CoreCaveatMap = {
   exactExecutionBatch: typeof exactExecutionBatchBuilder;
   multiTokenPeriod: typeof multiTokenPeriodBuilder;
   ownershipTransfer: typeof ownershipTransferBuilder;
-} & Record<CaveatTypeParam, (...args: any[]) => Caveat>;
+} & Record<CaveatType | `${CaveatType}`, (...args: any[]) => Caveat>;
 
 /**
  * A caveat builder type that includes all core caveat types pre-configured.

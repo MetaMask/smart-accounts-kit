@@ -89,7 +89,7 @@ import type { CaveatType } from '../constants';
 // doing so would significantly complicate type resolution. By explicitly
 // declaring the return type of createCaveatBuilder, we ensure the caveat
 // map remains synchronized with the actual implementation.
-type _CoreCaveatMap = {
+type CoreCaveatMapByString = {
   allowedMethods: typeof allowedMethodsBuilder;
   allowedTargets: typeof allowedTargetsBuilder;
   deployed: typeof deployedBuilder;
@@ -123,8 +123,8 @@ type _CoreCaveatMap = {
   ownershipTransfer: typeof ownershipTransferBuilder;
 };
 
-type CoreCaveatMap = _CoreCaveatMap & {
-  [K in CaveatType as `${K}`]: _CoreCaveatMap[`${K}`];
+type CoreCaveatMap = CoreCaveatMapByString & {
+  [K in CaveatType as `${K}`]: CoreCaveatMapByString[`${K}`];
 };
 
 /**

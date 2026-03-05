@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add chain deployment for Celo and Ronin mainnet and testnets ([#173](https://github.com/MetaMask/smart-accounts-kit/pull/173))
+- Add chain deployment for Cintra mainnet ([#180](https://github.com/MetaMask/smart-accounts-kit/pull/180))
 
 ## [0.16.0]
 

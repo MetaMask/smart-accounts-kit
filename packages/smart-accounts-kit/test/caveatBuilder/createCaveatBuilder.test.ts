@@ -4,6 +4,7 @@ import { expect, describe, it } from 'vitest';
 
 import { createCaveatBuilder, CaveatBuilder } from '../../src/caveatBuilder';
 import { BalanceChangeType } from '../../src/caveatBuilder/types';
+import { CaveatType } from '../../src/constants';
 import type { SmartAccountsEnvironment } from '../../src/types';
 import { randomAddress, randomBytes } from '../utils';
 
@@ -488,5 +489,437 @@ describe('createCaveatBuilder()', () => {
     }
 
     expect(isAddress(caveat.enforcer)).to.equal(true);
+  });
+
+  describe('caveat builders using CaveatType enum', () => {
+    it('should add allowedMethods caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const selectors = [randomBytes(4), randomBytes(4)];
+
+      const caveats = builder
+        .addCaveat(CaveatType.AllowedMethods, { selectors })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.AllowedMethodsEnforcer,
+          terms: concat(selectors),
+          args: '0x00',
+        },
+      ]);
+
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add allowedTargets caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const targets: [Address, Address] = [randomAddress(), randomAddress()];
+
+      const caveats = builder
+        .addCaveat(CaveatType.AllowedTargets, { targets })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.AllowedTargetsEnforcer,
+          terms: targets[0] + targets[1]?.slice(2),
+          args: '0x00',
+        },
+      ]);
+
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add deployed caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const contractAddress = randomAddress();
+      const salt = randomBytes(32);
+      const bytecode = randomBytes(256);
+
+      const caveats = builder
+        .addCaveat(CaveatType.Deployed, { contractAddress, salt, bytecode })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.DeployedEnforcer,
+          terms: concat([contractAddress, pad(salt, { size: 32 }), bytecode]),
+          args: '0x00',
+        },
+      ]);
+
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add allowedCalldata caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const value = randomBytes(128);
+      const startIndex = Math.floor(Math.random() * 2 ** 32);
+
+      const caveats = builder
+        .addCaveat(CaveatType.AllowedCalldata, { startIndex, value })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.AllowedCalldataEnforcer,
+          terms: concat([toHex(startIndex, { size: 32 }), value]),
+          args: '0x00',
+        },
+      ]);
+
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add erc20BalanceChange caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const tokenAddress = randomAddress();
+      const recipient = randomAddress();
+      const balance = BigInt(
+        Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+      );
+
+      const caveats = builder
+        .addCaveat(CaveatType.Erc20BalanceChange, {
+          tokenAddress,
+          recipient,
+          balance,
+          changeType: BalanceChangeType.Increase,
+        })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.ERC20BalanceChangeEnforcer,
+          terms: encodePacked(
+            ['uint8', 'address', 'address', 'uint256'],
+            [BalanceChangeType.Increase, tokenAddress, recipient, balance],
+          ),
+          args: '0x00',
+        },
+      ]);
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add valueLte caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const maxValue = BigInt(
+        Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+      );
+
+      const caveats = builder
+        .addCaveat(CaveatType.ValueLte, { maxValue })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.ValueLteEnforcer,
+          terms: toHex(maxValue, { size: 32 }),
+          args: '0x00',
+        },
+      ]);
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add limitedCalls caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const limit = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+
+      const caveats = builder
+        .addCaveat(CaveatType.LimitedCalls, { limit })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.LimitedCallsEnforcer,
+          terms: toHex(limit, { size: 32 }),
+          args: '0x00',
+        },
+      ]);
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add id caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const idValue = BigInt(Math.floor(Math.random() * 2 ** 32));
+
+      const caveats = builder.addCaveat(CaveatType.Id, { id: idValue }).build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.IdEnforcer,
+          terms: toHex(idValue, { size: 32 }),
+          args: '0x00',
+        },
+      ]);
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add nonce caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const nonce = randomBytes(16);
+
+      const caveats = builder.addCaveat(CaveatType.Nonce, { nonce }).build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.NonceEnforcer,
+          terms: pad(nonce, { size: 32 }),
+          args: '0x00',
+        },
+      ]);
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add timestamp caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const afterThreshold = 1000;
+      const beforeThreshold = 2000;
+
+      const caveats = builder
+        .addCaveat(CaveatType.Timestamp, {
+          afterThreshold,
+          beforeThreshold,
+        })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.TimestampEnforcer,
+          terms: concat([
+            toHex(afterThreshold, { size: 16 }),
+            toHex(beforeThreshold, { size: 16 }),
+          ]),
+          args: '0x00',
+        },
+      ]);
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add blockNumber caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const afterThreshold = 1000n;
+      const beforeThreshold = 2000n;
+
+      const caveats = builder
+        .addCaveat(CaveatType.BlockNumber, {
+          afterThreshold,
+          beforeThreshold,
+        })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.BlockNumberEnforcer,
+          terms: concat([
+            toHex(afterThreshold, { size: 16 }),
+            toHex(beforeThreshold, { size: 16 }),
+          ]),
+          args: '0x00',
+        },
+      ]);
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add nativeTokenTransferAmount caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const maxAmount = 1000000000000000000n; // 1 ETH in wei
+
+      const caveats = builder
+        .addCaveat(CaveatType.NativeTokenTransferAmount, { maxAmount })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer:
+            environment.caveatEnforcers.NativeTokenTransferAmountEnforcer,
+          terms: toHex(maxAmount, { size: 32 }),
+          args: '0x00',
+        },
+      ]);
+
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add nativeBalanceChange caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const recipient = randomAddress();
+      const minBalance = 500000000000000000n; // 0.5 ETH in wei
+
+      const caveats = builder
+        .addCaveat(CaveatType.NativeBalanceChange, {
+          recipient,
+          balance: minBalance,
+          changeType: BalanceChangeType.Increase,
+        })
+        .build();
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.NativeBalanceChangeEnforcer,
+          terms: encodePacked(
+            ['uint8', 'address', 'uint256'],
+            [BalanceChangeType.Increase, recipient, minBalance],
+          ),
+          args: '0x00',
+        },
+      ]);
+
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add nativeTokenPayment caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const amount = 1000000000000000000n; // 1 ETH in wei
+      const recipient = randomAddress('lowercase');
+
+      const caveats = builder
+        .addCaveat(CaveatType.NativeTokenPayment, { recipient, amount })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.NativeTokenPaymentEnforcer,
+          terms: concat([recipient, toHex(amount, { size: 32 })]),
+          args: '0x00',
+        },
+      ]);
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add erc20TransferAmount caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const tokenAddress = randomAddress();
+      const maxAmount = 2000n;
+
+      const caveats = builder
+        .addCaveat(CaveatType.Erc20TransferAmount, { tokenAddress, maxAmount })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.ERC20TransferAmountEnforcer,
+          terms: concat([tokenAddress, toHex(maxAmount, { size: 32 })]),
+          args: '0x00',
+        },
+      ]);
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add redeemer caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const redeemerAddress = randomAddress();
+
+      const caveats = builder
+        .addCaveat(CaveatType.Redeemer, { redeemers: [redeemerAddress] })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.RedeemerEnforcer,
+          terms: redeemerAddress,
+          args: '0x00',
+        },
+      ]);
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add argsEqualityCheck caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const args = '0x1234567890';
+
+      const caveats = builder
+        .addCaveat(CaveatType.ArgsEqualityCheck, { args })
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.ArgsEqualityCheckEnforcer,
+          terms: args,
+          args: '0x00',
+        },
+      ]);
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
   });
 });

@@ -83,12 +83,13 @@ import {
 } from './specificActionERC20TransferBatchBuilder';
 import { timestamp, timestampBuilder } from './timestampBuilder';
 import { valueLte, valueLteBuilder } from './valueLteBuilder';
+import type { CaveatType } from '../constants';
 
 // While we could derive CoreCaveatMap from the createCaveatBuilder function,
 // doing so would significantly complicate type resolution. By explicitly
 // declaring the return type of createCaveatBuilder, we ensure the caveat
 // map remains synchronized with the actual implementation.
-type CoreCaveatMap = {
+type CoreCaveatMapByString = {
   allowedMethods: typeof allowedMethodsBuilder;
   allowedTargets: typeof allowedTargetsBuilder;
   deployed: typeof deployedBuilder;
@@ -120,6 +121,10 @@ type CoreCaveatMap = {
   exactExecutionBatch: typeof exactExecutionBatchBuilder;
   multiTokenPeriod: typeof multiTokenPeriodBuilder;
   ownershipTransfer: typeof ownershipTransferBuilder;
+};
+
+type CoreCaveatMap = CoreCaveatMapByString & {
+  [K in CaveatType as `${K}`]: CoreCaveatMapByString[`${K}`];
 };
 
 /**

@@ -1,4 +1,4 @@
-import type { Caveat, SmartAccountsEnvironment } from '../types';
+import type { SmartAccountsEnvironment } from '../types';
 import {
   allowedCalldata,
   allowedCalldataBuilder,

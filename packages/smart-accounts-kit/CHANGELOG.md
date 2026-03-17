@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `encodeDelegation` and `decodeDelegation` utilities for encoding and decoding single delegations. ([#153](https://github.com/MetaMask/smart-accounts-kit/pull/153))
+
 ### Changed
 
 - Introduce `PermissionContext` to represent a delegation chain (ABI-encoded `Hex` or decoded `Delegation[]`). ([#140](https://github.com/MetaMask/smart-accounts-kit/pull/140))
@@ -16,10 +20,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `redeemDelegations`: parameter `Delegation[]` → `PermissionContext`
     - `encodeDelegations` and `decodeDelegations` now accept `PermissionContext` (if the input is already the expected type, the input is returned)
     - `encode`, `execute`, and `simulate` functions for `DelegationManager.redeemDelegations` from `@metamask/smart-accounts-kit/contracts`: parameter `delegations: Delegation[]` → `delegations: PermissionContext`
+- **Breaking**: ERC-7715 actions now return developer-friendly types: `chainId` as number, token amounts as `bigint`. ([#172](https://github.com/MetaMask/smart-accounts-kit/pull/172))
+- **Breaking**: Rename `getDelegationHashOffchain` to `hashDelegation` for improved clarity. ([#162](https://github.com/MetaMask/smart-accounts-kit/pull/162))
+- **Breaking**: EIP-7715 permission requests nest `isAdjustmentAllowed` inside each permission object per specification. ([#159](https://github.com/MetaMask/smart-accounts-kit/pull/159))
+- **Breaking**: `sendUserOperationWithDelegation` now accepts `dependencies` instead of deprecated `accountMetadata`. ([#157](https://github.com/MetaMask/smart-accounts-kit/pull/157))
+- **Breaking**: Validate that the provided `DelegationManager` address matches the known contract address for the chain in EIP-7710 actions. ([#156](https://github.com/MetaMask/smart-accounts-kit/pull/156))
+- **Breaking**: Default `delegation.salt` and `caveat.args` to `0x00` instead of invalid `0x`. ([#138](https://github.com/MetaMask/smart-accounts-kit/pull/138))
+- Allow scope type to be specified either as `ScopeType` enum, or string literal. ([#133](https://github.com/MetaMask/smart-accounts-kit/pull/133))
+- Allow caveat type to be specified either as `CaveatType` enum, or string literal. ([#179](https://github.com/MetaMask/smart-accounts-kit/pull/179))
+
+### Removed
+
+- **Breaking**: `encodePermissionContexts` and `decodePermissionContexts` utilities; use `encodeDelegations` and `decodeDelegations` directly. ([#148](https://github.com/MetaMask/smart-accounts-kit/pull/148))
+- **Breaking**: `redeemDelegations` helper and `Redemption` type; use `redeemDelegations` encoding / execution utilities directly. ([#160](https://github.com/MetaMask/smart-accounts-kit/pull/160))
 
 ### Fixed
 
-- Allow scope type to be specified either as `ScopeType` enum, or string literal ([#133](https://github.com/MetaMask/smart-accounts-kit/pull/133))
+- Fix delegation storage to throw a proper `Error` instance so stack traces are correct across environments. ([#171](https://github.com/MetaMask/smart-accounts-kit/pull/171))
+- Fix `signDelegation` to correctly await the signer and return the signed signature. ([#168](https://github.com/MetaMask/smart-accounts-kit/pull/168))
 
 ## [0.4.0-beta.1]
 

@@ -1,3 +1,4 @@
+import { ensureSmartAccountsKitAnalyticsBootstrapped } from '../analytics';
 import * as DelegationManager from '../DelegationFramework/DelegationManager';
 import * as DeleGatorCore from '../DelegationFramework/DeleGatorCore';
 import * as EIP712 from '../DelegationFramework/EIP712';
@@ -18,6 +19,8 @@ import * as Ownable2Step from '../DelegationFramework/Ownable2Step';
 import * as Pausable from '../DelegationFramework/Pausable';
 import * as SimpleFactory from '../DelegationFramework/SimpleFactory';
 import * as SpecificActionERC20TransferBatchEnforcer from '../DelegationFramework/SpecificActionERC20TransferBatchEnforcer';
+
+ensureSmartAccountsKitAnalyticsBootstrapped();
 
 export {
   isContractDeployed,

@@ -1,3 +1,7 @@
+import { ensureSmartAccountsKitAnalyticsBootstrapped } from '../analytics';
+
+ensureSmartAccountsKitAnalyticsBootstrapped();
+
 export {
   DelegationStorageClient,
   type DelegationStoreFilter,

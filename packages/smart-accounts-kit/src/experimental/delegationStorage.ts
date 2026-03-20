@@ -1,5 +1,6 @@
 import { type Hex, toHex } from 'viem';
 
+import { trackSmartAccountsKitFunctionCall } from '../analytics';
 import { hashDelegation } from '../delegation';
 import type { Delegation } from '../types';
 
@@ -32,6 +33,24 @@ export const DelegationStorageEnvironment: {
   prod: { apiUrl: 'https://passkeys.api.cx.metamask.io' },
 };
 
+/**
+ * Returns the DelegationStorageEnvironment ('dev' or 'prod') for a given apiUrl,
+ * or 'custom' if the apiUrl does not match a known environment.
+ *
+ * @param apiUrl - The API URL to check.
+ * @returns The environment key ('dev' or 'prod'), or 'custom'.
+ */
+function getDelegationStorageEnvironment(apiUrl: string): 'dev' | 'prod' | 'custom' {
+  for (const [key, env] of Object.entries(DelegationStorageEnvironment) as [keyof typeof DelegationStorageEnvironment, Environment][]) {
+    if (env.apiUrl === apiUrl) {
+      return key;
+    }
+  }
+  return "custom";
+}
+
+
+
 export type Environment = {
   apiUrl: string;
 };
@@ -54,6 +73,10 @@ export class DelegationStorageClient {
 
   constructor(config: DelegationStorageConfig) {
     const { apiUrl } = config.environment;
+
+    trackSmartAccountsKitFunctionCall('experimental.DelegationStorageClient.constructor', {
+      environment: getDelegationStorageEnvironment(apiUrl)
+    });
 
     if (apiUrl.endsWith(this.#apiVersionPrefix)) {
       this.#apiUrl = apiUrl;
@@ -99,6 +122,15 @@ export class DelegationStorageClient {
   async getDelegationChain(
     leafDelegationOrDelegationHash: Hex | Delegation,
   ): Promise<Delegation[]> {
+    trackSmartAccountsKitFunctionCall(
+      'experimental.DelegationStorageClient.getDelegationChain',
+      {
+        inputKind:
+          typeof leafDelegationOrDelegationHash === 'string'
+            ? 'hash'
+            : 'delegation',
+      },
+    );
     const leafDelegationHash =
       typeof leafDelegationOrDelegationHash === 'string'
         ? leafDelegationOrDelegationHash
@@ -140,6 +172,10 @@ export class DelegationStorageClient {
     deleGatorAddress: Hex,
     filterMode = DelegationStoreFilter.Received,
   ): Promise<Delegation[]> {
+    trackSmartAccountsKitFunctionCall(
+      'experimental.DelegationStorageClient.fetchDelegations',
+      { filterMode },
+    );
     const response = await this.#fetcher(
       `${this.#apiUrl}/delegation/accounts/${deleGatorAddress}?filter=${filterMode}`,
       {
@@ -167,6 +203,10 @@ export class DelegationStorageClient {
    * @returns A promise that resolves to the delegation hash indicating successful storage.
    */
   async storeDelegation(delegation: Delegation): Promise<Hex> {
+    trackSmartAccountsKitFunctionCall(
+      'experimental.DelegationStorageClient.storeDelegation',
+      { caveatCount: delegation.caveats.length },
+    );
     if (!delegation.signature || delegation.signature === '0x') {
       throw new Error('Delegation must be signed to be stored');
     }

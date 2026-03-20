@@ -39,7 +39,29 @@ export type SmartAccountsKitPayload = {
   properties: SmartAccountsKitBaseProperties;
 };
 
-export type AnalyticsEventV2 = SmartAccountsKitPayload;
+/** Non-sensitive primitive fields only; callers must not pass secrets or PII. */
+export type SmartAccountsKitFunctionCallParameters = Record<
+  string,
+  unknown
+>;
+
+export type SmartAccountsKitFunctionCallProperties =
+  SmartAccountsKitBaseProperties & {
+    /** Exported SDK function name (e.g. `createDelegation`, `sendUserOperationWithDelegationAction`). */
+    function_name: string;
+    /** Optional safe subset of call arguments. */
+    parameters?: SmartAccountsKitFunctionCallParameters;
+  };
+
+export type SmartAccountsKitFunctionCallPayload = {
+  namespace: 'metamask/smart-accounts-kit';
+  event_name: 'smart_accounts_kit_function_called';
+  properties: SmartAccountsKitFunctionCallProperties;
+};
+
+export type AnalyticsEventV2 =
+  | SmartAccountsKitPayload
+  | SmartAccountsKitFunctionCallPayload;
 
 export type paths = {
   '/v2/events': {

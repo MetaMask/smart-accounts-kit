@@ -13,6 +13,7 @@ import { toHex, getAddress, isHex } from 'viem';
 import type { TypedData, AbiParameter, Address, Hex } from 'viem';
 import { signTypedData } from 'viem/accounts';
 
+import { trackSmartAccountsKitFunctionCall } from './analytics';
 import { type Caveats, resolveCaveats } from './caveatBuilder';
 import type { ScopeConfig } from './caveatBuilder/scope';
 import { CAVEAT_ABI_TYPE_COMPONENTS } from './caveats';
@@ -256,6 +257,11 @@ export const resolveAuthority = (parentDelegation?: Delegation | Hex): Hex => {
 export const createDelegation = (
   options: CreateDelegationOptions,
 ): Delegation => {
+  trackSmartAccountsKitFunctionCall('createDelegation', {
+    hasCaveats: options.caveats !== undefined,
+    hasParentDelegation: options.parentDelegation !== undefined,
+  });
+
   return {
     delegate: options.to,
     delegator: options.from,
@@ -275,6 +281,11 @@ export const createDelegation = (
 export const createOpenDelegation = (
   options: CreateOpenDelegationOptions,
 ): Delegation => {
+  trackSmartAccountsKitFunctionCall('createOpenDelegation', {
+    hasCaveats: options.caveats !== undefined,
+    hasParentDelegation: options.parentDelegation !== undefined,
+  });
+
   return {
     delegate: ANY_BENEFICIARY,
     delegator: options.from,

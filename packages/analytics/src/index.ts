@@ -8,6 +8,9 @@ import {
 } from './environment';
 import type {
   AnalyticsEventV2,
+  SmartAccountsKitFunctionCallParameters,
+  SmartAccountsKitFunctionCallPayload,
+  SmartAccountsKitFunctionCallProperties,
   SmartAccountsKitBaseProperties,
   paths,
 } from './schema';
@@ -87,7 +90,7 @@ export class Analytics {
 
     if (!isCompleteBase(merged)) {
       throw new Error(
-        'Analytics: trackInitialized produced incomplete base (ensure getInitializationContext ran and sdk_version, anon_id, platform are set)',
+        'Analytics: trackInitialized produced incomplete base configuration (ensure getInitializationContext ran and sdk_version, anon_id, platform are set)',
       );
     }
 
@@ -97,6 +100,51 @@ export class Analytics {
       namespace: 'metamask/smart-accounts-kit',
       event_name: 'smart_accounts_kit_initialized',
       properties: merged,
+    };
+
+    this.sender.enqueue(event);
+  }
+
+  /**
+   * Sends `smart_accounts_kit_function_called` with session base plus the function name and optional
+   * non-sensitive parameters. Does not mutate the session store (unlike {@link trackInitialized}).
+   *
+   * @param functionName - Public SDK entry name (use a stable string, e.g. `createDelegation`).
+   * @param parameters - Safe primitives only; omit secrets, keys, and raw addresses if sensitive.
+   * @param baseOverrides - Optional overrides for base fields (same as {@link trackInitialized}).
+   */
+  public trackSdkFunctionCall(
+    functionName: string,
+    parameters?: SmartAccountsKitFunctionCallParameters,
+    baseOverrides: Partial<SmartAccountsKitBaseProperties> = {},
+  ): void {
+    if (!this.enabled) {
+      return;
+    }
+
+    const mergedBase: Partial<SmartAccountsKitBaseProperties> = {
+      ...getSessionBaseProperties(),
+      ...baseOverrides,
+    };
+
+    if (!isCompleteBase(mergedBase)) {
+      throw new Error(
+        'Analytics: trackSdkFunctionCall requires session (call getInitializationContext before tracking)',
+      );
+    }
+
+    const props: SmartAccountsKitFunctionCallProperties = {
+      ...mergedBase,
+      function_name: functionName,
+      ...(parameters !== undefined && Object.keys(parameters).length > 0
+        ? { parameters }
+        : {}),
+    };
+
+    const event: SmartAccountsKitFunctionCallPayload = {
+      namespace: 'metamask/smart-accounts-kit',
+      event_name: 'smart_accounts_kit_function_called',
+      properties: props,
     };
 
     this.sender.enqueue(event);
@@ -117,6 +165,9 @@ export {
 } from './environment';
 export type {
   AnalyticsEventV2,
+  SmartAccountsKitFunctionCallParameters,
+  SmartAccountsKitFunctionCallPayload,
+  SmartAccountsKitFunctionCallProperties,
   SmartAccountsKitBaseProperties,
   SmartAccountsKitInitializedProperties,
   SmartAccountsKitPayload,

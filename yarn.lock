@@ -783,6 +783,8 @@ __metadata:
     tsup: "npm:^8.5.0"
     typescript: "npm:5.5.4"
     vitest: "npm:^3.2.4"
+  peerDependencies:
+    openapi-fetch: ^0.13.5
   languageName: unknown
   linkType: soft
 
@@ -814,6 +816,7 @@ __metadata:
     eslint-plugin-n: "npm:^17.10.3"
     eslint-plugin-prettier: "npm:^5.5.4"
     eslint-plugin-promise: "npm:^7.1.0"
+    openapi-fetch: "npm:^0.13.5"
     prettier: "npm:^3.5.3"
     sinon: "npm:^18.0.0"
     ts-node: "npm:^10.9.2"
@@ -826,6 +829,7 @@ __metadata:
     vitest: "npm:^3.2.4"
     webauthn-p256: "npm:^0.0.10"
   peerDependencies:
+    openapi-fetch: ^0.13.5
     viem: ^2.31.4
   languageName: unknown
   linkType: soft

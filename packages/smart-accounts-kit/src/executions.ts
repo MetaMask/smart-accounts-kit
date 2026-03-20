@@ -30,11 +30,13 @@ export const createExecution = ({
   target,
   value = 0n,
   callData = '0x',
-}: CreateExecutionArgs): ExecutionStruct => ({
-  target,
-  value,
-  callData,
-});
+}: CreateExecutionArgs): ExecutionStruct => {
+  return {
+    target,
+    value,
+    callData,
+  };
+};
 
 // Encoded modes
 // https://github.com/erc7579/erc7579-implementation/blob/main/src/lib/ModeLib.sol

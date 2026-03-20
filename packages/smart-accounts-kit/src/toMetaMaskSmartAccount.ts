@@ -11,6 +11,7 @@ import {
 } from 'viem/account-abstraction';
 
 import { isValid7702Implementation } from './actions/isValid7702Implementation';
+import { trackSmartAccountsKitFunctionCall } from './analytics';
 import { Implementation } from './constants';
 import { getCounterfactualAccountData } from './counterfactualAccountData';
 import {
@@ -54,6 +55,13 @@ export async function toMetaMaskSmartAccount<
     client: { chain },
     implementation,
   } = params;
+
+  trackSmartAccountsKitFunctionCall('toMetaMaskSmartAccount', {
+    implementation,
+    hasAddress: params.address !== undefined,
+    hasEnvironment: params.environment !== undefined,
+    chainId: chain?.id ?? null,
+  });
 
   if (!chain) {
     throw new Error('Chain not specified');

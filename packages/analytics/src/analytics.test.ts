@@ -173,4 +173,53 @@ t.describe('Analytics', () => {
       /getInitializationContext/iu,
     );
   });
+
+  t.it('should track SDK function call when enabled', async () => {
+    let captured: AnalyticsEventV2[] = [];
+    const scope = nock('http://127.0.0.6')
+      .post('/v2/events', (body) => {
+        captured = body;
+        return true;
+      })
+      .reply(
+        200,
+        { status: 'success' },
+        { 'Content-Type': 'application/json' },
+      );
+
+    getInitializationContext({
+      sdk_version: '1.0.0',
+      anon_id: 'dddddddd-dddd-dddd-dddd-dddddddddddd',
+    });
+    analytics = new Analytics('http://127.0.0.6');
+    analytics.enable();
+    analytics.trackSdkFunctionCall('testFn', { foo: 'bar' });
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    t.expect(captured).toEqual([
+      {
+        namespace: 'metamask/smart-accounts-kit',
+        event_name: 'smart_accounts_kit_function_called',
+        properties: {
+          sdk_version: '1.0.0',
+          anon_id: 'dddddddd-dddd-dddd-dddd-dddddddddddd',
+          platform: 'nodejs',
+          function_name: 'testFn',
+          parameters: { foo: 'bar' },
+        },
+      },
+    ]);
+
+    scope.done();
+  });
+
+  t.it('throws when trackSdkFunctionCall session was never started', () => {
+    resetAnalyticsSessionForTests();
+    analytics = new Analytics('http://127.0.0.7');
+    analytics.enable();
+    t.expect(() => analytics.trackSdkFunctionCall('x')).toThrow(
+      /getInitializationContext/iu,
+    );
+  });
 });

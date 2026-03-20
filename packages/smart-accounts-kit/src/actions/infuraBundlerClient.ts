@@ -6,6 +6,8 @@ import {
   type SmartAccount,
 } from 'viem/account-abstraction';
 
+import { trackSmartAccountsKitFunctionCall } from '../analytics';
+
 /**
  * Gas price tiers returned by pimlico_getUserOperationGasPrice
  */
@@ -129,6 +131,9 @@ export function createInfuraBundlerClient<
 >(
   config: BundlerClientConfig<TTransport, TChain, TAccount>,
 ): InfuraBundlerClient<TTransport, TChain, TAccount> {
+  trackSmartAccountsKitFunctionCall('createInfuraBundlerClient', {
+    chainId: config.chain?.id ?? null,
+  });
   // Create the base bundler client using viem's function
   const baseBundlerClient = createBundlerClient(config);
 

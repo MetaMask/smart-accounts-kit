@@ -1,6 +1,8 @@
 import type { Address, Hex } from 'viem';
 import { concat } from 'viem';
 
+import { trackSmartAccountsKitFunctionCall } from './analytics';
+
 const signatureTypes = ['ECDSA'] as const;
 
 export type SignatureType = (typeof signatureTypes)[number];
@@ -26,6 +28,10 @@ export const aggregateSignature = ({
 }: {
   signatures: PartialSignature[];
 }): Hex => {
+  trackSmartAccountsKitFunctionCall('aggregateSignature', {
+    signatureCount: signatures.length,
+  });
+  
   if (signatures.length === 0) {
     return '0x';
   }

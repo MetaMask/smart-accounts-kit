@@ -1,3 +1,4 @@
+import { trackSmartAccountsKitFunctionCall } from '../analytics';
 import { rpcSupportedPermissionsToDeveloper } from './erc7715Mapping';
 import type {
   GetSupportedExecutionPermissionsResult,
@@ -33,6 +34,13 @@ export type { GetSupportedExecutionPermissionsResult } from './erc7715Types';
 export async function erc7715GetSupportedExecutionPermissionsAction(
   client: MetaMaskExtensionClient,
 ): Promise<GetSupportedExecutionPermissionsResult> {
+  trackSmartAccountsKitFunctionCall(
+    'erc7715GetSupportedExecutionPermissionsAction',
+    {
+      chainId: client.chain?.id ?? null,
+    },
+  );
+  
   const result = await client.request(
     {
       method: 'wallet_getSupportedExecutionPermissions',

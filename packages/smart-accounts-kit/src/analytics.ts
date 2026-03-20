@@ -4,6 +4,7 @@ import {
   Analytics,
   METAMASK_ANALYTICS_ENDPOINT,
   getInitializationContext,
+  type SmartAccountsKitFunctionCallParameters,
 } from '@metamask/smart-accounts-kit-analytics';
 
 import { version as sdk_version } from '../package.json';
@@ -30,6 +31,20 @@ function isAnalyticsDisabled(): boolean {
 }
 
 export const analytics = new Analytics(METAMASK_ANALYTICS_ENDPOINT);
+
+/**
+ * Records `smart_accounts_kit_function_called` when analytics is enabled and session exists.
+ * Pass only non-sensitive primitive fields in `parameters`.
+ *
+ * @param functionName - Stable SDK entry identifier (e.g. `createDelegation`, `aggregateSignature`).
+ * @param parameters - Optional safe argument metadata; use camelCase keys, no secrets or PII.
+ */
+export function trackSmartAccountsKitFunctionCall(
+  functionName: string,
+  parameters?: SmartAccountsKitFunctionCallParameters,
+): void {
+  analytics.trackSdkFunctionCall(functionName, parameters);
+}
 
 let hasBootstrapped = false;
 

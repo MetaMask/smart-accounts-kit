@@ -41,7 +41,7 @@ export function createCaveatEnforcerClient<
   trackSmartAccountsKitFunctionCall('createCaveatEnforcerClient', {
     chainId: client.chain?.id ?? null,
   });
-  
+
   return client.extend(caveatEnforcerActions({ environment }));
 }
 

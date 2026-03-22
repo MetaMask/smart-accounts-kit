@@ -40,16 +40,19 @@ export const DelegationStorageEnvironment: {
  * @param apiUrl - The API URL to check.
  * @returns The environment key ('dev' or 'prod'), or 'custom'.
  */
-function getDelegationStorageEnvironment(apiUrl: string): 'dev' | 'prod' | 'custom' {
-  for (const [key, env] of Object.entries(DelegationStorageEnvironment) as [keyof typeof DelegationStorageEnvironment, Environment][]) {
+function getDelegationStorageEnvironment(
+  apiUrl: string,
+): 'dev' | 'prod' | 'custom' {
+  for (const [key, env] of Object.entries(DelegationStorageEnvironment) as [
+    keyof typeof DelegationStorageEnvironment,
+    Environment,
+  ][]) {
     if (env.apiUrl === apiUrl) {
       return key;
     }
   }
-  return "custom";
+  return 'custom';
 }
-
-
 
 export type Environment = {
   apiUrl: string;
@@ -74,9 +77,12 @@ export class DelegationStorageClient {
   constructor(config: DelegationStorageConfig) {
     const { apiUrl } = config.environment;
 
-    trackSmartAccountsKitFunctionCall('experimental.DelegationStorageClient.constructor', {
-      environment: getDelegationStorageEnvironment(apiUrl)
-    });
+    trackSmartAccountsKitFunctionCall(
+      'experimental.DelegationStorageClient.constructor',
+      {
+        environment: getDelegationStorageEnvironment(apiUrl),
+      },
+    );
 
     if (apiUrl.endsWith(this.#apiVersionPrefix)) {
       this.#apiUrl = apiUrl;

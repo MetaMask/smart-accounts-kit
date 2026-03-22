@@ -40,10 +40,7 @@ export type SmartAccountsKitPayload = {
 };
 
 /** Non-sensitive primitive fields only; callers must not pass secrets or PII. */
-export type SmartAccountsKitFunctionCallParameters = Record<
-  string,
-  unknown
->;
+export type SmartAccountsKitFunctionCallParameters = Record<string, unknown>;
 
 export type SmartAccountsKitFunctionCallProperties =
   SmartAccountsKitBaseProperties & {

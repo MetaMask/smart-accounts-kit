@@ -169,9 +169,12 @@ export async function getErc20StreamingEnforcerAvailableAmount(
   environment: SmartAccountsEnvironment,
   params: CaveatEnforcerParams,
 ): Promise<StreamingResult> {
-  trackSmartAccountsKitFunctionCall('getErc20StreamingEnforcerAvailableAmount', {
-    chainId: client.chain?.id ?? null,
-  });
+  trackSmartAccountsKitFunctionCall(
+    'getErc20StreamingEnforcerAvailableAmount',
+    {
+      chainId: client.chain?.id ?? null,
+    },
+  );
   const enforcerName = 'ERC20StreamingEnforcer';
   const delegationManager = getDelegationManager(environment);
   const enforcerAddress = getEnforcerAddress({

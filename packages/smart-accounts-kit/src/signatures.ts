@@ -31,7 +31,7 @@ export const aggregateSignature = ({
   trackSmartAccountsKitFunctionCall('aggregateSignature', {
     signatureCount: signatures.length,
   });
-  
+
   if (signatures.length === 0) {
     return '0x';
   }

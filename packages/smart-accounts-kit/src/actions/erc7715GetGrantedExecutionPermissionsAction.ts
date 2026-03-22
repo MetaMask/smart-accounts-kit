@@ -31,7 +31,7 @@ export async function erc7715GetGrantedExecutionPermissionsAction(
       chainId: client.chain?.id ?? null,
     },
   );
-  
+
   const result = await client.request(
     {
       method: 'wallet_getGrantedExecutionPermissions',

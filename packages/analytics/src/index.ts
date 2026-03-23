@@ -48,7 +48,12 @@ export class Analytics {
       }
     };
 
-    this.sender = new Sender({ batchSize: 100, baseTimeoutMs: 200, sendFn });
+    this.sender = new Sender({
+      batchSize: 100,
+      baseTimeoutMs: 200,
+      maxFailureCount: 10,
+      sendFn,
+    });
   }
 
   public enable(): void {

@@ -11,7 +11,12 @@ t.describe('Sender', () => {
   t.beforeEach(() => {
     t.vi.useFakeTimers();
     sendFn = t.vi.fn().mockResolvedValue(undefined);
-    sender = new Sender({ batchSize: 2, baseTimeoutMs: 50, sendFn });
+    sender = new Sender({
+      batchSize: 2,
+      baseTimeoutMs: 50,
+      maxFailureCount: 10,
+      sendFn,
+    });
   });
 
   t.afterEach(() => {
@@ -50,7 +55,12 @@ t.describe('Sender', () => {
         }
         return Promise.resolve();
       });
-      sender = new Sender({ batchSize: 100, baseTimeoutMs: 50, sendFn });
+      sender = new Sender({
+        batchSize: 100,
+        baseTimeoutMs: 50,
+        maxFailureCount: 100,
+        sendFn,
+      });
 
       shouldSendFail = true;
 
@@ -76,6 +86,30 @@ t.describe('Sender', () => {
     },
   );
 
+  t.it(
+    'disables and purges when maxFailureCount is reached; enqueue is noop',
+    async () => {
+      sendFn = t.vi.fn().mockRejectedValue(new Error('Failed'));
+      sender = new Sender({
+        batchSize: 100,
+        baseTimeoutMs: 50,
+        maxFailureCount: 2,
+        sendFn,
+      });
+
+      sender.enqueue('event1');
+      await t.vi.advanceTimersByTimeAsync(50);
+      t.expect(sendFn).toHaveBeenCalledTimes(1);
+
+      await t.vi.advanceTimersByTimeAsync(100);
+      t.expect(sendFn).toHaveBeenCalledTimes(2);
+
+      sender.enqueue('event2');
+      await t.vi.advanceTimersByTimeAsync(60_000);
+      t.expect(sendFn).toHaveBeenCalledTimes(2);
+    },
+  );
+
   t.it('should handle concurrent sends properly', async () => {
     let resolveSend!: (value?: unknown) => void;
     sendFn = t.vi.fn().mockImplementation(async () => {
@@ -83,7 +117,12 @@ t.describe('Sender', () => {
         resolveSend = resolve;
       });
     });
-    sender = new Sender({ batchSize: 100, baseTimeoutMs: 1000, sendFn });
+    sender = new Sender({
+      batchSize: 100,
+      baseTimeoutMs: 1000,
+      maxFailureCount: 100,
+      sendFn,
+    });
 
     sender.enqueue('event1');
     await t.vi.advanceTimersByTimeAsync(1000);

@@ -9,17 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.17.0]
 
-### Uncategorized
-
-- Bump a few deps to resolve inconsistent dependencies between packages ([#187](https://github.com/metamask/smart-accounts-kit/pull/187))
-- feat: add Tempo Mainnet and Tempo Moderato Testnet ([#177](https://github.com/metamask/smart-accounts-kit/pull/177))
-- Align linting scripts, add turbo lint:fix task ([#149](https://github.com/metamask/smart-accounts-kit/pull/149))
-- Release/21.0.0 ([#135](https://github.com/metamask/smart-accounts-kit/pull/135))
-- Resolve yarn peer dependency warnings ([#123](https://github.com/metamask/smart-accounts-kit/pull/123))
-
 ### Added
 
-- Add chain deployment for Celo and Ronin mainnet and testnets ([#173](https://github.com/MetaMask/smart-accounts-kit/pull/173))
+- Tempo mainnet and Tempo Moderato testnet ([#177](https://github.com/metamask/smart-accounts-kit/pull/177))
+- Celo and Ronin mainnet and testnets ([#173](https://github.com/MetaMask/smart-accounts-kit/pull/173))
 
 ## [0.16.0]
 

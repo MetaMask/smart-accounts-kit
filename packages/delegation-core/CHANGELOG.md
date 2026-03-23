@@ -9,13 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.0]
 
-### Uncategorized
-
-- Fix #151: Create utils `encodeDelegation` and `decodeDelegation` ([#153](https://github.com/metamask/smart-accounts-kit/pull/153))
-- Align linting scripts, add turbo lint:fix task ([#149](https://github.com/metamask/smart-accounts-kit/pull/149))
-- fix: default `delegation.salt` and `caveat.args` should be `0x00` ([#138](https://github.com/metamask/smart-accounts-kit/pull/138))
-- Release/21.0.0 ([#135](https://github.com/metamask/smart-accounts-kit/pull/135))
-
 ### Added
 
 - Add terms builders for all enforcers implemented in @metamask/smart-accounts-kit ([#139](https://github.com/metamask/smart-accounts-kit/pull/139))
@@ -41,6 +34,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `createOwnershipTransferTerms`
   - `createRedeemerTerms`
   - `createSpecificActionERC20TransferBatchTerms`
+- New utils `encodeDelegation` and `decodeDelegation` ([#153](https://github.com/metamask/smart-accounts-kit/pull/153))
+
+### Changed
+
+- Default `delegation.salt` and `caveat.args` should be `0x00` ([#138](https://github.com/metamask/smart-accounts-kit/pull/138))
 
 ### Fixed
 

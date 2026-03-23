@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0-beta.2]
+
 ### Added
 
 - Add `encodeDelegation` and `decodeDelegation` utilities for encoding and decoding single delegations. ([#153](https://github.com/MetaMask/smart-accounts-kit/pull/153))
+- Add DelegationManager validation for EIP-7710 actions (#150) ([#150](https://github.com/metamask/smart-accounts-kit/pull/150))
+- Support for Tempo Mainnet and Tempo Moderato Testnet ([#177](https://github.com/metamask/smart-accounts-kit/pull/177))
 
 ### Changed
 
@@ -84,7 +88,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.1...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.2...HEAD
+[0.4.0-beta.2]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.1...@metamask/smart-accounts-kit@0.4.0-beta.2
 [0.4.0-beta.1]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.0...@metamask/smart-accounts-kit@0.4.0-beta.1
 [0.4.0-beta.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.3.0...@metamask/smart-accounts-kit@0.4.0-beta.0
 [0.3.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.2.0...@metamask/smart-accounts-kit@0.3.0

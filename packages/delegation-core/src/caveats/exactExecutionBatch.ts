@@ -1,8 +1,9 @@
-import { encodeSingle } from '@metamask/abi-utils';
+import { decodeSingle, encodeSingle } from '@metamask/abi-utils';
 import { bytesToHex, type BytesLike } from '@metamask/utils';
 
 import { normalizeAddress } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -85,4 +86,29 @@ export function createExactExecutionBatchTerms(
 
   const hexValue = encodeSingle(EXECUTION_ARRAY_ABI, encodableExecutions);
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an ExactExecutionBatch caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded ExactExecutionBatchTerms object.
+ */
+export function decodeExactExecutionBatchTerms(
+  terms: BytesLike,
+): ExactExecutionBatchTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Decode using ABI: (address,uint256,bytes)[]
+  const decoded = decodeSingle(EXECUTION_ARRAY_ABI, hexTerms);
+  
+  const executions = (decoded as [string, bigint, Uint8Array][]).map(
+    ([target, value, callData]) => ({
+      target,
+      value,
+      callData: bytesToHex(callData),
+    }),
+  );
+  
+  return { executions };
 }

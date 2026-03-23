@@ -1,11 +1,13 @@
-import { toHexString } from '../internalUtils';
+import { extractNumber, toHexString } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
+import type { BytesLike } from '@metamask/utils';
 
 /**
  * Terms for configuring a LimitedCalls caveat.
@@ -55,4 +57,16 @@ export function createLimitedCallsTerms(
 
   const hexValue = `0x${toHexString({ value: limit, size: 32 })}`;
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a LimitedCalls caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded LimitedCallsTerms object.
+ */
+export function decodeLimitedCallsTerms(terms: BytesLike): LimitedCallsTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  const limit = extractNumber(hexTerms, 0, 32);
+  return { limit };
 }

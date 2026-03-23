@@ -1,7 +1,8 @@
 import { bytesToHex, remove0x, type BytesLike } from '@metamask/utils';
 
-import { toHexString } from '../internalUtils';
+import { extractNumber, extractRemainingHex, toHexString } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -72,4 +73,22 @@ export function createAllowedCalldataTerms(
 
   // The terms are the index encoded as 32 bytes followed by the expected value.
   return prepareResult(`0x${indexHex}${unprefixedValue}`, encodingOptions);
+}
+
+/**
+ * Decodes terms for an AllowedCalldata caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded AllowedCalldataTerms object.
+ */
+export function decodeAllowedCalldataTerms(
+  terms: BytesLike,
+): AllowedCalldataTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Structure: startIndex (32 bytes) + value (remaining)
+  const startIndex = extractNumber(hexTerms, 0, 32);
+  const value = extractRemainingHex(hexTerms, 32);
+  
+  return { startIndex, value };
 }

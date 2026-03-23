@@ -1,11 +1,13 @@
-import { toHexString } from '../internalUtils';
+import { extractBigInt, toHexString } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
+import type { BytesLike } from '@metamask/utils';
 
 /**
  * Terms for configuring a NativeTokenTransferAmount caveat.
@@ -51,4 +53,18 @@ export function createNativeTokenTransferAmountTerms(
 
   const hexValue = `0x${toHexString({ value: maxAmount, size: 32 })}`;
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a NativeTokenTransferAmount caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded NativeTokenTransferAmountTerms object.
+ */
+export function decodeNativeTokenTransferAmountTerms(
+  terms: BytesLike,
+): NativeTokenTransferAmountTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  const maxAmount = extractBigInt(hexTerms, 0, 32);
+  return { maxAmount };
 }

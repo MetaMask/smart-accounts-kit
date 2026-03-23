@@ -1,7 +1,8 @@
 import { bytesToHex, isHexString, type BytesLike } from '@metamask/utils';
 
-import { concatHex } from '../internalUtils';
+import { concatHex, extractHex } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -75,4 +76,29 @@ export function createAllowedMethodsTerms(
 
   const hexValue = concatHex(normalizedSelectors);
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an AllowedMethods caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded AllowedMethodsTerms object.
+ */
+export function decodeAllowedMethodsTerms(
+  terms: BytesLike,
+): AllowedMethodsTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Each selector is 4 bytes
+  const selectorSize = 4;
+  const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
+  const selectorCount = totalBytes / selectorSize;
+  
+  const selectors: string[] = [];
+  for (let i = 0; i < selectorCount; i++) {
+    const selector = extractHex(hexTerms, i * selectorSize, selectorSize);
+    selectors.push(selector);
+  }
+  
+  return { selectors };
 }

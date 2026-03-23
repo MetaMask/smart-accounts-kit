@@ -1,31 +1,91 @@
-export { createValueLteTerms } from './valueLte';
-export { createTimestampTerms } from './timestamp';
-export { createNativeTokenPeriodTransferTerms } from './nativeTokenPeriodTransfer';
-export { createExactCalldataTerms } from './exactCalldata';
-export { createExactCalldataBatchTerms } from './exactCalldataBatch';
-export { createExactExecutionTerms } from './exactExecution';
-export { createExactExecutionBatchTerms } from './exactExecutionBatch';
-export { createNativeTokenStreamingTerms } from './nativeTokenStreaming';
-export { createNativeTokenTransferAmountTerms } from './nativeTokenTransferAmount';
-export { createNativeTokenPaymentTerms } from './nativeTokenPayment';
-export { createNativeBalanceChangeTerms } from './nativeBalanceChange';
-export { createERC20StreamingTerms } from './erc20Streaming';
-export { createERC20TokenPeriodTransferTerms } from './erc20TokenPeriodTransfer';
-export { createERC20TransferAmountTerms } from './erc20TransferAmount';
-export { createERC20BalanceChangeTerms } from './erc20BalanceChange';
-export { createERC721BalanceChangeTerms } from './erc721BalanceChange';
-export { createERC721TransferTerms } from './erc721Transfer';
-export { createERC1155BalanceChangeTerms } from './erc1155BalanceChange';
-export { createNonceTerms } from './nonce';
-export { createAllowedCalldataTerms } from './allowedCalldata';
-export { createAllowedMethodsTerms } from './allowedMethods';
-export { createAllowedTargetsTerms } from './allowedTargets';
-export { createArgsEqualityCheckTerms } from './argsEqualityCheck';
-export { createBlockNumberTerms } from './blockNumber';
-export { createDeployedTerms } from './deployed';
-export { createIdTerms } from './id';
-export { createLimitedCallsTerms } from './limitedCalls';
-export { createMultiTokenPeriodTerms } from './multiTokenPeriod';
-export { createOwnershipTransferTerms } from './ownershipTransfer';
-export { createRedeemerTerms } from './redeemer';
-export { createSpecificActionERC20TransferBatchTerms } from './specificActionERC20TransferBatch';
+export { createValueLteTerms, decodeValueLteTerms } from './valueLte';
+export { createTimestampTerms, decodeTimestampTerms } from './timestamp';
+export {
+  createNativeTokenPeriodTransferTerms,
+  decodeNativeTokenPeriodTransferTerms,
+} from './nativeTokenPeriodTransfer';
+export { createExactCalldataTerms, decodeExactCalldataTerms } from './exactCalldata';
+export {
+  createExactCalldataBatchTerms,
+  decodeExactCalldataBatchTerms,
+} from './exactCalldataBatch';
+export {
+  createExactExecutionTerms,
+  decodeExactExecutionTerms,
+} from './exactExecution';
+export {
+  createExactExecutionBatchTerms,
+  decodeExactExecutionBatchTerms,
+} from './exactExecutionBatch';
+export {
+  createNativeTokenStreamingTerms,
+  decodeNativeTokenStreamingTerms,
+} from './nativeTokenStreaming';
+export {
+  createNativeTokenTransferAmountTerms,
+  decodeNativeTokenTransferAmountTerms,
+} from './nativeTokenTransferAmount';
+export {
+  createNativeTokenPaymentTerms,
+  decodeNativeTokenPaymentTerms,
+} from './nativeTokenPayment';
+export {
+  createNativeBalanceChangeTerms,
+  decodeNativeBalanceChangeTerms,
+} from './nativeBalanceChange';
+export { createERC20StreamingTerms, decodeERC20StreamingTerms } from './erc20Streaming';
+export {
+  createERC20TokenPeriodTransferTerms,
+  decodeERC20TokenPeriodTransferTerms,
+} from './erc20TokenPeriodTransfer';
+export {
+  createERC20TransferAmountTerms,
+  decodeERC20TransferAmountTerms,
+} from './erc20TransferAmount';
+export {
+  createERC20BalanceChangeTerms,
+  decodeERC20BalanceChangeTerms,
+} from './erc20BalanceChange';
+export {
+  createERC721BalanceChangeTerms,
+  decodeERC721BalanceChangeTerms,
+} from './erc721BalanceChange';
+export { createERC721TransferTerms, decodeERC721TransferTerms } from './erc721Transfer';
+export {
+  createERC1155BalanceChangeTerms,
+  decodeERC1155BalanceChangeTerms,
+} from './erc1155BalanceChange';
+export { createNonceTerms, decodeNonceTerms } from './nonce';
+export {
+  createAllowedCalldataTerms,
+  decodeAllowedCalldataTerms,
+} from './allowedCalldata';
+export {
+  createAllowedMethodsTerms,
+  decodeAllowedMethodsTerms,
+} from './allowedMethods';
+export {
+  createAllowedTargetsTerms,
+  decodeAllowedTargetsTerms,
+} from './allowedTargets';
+export {
+  createArgsEqualityCheckTerms,
+  decodeArgsEqualityCheckTerms,
+} from './argsEqualityCheck';
+export { createBlockNumberTerms, decodeBlockNumberTerms } from './blockNumber';
+export { createDeployedTerms, decodeDeployedTerms } from './deployed';
+export { createIdTerms, decodeIdTerms } from './id';
+export { createLimitedCallsTerms, decodeLimitedCallsTerms } from './limitedCalls';
+export {
+  createMultiTokenPeriodTerms,
+  decodeMultiTokenPeriodTerms,
+} from './multiTokenPeriod';
+export {
+  createOwnershipTransferTerms,
+  decodeOwnershipTransferTerms,
+} from './ownershipTransfer';
+export { createRedeemerTerms, decodeRedeemerTerms } from './redeemer';
+export {
+  createSpecificActionERC20TransferBatchTerms,
+  decodeSpecificActionERC20TransferBatchTerms,
+} from './specificActionERC20TransferBatch';

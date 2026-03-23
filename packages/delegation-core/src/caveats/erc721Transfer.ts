@@ -1,7 +1,14 @@
 import type { BytesLike } from '@metamask/utils';
 
-import { concatHex, normalizeAddress, toHexString } from '../internalUtils';
 import {
+  concatHex,
+  extractAddress,
+  extractBigInt,
+  normalizeAddress,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -62,4 +69,22 @@ export function createERC721TransferTerms(
   const hexValue = concatHex([tokenAddressHex, tokenIdHex]);
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an ERC721Transfer caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded ERC721TransferTerms object.
+ */
+export function decodeERC721TransferTerms(
+  terms: BytesLike,
+): ERC721TransferTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Structure: tokenAddress (20 bytes) + tokenId (32 bytes)
+  const tokenAddress = extractAddress(hexTerms, 0);
+  const tokenId = extractBigInt(hexTerms, 20, 32);
+  
+  return { tokenAddress, tokenId };
 }

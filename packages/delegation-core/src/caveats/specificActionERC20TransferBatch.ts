@@ -1,7 +1,15 @@
 import { bytesToHex, type BytesLike } from '@metamask/utils';
 
-import { concatHex, normalizeAddress, toHexString } from '../internalUtils';
 import {
+  concatHex,
+  extractAddress,
+  extractBigInt,
+  extractRemainingHex,
+  normalizeAddress,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -97,4 +105,25 @@ export function createSpecificActionERC20TransferBatchTerms(
   ]);
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a SpecificActionERC20TransferBatch caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded SpecificActionERC20TransferBatchTerms object.
+ */
+export function decodeSpecificActionERC20TransferBatchTerms(
+  terms: BytesLike,
+): SpecificActionERC20TransferBatchTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Structure: tokenAddress (20 bytes) + recipient (20 bytes) + amount (32 bytes) + target (20 bytes) + calldata (remaining)
+  const tokenAddress = extractAddress(hexTerms, 0);
+  const recipient = extractAddress(hexTerms, 20);
+  const amount = extractBigInt(hexTerms, 40, 32);
+  const target = extractAddress(hexTerms, 72);
+  const calldata = extractRemainingHex(hexTerms, 92);
+  
+  return { tokenAddress, recipient, amount, target, calldata };
 }

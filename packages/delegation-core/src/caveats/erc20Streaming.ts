@@ -1,7 +1,13 @@
 import { type BytesLike, bytesToHex, isHexString } from '@metamask/utils';
 
-import { toHexString } from '../internalUtils';
 import {
+  extractAddress,
+  extractBigInt,
+  extractNumber,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -119,4 +125,25 @@ export function createERC20StreamingTerms(
   const hexValue = `${prefixedTokenAddressHex}${initialAmountHex}${maxAmountHex}${amountPerSecondHex}${startTimeHex}`;
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an ERC20Streaming caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded ERC20StreamingTerms object.
+ */
+export function decodeERC20StreamingTerms(
+  terms: BytesLike,
+): ERC20StreamingTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Structure: tokenAddress (20 bytes) + initialAmount (32 bytes) + maxAmount (32 bytes) + amountPerSecond (32 bytes) + startTime (32 bytes)
+  const tokenAddress = extractAddress(hexTerms, 0);
+  const initialAmount = extractBigInt(hexTerms, 20, 32);
+  const maxAmount = extractBigInt(hexTerms, 52, 32);
+  const amountPerSecond = extractBigInt(hexTerms, 84, 32);
+  const startTime = extractNumber(hexTerms, 116, 32);
+  
+  return { tokenAddress, initialAmount, maxAmount, amountPerSecond, startTime };
 }

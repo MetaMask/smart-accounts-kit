@@ -2,10 +2,13 @@ import type { BytesLike } from '@metamask/utils';
 
 import {
   concatHex,
+  extractAddress,
+  extractBigInt,
   normalizeAddressLowercase,
   toHexString,
 } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -66,4 +69,22 @@ export function createNativeTokenPaymentTerms(
   const hexValue = concatHex([recipientHex, amountHex]);
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a NativeTokenPayment caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded NativeTokenPaymentTerms object.
+ */
+export function decodeNativeTokenPaymentTerms(
+  terms: BytesLike,
+): NativeTokenPaymentTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Structure: recipient (20 bytes) + amount (32 bytes)
+  const recipient = extractAddress(hexTerms, 0);
+  const amount = extractBigInt(hexTerms, 20, 32);
+  
+  return { recipient, amount };
 }

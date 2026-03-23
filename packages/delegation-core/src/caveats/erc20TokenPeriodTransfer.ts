@@ -1,7 +1,13 @@
 import { type BytesLike, isHexString, bytesToHex } from '@metamask/utils';
 
-import { toHexString } from '../internalUtils';
 import {
+  extractAddress,
+  extractBigInt,
+  extractNumber,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -93,4 +99,24 @@ export function createERC20TokenPeriodTransferTerms(
   const hexValue = `${prefixedTokenAddressHex}${periodAmountHex}${periodDurationHex}${startDateHex}`;
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an ERC20TokenPeriodTransfer caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded ERC20TokenPeriodTransferTerms object.
+ */
+export function decodeERC20TokenPeriodTransferTerms(
+  terms: BytesLike,
+): ERC20TokenPeriodTransferTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Structure: tokenAddress (20 bytes) + periodAmount (32 bytes) + periodDuration (32 bytes) + startDate (32 bytes)
+  const tokenAddress = extractAddress(hexTerms, 0);
+  const periodAmount = extractBigInt(hexTerms, 20, 32);
+  const periodDuration = extractNumber(hexTerms, 52, 32);
+  const startDate = extractNumber(hexTerms, 84, 32);
+  
+  return { tokenAddress, periodAmount, periodDuration, startDate };
 }

@@ -2,6 +2,7 @@ import type { BytesLike } from '@metamask/utils';
 
 import { normalizeHex } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -57,4 +58,17 @@ export function createArgsEqualityCheckTerms(
   );
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an ArgsEqualityCheck caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded ArgsEqualityCheckTerms object.
+ */
+export function decodeArgsEqualityCheckTerms(
+  terms: BytesLike,
+): ArgsEqualityCheckTerms {
+  const args = bytesLikeToHex(terms);
+  return { args };
 }

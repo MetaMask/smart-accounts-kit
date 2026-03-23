@@ -1,11 +1,13 @@
-import { toHexString } from '../internalUtils';
+import { extractNumber, toHexString } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
+import type { BytesLike } from '@metamask/utils';
 
 // Upper bound for timestamps (equivalent to January 1, 10000 CE)
 const TIMESTAMP_UPPER_BOUND_SECONDS = 253402300799;
@@ -95,4 +97,17 @@ export function createTimestampTerms(
   const hexValue = `0x${afterThresholdHex}${beforeThresholdHex}`;
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a Timestamp caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded TimestampTerms object.
+ */
+export function decodeTimestampTerms(terms: BytesLike): TimestampTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  const timestampAfterThreshold = extractNumber(hexTerms, 0, 16);
+  const timestampBeforeThreshold = extractNumber(hexTerms, 16, 16);
+  return { timestampAfterThreshold, timestampBeforeThreshold };
 }

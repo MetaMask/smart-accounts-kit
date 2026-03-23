@@ -2,10 +2,14 @@ import type { BytesLike } from '@metamask/utils';
 
 import {
   concatHex,
+  extractAddress,
+  extractBigInt,
+  extractNumber,
   normalizeAddressLowercase,
   toHexString,
 } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -79,4 +83,23 @@ export function createNativeBalanceChangeTerms(
   const hexValue = concatHex([changeTypeHex, recipientHex, balanceHex]);
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a NativeBalanceChange caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded NativeBalanceChangeTerms object.
+ */
+export function decodeNativeBalanceChangeTerms(
+  terms: BytesLike,
+): NativeBalanceChangeTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Structure: changeType (1 byte) + recipient (20 bytes) + balance (32 bytes)
+  const changeType = extractNumber(hexTerms, 0, 1);
+  const recipient = extractAddress(hexTerms, 1);
+  const balance = extractBigInt(hexTerms, 21, 32);
+  
+  return { changeType, recipient, balance };
 }

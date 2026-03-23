@@ -1,4 +1,4 @@
-import { isHexString } from '@metamask/utils';
+import { hexToBytes, isHexString } from '@metamask/utils';
 import type { BytesLike } from '@metamask/utils';
 
 import {
@@ -83,4 +83,20 @@ export function createNonceTerms(
   const hexValue = `0x${paddedNonce}`;
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a Nonce caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded NonceTerms object.
+ */
+export function decodeNonceTerms(terms: BytesLike): NonceTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // The nonce is stored as a 32-byte padded value
+  // We return it as-is (padded) to maintain consistency
+  const nonce = hexTerms;
+  
+  return { nonce };
 }

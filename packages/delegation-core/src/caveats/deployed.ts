@@ -1,8 +1,16 @@
 import type { BytesLike } from '@metamask/utils';
 import { remove0x } from '@metamask/utils';
 
-import { concatHex, normalizeAddress, normalizeHex } from '../internalUtils';
 import {
+  concatHex,
+  extractAddress,
+  extractHex,
+  extractRemainingHex,
+  normalizeAddress,
+  normalizeHex,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -73,4 +81,21 @@ export function createDeployedTerms(
 
   const hexValue = concatHex([contractAddressHex, paddedSalt, bytecodeHex]);
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a Deployed caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded DeployedTerms object.
+ */
+export function decodeDeployedTerms(terms: BytesLike): DeployedTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Structure: contractAddress (20 bytes) + salt (32 bytes) + bytecode (remaining)
+  const contractAddress = extractAddress(hexTerms, 0);
+  const salt = extractHex(hexTerms, 20, 32);
+  const bytecode = extractRemainingHex(hexTerms, 52);
+  
+  return { contractAddress, salt, bytecode };
 }

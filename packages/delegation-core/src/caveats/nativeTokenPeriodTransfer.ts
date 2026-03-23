@@ -1,11 +1,13 @@
-import { toHexString } from '../internalUtils';
+import { extractBigInt, extractNumber, toHexString } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
+import type { BytesLike } from '@metamask/utils';
 
 /**
  * Terms for configuring a periodic transfer allowance of native tokens.
@@ -71,4 +73,23 @@ export function createNativeTokenPeriodTransferTerms(
   const hexValue = `0x${periodAmountHex}${periodDurationHex}${startDateHex}`;
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a NativeTokenPeriodTransfer caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded NativeTokenPeriodTransferTerms object.
+ */
+export function decodeNativeTokenPeriodTransferTerms(
+  terms: BytesLike,
+): NativeTokenPeriodTransferTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Structure: periodAmount (32 bytes) + periodDuration (32 bytes) + startDate (32 bytes)
+  const periodAmount = extractBigInt(hexTerms, 0, 32);
+  const periodDuration = extractNumber(hexTerms, 32, 32);
+  const startDate = extractNumber(hexTerms, 64, 32);
+  
+  return { periodAmount, periodDuration, startDate };
 }

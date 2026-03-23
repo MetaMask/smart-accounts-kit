@@ -1,7 +1,8 @@
 import type { BytesLike } from '@metamask/utils';
 
-import { normalizeAddress } from '../internalUtils';
+import { extractAddress, normalizeAddress } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -53,4 +54,18 @@ export function createOwnershipTransferTerms(
   );
 
   return prepareResult(contractAddressHex, encodingOptions);
+}
+
+/**
+ * Decodes terms for an OwnershipTransfer caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded OwnershipTransferTerms object.
+ */
+export function decodeOwnershipTransferTerms(
+  terms: BytesLike,
+): OwnershipTransferTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  const contractAddress = extractAddress(hexTerms, 0);
+  return { contractAddress };
 }

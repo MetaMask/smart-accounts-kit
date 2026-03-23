@@ -1,11 +1,13 @@
-import { toHexString } from '../internalUtils';
+import { extractBigInt, toHexString } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
+import type { BytesLike } from '@metamask/utils';
 
 /**
  * Terms for configuring a ValueLte caveat.
@@ -51,4 +53,16 @@ export function createValueLteTerms(
   const hexValue = toHexString({ value: maxValue, size: 32 });
 
   return prepareResult(hexValue, options);
+}
+
+/**
+ * Decodes terms for a ValueLte caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded ValueLteTerms object.
+ */
+export function decodeValueLteTerms(terms: BytesLike): ValueLteTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  const maxValue = extractBigInt(hexTerms, 0, 32);
+  return { maxValue };
 }

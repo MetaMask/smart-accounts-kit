@@ -1,11 +1,13 @@
-import { toHexString } from '../internalUtils';
+import { extractBigInt, toHexString } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
+import type { BytesLike } from '@metamask/utils';
 
 /**
  * Terms for configuring a BlockNumber caveat.
@@ -68,4 +70,17 @@ export function createBlockNumberTerms(
   const hexValue = `0x${afterThresholdHex}${beforeThresholdHex}`;
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a BlockNumber caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded BlockNumberTerms object.
+ */
+export function decodeBlockNumberTerms(terms: BytesLike): BlockNumberTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  const afterThreshold = extractBigInt(hexTerms, 0, 16);
+  const beforeThreshold = extractBigInt(hexTerms, 16, 16);
+  return { afterThreshold, beforeThreshold };
 }

@@ -2,10 +2,14 @@ import type { BytesLike } from '@metamask/utils';
 
 import {
   concatHex,
+  extractAddress,
+  extractBigInt,
+  extractNumber,
   normalizeAddressLowercase,
   toHexString,
 } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -104,4 +108,25 @@ export function createERC1155BalanceChangeTerms(
   ]);
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an ERC1155BalanceChange caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded ERC1155BalanceChangeTerms object.
+ */
+export function decodeERC1155BalanceChangeTerms(
+  terms: BytesLike,
+): ERC1155BalanceChangeTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  
+  // Structure: changeType (1 byte) + tokenAddress (20 bytes) + recipient (20 bytes) + tokenId (32 bytes) + balance (32 bytes)
+  const changeType = extractNumber(hexTerms, 0, 1);
+  const tokenAddress = extractAddress(hexTerms, 1);
+  const recipient = extractAddress(hexTerms, 21);
+  const tokenId = extractBigInt(hexTerms, 41, 32);
+  const balance = extractBigInt(hexTerms, 73, 32);
+  
+  return { changeType, tokenAddress, recipient, tokenId, balance };
 }

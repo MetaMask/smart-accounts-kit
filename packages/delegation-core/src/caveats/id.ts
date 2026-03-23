@@ -1,11 +1,13 @@
-import { toHexString } from '../internalUtils';
+import { extractBigInt, toHexString } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
+import type { BytesLike } from '@metamask/utils';
 
 const MAX_UINT256 = BigInt(`0x${'f'.repeat(64)}`);
 
@@ -70,4 +72,16 @@ export function createIdTerms(
 
   const hexValue = `0x${toHexString({ value: idBigInt, size: 32 })}`;
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an Id caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded IdTerms object.
+ */
+export function decodeIdTerms(terms: BytesLike): IdTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  const id = extractBigInt(hexTerms, 0, 32);
+  return { id };
 }

@@ -78,7 +78,7 @@ export function decodeAllowedTargetsTerms(
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const addressCount = totalBytes / addressSize;
   
-  const targets: string[] = [];
+  const targets: `0x${string}`[] = [];
   for (let i = 0; i < addressCount; i++) {
     const target = extractAddress(hexTerms, i * addressSize);
     targets.push(target);

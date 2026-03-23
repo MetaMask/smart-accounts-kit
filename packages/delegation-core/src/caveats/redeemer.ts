@@ -76,7 +76,7 @@ export function decodeRedeemerTerms(terms: BytesLike): RedeemerTerms {
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const addressCount = totalBytes / addressSize;
   
-  const redeemers: string[] = [];
+  const redeemers: `0x${string}`[] = [];
   for (let i = 0; i < addressCount; i++) {
     const redeemer = extractAddress(hexTerms, i * addressSize);
     redeemers.push(redeemer);

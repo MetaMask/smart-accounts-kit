@@ -158,10 +158,10 @@ export const extractNumber = (
  * @param offset - The byte offset to start extraction.
  * @returns The extracted address as a 0x-prefixed hex string.
  */
-export const extractAddress = (hex: string, offset: number): string => {
+export const extractAddress = (hex: string, offset: number): `0x${string}` => {
   const start = 2 + offset * 2; // Skip '0x' prefix
   const end = start + 40; // 20 bytes = 40 hex chars
-  return `0x${hex.slice(start, end)}`;
+  return `0x${hex.slice(start, end)}` as `0x${string}`;
 };
 
 /**
@@ -172,10 +172,10 @@ export const extractAddress = (hex: string, offset: number): string => {
  * @param size - The number of bytes to extract.
  * @returns The extracted hex string (0x-prefixed).
  */
-export const extractHex = (hex: string, offset: number, size: number): string => {
+export const extractHex = (hex: string, offset: number, size: number): `0x${string}` => {
   const start = 2 + offset * 2; // Skip '0x' prefix
   const end = start + size * 2;
-  return `0x${hex.slice(start, end)}`;
+  return `0x${hex.slice(start, end)}` as `0x${string}`;
 };
 
 /**
@@ -185,7 +185,7 @@ export const extractHex = (hex: string, offset: number, size: number): string =>
  * @param offset - The byte offset to start extraction.
  * @returns The extracted hex string (0x-prefixed).
  */
-export const extractRemainingHex = (hex: string, offset: number): string => {
+export const extractRemainingHex = (hex: string, offset: number): `0x${string}` => {
   const start = 2 + offset * 2; // Skip '0x' prefix
-  return `0x${hex.slice(start)}`;
+  return `0x${hex.slice(start)}` as `0x${string}`;
 };

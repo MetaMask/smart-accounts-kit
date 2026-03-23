@@ -104,7 +104,7 @@ export function decodeExactExecutionBatchTerms(
   
   const executions = (decoded as [string, bigint, Uint8Array][]).map(
     ([target, value, callData]) => ({
-      target,
+      target: target as `0x${string}`,
       value,
       callData: bytesToHex(callData),
     }),

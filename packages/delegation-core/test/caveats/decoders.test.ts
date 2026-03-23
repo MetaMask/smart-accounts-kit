@@ -133,7 +133,7 @@ describe('Terms Decoders', () => {
 
   describe('decodeNonceTerms', () => {
     it('correctly decodes encoded terms', () => {
-      const original = { nonce: '0x1234' };
+      const original = { nonce: '0x1234' as `0x${string}` };
       const encoded = createNonceTerms(original);
       const decoded = decodeNonceTerms(encoded);
       expect(decoded.nonce).toEqual(encoded);
@@ -142,7 +142,7 @@ describe('Terms Decoders', () => {
 
   describe('decodeAllowedMethodsTerms', () => {
     it('correctly decodes encoded terms', () => {
-      const original = { selectors: ['0x70a08231', '0xa9059cbb'] };
+      const original = { selectors: ['0x70a08231', '0xa9059cbb'] as `0x${string}`[] };
       const encoded = createAllowedMethodsTerms(original);
       const decoded = decodeAllowedMethodsTerms(encoded);
       expect(decoded).toEqual(original);
@@ -155,7 +155,7 @@ describe('Terms Decoders', () => {
         targets: [
           '0x1234567890123456789012345678901234567890',
           '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
-        ],
+        ] as `0x${string}`[],
       };
       const encoded = createAllowedTargetsTerms(original);
       const decoded = decodeAllowedTargetsTerms(encoded);
@@ -166,7 +166,7 @@ describe('Terms Decoders', () => {
   describe('decodeRedeemerTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        redeemers: ['0x1234567890123456789012345678901234567890'],
+        redeemers: ['0x1234567890123456789012345678901234567890'] as `0x${string}`[],
       };
       const encoded = createRedeemerTerms(original);
       const decoded = decodeRedeemerTerms(encoded);
@@ -176,7 +176,7 @@ describe('Terms Decoders', () => {
 
   describe('decodeAllowedCalldataTerms', () => {
     it('correctly decodes encoded terms', () => {
-      const original = { startIndex: 4, value: '0x1234' };
+      const original = { startIndex: 4, value: '0x1234' as `0x${string}` };
       const encoded = createAllowedCalldataTerms(original);
       const decoded = decodeAllowedCalldataTerms(encoded);
       expect(decoded).toEqual(original);
@@ -185,7 +185,7 @@ describe('Terms Decoders', () => {
 
   describe('decodeArgsEqualityCheckTerms', () => {
     it('correctly decodes encoded terms', () => {
-      const original = { args: '0x1234567890abcdef' };
+      const original = { args: '0x1234567890abcdef' as `0x${string}` };
       const encoded = createArgsEqualityCheckTerms(original);
       const decoded = decodeArgsEqualityCheckTerms(encoded);
       expect(decoded).toEqual(original);
@@ -194,7 +194,7 @@ describe('Terms Decoders', () => {
 
   describe('decodeExactCalldataTerms', () => {
     it('correctly decodes encoded terms', () => {
-      const original = { calldata: '0x70a08231000000000000000000000000' };
+      const original = { calldata: '0x70a08231000000000000000000000000' as `0x${string}` };
       const encoded = createExactCalldataTerms(original);
       const decoded = decodeExactCalldataTerms(encoded);
       expect(decoded).toEqual(original);
@@ -205,9 +205,9 @@ describe('Terms Decoders', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
         execution: {
-          target: '0x1234567890123456789012345678901234567890',
+          target: '0x1234567890123456789012345678901234567890' as `0x${string}`,
           value: 1000n,
-          callData: '0x70a08231',
+          callData: '0x70a08231' as `0x${string}`,
         },
       };
       const encoded = createExactExecutionTerms(original);
@@ -221,14 +221,14 @@ describe('Terms Decoders', () => {
       const original = {
         executions: [
           {
-            target: '0x1234567890123456789012345678901234567890',
+            target: '0x1234567890123456789012345678901234567890' as `0x${string}`,
             value: 1000n,
-            callData: '0x70a08231',
+            callData: '0x70a08231' as `0x${string}`,
           },
           {
-            target: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+            target: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
             value: 2000n,
-            callData: '0xa9059cbb',
+            callData: '0xa9059cbb' as `0x${string}`,
           },
         ],
       };
@@ -243,9 +243,9 @@ describe('Terms Decoders', () => {
       const original = {
         executions: [
           {
-            target: '0x1234567890123456789012345678901234567890',
+            target: '0x1234567890123456789012345678901234567890' as `0x${string}`,
             value: 1000n,
-            callData: '0x70a08231',
+            callData: '0x70a08231' as `0x${string}`,
           },
         ],
       };
@@ -267,12 +267,12 @@ describe('Terms Decoders', () => {
   describe('decodeNativeTokenPaymentTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        recipient: '0x1234567890123456789012345678901234567890',
+        recipient: '0x1234567890123456789012345678901234567890' as `0x${string}`,
         amount: 1000000000000000000n,
       };
       const encoded = createNativeTokenPaymentTerms(original);
       const decoded = decodeNativeTokenPaymentTerms(encoded);
-      expect(decoded.recipient.toLowerCase()).toEqual(
+      expect((decoded.recipient as string).toLowerCase()).toEqual(
         original.recipient.toLowerCase(),
       );
       expect(decoded.amount).toEqual(original.amount);
@@ -282,13 +282,13 @@ describe('Terms Decoders', () => {
   describe('decodeNativeBalanceChangeTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        recipient: '0x1234567890123456789012345678901234567890',
+        recipient: '0x1234567890123456789012345678901234567890' as `0x${string}`,
         balance: 1000000000000000000n,
         changeType: 0,
       };
       const encoded = createNativeBalanceChangeTerms(original);
       const decoded = decodeNativeBalanceChangeTerms(encoded);
-      expect(decoded.recipient.toLowerCase()).toEqual(
+      expect((decoded.recipient as string).toLowerCase()).toEqual(
         original.recipient.toLowerCase(),
       );
       expect(decoded.balance).toEqual(original.balance);
@@ -326,7 +326,7 @@ describe('Terms Decoders', () => {
   describe('decodeERC20TransferAmountTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        tokenAddress: '0x1234567890123456789012345678901234567890',
+        tokenAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
         maxAmount: 1000000000000000000n,
       };
       const encoded = createERC20TransferAmountTerms(original);
@@ -338,17 +338,17 @@ describe('Terms Decoders', () => {
   describe('decodeERC20BalanceChangeTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        tokenAddress: '0x1234567890123456789012345678901234567890',
-        recipient: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        tokenAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
+        recipient: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
         balance: 1000000000000000000n,
         changeType: 0,
       };
       const encoded = createERC20BalanceChangeTerms(original);
       const decoded = decodeERC20BalanceChangeTerms(encoded);
-      expect(decoded.tokenAddress.toLowerCase()).toEqual(
+      expect((decoded.tokenAddress as string).toLowerCase()).toEqual(
         original.tokenAddress.toLowerCase(),
       );
-      expect(decoded.recipient.toLowerCase()).toEqual(
+      expect((decoded.recipient as string).toLowerCase()).toEqual(
         original.recipient.toLowerCase(),
       );
       expect(decoded.balance).toEqual(original.balance);
@@ -359,7 +359,7 @@ describe('Terms Decoders', () => {
   describe('decodeERC20TokenPeriodTransferTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        tokenAddress: '0x1234567890123456789012345678901234567890',
+        tokenAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
         periodAmount: 1000000000000000000n,
         periodDuration: 86400,
         startDate: 1640995200,
@@ -373,7 +373,7 @@ describe('Terms Decoders', () => {
   describe('decodeERC20StreamingTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        tokenAddress: '0x1234567890123456789012345678901234567890',
+        tokenAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
         initialAmount: 1000000000000000000n,
         maxAmount: 10000000000000000000n,
         amountPerSecond: 1000000000000000n,
@@ -388,7 +388,7 @@ describe('Terms Decoders', () => {
   describe('decodeERC721TransferTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        tokenAddress: '0x1234567890123456789012345678901234567890',
+        tokenAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
         tokenId: 123n,
       };
       const encoded = createERC721TransferTerms(original);
@@ -400,17 +400,17 @@ describe('Terms Decoders', () => {
   describe('decodeERC721BalanceChangeTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        tokenAddress: '0x1234567890123456789012345678901234567890',
-        recipient: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        tokenAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
+        recipient: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
         amount: 5n,
         changeType: 0,
       };
       const encoded = createERC721BalanceChangeTerms(original);
       const decoded = decodeERC721BalanceChangeTerms(encoded);
-      expect(decoded.tokenAddress.toLowerCase()).toEqual(
+      expect((decoded.tokenAddress as string).toLowerCase()).toEqual(
         original.tokenAddress.toLowerCase(),
       );
-      expect(decoded.recipient.toLowerCase()).toEqual(
+      expect((decoded.recipient as string).toLowerCase()).toEqual(
         original.recipient.toLowerCase(),
       );
       expect(decoded.amount).toEqual(original.amount);
@@ -421,18 +421,18 @@ describe('Terms Decoders', () => {
   describe('decodeERC1155BalanceChangeTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        tokenAddress: '0x1234567890123456789012345678901234567890',
-        recipient: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        tokenAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
+        recipient: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
         tokenId: 123n,
         balance: 1000n,
         changeType: 0,
       };
       const encoded = createERC1155BalanceChangeTerms(original);
       const decoded = decodeERC1155BalanceChangeTerms(encoded);
-      expect(decoded.tokenAddress.toLowerCase()).toEqual(
+      expect((decoded.tokenAddress as string).toLowerCase()).toEqual(
         original.tokenAddress.toLowerCase(),
       );
-      expect(decoded.recipient.toLowerCase()).toEqual(
+      expect((decoded.recipient as string).toLowerCase()).toEqual(
         original.recipient.toLowerCase(),
       );
       expect(decoded.tokenId).toEqual(original.tokenId);
@@ -444,14 +444,14 @@ describe('Terms Decoders', () => {
   describe('decodeDeployedTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        contractAddress: '0x1234567890123456789012345678901234567890',
-        salt: '0x1234',
-        bytecode: '0x608060405234801561001057600080fd5b50',
+        contractAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
+        salt: '0x1234' as `0x${string}`,
+        bytecode: '0x608060405234801561001057600080fd5b50' as `0x${string}`,
       };
       const encoded = createDeployedTerms(original);
       const decoded = decodeDeployedTerms(encoded);
       expect(decoded.contractAddress).toEqual(original.contractAddress);
-      expect(decoded.salt.toLowerCase()).toEqual(
+      expect((decoded.salt as string).toLowerCase()).toEqual(
         '0x0000000000000000000000000000000000000000000000000000000000001234',
       );
       expect(decoded.bytecode).toEqual(original.bytecode);
@@ -461,7 +461,7 @@ describe('Terms Decoders', () => {
   describe('decodeOwnershipTransferTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        contractAddress: '0x1234567890123456789012345678901234567890',
+        contractAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
       };
       const encoded = createOwnershipTransferTerms(original);
       const decoded = decodeOwnershipTransferTerms(encoded);
@@ -474,13 +474,13 @@ describe('Terms Decoders', () => {
       const original = {
         tokenConfigs: [
           {
-            token: '0x1234567890123456789012345678901234567890',
+            token: '0x1234567890123456789012345678901234567890' as `0x${string}`,
             periodAmount: 1000000000000000000n,
             periodDuration: 86400,
             startDate: 1640995200,
           },
           {
-            token: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+            token: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
             periodAmount: 2000000000000000000n,
             periodDuration: 172800,
             startDate: 1640995200,
@@ -496,11 +496,11 @@ describe('Terms Decoders', () => {
   describe('decodeSpecificActionERC20TransferBatchTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        tokenAddress: '0x1234567890123456789012345678901234567890',
-        recipient: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        tokenAddress: '0x1234567890123456789012345678901234567890' as `0x${string}`,
+        recipient: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
         amount: 1000000000000000000n,
-        target: '0x9876543210987654321098765432109876543210',
-        calldata: '0x70a08231',
+        target: '0x9876543210987654321098765432109876543210' as `0x${string}`,
+        calldata: '0x70a08231' as `0x${string}`,
       };
       const encoded = createSpecificActionERC20TransferBatchTerms(original);
       const decoded = decodeSpecificActionERC20TransferBatchTerms(encoded);

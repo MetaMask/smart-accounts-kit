@@ -43,15 +43,11 @@ export const DelegationStorageEnvironment: {
 function getDelegationStorageEnvironment(
   apiUrl: string,
 ): 'dev' | 'prod' | 'custom' {
-  for (const [key, env] of Object.entries(DelegationStorageEnvironment) as [
-    keyof typeof DelegationStorageEnvironment,
-    Environment,
-  ][]) {
-    if (env.apiUrl === apiUrl) {
-      return key;
-    }
-  }
-  return 'custom';
+  const matchingEnvironment = Object.entries(DelegationStorageEnvironment).find(
+    ([_, env]) => env.apiUrl === apiUrl,
+  ) as [keyof typeof DelegationStorageEnvironment, Environment] | undefined;
+
+  return matchingEnvironment ? matchingEnvironment[0] : 'custom';
 }
 
 export type Environment = {

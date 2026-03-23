@@ -43,7 +43,10 @@ export function trackSmartAccountsKitFunctionCall(
   functionName: string,
   parameters?: SmartAccountsKitFunctionCallParameters,
 ): void {
-  analytics.trackSdkFunctionCall(functionName, parameters);
+  try {
+    analytics.trackSdkFunctionCall(functionName, parameters);
+    // eslint-disable-next-line no-empty, @typescript-eslint/no-unused-vars
+  } catch (_error) {}
 }
 
 let hasBootstrapped = false;
@@ -66,8 +69,10 @@ export function ensureSmartAccountsKitAnalyticsBootstrapped(): void {
     return;
   }
 
-  getInitializationContext({ sdk_version });
-
-  analytics.enable();
-  analytics.trackInitialized();
+  try {
+    getInitializationContext({ sdk_version });
+    analytics.enable();
+    analytics.trackInitialized();
+    // eslint-disable-next-line no-empty, @typescript-eslint/no-unused-vars
+  } catch (_error) {}
 }

@@ -70,17 +70,17 @@ export function createRedeemerTerms(
  */
 export function decodeRedeemerTerms(terms: BytesLike): RedeemerTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Each address is 20 bytes
   const addressSize = 20;
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const addressCount = totalBytes / addressSize;
-  
+
   const redeemers: `0x${string}`[] = [];
   for (let i = 0; i < addressCount; i++) {
     const redeemer = extractAddress(hexTerms, i * addressSize);
     redeemers.push(redeemer);
   }
-  
+
   return { redeemers };
 }

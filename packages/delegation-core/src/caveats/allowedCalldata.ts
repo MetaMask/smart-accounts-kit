@@ -1,6 +1,10 @@
 import { bytesToHex, remove0x, type BytesLike } from '@metamask/utils';
 
-import { extractNumber, extractRemainingHex, toHexString } from '../internalUtils';
+import {
+  extractNumber,
+  extractRemainingHex,
+  toHexString,
+} from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
@@ -85,10 +89,10 @@ export function decodeAllowedCalldataTerms(
   terms: BytesLike,
 ): AllowedCalldataTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: startIndex (32 bytes) + value (remaining)
   const startIndex = extractNumber(hexTerms, 0, 32);
   const value = extractRemainingHex(hexTerms, 32);
-  
+
   return { startIndex, value };
 }

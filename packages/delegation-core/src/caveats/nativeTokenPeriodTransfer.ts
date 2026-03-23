@@ -1,3 +1,5 @@
+import type { BytesLike } from '@metamask/utils';
+
 import { extractBigInt, extractNumber, toHexString } from '../internalUtils';
 import {
   bytesLikeToHex,
@@ -7,7 +9,6 @@ import {
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
-import type { BytesLike } from '@metamask/utils';
 
 /**
  * Terms for configuring a periodic transfer allowance of native tokens.
@@ -85,11 +86,11 @@ export function decodeNativeTokenPeriodTransferTerms(
   terms: BytesLike,
 ): NativeTokenPeriodTransferTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: periodAmount (32 bytes) + periodDuration (32 bytes) + startDate (32 bytes)
   const periodAmount = extractBigInt(hexTerms, 0, 32);
   const periodDuration = extractNumber(hexTerms, 32, 32);
   const startDate = extractNumber(hexTerms, 64, 32);
-  
+
   return { periodAmount, periodDuration, startDate };
 }

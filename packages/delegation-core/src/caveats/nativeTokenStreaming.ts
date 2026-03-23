@@ -1,3 +1,5 @@
+import type { BytesLike } from '@metamask/utils';
+
 import { extractBigInt, extractNumber, toHexString } from '../internalUtils';
 import {
   bytesLikeToHex,
@@ -7,7 +9,6 @@ import {
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
-import type { BytesLike } from '@metamask/utils';
 
 // Upper bound for timestamps (January 1, 10000 CE)
 const TIMESTAMP_UPPER_BOUND_SECONDS = 253402300799;
@@ -109,12 +110,12 @@ export function decodeNativeTokenStreamingTerms(
   terms: BytesLike,
 ): NativeTokenStreamingTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: initialAmount (32 bytes) + maxAmount (32 bytes) + amountPerSecond (32 bytes) + startTime (32 bytes)
   const initialAmount = extractBigInt(hexTerms, 0, 32);
   const maxAmount = extractBigInt(hexTerms, 32, 32);
   const amountPerSecond = extractBigInt(hexTerms, 64, 32);
   const startTime = extractNumber(hexTerms, 96, 32);
-  
+
   return { initialAmount, maxAmount, amountPerSecond, startTime };
 }

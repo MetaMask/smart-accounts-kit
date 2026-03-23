@@ -1,3 +1,5 @@
+import type { BytesLike } from '@metamask/utils';
+
 import { extractBigInt, toHexString } from '../internalUtils';
 import {
   bytesLikeToHex,
@@ -7,7 +9,6 @@ import {
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
-import type { BytesLike } from '@metamask/utils';
 
 /**
  * Terms for configuring a BlockNumber caveat.

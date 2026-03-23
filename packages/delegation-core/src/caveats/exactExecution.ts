@@ -96,12 +96,12 @@ export function decodeExactExecutionTerms(
   terms: BytesLike,
 ): ExactExecutionTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: target (20 bytes) + value (32 bytes) + callData (remaining)
   const target = extractAddress(hexTerms, 0);
   const value = extractBigInt(hexTerms, 20, 32);
   const callData = extractRemainingHex(hexTerms, 52);
-  
+
   return {
     execution: {
       target,

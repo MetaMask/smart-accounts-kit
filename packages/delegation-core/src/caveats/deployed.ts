@@ -91,11 +91,11 @@ export function createDeployedTerms(
  */
 export function decodeDeployedTerms(terms: BytesLike): DeployedTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: contractAddress (20 bytes) + salt (32 bytes) + bytecode (remaining)
   const contractAddress = extractAddress(hexTerms, 0);
   const salt = extractHex(hexTerms, 20, 32);
   const bytecode = extractRemainingHex(hexTerms, 52);
-  
+
   return { contractAddress, salt, bytecode };
 }

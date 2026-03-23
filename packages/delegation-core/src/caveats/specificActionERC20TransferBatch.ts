@@ -117,13 +117,13 @@ export function decodeSpecificActionERC20TransferBatchTerms(
   terms: BytesLike,
 ): SpecificActionERC20TransferBatchTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: tokenAddress (20 bytes) + recipient (20 bytes) + amount (32 bytes) + target (20 bytes) + calldata (remaining)
   const tokenAddress = extractAddress(hexTerms, 0);
   const recipient = extractAddress(hexTerms, 20);
   const amount = extractBigInt(hexTerms, 40, 32);
   const target = extractAddress(hexTerms, 72);
   const calldata = extractRemainingHex(hexTerms, 92);
-  
+
   return { tokenAddress, recipient, amount, target, calldata };
 }

@@ -137,13 +137,13 @@ export function decodeERC20StreamingTerms(
   terms: BytesLike,
 ): ERC20StreamingTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: tokenAddress (20 bytes) + initialAmount (32 bytes) + maxAmount (32 bytes) + amountPerSecond (32 bytes) + startTime (32 bytes)
   const tokenAddress = extractAddress(hexTerms, 0);
   const initialAmount = extractBigInt(hexTerms, 20, 32);
   const maxAmount = extractBigInt(hexTerms, 52, 32);
   const amountPerSecond = extractBigInt(hexTerms, 84, 32);
   const startTime = extractNumber(hexTerms, 116, 32);
-  
+
   return { tokenAddress, initialAmount, maxAmount, amountPerSecond, startTime };
 }

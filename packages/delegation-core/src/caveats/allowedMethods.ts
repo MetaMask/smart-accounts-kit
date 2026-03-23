@@ -88,17 +88,17 @@ export function decodeAllowedMethodsTerms(
   terms: BytesLike,
 ): AllowedMethodsTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Each selector is 4 bytes
   const selectorSize = 4;
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const selectorCount = totalBytes / selectorSize;
-  
+
   const selectors: `0x${string}`[] = [];
   for (let i = 0; i < selectorCount; i++) {
     const selector = extractHex(hexTerms, i * selectorSize, selectorSize);
     selectors.push(selector);
   }
-  
+
   return { selectors };
 }

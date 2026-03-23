@@ -98,10 +98,10 @@ export function decodeExactCalldataBatchTerms(
   terms: BytesLike,
 ): ExactCalldataBatchTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Decode using ABI: (address,uint256,bytes)[]
   const decoded = decodeSingle(EXECUTION_ARRAY_ABI, hexTerms);
-  
+
   const executions = (decoded as [string, bigint, Uint8Array][]).map(
     ([target, value, callData]) => ({
       target: target as `0x${string}`,
@@ -109,6 +109,6 @@ export function decodeExactCalldataBatchTerms(
       callData: bytesToHex(callData),
     }),
   );
-  
+
   return { executions };
 }

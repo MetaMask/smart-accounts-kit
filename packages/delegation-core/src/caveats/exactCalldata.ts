@@ -67,9 +67,7 @@ export function createExactCalldataTerms(
  * @param terms - The encoded terms as a hex string or Uint8Array.
  * @returns The decoded ExactCalldataTerms object.
  */
-export function decodeExactCalldataTerms(
-  terms: BytesLike,
-): ExactCalldataTerms {
+export function decodeExactCalldataTerms(terms: BytesLike): ExactCalldataTerms {
   const calldata = bytesLikeToHex(terms);
   return { calldata };
 }

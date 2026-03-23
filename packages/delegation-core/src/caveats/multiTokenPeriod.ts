@@ -112,12 +112,12 @@ export function decodeMultiTokenPeriodTerms(
   terms: BytesLike,
 ): MultiTokenPeriodTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Each token config is: token (20 bytes) + periodAmount (32 bytes) + periodDuration (32 bytes) + startDate (32 bytes) = 116 bytes
   const configSize = 116;
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const configCount = totalBytes / configSize;
-  
+
   const tokenConfigs: TokenPeriodConfig[] = [];
   for (let i = 0; i < configCount; i++) {
     const offset = i * configSize;
@@ -125,9 +125,9 @@ export function decodeMultiTokenPeriodTerms(
     const periodAmount = extractBigInt(hexTerms, offset + 20, 32);
     const periodDuration = extractNumber(hexTerms, offset + 52, 32);
     const startDate = extractNumber(hexTerms, offset + 84, 32);
-    
+
     tokenConfigs.push({ token, periodAmount, periodDuration, startDate });
   }
-  
+
   return { tokenConfigs };
 }

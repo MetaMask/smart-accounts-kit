@@ -81,10 +81,10 @@ export function decodeNativeTokenPaymentTerms(
   terms: BytesLike,
 ): NativeTokenPaymentTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: recipient (20 bytes) + amount (32 bytes)
   const recipient = extractAddress(hexTerms, 0);
   const amount = extractBigInt(hexTerms, 20, 32);
-  
+
   return { recipient, amount };
 }

@@ -81,10 +81,10 @@ export function decodeERC20TransferAmountTerms(
   terms: BytesLike,
 ): ERC20TransferAmountTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: tokenAddress (20 bytes) + maxAmount (32 bytes)
   const tokenAddress = extractAddress(hexTerms, 0);
   const maxAmount = extractBigInt(hexTerms, 20, 32);
-  
+
   return { tokenAddress, maxAmount };
 }

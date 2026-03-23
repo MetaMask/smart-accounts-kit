@@ -111,12 +111,12 @@ export function decodeERC20TokenPeriodTransferTerms(
   terms: BytesLike,
 ): ERC20TokenPeriodTransferTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: tokenAddress (20 bytes) + periodAmount (32 bytes) + periodDuration (32 bytes) + startDate (32 bytes)
   const tokenAddress = extractAddress(hexTerms, 0);
   const periodAmount = extractBigInt(hexTerms, 20, 32);
   const periodDuration = extractNumber(hexTerms, 52, 32);
   const startDate = extractNumber(hexTerms, 84, 32);
-  
+
   return { tokenAddress, periodAmount, periodDuration, startDate };
 }

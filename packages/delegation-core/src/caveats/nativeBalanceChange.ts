@@ -95,11 +95,11 @@ export function decodeNativeBalanceChangeTerms(
   terms: BytesLike,
 ): NativeBalanceChangeTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: changeType (1 byte) + recipient (20 bytes) + balance (32 bytes)
   const changeType = extractNumber(hexTerms, 0, 1);
   const recipient = extractAddress(hexTerms, 1);
   const balance = extractBigInt(hexTerms, 21, 32);
-  
+
   return { changeType, recipient, balance };
 }

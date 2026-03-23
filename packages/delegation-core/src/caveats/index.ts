@@ -4,7 +4,10 @@ export {
   createNativeTokenPeriodTransferTerms,
   decodeNativeTokenPeriodTransferTerms,
 } from './nativeTokenPeriodTransfer';
-export { createExactCalldataTerms, decodeExactCalldataTerms } from './exactCalldata';
+export {
+  createExactCalldataTerms,
+  decodeExactCalldataTerms,
+} from './exactCalldata';
 export {
   createExactCalldataBatchTerms,
   decodeExactCalldataBatchTerms,
@@ -33,7 +36,10 @@ export {
   createNativeBalanceChangeTerms,
   decodeNativeBalanceChangeTerms,
 } from './nativeBalanceChange';
-export { createERC20StreamingTerms, decodeERC20StreamingTerms } from './erc20Streaming';
+export {
+  createERC20StreamingTerms,
+  decodeERC20StreamingTerms,
+} from './erc20Streaming';
 export {
   createERC20TokenPeriodTransferTerms,
   decodeERC20TokenPeriodTransferTerms,
@@ -50,7 +56,10 @@ export {
   createERC721BalanceChangeTerms,
   decodeERC721BalanceChangeTerms,
 } from './erc721BalanceChange';
-export { createERC721TransferTerms, decodeERC721TransferTerms } from './erc721Transfer';
+export {
+  createERC721TransferTerms,
+  decodeERC721TransferTerms,
+} from './erc721Transfer';
 export {
   createERC1155BalanceChangeTerms,
   decodeERC1155BalanceChangeTerms,
@@ -75,7 +84,10 @@ export {
 export { createBlockNumberTerms, decodeBlockNumberTerms } from './blockNumber';
 export { createDeployedTerms, decodeDeployedTerms } from './deployed';
 export { createIdTerms, decodeIdTerms } from './id';
-export { createLimitedCallsTerms, decodeLimitedCallsTerms } from './limitedCalls';
+export {
+  createLimitedCallsTerms,
+  decodeLimitedCallsTerms,
+} from './limitedCalls';
 export {
   createMultiTokenPeriodTerms,
   decodeMultiTokenPeriodTerms,

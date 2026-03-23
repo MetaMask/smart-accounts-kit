@@ -1,3 +1,5 @@
+import type { BytesLike } from '@metamask/utils';
+
 import { extractNumber, toHexString } from '../internalUtils';
 import {
   bytesLikeToHex,
@@ -7,7 +9,6 @@ import {
   type ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
-import type { BytesLike } from '@metamask/utils';
 
 // Upper bound for timestamps (equivalent to January 1, 10000 CE)
 const TIMESTAMP_UPPER_BOUND_SECONDS = 253402300799;

@@ -1,4 +1,4 @@
-import { hexToBytes, isHexString } from '@metamask/utils';
+import { isHexString } from '@metamask/utils';
 import type { BytesLike } from '@metamask/utils';
 
 import {
@@ -93,10 +93,10 @@ export function createNonceTerms(
  */
 export function decodeNonceTerms(terms: BytesLike): NonceTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // The nonce is stored as a 32-byte padded value
   // We return it as-is (padded) to maintain consistency
   const nonce = hexTerms;
-  
+
   return { nonce };
 }

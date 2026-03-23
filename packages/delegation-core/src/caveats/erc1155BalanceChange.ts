@@ -120,13 +120,13 @@ export function decodeERC1155BalanceChangeTerms(
   terms: BytesLike,
 ): ERC1155BalanceChangeTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: changeType (1 byte) + tokenAddress (20 bytes) + recipient (20 bytes) + tokenId (32 bytes) + balance (32 bytes)
   const changeType = extractNumber(hexTerms, 0, 1);
   const tokenAddress = extractAddress(hexTerms, 1);
   const recipient = extractAddress(hexTerms, 21);
   const tokenId = extractBigInt(hexTerms, 41, 32);
   const balance = extractBigInt(hexTerms, 73, 32);
-  
+
   return { changeType, tokenAddress, recipient, tokenId, balance };
 }

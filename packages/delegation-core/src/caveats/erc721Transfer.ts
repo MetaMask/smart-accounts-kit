@@ -81,10 +81,10 @@ export function decodeERC721TransferTerms(
   terms: BytesLike,
 ): ERC721TransferTerms {
   const hexTerms = bytesLikeToHex(terms);
-  
+
   // Structure: tokenAddress (20 bytes) + tokenId (32 bytes)
   const tokenAddress = extractAddress(hexTerms, 0);
   const tokenId = extractBigInt(hexTerms, 20, 32);
-  
+
   return { tokenAddress, tokenId };
 }

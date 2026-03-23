@@ -54,7 +54,7 @@
     "turbo": "latest",
     "typescript": "5.5.4",
     "typescript-eslint": "^8.0.0",
-    "viem": "^2.43.5",
+    "viem": "2.31.4",
     "webauthn-p256": "^0.0.10"
   },
   "packageManager": "yarn@4.10.1",

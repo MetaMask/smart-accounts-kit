@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0]
+
+### Uncategorized
+
+- Bump a few deps to resolve inconsistent dependencies between packages ([#187](https://github.com/metamask/smart-accounts-kit/pull/187))
+- Update changelog with unreleased changes ([#182](https://github.com/metamask/smart-accounts-kit/pull/182))
+- Remove unused utilities| ([#165](https://github.com/metamask/smart-accounts-kit/pull/165))
+- Add DelegationManager validation for EIP-7710 actions (#150) ([#150](https://github.com/metamask/smart-accounts-kit/pull/150))
+- Align linting scripts, add turbo lint:fix task ([#149](https://github.com/metamask/smart-accounts-kit/pull/149))
+- feat: add terms builders to @metamask/delegation-core ([#139](https://github.com/metamask/smart-accounts-kit/pull/139))
+
 ### Added
 
 - Add `encodeDelegation` and `decodeDelegation` utilities for encoding and decoding single delegations. ([#153](https://github.com/MetaMask/smart-accounts-kit/pull/153))
@@ -84,7 +95,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.1...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.5.0...HEAD
+[0.5.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.1...@metamask/smart-accounts-kit@0.5.0
 [0.4.0-beta.1]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.0...@metamask/smart-accounts-kit@0.4.0-beta.1
 [0.4.0-beta.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.3.0...@metamask/smart-accounts-kit@0.4.0-beta.0
 [0.3.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.2.0...@metamask/smart-accounts-kit@0.3.0

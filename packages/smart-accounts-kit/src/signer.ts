@@ -206,20 +206,56 @@ const resolveStateless7702Signer = (
   throw new Error('Invalid signer config');
 };
 
-export const resolveSigner = <TImplementation extends Implementation>(config: {
+/**
+ * Resolve a signer from a configuration object.
+ *
+ * @param config - The configuration object.
+ * @param config.implementation - The implementation type.
+ * @param config.signer - The signer configuration object.
+ * @returns The resolved signer.
+ */
+export function resolveSigner<TImplementation extends Implementation>(config: {
   implementation: TImplementation;
   signer: SignerConfigByImplementation<TImplementation>;
-}): InternalSigner => {
-  const { implementation } = config;
+}): InternalSigner;
+
+/**
+ * Resolve a signer from a configuration object. If no signer is provided, return null.
+ *
+ * @param config - The configuration object.
+ * @param config.implementation - The implementation type.
+ * @param config.signer - The signer configuration object.
+ * @returns The resolved signer or null if no signer is provided.
+ */
+export function resolveSigner<TImplementation extends Implementation>(config: {
+  implementation: TImplementation;
+  signer?: SignerConfigByImplementation<TImplementation>;
+}): InternalSigner | null;
+
+/**
+ * Resolve a signer from a configuration object. If no signer is provided, return null.
+ *
+ * @param config - The configuration object.
+ * @param config.implementation - The implementation type.
+ * @param config.signer - The signer configuration object.
+ * @returns The resolved signer or null if no signer is provided.
+ */
+export function resolveSigner<TImplementation extends Implementation>(config: {
+  implementation: TImplementation;
+  signer?: SignerConfigByImplementation<TImplementation>;
+}): InternalSigner | null {
+  const { implementation, signer } = config;
+
+  if (!signer) {
+    return null;
+  }
 
   if (implementation === Implementation.Hybrid) {
-    return resolveHybridSigner(config.signer as HybridSignerConfig);
+    return resolveHybridSigner(signer as HybridSignerConfig);
   } else if (implementation === Implementation.MultiSig) {
-    return resolveMultiSigSigner(config.signer as MultiSigSignerConfig);
+    return resolveMultiSigSigner(signer as MultiSigSignerConfig);
   } else if (implementation === Implementation.Stateless7702) {
-    return resolveStateless7702Signer(
-      config.signer as Stateless7702SignerConfig,
-    );
+    return resolveStateless7702Signer(signer as Stateless7702SignerConfig);
   }
   throw new Error(`Implementation type '${implementation}' not supported`);
-};
+}

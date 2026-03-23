@@ -152,7 +152,7 @@ export type ToMetaMaskSmartAccountParameters<
 > = {
   client: PublicClient;
   implementation: TImplementation;
-  signer: SignerConfigByImplementation<TImplementation>;
+  signer?: SignerConfigByImplementation<TImplementation>;
   environment?: SmartAccountsEnvironment;
 } & OneOf<
   | {

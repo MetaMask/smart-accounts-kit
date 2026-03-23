@@ -142,6 +142,131 @@ describe('MetaMaskSmartAccount', () => {
       expect(smartAccount).toBeInstanceOf(Object);
     });
   });
+  describe('optional signer', () => {
+    it('creates a MetaMaskSmartAccount for Hybrid implementation without signer', async () => {
+      const smartAccount = await toMetaMaskSmartAccount({
+        client: publicClient,
+        implementation: Implementation.Hybrid,
+        deployParams: [alice.address, [], [], []],
+        deploySalt: '0x0',
+        environment,
+      });
+
+      expect(isAddress(smartAccount.address)).toBe(true);
+      expect(smartAccount).to.have.property('getAddress');
+      expect(smartAccount).to.have.property('getNonce');
+      expect(smartAccount).to.have.property('encodeCalls');
+    });
+
+    it('creates a MetaMaskSmartAccount for MultiSig implementation without signer', async () => {
+      const smartAccount = await toMetaMaskSmartAccount({
+        client: publicClient,
+        implementation: Implementation.MultiSig,
+        deployParams: [[alice.address, bob.address], 2n],
+        deploySalt: '0x0',
+        environment,
+      });
+
+      expect(isAddress(smartAccount.address)).toBe(true);
+      expect(smartAccount).to.have.property('getAddress');
+      expect(smartAccount).to.have.property('getNonce');
+      expect(smartAccount).to.have.property('encodeCalls');
+    });
+
+    it('creates a MetaMaskSmartAccount for Stateless7702 implementation without signer', async () => {
+      const smartAccount = await toMetaMaskSmartAccount({
+        client: publicClient,
+        implementation: Implementation.Stateless7702,
+        address: alice.address,
+        environment,
+      });
+
+      expect(smartAccount.address).to.equal(alice.address);
+      expect(smartAccount).to.have.property('getAddress');
+      expect(smartAccount).to.have.property('getNonce');
+      expect(smartAccount).to.have.property('encodeCalls');
+    });
+
+    it('allows non-signing operations without signer - getAddress', async () => {
+      const smartAccount = await toMetaMaskSmartAccount({
+        client: publicClient,
+        implementation: Implementation.Hybrid,
+        deployParams: [alice.address, [], [], []],
+        deploySalt: '0x0',
+        environment,
+      });
+
+      const address = await smartAccount.getAddress();
+      expect(isAddress(address)).toBe(true);
+    });
+
+    it('allows non-signing operations without signer - encodeCalls', async () => {
+      const smartAccount = await toMetaMaskSmartAccount({
+        client: publicClient,
+        implementation: Implementation.Hybrid,
+        deployParams: [alice.address, [], [], []],
+        deploySalt: '0x0',
+        environment,
+      });
+
+      const encoded = await smartAccount.encodeCalls([
+        { to: alice.address, data: '0x', value: 0n },
+      ]);
+      expect(isHex(encoded)).toBe(true);
+    });
+
+    it('throws error when signUserOperation is called without signer', async () => {
+      const smartAccount = await toMetaMaskSmartAccount({
+        client: publicClient,
+        implementation: Implementation.Hybrid,
+        deployParams: [alice.address, [], [], []],
+        deploySalt: '0x0',
+        environment,
+      });
+
+      const userOperation = {
+        callData: '0x',
+        sender: alice.address,
+        nonce: 0n,
+        callGasLimit: 1000000n,
+        preVerificationGas: 1000000n,
+        verificationGasLimit: 1000000n,
+        maxFeePerGas: 1000000000000000000n,
+        maxPriorityFeePerGas: 1000000000000000000n,
+        signature: '0x',
+      } as const;
+
+      await expect(
+        smartAccount.signUserOperation(userOperation),
+      ).rejects.toThrow(
+        'Cannot sign user operation: signer not provided. Specify a signer in toMetaMaskSmartAccount() to perform signing operations.',
+      );
+    });
+
+    it('throws error when signDelegation is called without signer', async () => {
+      const smartAccount = await toMetaMaskSmartAccount({
+        client: publicClient,
+        implementation: Implementation.Hybrid,
+        deployParams: [alice.address, [], [], []],
+        deploySalt: '0x0',
+        environment,
+      });
+
+      const delegation = {
+        delegate: alice.address,
+        delegator: bob.address,
+        authority:
+          '0x0000000000000000000000000000000000000000000000000000000000000000' as const,
+        caveats: [],
+        salt: '0x0000000000000000000000000000000000000000000000000000000000000000' as const,
+      };
+
+      await expect(smartAccount.signDelegation({ delegation })).rejects.toThrow(
+        'Cannot sign delegation: signer not provided. Specify a signer in toMetaMaskSmartAccount() to perform signing operations.',
+      );
+    });
+  });
+
   describe('signUserOperation()', () => {
     it('signs a user operation for MultiSig implementation', async () => {
       const smartAccount = await toMetaMaskSmartAccount({

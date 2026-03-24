@@ -1,5 +1,6 @@
 import {
   bytesToHex,
+  Hex,
   hexToBytes,
   isHexString,
   remove0x,
@@ -116,86 +117,91 @@ export const concatHex = (parts: string[]): string => {
 /**
  * Extracts a bigint value from a hex string at a specific byte offset.
  *
- * @param hexString - The hex string to extract from.
+ * @param value - The hex string to extract from.
  * @param offset - The byte offset to start extraction.
  * @param size - The number of bytes to extract.
  * @returns The extracted bigint value.
  */
 export const extractBigInt = (
-  hexString: string,
+  value: string,
   offset: number,
   size: number,
 ): bigint => {
-  const start = 2 + offset * 2; // Skip '0x' prefix
+  const start = 2 + offset * 2;
   const end = start + size * 2;
-  const slice = hexString.slice(start, end);
+  const slice = value.slice(start, end);
+
   return BigInt(`0x${slice}`);
 };
 
 /**
  * Extracts a number value from a hex string at a specific byte offset.
  *
- * @param hexString - The hex string to extract from.
+ * @param value - The hex string to extract from.
  * @param offset - The byte offset to start extraction.
  * @param size - The number of bytes to extract.
  * @returns The extracted number value.
  */
 export const extractNumber = (
-  hexString: string,
+  value: Hex,
   offset: number,
   size: number,
 ): number => {
-  const start = 2 + offset * 2; // Skip '0x' prefix
+  const start = 2 + offset * 2;
   const end = start + size * 2;
-  const slice = hexString.slice(start, end);
-  return parseInt(slice, 16);
+  const slice = value.slice(start, end);
+
+  return Number.parseInt(slice, 16);
 };
 
 /**
  * Extracts an address from a hex string at a specific byte offset.
  *
- * @param hexString - The hex string to extract from.
+ * @param value - The hex string to extract from.
  * @param offset - The byte offset to start extraction.
  * @returns The extracted address as a 0x-prefixed hex string.
  */
 export const extractAddress = (
-  hexString: string,
+  value: Hex,
   offset: number,
-): `0x${string}` => {
-  const start = 2 + offset * 2; // Skip '0x' prefix
-  const end = start + 40; // 20 bytes = 40 hex chars
-  return `0x${hexString.slice(start, end)}`;
+): Hex => {
+  const start = 2 + offset * 2;
+  const end = start + 40;
+
+  return `0x${value.slice(start, end)}`;
 };
 
 /**
  * Extracts a hex slice from a hex string at a specific byte offset.
  *
- * @param hexString - The hex string to extract from.
+ * @param value - The hex string to extract from.
  * @param offset - The byte offset to start extraction.
  * @param size - The number of bytes to extract.
  * @returns The extracted hex string (0x-prefixed).
  */
 export const extractHex = (
-  hexString: string,
+  value: Hex,
   offset: number,
   size: number,
-): `0x${string}` => {
-  const start = 2 + offset * 2; // Skip '0x' prefix
+): Hex => {
+  const start = 2 + offset * 2;
   const end = start + size * 2;
-  return `0x${hexString.slice(start, end)}`;
+
+  return `0x${value.slice(start, end)}`;
 };
 
 /**
  * Extracts the remaining hex data from a hex string starting at a specific byte offset.
  *
- * @param hexString - The hex string to extract from.
+ * @param value - The hex string to extract from.
  * @param offset - The byte offset to start extraction.
  * @returns The extracted hex string (0x-prefixed).
  */
 export const extractRemainingHex = (
-  hexString: string,
+  value: Hex,
   offset: number,
-): `0x${string}` => {
-  const start = 2 + offset * 2; // Skip '0x' prefix
-  return `0x${hexString.slice(start)}`;
+): Hex => {
+  const start = 2 + offset * 2;
+
+  return `0x${value.slice(start)}`;
 };

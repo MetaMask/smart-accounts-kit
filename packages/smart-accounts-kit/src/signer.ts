@@ -72,7 +72,9 @@ const resolveHybridSigner = (config: HybridSignerConfig): InternalSigner => {
     throw new Error('Account is not a webAuthn account');
   }
 
-  const encodeSignature = (result: Awaited<ReturnType<WebAuthnAccount['signMessage']>>) =>
+  const encodeSignature = (
+    result: Awaited<ReturnType<WebAuthnAccount['signMessage']>>,
+  ) =>
     encodeDeleGatorSignature(
       keyId,
       result.signature,

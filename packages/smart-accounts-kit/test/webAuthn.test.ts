@@ -1,4 +1,5 @@
 import { Buffer as BufferPolyfill } from 'buffer/';
+import { Signature } from 'ox';
 import {
   decodeAbiParameters,
   isHex,
@@ -8,7 +9,6 @@ import {
   serializeSignature,
 } from 'viem';
 import { describe, it, expect } from 'vitest';
-import { Signature } from 'ox';
 
 import {
   MALLEABILITY_THRESHOLD,

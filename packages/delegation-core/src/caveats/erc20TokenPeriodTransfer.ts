@@ -18,6 +18,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -26,9 +27,11 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring a periodic transfer allowance of ERC20 tokens.
  */
-export type ERC20TokenPeriodTransferTerms = {
+export type ERC20TokenPeriodTransferTerms<
+  TBytesLike extends BytesLike = BytesLike,
+> = {
   /** The address of the ERC20 token. */
-  tokenAddress: BytesLike;
+  tokenAddress: TBytesLike;
   /** The maximum amount that can be transferred within each period. */
   periodAmount: bigint;
   /** The duration of each period in seconds. */
@@ -113,17 +116,41 @@ export function createERC20TokenPeriodTransferTerms(
  * Decodes terms for an ERC20TokenPeriodTransfer caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded token address is returned as hex or bytes.
  * @returns The decoded ERC20TokenPeriodTransferTerms object.
  */
 export function decodeERC20TokenPeriodTransferTerms(
   terms: BytesLike,
-): ERC20TokenPeriodTransferTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): ERC20TokenPeriodTransferTerms<DecodedBytesLike<'hex'>>;
+export function decodeERC20TokenPeriodTransferTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ERC20TokenPeriodTransferTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeERC20TokenPeriodTransferTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ERC20TokenPeriodTransferTerms<DecodedBytesLike<'hex'>>
+  | ERC20TokenPeriodTransferTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
-  const tokenAddress = extractAddress(hexTerms, 0);
+  const tokenAddressHex = extractAddress(hexTerms, 0);
   const periodAmount = extractBigInt(hexTerms, 20, 32);
   const periodDuration = extractNumber(hexTerms, 52, 32);
   const startDate = extractNumber(hexTerms, 84, 32);
 
-  return { tokenAddress, periodAmount, periodDuration, startDate };
+  return {
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    periodAmount,
+    periodDuration,
+    startDate,
+  } as
+    | ERC20TokenPeriodTransferTerms<DecodedBytesLike<'hex'>>
+    | ERC20TokenPeriodTransferTerms<DecodedBytesLike<'bytes'>>;
 }

@@ -9,11 +9,11 @@ describe('Timestamp', () => {
   describe('createTimestampTerms', () => {
     const EXPECTED_BYTE_LENGTH = 32; // 16 bytes for each timestamp (2 timestamps)
     it('creates valid terms for valid timestamp range', () => {
-      const timestampAfterThreshold = 1640995200; // 2022-01-01 00:00:00 UTC
-      const timestampBeforeThreshold = 1672531200; // 2023-01-01 00:00:00 UTC
+      const afterThreshold = 1640995200; // 2022-01-01 00:00:00 UTC
+      const beforeThreshold = 1672531200; // 2023-01-01 00:00:00 UTC
       const result = createTimestampTerms({
-        timestampAfterThreshold,
-        timestampBeforeThreshold,
+        afterThreshold,
+        beforeThreshold,
       });
 
       expect(result).toStrictEqual(
@@ -22,11 +22,11 @@ describe('Timestamp', () => {
     });
 
     it('creates valid terms for zero thresholds', () => {
-      const timestampAfterThreshold = 0;
-      const timestampBeforeThreshold = 0;
+      const afterThreshold = 0;
+      const beforeThreshold = 0;
       const result = createTimestampTerms({
-        timestampAfterThreshold,
-        timestampBeforeThreshold,
+        afterThreshold,
+        beforeThreshold,
       });
 
       expect(result).toStrictEqual(
@@ -35,11 +35,11 @@ describe('Timestamp', () => {
     });
 
     it('creates valid terms when only after threshold is set', () => {
-      const timestampAfterThreshold = 1640995200; // 2022-01-01 00:00:00 UTC
-      const timestampBeforeThreshold = 0;
+      const afterThreshold = 1640995200; // 2022-01-01 00:00:00 UTC
+      const beforeThreshold = 0;
       const result = createTimestampTerms({
-        timestampAfterThreshold,
-        timestampBeforeThreshold,
+        afterThreshold,
+        beforeThreshold,
       });
 
       expect(result).toStrictEqual(
@@ -48,11 +48,11 @@ describe('Timestamp', () => {
     });
 
     it('creates valid terms when only before threshold is set', () => {
-      const timestampAfterThreshold = 0;
-      const timestampBeforeThreshold = 1672531200; // 2023-01-01 00:00:00 UTC
+      const afterThreshold = 0;
+      const beforeThreshold = 1672531200; // 2023-01-01 00:00:00 UTC
       const result = createTimestampTerms({
-        timestampAfterThreshold,
-        timestampBeforeThreshold,
+        afterThreshold,
+        beforeThreshold,
       });
 
       expect(result).toStrictEqual(
@@ -61,11 +61,11 @@ describe('Timestamp', () => {
     });
 
     it('creates valid terms for small timestamp values', () => {
-      const timestampAfterThreshold = 1;
-      const timestampBeforeThreshold = 2;
+      const afterThreshold = 1;
+      const beforeThreshold = 2;
       const result = createTimestampTerms({
-        timestampAfterThreshold,
-        timestampBeforeThreshold,
+        afterThreshold,
+        beforeThreshold,
       });
 
       expect(result).toStrictEqual(
@@ -76,8 +76,8 @@ describe('Timestamp', () => {
     it('creates valid terms for maximum allowed timestamps', () => {
       const maxTimestamp = 253402300799; // January 1, 10000 CE
       const result = createTimestampTerms({
-        timestampAfterThreshold: maxTimestamp,
-        timestampBeforeThreshold: 0,
+        afterThreshold: maxTimestamp,
+        beforeThreshold: 0,
       });
 
       expect(result).toStrictEqual(
@@ -88,30 +88,30 @@ describe('Timestamp', () => {
     it('throws an error for negative after threshold', () => {
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold: -1,
-          timestampBeforeThreshold: 0,
+          afterThreshold: -1,
+          beforeThreshold: 0,
         }),
-      ).toThrow('Invalid timestampAfterThreshold: must be zero or positive');
+      ).toThrow('Invalid afterThreshold: must be zero or positive');
     });
 
     it('throws an error for negative before threshold', () => {
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold: 0,
-          timestampBeforeThreshold: -1,
+          afterThreshold: 0,
+          beforeThreshold: -1,
         }),
-      ).toThrow('Invalid timestampBeforeThreshold: must be zero or positive');
+      ).toThrow('Invalid beforeThreshold: must be zero or positive');
     });
 
     it('throws an error for before threshold exceeding upper bound', () => {
       const overBound = 253402300800; // One second past January 1, 10000 CE
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold: 0,
-          timestampBeforeThreshold: overBound,
+          afterThreshold: 0,
+          beforeThreshold: overBound,
         }),
       ).toThrow(
-        'Invalid timestampBeforeThreshold: must be less than or equal to 253402300799',
+        'Invalid beforeThreshold: must be less than or equal to 253402300799',
       );
     });
 
@@ -119,11 +119,11 @@ describe('Timestamp', () => {
       const overBound = 253402300800; // One second past January 1, 10000 CE
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold: overBound,
-          timestampBeforeThreshold: 0,
+          afterThreshold: overBound,
+          beforeThreshold: 0,
         }),
       ).toThrow(
-        'Invalid timestampAfterThreshold: must be less than or equal to 253402300799',
+        'Invalid afterThreshold: must be less than or equal to 253402300799',
       );
     });
 
@@ -131,89 +131,89 @@ describe('Timestamp', () => {
       const timestamp = 1640995200;
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold: timestamp,
-          timestampBeforeThreshold: timestamp,
+          afterThreshold: timestamp,
+          beforeThreshold: timestamp,
         }),
       ).toThrow(
-        'Invalid thresholds: timestampBeforeThreshold must be greater than timestampAfterThreshold when both are specified',
+        'Invalid thresholds: beforeThreshold must be greater than afterThreshold when both are specified',
       );
     });
 
     it('throws an error when after threshold is greater than before threshold', () => {
-      const timestampAfterThreshold = 1672531200; // 2023-01-01 00:00:00 UTC
-      const timestampBeforeThreshold = 1640995200; // 2022-01-01 00:00:00 UTC
+      const afterThreshold = 1672531200; // 2023-01-01 00:00:00 UTC
+      const beforeThreshold = 1640995200; // 2022-01-01 00:00:00 UTC
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold,
-          timestampBeforeThreshold,
+          afterThreshold,
+          beforeThreshold,
         }),
       ).toThrow(
-        'Invalid thresholds: timestampBeforeThreshold must be greater than timestampAfterThreshold when both are specified',
+        'Invalid thresholds: beforeThreshold must be greater than afterThreshold when both are specified',
       );
     });
 
-    it('throws an error for undefined timestampAfterThreshold', () => {
+    it('throws an error for undefined afterThreshold', () => {
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold: undefined as any,
-          timestampBeforeThreshold: 0,
+          afterThreshold: undefined as any,
+          beforeThreshold: 0,
         }),
       ).toThrow();
     });
 
-    it('throws an error for null timestampAfterThreshold', () => {
+    it('throws an error for null afterThreshold', () => {
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold: null as any,
-          timestampBeforeThreshold: 0,
+          afterThreshold: null as any,
+          beforeThreshold: 0,
         }),
       ).toThrow();
     });
 
-    it('throws an error for undefined timestampBeforeThreshold', () => {
+    it('throws an error for undefined beforeThreshold', () => {
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold: 0,
-          timestampBeforeThreshold: undefined as any,
+          afterThreshold: 0,
+          beforeThreshold: undefined as any,
         }),
       ).toThrow();
     });
 
-    it('throws an error for null timestampBeforeThreshold', () => {
+    it('throws an error for null beforeThreshold', () => {
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold: 0,
-          timestampBeforeThreshold: null as any,
+          afterThreshold: 0,
+          beforeThreshold: null as any,
         }),
       ).toThrow();
     });
 
-    it('throws an error for Infinity timestampAfterThreshold', () => {
+    it('throws an error for Infinity afterThreshold', () => {
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold: Infinity,
-          timestampBeforeThreshold: 0,
+          afterThreshold: Infinity,
+          beforeThreshold: 0,
         }),
       ).toThrow();
     });
 
-    it('throws an error for Infinity timestampBeforeThreshold', () => {
+    it('throws an error for Infinity beforeThreshold', () => {
       expect(() =>
         createTimestampTerms({
-          timestampAfterThreshold: 0,
-          timestampBeforeThreshold: Infinity,
+          afterThreshold: 0,
+          beforeThreshold: Infinity,
         }),
       ).toThrow();
     });
 
     it('allows after threshold greater than before threshold when before is 0', () => {
-      const timestampAfterThreshold = 1672531200; // 2023-01-01 00:00:00 UTC
-      const timestampBeforeThreshold = 0;
+      const afterThreshold = 1672531200; // 2023-01-01 00:00:00 UTC
+      const beforeThreshold = 0;
 
       // Should not throw
       const result = createTimestampTerms({
-        timestampAfterThreshold,
-        timestampBeforeThreshold,
+        afterThreshold,
+        beforeThreshold,
       });
       expect(result).toStrictEqual(
         '0x00000000000000000000000063b0cd0000000000000000000000000000000000',
@@ -223,12 +223,12 @@ describe('Timestamp', () => {
     // Tests for bytes return type
     describe('bytes return type', () => {
       it('returns Uint8Array when bytes encoding is specified', () => {
-        const timestampAfterThreshold = 1640995200; // 2022-01-01 00:00:00 UTC
-        const timestampBeforeThreshold = 1672531200; // 2023-01-01 00:00:00 UTC
+        const afterThreshold = 1640995200; // 2022-01-01 00:00:00 UTC
+        const beforeThreshold = 1672531200; // 2023-01-01 00:00:00 UTC
         const result = createTimestampTerms(
           {
-            timestampAfterThreshold,
-            timestampBeforeThreshold,
+            afterThreshold,
+            beforeThreshold,
           },
           { out: 'bytes' },
         );
@@ -238,12 +238,12 @@ describe('Timestamp', () => {
       });
 
       it('returns Uint8Array for zero thresholds with bytes encoding', () => {
-        const timestampAfterThreshold = 0;
-        const timestampBeforeThreshold = 0;
+        const afterThreshold = 0;
+        const beforeThreshold = 0;
         const result = createTimestampTerms(
           {
-            timestampAfterThreshold,
-            timestampBeforeThreshold,
+            afterThreshold,
+            beforeThreshold,
           },
           { out: 'bytes' },
         );
@@ -256,12 +256,12 @@ describe('Timestamp', () => {
       });
 
       it('returns Uint8Array for single timestamp with bytes encoding', () => {
-        const timestampAfterThreshold = 1640995200;
-        const timestampBeforeThreshold = 1672531200;
+        const afterThreshold = 1640995200;
+        const beforeThreshold = 1672531200;
         const result = createTimestampTerms(
           {
-            timestampAfterThreshold,
-            timestampBeforeThreshold,
+            afterThreshold,
+            beforeThreshold,
           },
           { out: 'bytes' },
         );
@@ -290,8 +290,8 @@ describe('Timestamp', () => {
         const maxTimestamp = 253402300799; // January 1, 10000 CE
         const result = createTimestampTerms(
           {
-            timestampAfterThreshold: maxTimestamp,
-            timestampBeforeThreshold: 0,
+            afterThreshold: maxTimestamp,
+            beforeThreshold: 0,
           },
           { out: 'bytes' },
         );
@@ -305,8 +305,8 @@ describe('Timestamp', () => {
   describe('decodeTimestampTerms', () => {
     it('decodes a valid range', () => {
       const original = {
-        timestampAfterThreshold: 1640995200,
-        timestampBeforeThreshold: 1672531200,
+        afterThreshold: 1640995200,
+        beforeThreshold: 1672531200,
       };
       expect(
         decodeTimestampTerms(createTimestampTerms(original)),
@@ -315,8 +315,8 @@ describe('Timestamp', () => {
 
     it('decodes both thresholds zero', () => {
       const original = {
-        timestampAfterThreshold: 0,
-        timestampBeforeThreshold: 0,
+        afterThreshold: 0,
+        beforeThreshold: 0,
       };
       expect(
         decodeTimestampTerms(createTimestampTerms(original)),
@@ -325,8 +325,8 @@ describe('Timestamp', () => {
 
     it('decodes only after threshold set', () => {
       const original = {
-        timestampAfterThreshold: 1640995200,
-        timestampBeforeThreshold: 0,
+        afterThreshold: 1640995200,
+        beforeThreshold: 0,
       };
       expect(
         decodeTimestampTerms(createTimestampTerms(original)),
@@ -335,8 +335,8 @@ describe('Timestamp', () => {
 
     it('decodes only before threshold set', () => {
       const original = {
-        timestampAfterThreshold: 0,
-        timestampBeforeThreshold: 1672531200,
+        afterThreshold: 0,
+        beforeThreshold: 1672531200,
       };
       expect(
         decodeTimestampTerms(createTimestampTerms(original)),
@@ -345,8 +345,8 @@ describe('Timestamp', () => {
 
     it('decodes small positive timestamps', () => {
       const original = {
-        timestampAfterThreshold: 1,
-        timestampBeforeThreshold: 2,
+        afterThreshold: 1,
+        beforeThreshold: 2,
       };
       expect(
         decodeTimestampTerms(createTimestampTerms(original)),
@@ -356,8 +356,8 @@ describe('Timestamp', () => {
     it('decodes maximum allowed before threshold', () => {
       const maxTimestamp = 253402300799;
       const original = {
-        timestampAfterThreshold: 0,
-        timestampBeforeThreshold: maxTimestamp,
+        afterThreshold: 0,
+        beforeThreshold: maxTimestamp,
       };
       expect(
         decodeTimestampTerms(createTimestampTerms(original)),
@@ -366,8 +366,8 @@ describe('Timestamp', () => {
 
     it('accepts Uint8Array terms from the encoder', () => {
       const original = {
-        timestampAfterThreshold: 1640995200,
-        timestampBeforeThreshold: 1672531200,
+        afterThreshold: 1640995200,
+        beforeThreshold: 1672531200,
       };
       const bytes = createTimestampTerms(original, { out: 'bytes' });
       expect(decodeTimestampTerms(bytes)).toStrictEqual(original);

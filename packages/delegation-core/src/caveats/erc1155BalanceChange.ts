@@ -20,6 +20,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -29,11 +30,13 @@ import { BalanceChangeType } from './types';
 /**
  * Terms for configuring an ERC1155BalanceChange caveat.
  */
-export type ERC1155BalanceChangeTerms = {
+export type ERC1155BalanceChangeTerms<
+  TBytesLike extends BytesLike = BytesLike,
+> = {
   /** The ERC-1155 token address. */
-  tokenAddress: BytesLike;
+  tokenAddress: TBytesLike;
   /** The recipient address. */
-  recipient: BytesLike;
+  recipient: TBytesLike;
   /** The token id. */
   tokenId: bigint;
   /** The balance change amount. */
@@ -122,18 +125,43 @@ export function createERC1155BalanceChangeTerms(
  * Decodes terms for an ERC1155BalanceChange caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
  * @returns The decoded ERC1155BalanceChangeTerms object.
  */
 export function decodeERC1155BalanceChangeTerms(
   terms: BytesLike,
-): ERC1155BalanceChangeTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): ERC1155BalanceChangeTerms<DecodedBytesLike<'hex'>>;
+export function decodeERC1155BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ERC1155BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeERC1155BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ERC1155BalanceChangeTerms<DecodedBytesLike<'hex'>>
+  | ERC1155BalanceChangeTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
   const changeType = extractNumber(hexTerms, 0, 1);
-  const tokenAddress = extractAddress(hexTerms, 1);
-  const recipient = extractAddress(hexTerms, 21);
+  const tokenAddressHex = extractAddress(hexTerms, 1);
+  const recipientHex = extractAddress(hexTerms, 21);
   const tokenId = extractBigInt(hexTerms, 41, 32);
   const balance = extractBigInt(hexTerms, 73, 32);
 
-  return { changeType, tokenAddress, recipient, tokenId, balance };
+  return {
+    changeType,
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    recipient: prepareResult(recipientHex, encodingOptions),
+    tokenId,
+    balance,
+  } as
+    | ERC1155BalanceChangeTerms<DecodedBytesLike<'hex'>>
+    | ERC1155BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
 }

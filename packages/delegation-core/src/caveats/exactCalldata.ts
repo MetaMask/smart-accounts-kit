@@ -12,6 +12,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -20,9 +21,9 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an ExactCalldata caveat.
  */
-export type ExactCalldataTerms = {
+export type ExactCalldataTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The expected calldata to match against. */
-  calldata: BytesLike;
+  calldata: TBytesLike;
 };
 
 /**
@@ -72,9 +73,31 @@ export function createExactCalldataTerms(
  * Decodes terms for an ExactCalldata caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded calldata is returned as hex or bytes.
  * @returns The decoded ExactCalldataTerms object.
  */
-export function decodeExactCalldataTerms(terms: BytesLike): ExactCalldataTerms {
-  const calldata = bytesLikeToHex(terms);
-  return { calldata };
+export function decodeExactCalldataTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): ExactCalldataTerms<DecodedBytesLike<'hex'>>;
+export function decodeExactCalldataTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ExactCalldataTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeExactCalldataTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ExactCalldataTerms<DecodedBytesLike<'hex'>>
+  | ExactCalldataTerms<DecodedBytesLike<'bytes'>> {
+  const calldataHex = bytesLikeToHex(terms);
+  const calldata = prepareResult(calldataHex, encodingOptions);
+  return { calldata } as
+    | ExactCalldataTerms<DecodedBytesLike<'hex'>>
+    | ExactCalldataTerms<DecodedBytesLike<'bytes'>>;
 }

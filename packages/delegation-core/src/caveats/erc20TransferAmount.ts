@@ -19,6 +19,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -27,12 +28,13 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an ERC20TransferAmount caveat.
  */
-export type ERC20TransferAmountTerms = {
-  /** The ERC-20 token address. */
-  tokenAddress: BytesLike;
-  /** The maximum amount of tokens that can be transferred. */
-  maxAmount: bigint;
-};
+export type ERC20TransferAmountTerms<TBytesLike extends BytesLike = BytesLike> =
+  {
+    /** The ERC-20 token address. */
+    tokenAddress: TBytesLike;
+    /** The maximum amount of tokens that can be transferred. */
+    maxAmount: bigint;
+  };
 
 /**
  * Creates terms for an ERC20TransferAmount caveat that caps transfer amount.
@@ -83,15 +85,37 @@ export function createERC20TransferAmountTerms(
  * Decodes terms for an ERC20TransferAmount caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded token address is returned as hex or bytes.
  * @returns The decoded ERC20TransferAmountTerms object.
  */
 export function decodeERC20TransferAmountTerms(
   terms: BytesLike,
-): ERC20TransferAmountTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): ERC20TransferAmountTerms<DecodedBytesLike<'hex'>>;
+export function decodeERC20TransferAmountTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ERC20TransferAmountTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeERC20TransferAmountTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ERC20TransferAmountTerms<DecodedBytesLike<'hex'>>
+  | ERC20TransferAmountTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
-  const tokenAddress = extractAddress(hexTerms, 0);
+  const tokenAddressHex = extractAddress(hexTerms, 0);
   const maxAmount = extractBigInt(hexTerms, 20, 32);
 
-  return { tokenAddress, maxAmount };
+  return {
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    maxAmount,
+  } as
+    | ERC20TransferAmountTerms<DecodedBytesLike<'hex'>>
+    | ERC20TransferAmountTerms<DecodedBytesLike<'bytes'>>;
 }

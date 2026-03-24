@@ -85,8 +85,8 @@ describe('Terms Decoders', () => {
   describe('decodeTimestampTerms', () => {
     it('correctly decodes encoded terms', () => {
       const original = {
-        timestampAfterThreshold: 1640995200,
-        timestampBeforeThreshold: 1672531200,
+        afterThreshold: 1640995200,
+        beforeThreshold: 1672531200,
       };
       const encoded = createTimestampTerms(original);
       const decoded = decodeTimestampTerms(encoded);
@@ -95,8 +95,8 @@ describe('Terms Decoders', () => {
 
     it('decodes zero thresholds', () => {
       const original = {
-        timestampAfterThreshold: 0,
-        timestampBeforeThreshold: 0,
+        afterThreshold: 0,
+        beforeThreshold: 0,
       };
       const encoded = createTimestampTerms(original);
       const decoded = decodeTimestampTerms(encoded);

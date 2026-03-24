@@ -13,6 +13,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -24,9 +25,9 @@ const MAX_NONCE_STRING_LENGTH = 66;
 /**
  * Terms for configuring a Nonce caveat.
  */
-export type NonceTerms = {
+export type NonceTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The nonce as BytesLike (0x-prefixed hex string or Uint8Array) to allow bulk revocation of delegations. */
-  nonce: BytesLike;
+  nonce: TBytesLike;
 };
 
 /**
@@ -97,12 +98,31 @@ export function createNonceTerms(
  * Decodes terms for a Nonce caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded nonce is returned as hex or bytes.
  * @returns The decoded NonceTerms object.
  */
-export function decodeNonceTerms(terms: BytesLike): NonceTerms {
+export function decodeNonceTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): NonceTerms<DecodedBytesLike<'hex'>>;
+export function decodeNonceTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): NonceTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeNonceTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+): NonceTerms<DecodedBytesLike<'hex'>> | NonceTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
-  const nonce = hexTerms;
+  const nonce = prepareResult(hexTerms, encodingOptions);
 
-  return { nonce };
+  return { nonce } as
+    | NonceTerms<DecodedBytesLike<'hex'>>
+    | NonceTerms<DecodedBytesLike<'bytes'>>;
 }

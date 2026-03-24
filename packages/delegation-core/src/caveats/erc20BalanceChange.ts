@@ -20,6 +20,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -29,16 +30,17 @@ import { BalanceChangeType } from './types';
 /**
  * Terms for configuring an ERC20BalanceChange caveat.
  */
-export type ERC20BalanceChangeTerms = {
-  /** The ERC-20 token address. */
-  tokenAddress: BytesLike;
-  /** The recipient address. */
-  recipient: BytesLike;
-  /** The balance change amount. */
-  balance: bigint;
-  /** The balance change type. */
-  changeType: number;
-};
+export type ERC20BalanceChangeTerms<TBytesLike extends BytesLike = BytesLike> =
+  {
+    /** The ERC-20 token address. */
+    tokenAddress: TBytesLike;
+    /** The recipient address. */
+    recipient: TBytesLike;
+    /** The balance change amount. */
+    balance: bigint;
+    /** The balance change type. */
+    changeType: number;
+  };
 
 /**
  * Creates terms for an ERC20BalanceChange caveat that checks token balance changes.
@@ -113,17 +115,41 @@ export function createERC20BalanceChangeTerms(
  * Decodes terms for an ERC20BalanceChange caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
  * @returns The decoded ERC20BalanceChangeTerms object.
  */
 export function decodeERC20BalanceChangeTerms(
   terms: BytesLike,
-): ERC20BalanceChangeTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): ERC20BalanceChangeTerms<DecodedBytesLike<'hex'>>;
+export function decodeERC20BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ERC20BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeERC20BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ERC20BalanceChangeTerms<DecodedBytesLike<'hex'>>
+  | ERC20BalanceChangeTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
   const changeType = extractNumber(hexTerms, 0, 1);
-  const tokenAddress = extractAddress(hexTerms, 1);
-  const recipient = extractAddress(hexTerms, 21);
+  const tokenAddressHex = extractAddress(hexTerms, 1);
+  const recipientHex = extractAddress(hexTerms, 21);
   const balance = extractBigInt(hexTerms, 41, 32);
 
-  return { changeType, tokenAddress, recipient, balance };
+  return {
+    changeType,
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    recipient: prepareResult(recipientHex, encodingOptions),
+    balance,
+  } as
+    | ERC20BalanceChangeTerms<DecodedBytesLike<'hex'>>
+    | ERC20BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
 }

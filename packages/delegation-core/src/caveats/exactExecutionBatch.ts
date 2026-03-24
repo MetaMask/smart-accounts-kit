@@ -14,6 +14,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -22,14 +23,15 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an ExactExecutionBatch caveat.
  */
-export type ExactExecutionBatchTerms = {
-  /** The executions that must be matched exactly in the batch. */
-  executions: {
-    target: BytesLike;
-    value: bigint;
-    callData: BytesLike;
-  }[];
-};
+export type ExactExecutionBatchTerms<TBytesLike extends BytesLike = BytesLike> =
+  {
+    /** The executions that must be matched exactly in the batch. */
+    executions: {
+      target: TBytesLike;
+      value: bigint;
+      callData: TBytesLike;
+    }[];
+  };
 
 const EXECUTION_ARRAY_ABI = '(address,uint256,bytes)[]';
 
@@ -100,22 +102,41 @@ export function createExactExecutionBatchTerms(
  * Decodes terms for an ExactExecutionBatch caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded targets and calldata are returned as hex or bytes.
  * @returns The decoded ExactExecutionBatchTerms object.
  */
 export function decodeExactExecutionBatchTerms(
   terms: BytesLike,
-): ExactExecutionBatchTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): ExactExecutionBatchTerms<DecodedBytesLike<'hex'>>;
+export function decodeExactExecutionBatchTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ExactExecutionBatchTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeExactExecutionBatchTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ExactExecutionBatchTerms<DecodedBytesLike<'hex'>>
+  | ExactExecutionBatchTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
   const decoded = decodeSingle(EXECUTION_ARRAY_ABI, hexTerms);
 
   const executions = (decoded as [string, bigint, Uint8Array][]).map(
     ([target, value, callData]) => ({
-      target: target as `0x${string}`,
+      target: prepareResult(target, encodingOptions),
       value,
-      callData: bytesToHex(callData),
+      callData: prepareResult(bytesToHex(callData), encodingOptions),
     }),
   );
 
-  return { executions };
+  return { executions } as
+    | ExactExecutionBatchTerms<DecodedBytesLike<'hex'>>
+    | ExactExecutionBatchTerms<DecodedBytesLike<'bytes'>>;
 }

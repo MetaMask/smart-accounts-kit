@@ -19,6 +19,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -27,12 +28,13 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring a NativeTokenPayment caveat.
  */
-export type NativeTokenPaymentTerms = {
-  /** The recipient address. */
-  recipient: BytesLike;
-  /** The amount that must be paid. */
-  amount: bigint;
-};
+export type NativeTokenPaymentTerms<TBytesLike extends BytesLike = BytesLike> =
+  {
+    /** The recipient address. */
+    recipient: TBytesLike;
+    /** The amount that must be paid. */
+    amount: bigint;
+  };
 
 /**
  * Creates terms for a NativeTokenPayment caveat that requires a payment to a recipient.
@@ -83,15 +85,37 @@ export function createNativeTokenPaymentTerms(
  * Decodes terms for a NativeTokenPayment caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded recipient is returned as hex or bytes.
  * @returns The decoded NativeTokenPaymentTerms object.
  */
 export function decodeNativeTokenPaymentTerms(
   terms: BytesLike,
-): NativeTokenPaymentTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): NativeTokenPaymentTerms<DecodedBytesLike<'hex'>>;
+export function decodeNativeTokenPaymentTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): NativeTokenPaymentTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeNativeTokenPaymentTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | NativeTokenPaymentTerms<DecodedBytesLike<'hex'>>
+  | NativeTokenPaymentTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
-  const recipient = extractAddress(hexTerms, 0);
+  const recipientHex = extractAddress(hexTerms, 0);
   const amount = extractBigInt(hexTerms, 20, 32);
 
-  return { recipient, amount };
+  return {
+    recipient: prepareResult(recipientHex, encodingOptions),
+    amount,
+  } as
+    | NativeTokenPaymentTerms<DecodedBytesLike<'hex'>>
+    | NativeTokenPaymentTerms<DecodedBytesLike<'bytes'>>;
 }

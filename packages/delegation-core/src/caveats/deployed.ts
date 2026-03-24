@@ -21,6 +21,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -29,13 +30,13 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring a Deployed caveat.
  */
-export type DeployedTerms = {
+export type DeployedTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The contract address. */
-  contractAddress: BytesLike;
+  contractAddress: TBytesLike;
   /** The deployment salt. */
-  salt: BytesLike;
+  salt: TBytesLike;
   /** The contract bytecode. */
-  bytecode: BytesLike;
+  bytecode: TBytesLike;
 };
 
 /**
@@ -95,14 +96,39 @@ export function createDeployedTerms(
  * Decodes terms for a Deployed caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded address, salt, and bytecode are returned as hex or bytes.
  * @returns The decoded DeployedTerms object.
  */
-export function decodeDeployedTerms(terms: BytesLike): DeployedTerms {
+export function decodeDeployedTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): DeployedTerms<DecodedBytesLike<'hex'>>;
+export function decodeDeployedTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): DeployedTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeDeployedTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | DeployedTerms<DecodedBytesLike<'hex'>>
+  | DeployedTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
-  const contractAddress = extractAddress(hexTerms, 0);
-  const salt = extractHex(hexTerms, 20, 32);
-  const bytecode = extractRemainingHex(hexTerms, 52);
+  const contractAddressHex = extractAddress(hexTerms, 0);
+  const saltHex = extractHex(hexTerms, 20, 32);
+  const bytecodeHex = extractRemainingHex(hexTerms, 52);
 
-  return { contractAddress, salt, bytecode };
+  return {
+    contractAddress: prepareResult(contractAddressHex, encodingOptions),
+    salt: prepareResult(saltHex, encodingOptions),
+    bytecode: prepareResult(bytecodeHex, encodingOptions),
+  } as
+    | DeployedTerms<DecodedBytesLike<'hex'>>
+    | DeployedTerms<DecodedBytesLike<'bytes'>>;
 }

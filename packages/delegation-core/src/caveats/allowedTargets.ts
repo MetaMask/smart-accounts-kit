@@ -13,6 +13,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -21,9 +22,9 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an AllowedTargets caveat.
  */
-export type AllowedTargetsTerms = {
+export type AllowedTargetsTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** An array of target addresses that the delegate is allowed to call. */
-  targets: BytesLike[];
+  targets: TBytesLike[];
 };
 
 /**
@@ -74,22 +75,41 @@ export function createAllowedTargetsTerms(
  * Decodes terms for an AllowedTargets caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
  * @returns The decoded AllowedTargetsTerms object.
  */
 export function decodeAllowedTargetsTerms(
   terms: BytesLike,
-): AllowedTargetsTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): AllowedTargetsTerms<DecodedBytesLike<'hex'>>;
+export function decodeAllowedTargetsTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): AllowedTargetsTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeAllowedTargetsTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | AllowedTargetsTerms<DecodedBytesLike<'hex'>>
+  | AllowedTargetsTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
   const addressSize = 20;
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const addressCount = totalBytes / addressSize;
 
-  const targets: `0x${string}`[] = [];
+  const targets: (Hex | Uint8Array)[] = [];
   for (let i = 0; i < addressCount; i++) {
     const target = extractAddress(hexTerms, i * addressSize);
-    targets.push(target);
+    targets.push(prepareResult(target, encodingOptions));
   }
 
-  return { targets };
+  return { targets } as
+    | AllowedTargetsTerms<DecodedBytesLike<'hex'>>
+    | AllowedTargetsTerms<DecodedBytesLike<'bytes'>>;
 }

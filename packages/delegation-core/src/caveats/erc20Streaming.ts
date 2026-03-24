@@ -18,6 +18,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -29,9 +30,9 @@ const TIMESTAMP_UPPER_BOUND_SECONDS = 253402300799;
 /**
  * Terms for configuring a linear streaming allowance of ERC20 tokens.
  */
-export type ERC20StreamingTerms = {
+export type ERC20StreamingTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The address of the ERC20 token contract. */
-  tokenAddress: BytesLike;
+  tokenAddress: TBytesLike;
   /** The initial amount available immediately. */
   initialAmount: bigint;
   /** The maximum total amount that can be transferred. */
@@ -139,18 +140,43 @@ export function createERC20StreamingTerms(
  * Decodes terms for an ERC20Streaming caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded token address is returned as hex or bytes.
  * @returns The decoded ERC20StreamingTerms object.
  */
 export function decodeERC20StreamingTerms(
   terms: BytesLike,
-): ERC20StreamingTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): ERC20StreamingTerms<DecodedBytesLike<'hex'>>;
+export function decodeERC20StreamingTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ERC20StreamingTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeERC20StreamingTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ERC20StreamingTerms<DecodedBytesLike<'hex'>>
+  | ERC20StreamingTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
-  const tokenAddress = extractAddress(hexTerms, 0);
+  const tokenAddressHex = extractAddress(hexTerms, 0);
   const initialAmount = extractBigInt(hexTerms, 20, 32);
   const maxAmount = extractBigInt(hexTerms, 52, 32);
   const amountPerSecond = extractBigInt(hexTerms, 84, 32);
   const startTime = extractNumber(hexTerms, 116, 32);
 
-  return { tokenAddress, initialAmount, maxAmount, amountPerSecond, startTime };
+  return {
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    initialAmount,
+    maxAmount,
+    amountPerSecond,
+    startTime,
+  } as
+    | ERC20StreamingTerms<DecodedBytesLike<'hex'>>
+    | ERC20StreamingTerms<DecodedBytesLike<'bytes'>>;
 }

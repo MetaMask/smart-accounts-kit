@@ -13,6 +13,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -21,9 +22,9 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an OwnershipTransfer caveat.
  */
-export type OwnershipTransferTerms = {
+export type OwnershipTransferTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The contract address for which ownership transfers are allowed. */
-  contractAddress: BytesLike;
+  contractAddress: TBytesLike;
 };
 
 /**
@@ -68,12 +69,33 @@ export function createOwnershipTransferTerms(
  * Decodes terms for an OwnershipTransfer caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded contract address is returned as hex or bytes.
  * @returns The decoded OwnershipTransferTerms object.
  */
 export function decodeOwnershipTransferTerms(
   terms: BytesLike,
-): OwnershipTransferTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): OwnershipTransferTerms<DecodedBytesLike<'hex'>>;
+export function decodeOwnershipTransferTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): OwnershipTransferTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeOwnershipTransferTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | OwnershipTransferTerms<DecodedBytesLike<'hex'>>
+  | OwnershipTransferTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
-  const contractAddress = extractAddress(hexTerms, 0);
-  return { contractAddress };
+  const contractAddressHex = extractAddress(hexTerms, 0);
+  return {
+    contractAddress: prepareResult(contractAddressHex, encodingOptions),
+  } as
+    | OwnershipTransferTerms<DecodedBytesLike<'hex'>>
+    | OwnershipTransferTerms<DecodedBytesLike<'bytes'>>;
 }

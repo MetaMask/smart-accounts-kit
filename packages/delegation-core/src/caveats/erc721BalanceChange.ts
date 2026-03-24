@@ -20,6 +20,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -29,16 +30,17 @@ import { BalanceChangeType } from './types';
 /**
  * Terms for configuring an ERC721BalanceChange caveat.
  */
-export type ERC721BalanceChangeTerms = {
-  /** The ERC-721 token address. */
-  tokenAddress: BytesLike;
-  /** The recipient address. */
-  recipient: BytesLike;
-  /** The balance change amount. */
-  amount: bigint;
-  /** The balance change type. */
-  changeType: number;
-};
+export type ERC721BalanceChangeTerms<TBytesLike extends BytesLike = BytesLike> =
+  {
+    /** The ERC-721 token address. */
+    tokenAddress: TBytesLike;
+    /** The recipient address. */
+    recipient: TBytesLike;
+    /** The balance change amount. */
+    amount: bigint;
+    /** The balance change type. */
+    changeType: number;
+  };
 
 /**
  * Creates terms for an ERC721BalanceChange caveat that checks token balance changes.
@@ -113,17 +115,41 @@ export function createERC721BalanceChangeTerms(
  * Decodes terms for an ERC721BalanceChange caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
  * @returns The decoded ERC721BalanceChangeTerms object.
  */
 export function decodeERC721BalanceChangeTerms(
   terms: BytesLike,
-): ERC721BalanceChangeTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): ERC721BalanceChangeTerms<DecodedBytesLike<'hex'>>;
+export function decodeERC721BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ERC721BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeERC721BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ERC721BalanceChangeTerms<DecodedBytesLike<'hex'>>
+  | ERC721BalanceChangeTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
   const changeType = extractNumber(hexTerms, 0, 1);
-  const tokenAddress = extractAddress(hexTerms, 1);
-  const recipient = extractAddress(hexTerms, 21);
+  const tokenAddressHex = extractAddress(hexTerms, 1);
+  const recipientHex = extractAddress(hexTerms, 21);
   const amount = extractBigInt(hexTerms, 41, 32);
 
-  return { changeType, tokenAddress, recipient, amount };
+  return {
+    changeType,
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    recipient: prepareResult(recipientHex, encodingOptions),
+    amount,
+  } as
+    | ERC721BalanceChangeTerms<DecodedBytesLike<'hex'>>
+    | ERC721BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
 }

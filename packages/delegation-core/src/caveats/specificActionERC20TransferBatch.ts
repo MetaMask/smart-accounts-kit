@@ -20,6 +20,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -28,17 +29,19 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring a SpecificActionERC20TransferBatch caveat.
  */
-export type SpecificActionERC20TransferBatchTerms = {
+export type SpecificActionERC20TransferBatchTerms<
+  TBytesLike extends BytesLike = BytesLike,
+> = {
   /** The address of the ERC-20 token contract. */
-  tokenAddress: BytesLike;
+  tokenAddress: TBytesLike;
   /** The recipient of the ERC-20 transfer. */
-  recipient: BytesLike;
+  recipient: TBytesLike;
   /** The amount of tokens to transfer. */
   amount: bigint;
   /** The target address for the first transaction. */
-  target: BytesLike;
+  target: TBytesLike;
   /** The calldata for the first transaction. */
-  calldata: BytesLike;
+  calldata: TBytesLike;
 };
 
 /**
@@ -119,18 +122,43 @@ export function createSpecificActionERC20TransferBatchTerms(
  * Decodes terms for a SpecificActionERC20TransferBatch caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses and calldata are returned as hex or bytes.
  * @returns The decoded SpecificActionERC20TransferBatchTerms object.
  */
 export function decodeSpecificActionERC20TransferBatchTerms(
   terms: BytesLike,
-): SpecificActionERC20TransferBatchTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): SpecificActionERC20TransferBatchTerms<DecodedBytesLike<'hex'>>;
+export function decodeSpecificActionERC20TransferBatchTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): SpecificActionERC20TransferBatchTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeSpecificActionERC20TransferBatchTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | SpecificActionERC20TransferBatchTerms<DecodedBytesLike<'hex'>>
+  | SpecificActionERC20TransferBatchTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
-  const tokenAddress = extractAddress(hexTerms, 0);
-  const recipient = extractAddress(hexTerms, 20);
+  const tokenAddressHex = extractAddress(hexTerms, 0);
+  const recipientHex = extractAddress(hexTerms, 20);
   const amount = extractBigInt(hexTerms, 40, 32);
-  const target = extractAddress(hexTerms, 72);
-  const calldata = extractRemainingHex(hexTerms, 92);
+  const targetHex = extractAddress(hexTerms, 72);
+  const calldataHex = extractRemainingHex(hexTerms, 92);
 
-  return { tokenAddress, recipient, amount, target, calldata };
+  return {
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    recipient: prepareResult(recipientHex, encodingOptions),
+    amount,
+    target: prepareResult(targetHex, encodingOptions),
+    calldata: prepareResult(calldataHex, encodingOptions),
+  } as
+    | SpecificActionERC20TransferBatchTerms<DecodedBytesLike<'hex'>>
+    | SpecificActionERC20TransferBatchTerms<DecodedBytesLike<'bytes'>>;
 }

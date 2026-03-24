@@ -13,6 +13,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -21,9 +22,9 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring a Redeemer caveat.
  */
-export type RedeemerTerms = {
+export type RedeemerTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** An array of addresses allowed to redeem the delegation. */
-  redeemers: BytesLike[];
+  redeemers: TBytesLike[];
 };
 
 /**
@@ -74,20 +75,41 @@ export function createRedeemerTerms(
  * Decodes terms for a Redeemer caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
  * @returns The decoded RedeemerTerms object.
  */
-export function decodeRedeemerTerms(terms: BytesLike): RedeemerTerms {
+export function decodeRedeemerTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): RedeemerTerms<DecodedBytesLike<'hex'>>;
+export function decodeRedeemerTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): RedeemerTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeRedeemerTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | RedeemerTerms<DecodedBytesLike<'hex'>>
+  | RedeemerTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
   const addressSize = 20;
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const addressCount = totalBytes / addressSize;
 
-  const redeemers: `0x${string}`[] = [];
+  const redeemers: (Hex | Uint8Array)[] = [];
   for (let i = 0; i < addressCount; i++) {
     const redeemer = extractAddress(hexTerms, i * addressSize);
-    redeemers.push(redeemer);
+    redeemers.push(prepareResult(redeemer, encodingOptions));
   }
 
-  return { redeemers };
+  return { redeemers } as
+    | RedeemerTerms<DecodedBytesLike<'hex'>>
+    | RedeemerTerms<DecodedBytesLike<'bytes'>>;
 }

@@ -13,6 +13,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -21,9 +22,9 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an ArgsEqualityCheck caveat.
  */
-export type ArgsEqualityCheckTerms = {
+export type ArgsEqualityCheckTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The expected args that must match exactly when redeeming the delegation. */
-  args: BytesLike;
+  args: TBytesLike;
 };
 
 /**
@@ -72,11 +73,31 @@ export function createArgsEqualityCheckTerms(
  * Decodes terms for an ArgsEqualityCheck caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded args are returned as hex or bytes.
  * @returns The decoded ArgsEqualityCheckTerms object.
  */
 export function decodeArgsEqualityCheckTerms(
   terms: BytesLike,
-): ArgsEqualityCheckTerms {
-  const args = bytesLikeToHex(terms);
-  return { args };
+  encodingOptions?: EncodingOptions<'hex'>,
+): ArgsEqualityCheckTerms<DecodedBytesLike<'hex'>>;
+export function decodeArgsEqualityCheckTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ArgsEqualityCheckTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeArgsEqualityCheckTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ArgsEqualityCheckTerms<DecodedBytesLike<'hex'>>
+  | ArgsEqualityCheckTerms<DecodedBytesLike<'bytes'>> {
+  const argsHex = bytesLikeToHex(terms);
+  const args = prepareResult(argsHex, encodingOptions);
+  return { args } as
+    | ArgsEqualityCheckTerms<DecodedBytesLike<'hex'>>
+    | ArgsEqualityCheckTerms<DecodedBytesLike<'bytes'>>;
 }

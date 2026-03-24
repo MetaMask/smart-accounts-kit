@@ -26,9 +26,9 @@ const TIMESTAMP_UPPER_BOUND_SECONDS = 253402300799;
  */
 export type TimestampTerms = {
   /** The timestamp (in seconds) after which the delegation can be used. */
-  timestampAfterThreshold: number;
+  afterThreshold: number;
   /** The timestamp (in seconds) before which the delegation can be used. */
-  timestampBeforeThreshold: number;
+  beforeThreshold: number;
 };
 
 /**
@@ -59,47 +59,40 @@ export function createTimestampTerms(
   terms: TimestampTerms,
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
 ): Hex | Uint8Array {
-  const { timestampAfterThreshold, timestampBeforeThreshold } = terms;
+  const { afterThreshold, beforeThreshold } = terms;
 
-  if (timestampAfterThreshold < 0) {
+  if (afterThreshold < 0) {
+    throw new Error('Invalid afterThreshold: must be zero or positive');
+  }
+
+  if (beforeThreshold < 0) {
+    throw new Error('Invalid beforeThreshold: must be zero or positive');
+  }
+
+  if (beforeThreshold > TIMESTAMP_UPPER_BOUND_SECONDS) {
     throw new Error(
-      'Invalid timestampAfterThreshold: must be zero or positive',
+      `Invalid beforeThreshold: must be less than or equal to ${TIMESTAMP_UPPER_BOUND_SECONDS}`,
     );
   }
 
-  if (timestampBeforeThreshold < 0) {
+  if (afterThreshold > TIMESTAMP_UPPER_BOUND_SECONDS) {
     throw new Error(
-      'Invalid timestampBeforeThreshold: must be zero or positive',
+      `Invalid afterThreshold: must be less than or equal to ${TIMESTAMP_UPPER_BOUND_SECONDS}`,
     );
   }
 
-  if (timestampBeforeThreshold > TIMESTAMP_UPPER_BOUND_SECONDS) {
+  if (beforeThreshold !== 0 && afterThreshold >= beforeThreshold) {
     throw new Error(
-      `Invalid timestampBeforeThreshold: must be less than or equal to ${TIMESTAMP_UPPER_BOUND_SECONDS}`,
-    );
-  }
-
-  if (timestampAfterThreshold > TIMESTAMP_UPPER_BOUND_SECONDS) {
-    throw new Error(
-      `Invalid timestampAfterThreshold: must be less than or equal to ${TIMESTAMP_UPPER_BOUND_SECONDS}`,
-    );
-  }
-
-  if (
-    timestampBeforeThreshold !== 0 &&
-    timestampAfterThreshold >= timestampBeforeThreshold
-  ) {
-    throw new Error(
-      'Invalid thresholds: timestampBeforeThreshold must be greater than timestampAfterThreshold when both are specified',
+      'Invalid thresholds: beforeThreshold must be greater than afterThreshold when both are specified',
     );
   }
 
   const afterThresholdHex = toHexString({
-    value: timestampAfterThreshold,
+    value: afterThreshold,
     size: 16,
   });
   const beforeThresholdHex = toHexString({
-    value: timestampBeforeThreshold,
+    value: beforeThreshold,
     size: 16,
   });
 
@@ -116,7 +109,7 @@ export function createTimestampTerms(
  */
 export function decodeTimestampTerms(terms: BytesLike): TimestampTerms {
   const hexTerms = bytesLikeToHex(terms);
-  const timestampAfterThreshold = extractNumber(hexTerms, 0, 16);
-  const timestampBeforeThreshold = extractNumber(hexTerms, 16, 16);
-  return { timestampAfterThreshold, timestampBeforeThreshold };
+  const afterThreshold = extractNumber(hexTerms, 0, 16);
+  const beforeThreshold = extractNumber(hexTerms, 16, 16);
+  return { afterThreshold, beforeThreshold };
 }

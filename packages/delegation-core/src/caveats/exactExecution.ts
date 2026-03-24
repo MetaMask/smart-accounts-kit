@@ -20,6 +20,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -28,12 +29,12 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an ExactExecution caveat.
  */
-export type ExactExecutionTerms = {
+export type ExactExecutionTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The execution that must be matched exactly. */
   execution: {
-    target: BytesLike;
+    target: TBytesLike;
     value: bigint;
-    callData: BytesLike;
+    callData: TBytesLike;
   };
 };
 
@@ -98,22 +99,41 @@ export function createExactExecutionTerms(
  * Decodes terms for an ExactExecution caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded target and calldata are returned as hex or bytes.
  * @returns The decoded ExactExecutionTerms object.
  */
 export function decodeExactExecutionTerms(
   terms: BytesLike,
-): ExactExecutionTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): ExactExecutionTerms<DecodedBytesLike<'hex'>>;
+export function decodeExactExecutionTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ExactExecutionTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeExactExecutionTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ExactExecutionTerms<DecodedBytesLike<'hex'>>
+  | ExactExecutionTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
-  const target = extractAddress(hexTerms, 0);
+  const targetHex = extractAddress(hexTerms, 0);
   const value = extractBigInt(hexTerms, 20, 32);
-  const callData = extractRemainingHex(hexTerms, 52);
+  const callDataHex = extractRemainingHex(hexTerms, 52);
 
   return {
     execution: {
-      target,
+      target: prepareResult(targetHex, encodingOptions),
       value,
-      callData,
+      callData: prepareResult(callDataHex, encodingOptions),
     },
-  };
+  } as
+    | ExactExecutionTerms<DecodedBytesLike<'hex'>>
+    | ExactExecutionTerms<DecodedBytesLike<'bytes'>>;
 }

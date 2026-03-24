@@ -13,6 +13,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -21,9 +22,9 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an AllowedMethods caveat.
  */
-export type AllowedMethodsTerms = {
+export type AllowedMethodsTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** An array of 4-byte method selectors that the delegate is allowed to call. */
-  selectors: BytesLike[];
+  selectors: TBytesLike[];
 };
 
 const FUNCTION_SELECTOR_STRING_LENGTH = 10; // 0x + 8 hex chars
@@ -90,22 +91,41 @@ export function createAllowedMethodsTerms(
  * Decodes terms for an AllowedMethods caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded selector values are returned as hex or bytes.
  * @returns The decoded AllowedMethodsTerms object.
  */
 export function decodeAllowedMethodsTerms(
   terms: BytesLike,
-): AllowedMethodsTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): AllowedMethodsTerms<DecodedBytesLike<'hex'>>;
+export function decodeAllowedMethodsTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): AllowedMethodsTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeAllowedMethodsTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | AllowedMethodsTerms<DecodedBytesLike<'hex'>>
+  | AllowedMethodsTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
   const selectorSize = 4;
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const selectorCount = totalBytes / selectorSize;
 
-  const selectors: `0x${string}`[] = [];
+  const selectors: (Hex | Uint8Array)[] = [];
   for (let i = 0; i < selectorCount; i++) {
     const selector = extractHex(hexTerms, i * selectorSize, selectorSize);
-    selectors.push(selector);
+    selectors.push(prepareResult(selector, encodingOptions));
   }
 
-  return { selectors };
+  return { selectors } as
+    | AllowedMethodsTerms<DecodedBytesLike<'hex'>>
+    | AllowedMethodsTerms<DecodedBytesLike<'bytes'>>;
 }

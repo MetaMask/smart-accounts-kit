@@ -19,6 +19,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -27,9 +28,9 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an ERC721Transfer caveat.
  */
-export type ERC721TransferTerms = {
+export type ERC721TransferTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The ERC-721 token address. */
-  tokenAddress: BytesLike;
+  tokenAddress: TBytesLike;
   /** The token id. */
   tokenId: bigint;
 };
@@ -83,15 +84,37 @@ export function createERC721TransferTerms(
  * Decodes terms for an ERC721Transfer caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded token address is returned as hex or bytes.
  * @returns The decoded ERC721TransferTerms object.
  */
 export function decodeERC721TransferTerms(
   terms: BytesLike,
-): ERC721TransferTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): ERC721TransferTerms<DecodedBytesLike<'hex'>>;
+export function decodeERC721TransferTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ERC721TransferTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeERC721TransferTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ERC721TransferTerms<DecodedBytesLike<'hex'>>
+  | ERC721TransferTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
-  const tokenAddress = extractAddress(hexTerms, 0);
+  const tokenAddressHex = extractAddress(hexTerms, 0);
   const tokenId = extractBigInt(hexTerms, 20, 32);
 
-  return { tokenAddress, tokenId };
+  return {
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    tokenId,
+  } as
+    | ERC721TransferTerms<DecodedBytesLike<'hex'>>
+    | ERC721TransferTerms<DecodedBytesLike<'bytes'>>;
 }

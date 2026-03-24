@@ -20,6 +20,7 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -29,14 +30,15 @@ import { BalanceChangeType } from './types';
 /**
  * Terms for configuring a NativeBalanceChange caveat.
  */
-export type NativeBalanceChangeTerms = {
-  /** The recipient address. */
-  recipient: BytesLike;
-  /** The balance change amount. */
-  balance: bigint;
-  /** The balance change type. */
-  changeType: number;
-};
+export type NativeBalanceChangeTerms<TBytesLike extends BytesLike = BytesLike> =
+  {
+    /** The recipient address. */
+    recipient: TBytesLike;
+    /** The balance change amount. */
+    balance: bigint;
+    /** The balance change type. */
+    changeType: number;
+  };
 
 /**
  * Creates terms for a NativeBalanceChange caveat that checks recipient balance changes.
@@ -97,16 +99,39 @@ export function createNativeBalanceChangeTerms(
  * Decodes terms for a NativeBalanceChange caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded recipient is returned as hex or bytes.
  * @returns The decoded NativeBalanceChangeTerms object.
  */
 export function decodeNativeBalanceChangeTerms(
   terms: BytesLike,
-): NativeBalanceChangeTerms {
+  encodingOptions?: EncodingOptions<'hex'>,
+): NativeBalanceChangeTerms<DecodedBytesLike<'hex'>>;
+export function decodeNativeBalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): NativeBalanceChangeTerms<DecodedBytesLike<'bytes'>>;
+/**
+ *
+ * @param terms
+ * @param encodingOptions
+ */
+export function decodeNativeBalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | NativeBalanceChangeTerms<DecodedBytesLike<'hex'>>
+  | NativeBalanceChangeTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
 
   const changeType = extractNumber(hexTerms, 0, 1);
-  const recipient = extractAddress(hexTerms, 1);
+  const recipientHex = extractAddress(hexTerms, 1);
   const balance = extractBigInt(hexTerms, 21, 32);
 
-  return { changeType, recipient, balance };
+  return {
+    changeType,
+    recipient: prepareResult(recipientHex, encodingOptions),
+    balance,
+  } as
+    | NativeBalanceChangeTerms<DecodedBytesLike<'hex'>>
+    | NativeBalanceChangeTerms<DecodedBytesLike<'bytes'>>;
 }

@@ -1,3 +1,11 @@
+/**
+ * ## IdEnforcer
+ *
+ * Ensures each delegation redemption uses a unique numeric id.
+ *
+ * Terms are encoded as a single 32-byte big-endian uint256 id.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { extractBigInt, toHexString } from '../internalUtils';
@@ -25,7 +33,7 @@ export type IdTerms = {
  *
  * @param terms - The terms for the Id caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the id is invalid or out of range.
  */
 export function createIdTerms(
@@ -41,7 +49,7 @@ export function createIdTerms(
  *
  * @param terms - The terms for the Id caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the id is invalid or out of range.
  */
 export function createIdTerms(

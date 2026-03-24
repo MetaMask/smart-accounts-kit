@@ -1,3 +1,11 @@
+/**
+ * ## ERC1155BalanceChangeEnforcer
+ *
+ * Constrains ERC-1155 balance change for a token id and recipient.
+ *
+ * Terms are encoded as 1-byte change type, 20-byte token and recipient (normalized lowercase), then two 32-byte big-endian uint256 words: token id and balance.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import {
@@ -39,7 +47,7 @@ export type ERC1155BalanceChangeTerms = {
  *
  * @param terms - The terms for the ERC1155BalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + tokenAddress + recipient + tokenId + balance.
+ * @returns Encoded terms.
  * @throws Error if any parameter is invalid.
  */
 export function createERC1155BalanceChangeTerms(
@@ -55,7 +63,7 @@ export function createERC1155BalanceChangeTerms(
  *
  * @param terms - The terms for the ERC1155BalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + tokenAddress + recipient + tokenId + balance.
+ * @returns Encoded terms.
  * @throws Error if any parameter is invalid.
  */
 export function createERC1155BalanceChangeTerms(
@@ -121,7 +129,6 @@ export function decodeERC1155BalanceChangeTerms(
 ): ERC1155BalanceChangeTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: changeType (1 byte) + tokenAddress (20 bytes) + recipient (20 bytes) + tokenId (32 bytes) + balance (32 bytes)
   const changeType = extractNumber(hexTerms, 0, 1);
   const tokenAddress = extractAddress(hexTerms, 1);
   const recipient = extractAddress(hexTerms, 21);

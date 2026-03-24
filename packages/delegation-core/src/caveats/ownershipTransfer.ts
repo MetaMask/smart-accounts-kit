@@ -1,3 +1,11 @@
+/**
+ * ## OwnershipTransferEnforcer
+ *
+ * Constrains ownership transfer for a specific contract.
+ *
+ * Terms are encoded as the 20-byte contract address only.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { extractAddress, normalizeAddress } from '../internalUtils';
@@ -23,7 +31,7 @@ export type OwnershipTransferTerms = {
  *
  * @param terms - The terms for the OwnershipTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the contract address.
+ * @returns Encoded terms.
  * @throws Error if the contract address is invalid.
  */
 export function createOwnershipTransferTerms(
@@ -39,7 +47,7 @@ export function createOwnershipTransferTerms(
  *
  * @param terms - The terms for the OwnershipTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the contract address.
+ * @returns Encoded terms.
  * @throws Error if the contract address is invalid.
  */
 export function createOwnershipTransferTerms(

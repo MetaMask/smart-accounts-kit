@@ -1,3 +1,11 @@
+/**
+ * ## NativeTokenTransferAmountEnforcer
+ *
+ * Limits how much native token (wei) may be transferred in a single execution.
+ *
+ * Terms are encoded as a single 32-byte big-endian uint256 max amount.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { extractBigInt, toHexString } from '../internalUtils';
@@ -23,7 +31,7 @@ export type NativeTokenTransferAmountTerms = {
  *
  * @param terms - The terms for the NativeTokenTransferAmount caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if maxAmount is negative.
  */
 export function createNativeTokenTransferAmountTerms(
@@ -39,7 +47,7 @@ export function createNativeTokenTransferAmountTerms(
  *
  * @param terms - The terms for the NativeTokenTransferAmount caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if maxAmount is negative.
  */
 export function createNativeTokenTransferAmountTerms(

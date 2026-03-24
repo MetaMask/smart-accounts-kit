@@ -1,3 +1,11 @@
+/**
+ * ## AllowedTargetsEnforcer
+ *
+ * Restricts which contract addresses the delegate may call.
+ *
+ * Terms are encoded as the concatenation of 20-byte addresses in order with no padding between addresses.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { concatHex, extractAddress, normalizeAddress } from '../internalUtils';
@@ -23,7 +31,7 @@ export type AllowedTargetsTerms = {
  *
  * @param terms - The terms for the AllowedTargets caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated target addresses.
+ * @returns Encoded terms.
  * @throws Error if the targets array is empty or contains invalid addresses.
  */
 export function createAllowedTargetsTerms(
@@ -39,7 +47,7 @@ export function createAllowedTargetsTerms(
  *
  * @param terms - The terms for the AllowedTargets caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated target addresses.
+ * @returns Encoded terms.
  * @throws Error if the targets array is empty or contains invalid addresses.
  */
 export function createAllowedTargetsTerms(
@@ -73,7 +81,6 @@ export function decodeAllowedTargetsTerms(
 ): AllowedTargetsTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Each address is 20 bytes
   const addressSize = 20;
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const addressCount = totalBytes / addressSize;

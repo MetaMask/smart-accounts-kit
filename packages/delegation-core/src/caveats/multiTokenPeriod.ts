@@ -1,3 +1,11 @@
+/**
+ * ## MultiTokenPeriodEnforcer
+ *
+ * Sets independent periodic transfer limits for multiple ERC-20 tokens.
+ *
+ * Terms are encoded by repeating, per token: 20-byte token address then three 32-byte big-endian uint256 words (period amount, period duration, start date).
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import {
@@ -39,7 +47,7 @@ export type MultiTokenPeriodTerms = {
  *
  * @param terms - The terms for the MultiTokenPeriod caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated token period configs.
+ * @returns Encoded terms.
  * @throws Error if the tokenConfigs array is empty or contains invalid parameters.
  */
 export function createMultiTokenPeriodTerms(
@@ -55,7 +63,7 @@ export function createMultiTokenPeriodTerms(
  *
  * @param terms - The terms for the MultiTokenPeriod caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated token period configs.
+ * @returns Encoded terms.
  * @throws Error if the tokenConfigs array is empty or contains invalid parameters.
  */
 export function createMultiTokenPeriodTerms(
@@ -113,7 +121,6 @@ export function decodeMultiTokenPeriodTerms(
 ): MultiTokenPeriodTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Each token config is: token (20 bytes) + periodAmount (32 bytes) + periodDuration (32 bytes) + startDate (32 bytes) = 116 bytes
   const configSize = 116;
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const configCount = totalBytes / configSize;

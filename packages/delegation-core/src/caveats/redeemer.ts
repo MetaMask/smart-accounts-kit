@@ -1,3 +1,11 @@
+/**
+ * ## RedeemerEnforcer
+ *
+ * Restricts which addresses may redeem the delegation.
+ *
+ * Terms are encoded as the concatenation of 20-byte redeemer addresses in order with no padding between addresses.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { concatHex, extractAddress, normalizeAddress } from '../internalUtils';
@@ -23,7 +31,7 @@ export type RedeemerTerms = {
  *
  * @param terms - The terms for the Redeemer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated redeemer addresses.
+ * @returns Encoded terms.
  * @throws Error if the redeemers array is empty or contains invalid addresses.
  */
 export function createRedeemerTerms(
@@ -39,7 +47,7 @@ export function createRedeemerTerms(
  *
  * @param terms - The terms for the Redeemer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated redeemer addresses.
+ * @returns Encoded terms.
  * @throws Error if the redeemers array is empty or contains invalid addresses.
  */
 export function createRedeemerTerms(
@@ -71,7 +79,6 @@ export function createRedeemerTerms(
 export function decodeRedeemerTerms(terms: BytesLike): RedeemerTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Each address is 20 bytes
   const addressSize = 20;
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const addressCount = totalBytes / addressSize;

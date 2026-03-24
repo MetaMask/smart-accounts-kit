@@ -1,3 +1,11 @@
+/**
+ * ## BlockNumberEnforcer
+ *
+ * Restricts redemption to a block number range.
+ *
+ * Terms are encoded as a 16-byte after threshold followed by a 16-byte before threshold (each big-endian, zero-padded).
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { extractBigInt, toHexString } from '../internalUtils';
@@ -25,7 +33,7 @@ export type BlockNumberTerms = {
  *
  * @param terms - The terms for the BlockNumber caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string (16 bytes for each threshold).
+ * @returns Encoded terms.
  * @throws Error if both thresholds are zero or if afterThreshold >= beforeThreshold when both are set.
  */
 export function createBlockNumberTerms(
@@ -41,7 +49,7 @@ export function createBlockNumberTerms(
  *
  * @param terms - The terms for the BlockNumber caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string (16 bytes for each threshold).
+ * @returns Encoded terms.
  * @throws Error if both thresholds are zero or if afterThreshold >= beforeThreshold when both are set.
  */
 export function createBlockNumberTerms(

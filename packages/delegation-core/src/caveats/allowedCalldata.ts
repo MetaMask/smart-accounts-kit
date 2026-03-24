@@ -1,3 +1,11 @@
+/**
+ * ## AllowedCalldataEnforcer
+ *
+ * Constrains the calldata bytes starting at a given byte offset to match an expected fragment.
+ *
+ * Terms are encoded as a 32-byte big-endian start index followed by the expected calldata bytes (not ABI-wrapped).
+ */
+
 import { bytesToHex, remove0x, type BytesLike } from '@metamask/utils';
 
 import {
@@ -28,7 +36,7 @@ export type AllowedCalldataTerms = {
  *
  * @param terms - The terms for the AllowedCalldata caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the calldata itself.
+ * @returns Encoded terms.
  * @throws Error if the `calldata` is invalid.
  */
 export function createAllowedCalldataTerms(
@@ -45,7 +53,7 @@ export function createAllowedCalldataTerms(
  *
  * @param terms - The terms for the AllowedCalldata caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the calldata itself.
+ * @returns Encoded terms.
  * @throws Error if the `calldata` is invalid.
  */
 export function createAllowedCalldataTerms(
@@ -75,7 +83,6 @@ export function createAllowedCalldataTerms(
 
   const indexHex = toHexString({ value: startIndex, size: 32 });
 
-  // The terms are the index encoded as 32 bytes followed by the expected value.
   return prepareResult(`0x${indexHex}${unprefixedValue}`, encodingOptions);
 }
 
@@ -90,7 +97,6 @@ export function decodeAllowedCalldataTerms(
 ): AllowedCalldataTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: startIndex (32 bytes) + value (remaining)
   const startIndex = extractNumber(hexTerms, 0, 32);
   const value = extractRemainingHex(hexTerms, 32);
 

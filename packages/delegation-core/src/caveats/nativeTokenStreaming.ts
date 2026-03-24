@@ -1,3 +1,11 @@
+/**
+ * ## NativeTokenStreamingEnforcer
+ *
+ * Configures a linear streaming allowance of native token over time.
+ *
+ * Terms are encoded as four consecutive 32-byte big-endian uint256 words: initial amount, max amount, amount per second, start time.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { extractBigInt, extractNumber, toHexString } from '../internalUtils';
@@ -55,7 +63,7 @@ export function createNativeTokenStreamingTerms(
  *
  * @param terms - The terms for the NativeTokenStreaming caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 128-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createNativeTokenStreamingTerms(
@@ -111,7 +119,6 @@ export function decodeNativeTokenStreamingTerms(
 ): NativeTokenStreamingTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: initialAmount (32 bytes) + maxAmount (32 bytes) + amountPerSecond (32 bytes) + startTime (32 bytes)
   const initialAmount = extractBigInt(hexTerms, 0, 32);
   const maxAmount = extractBigInt(hexTerms, 32, 32);
   const amountPerSecond = extractBigInt(hexTerms, 64, 32);

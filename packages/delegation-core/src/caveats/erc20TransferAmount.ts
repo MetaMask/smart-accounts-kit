@@ -1,3 +1,11 @@
+/**
+ * ## ERC20TransferAmountEnforcer
+ *
+ * Limits the amount of a given ERC-20 token that may be transferred.
+ *
+ * Terms are encoded as 20-byte token address followed by a 32-byte big-endian uint256 max amount.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import {
@@ -31,7 +39,7 @@ export type ERC20TransferAmountTerms = {
  *
  * @param terms - The terms for the ERC20TransferAmount caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as tokenAddress + maxAmount.
+ * @returns Encoded terms.
  * @throws Error if the token address is invalid or maxAmount is not positive.
  */
 export function createERC20TransferAmountTerms(
@@ -47,7 +55,7 @@ export function createERC20TransferAmountTerms(
  *
  * @param terms - The terms for the ERC20TransferAmount caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as tokenAddress + maxAmount.
+ * @returns Encoded terms.
  * @throws Error if the token address is invalid or maxAmount is not positive.
  */
 export function createERC20TransferAmountTerms(
@@ -82,7 +90,6 @@ export function decodeERC20TransferAmountTerms(
 ): ERC20TransferAmountTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: tokenAddress (20 bytes) + maxAmount (32 bytes)
   const tokenAddress = extractAddress(hexTerms, 0);
   const maxAmount = extractBigInt(hexTerms, 20, 32);
 

@@ -1,3 +1,11 @@
+/**
+ * ## SpecificActionERC20TransferBatchEnforcer
+ *
+ * Ties an ERC-20 transfer batch to a specific preceding action (target and calldata).
+ *
+ * Terms are encoded as 20-byte token, 20-byte recipient, 32-byte amount, 20-byte target, then calldata bytes without a separate ABI length prefix.
+ */
+
 import { bytesToHex, type BytesLike } from '@metamask/utils';
 
 import {
@@ -39,7 +47,7 @@ export type SpecificActionERC20TransferBatchTerms = {
  *
  * @param terms - The terms for the SpecificActionERC20TransferBatch caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated tokenAddress + recipient + amount + target + calldata.
+ * @returns Encoded terms.
  * @throws Error if any address is invalid or amount is not positive.
  */
 export function createSpecificActionERC20TransferBatchTerms(
@@ -56,7 +64,7 @@ export function createSpecificActionERC20TransferBatchTerms(
  *
  * @param terms - The terms for the SpecificActionERC20TransferBatch caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated tokenAddress + recipient + amount + target + calldata.
+ * @returns Encoded terms.
  * @throws Error if any address is invalid or amount is not positive.
  */
 export function createSpecificActionERC20TransferBatchTerms(
@@ -118,7 +126,6 @@ export function decodeSpecificActionERC20TransferBatchTerms(
 ): SpecificActionERC20TransferBatchTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: tokenAddress (20 bytes) + recipient (20 bytes) + amount (32 bytes) + target (20 bytes) + calldata (remaining)
   const tokenAddress = extractAddress(hexTerms, 0);
   const recipient = extractAddress(hexTerms, 20);
   const amount = extractBigInt(hexTerms, 40, 32);

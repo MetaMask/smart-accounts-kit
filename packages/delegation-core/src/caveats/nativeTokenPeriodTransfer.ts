@@ -1,3 +1,11 @@
+/**
+ * ## NativeTokenPeriodTransferEnforcer
+ *
+ * Limits periodic native token transfers using amount, period length, and start date.
+ *
+ * Terms are encoded as three consecutive 32-byte big-endian uint256 words: period amount, period duration, start date.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { extractBigInt, extractNumber, toHexString } from '../internalUtils';
@@ -29,7 +37,7 @@ export type NativeTokenPeriodTransferTerms = {
  *
  * @param terms - The terms for the NativeTokenPeriodTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 96-byte hex string (32 bytes for each parameter).
+ * @returns Encoded terms.
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createNativeTokenPeriodTransferTerms(
@@ -46,7 +54,7 @@ export function createNativeTokenPeriodTransferTerms(
  *
  * @param terms - The terms for the NativeTokenPeriodTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 96-byte hex string (32 bytes for each parameter).
+ * @returns Encoded terms.
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createNativeTokenPeriodTransferTerms(
@@ -87,7 +95,6 @@ export function decodeNativeTokenPeriodTransferTerms(
 ): NativeTokenPeriodTransferTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: periodAmount (32 bytes) + periodDuration (32 bytes) + startDate (32 bytes)
   const periodAmount = extractBigInt(hexTerms, 0, 32);
   const periodDuration = extractNumber(hexTerms, 32, 32);
   const startDate = extractNumber(hexTerms, 64, 32);

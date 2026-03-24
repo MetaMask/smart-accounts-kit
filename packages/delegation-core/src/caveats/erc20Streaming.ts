@@ -1,3 +1,11 @@
+/**
+ * ## ERC20StreamingEnforcer
+ *
+ * Configures a linear streaming allowance for an ERC-20 token over time.
+ *
+ * Terms are encoded as 20-byte token address then four 32-byte big-endian uint256 words: initial amount, max amount, amount per second, start time.
+ */
+
 import { type BytesLike, bytesToHex, isHexString } from '@metamask/utils';
 
 import {
@@ -63,7 +71,7 @@ export function createERC20StreamingTerms(
  *
  * @param terms - The terms for the ERC20Streaming caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 160-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if any of the parameters are invalid.
  */
 export function createERC20StreamingTerms(
@@ -138,7 +146,6 @@ export function decodeERC20StreamingTerms(
 ): ERC20StreamingTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: tokenAddress (20 bytes) + initialAmount (32 bytes) + maxAmount (32 bytes) + amountPerSecond (32 bytes) + startTime (32 bytes)
   const tokenAddress = extractAddress(hexTerms, 0);
   const initialAmount = extractBigInt(hexTerms, 20, 32);
   const maxAmount = extractBigInt(hexTerms, 52, 32);

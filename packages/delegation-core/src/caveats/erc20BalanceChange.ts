@@ -1,3 +1,11 @@
+/**
+ * ## ERC20BalanceChangeEnforcer
+ *
+ * Constrains ERC-20 balance change for a recipient relative to a reference balance.
+ *
+ * Terms are encoded as 1-byte change type, 20-byte token and recipient (each normalized lowercase), then 32-byte big-endian balance.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import {
@@ -37,7 +45,7 @@ export type ERC20BalanceChangeTerms = {
  *
  * @param terms - The terms for the ERC20BalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + tokenAddress + recipient + balance.
+ * @returns Encoded terms.
  * @throws Error if any parameter is invalid.
  */
 export function createERC20BalanceChangeTerms(
@@ -53,7 +61,7 @@ export function createERC20BalanceChangeTerms(
  *
  * @param terms - The terms for the ERC20BalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + tokenAddress + recipient + balance.
+ * @returns Encoded terms.
  * @throws Error if any parameter is invalid.
  */
 export function createERC20BalanceChangeTerms(
@@ -112,7 +120,6 @@ export function decodeERC20BalanceChangeTerms(
 ): ERC20BalanceChangeTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: changeType (1 byte) + tokenAddress (20 bytes) + recipient (20 bytes) + balance (32 bytes)
   const changeType = extractNumber(hexTerms, 0, 1);
   const tokenAddress = extractAddress(hexTerms, 1);
   const recipient = extractAddress(hexTerms, 21);

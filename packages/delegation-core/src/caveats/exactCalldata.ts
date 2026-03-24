@@ -1,3 +1,11 @@
+/**
+ * ## ExactCalldataEnforcer
+ *
+ * Requires the full execution calldata to match exactly.
+ *
+ * Terms are encoded as the calldata bytes only with no additional encoding.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import {
@@ -23,7 +31,7 @@ export type ExactCalldataTerms = {
  *
  * @param terms - The terms for the ExactCalldata caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the calldata itself.
+ * @returns Encoded terms.
  * @throws Error if the `calldata` is invalid.
  */
 export function createExactCalldataTerms(
@@ -40,7 +48,7 @@ export function createExactCalldataTerms(
  *
  * @param terms - The terms for the ExactCalldata caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the calldata itself.
+ * @returns Encoded terms.
  * @throws Error if the `calldata` is invalid.
  */
 export function createExactCalldataTerms(
@@ -57,7 +65,6 @@ export function createExactCalldataTerms(
     throw new Error('Invalid calldata: must be a hex string starting with 0x');
   }
 
-  // For exact calldata, the terms are simply the expected calldata
   return prepareResult(calldata, encodingOptions);
 }
 

@@ -1,3 +1,11 @@
+/**
+ * ## DeployedEnforcer
+ *
+ * Constrains contract deployment to a specific address, salt, and bytecode.
+ *
+ * Terms are encoded as 20-byte contract address, 32-byte left-padded salt, then creation bytecode bytes.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 import { remove0x } from '@metamask/utils';
 
@@ -35,7 +43,7 @@ export type DeployedTerms = {
  *
  * @param terms - The terms for the Deployed caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated contractAddress + salt (32 bytes) + bytecode.
+ * @returns Encoded terms.
  * @throws Error if the contract address, salt, or bytecode is invalid.
  */
 export function createDeployedTerms(
@@ -51,7 +59,7 @@ export function createDeployedTerms(
  *
  * @param terms - The terms for the Deployed caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated contractAddress + salt (32 bytes) + bytecode.
+ * @returns Encoded terms.
  * @throws Error if the contract address, salt, or bytecode is invalid.
  */
 export function createDeployedTerms(
@@ -92,7 +100,6 @@ export function createDeployedTerms(
 export function decodeDeployedTerms(terms: BytesLike): DeployedTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: contractAddress (20 bytes) + salt (32 bytes) + bytecode (remaining)
   const contractAddress = extractAddress(hexTerms, 0);
   const salt = extractHex(hexTerms, 20, 32);
   const bytecode = extractRemainingHex(hexTerms, 52);

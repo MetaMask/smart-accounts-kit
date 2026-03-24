@@ -1,3 +1,11 @@
+/**
+ * ## TimestampEnforcer
+ *
+ * Restricts redemption to a unix timestamp window (after / before thresholds).
+ *
+ * Terms are encoded as two 16-byte big-endian fields: timestamp after, then timestamp before (each zero-padded).
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { extractNumber, toHexString } from '../internalUtils';
@@ -28,7 +36,7 @@ export type TimestampTerms = {
  *
  * @param terms - The terms for the Timestamp caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string (16 bytes for each timestamp).
+ * @returns Encoded terms.
  * @throws Error if the timestamps are invalid.
  */
 export function createTimestampTerms(
@@ -44,7 +52,7 @@ export function createTimestampTerms(
  *
  * @param terms - The terms for the Timestamp caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string (16 bytes for each timestamp).
+ * @returns Encoded terms.
  * @throws Error if the timestamps are invalid.
  */
 export function createTimestampTerms(

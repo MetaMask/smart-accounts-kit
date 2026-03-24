@@ -1,3 +1,11 @@
+/**
+ * ## NonceEnforcer
+ *
+ * Binds the delegation to a nonce word for revocation and replay semantics.
+ *
+ * Terms are encoded as one 32-byte word with the nonce right-aligned and zero-padded on the left.
+ */
+
 import { isHexString } from '@metamask/utils';
 import type { BytesLike } from '@metamask/utils';
 
@@ -26,7 +34,7 @@ export type NonceTerms = {
  *
  * @param terms - The terms for the Nonce caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the nonce is invalid.
  */
 export function createNonceTerms(
@@ -42,7 +50,7 @@ export function createNonceTerms(
  *
  * @param terms - The terms for the Nonce caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte padded value in the specified encoding format.
+ * @returns Encoded terms.
  * @throws Error if the nonce is invalid or empty.
  */
 export function createNonceTerms(
@@ -94,8 +102,6 @@ export function createNonceTerms(
 export function decodeNonceTerms(terms: BytesLike): NonceTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // The nonce is stored as a 32-byte padded value
-  // We return it as-is (padded) to maintain consistency
   const nonce = hexTerms;
 
   return { nonce };

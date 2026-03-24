@@ -1,3 +1,11 @@
+/**
+ * ## ERC20TokenPeriodTransferEnforcer
+ *
+ * Limits periodic ERC-20 transfers for a token using amount, period length, and start date.
+ *
+ * Terms are encoded as 20-byte token address then three 32-byte big-endian uint256 words: period amount, period duration, start date.
+ */
+
 import { type BytesLike, isHexString, bytesToHex } from '@metamask/utils';
 
 import {
@@ -36,7 +44,7 @@ export type ERC20TokenPeriodTransferTerms = {
  *
  * @param terms - The terms for the ERC20TokenPeriodTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 128-byte hex string (32 bytes for each parameter).
+ * @returns Encoded terms.
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createERC20TokenPeriodTransferTerms(
@@ -53,7 +61,7 @@ export function createERC20TokenPeriodTransferTerms(
  *
  * @param terms - The terms for the ERC20TokenPeriodTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 128-byte hex string (32 bytes for each parameter).
+ * @returns Encoded terms.
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createERC20TokenPeriodTransferTerms(
@@ -112,7 +120,6 @@ export function decodeERC20TokenPeriodTransferTerms(
 ): ERC20TokenPeriodTransferTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: tokenAddress (20 bytes) + periodAmount (32 bytes) + periodDuration (32 bytes) + startDate (32 bytes)
   const tokenAddress = extractAddress(hexTerms, 0);
   const periodAmount = extractBigInt(hexTerms, 20, 32);
   const periodDuration = extractNumber(hexTerms, 52, 32);

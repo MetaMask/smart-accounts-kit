@@ -1,3 +1,11 @@
+/**
+ * ## ValueLteEnforcer
+ *
+ * Limits the native token (wei) value allowed per execution.
+ *
+ * Terms are encoded as a single 32-byte big-endian uint256 max value.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { extractBigInt, toHexString } from '../internalUtils';
@@ -23,7 +31,7 @@ export type ValueLteTerms = {
  *
  * @param terms - The terms for the ValueLte caveat.
  * @param options - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the maxValue is negative.
  */
 export function createValueLteTerms(
@@ -39,7 +47,7 @@ export function createValueLteTerms(
  *
  * @param terms - The terms for the ValueLte caveat.
  * @param options - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the maxValue is negative.
  */
 export function createValueLteTerms(

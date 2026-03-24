@@ -1,3 +1,11 @@
+/**
+ * ## ERC721TransferEnforcer
+ *
+ * Constrains transfer of a specific ERC-721 token id for a collection.
+ *
+ * Terms are encoded as 20-byte token address followed by a 32-byte big-endian uint256 token id.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import {
@@ -31,7 +39,7 @@ export type ERC721TransferTerms = {
  *
  * @param terms - The terms for the ERC721Transfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as tokenAddress + tokenId.
+ * @returns Encoded terms.
  * @throws Error if the token address is invalid or tokenId is negative.
  */
 export function createERC721TransferTerms(
@@ -47,7 +55,7 @@ export function createERC721TransferTerms(
  *
  * @param terms - The terms for the ERC721Transfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as tokenAddress + tokenId.
+ * @returns Encoded terms.
  * @throws Error if the token address is invalid or tokenId is negative.
  */
 export function createERC721TransferTerms(
@@ -82,7 +90,6 @@ export function decodeERC721TransferTerms(
 ): ERC721TransferTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: tokenAddress (20 bytes) + tokenId (32 bytes)
   const tokenAddress = extractAddress(hexTerms, 0);
   const tokenId = extractBigInt(hexTerms, 20, 32);
 

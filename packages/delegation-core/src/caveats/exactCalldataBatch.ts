@@ -1,3 +1,11 @@
+/**
+ * ## ExactCalldataBatchEnforcer
+ *
+ * Requires a batch of executions to match exactly on calldata and metadata.
+ *
+ * Terms are encoded as ABI-encoded (address,uint256,bytes)[].
+ */
+
 import { decodeSingle, encodeSingle } from '@metamask/abi-utils';
 import { bytesToHex, type BytesLike } from '@metamask/utils';
 
@@ -30,7 +38,7 @@ const EXECUTION_ARRAY_ABI = '(address,uint256,bytes)[]';
  *
  * @param terms - The terms for the ExactCalldataBatch caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as ABI-encoded execution array.
+ * @returns Encoded terms.
  * @throws Error if any execution parameters are invalid.
  */
 export function createExactCalldataBatchTerms(
@@ -46,7 +54,7 @@ export function createExactCalldataBatchTerms(
  *
  * @param terms - The terms for the ExactCalldataBatch caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as ABI-encoded execution array.
+ * @returns Encoded terms.
  * @throws Error if any execution parameters are invalid.
  */
 export function createExactCalldataBatchTerms(
@@ -99,7 +107,6 @@ export function decodeExactCalldataBatchTerms(
 ): ExactCalldataBatchTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Decode using ABI: (address,uint256,bytes)[]
   const decoded = decodeSingle(EXECUTION_ARRAY_ABI, hexTerms);
 
   const executions = (decoded as [string, bigint, Uint8Array][]).map(

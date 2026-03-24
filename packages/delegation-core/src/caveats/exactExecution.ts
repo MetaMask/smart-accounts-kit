@@ -1,3 +1,11 @@
+/**
+ * ## ExactExecutionEnforcer
+ *
+ * Requires a single execution (target, value, calldata) to match exactly.
+ *
+ * Terms are encoded as 20-byte target, 32-byte big-endian value, then calldata bytes.
+ */
+
 import { bytesToHex, type BytesLike } from '@metamask/utils';
 
 import {
@@ -34,7 +42,7 @@ export type ExactExecutionTerms = {
  *
  * @param terms - The terms for the ExactExecution caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated target + value + calldata.
+ * @returns Encoded terms.
  * @throws Error if any execution parameters are invalid.
  */
 export function createExactExecutionTerms(
@@ -50,7 +58,7 @@ export function createExactExecutionTerms(
  *
  * @param terms - The terms for the ExactExecution caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated target + value + calldata.
+ * @returns Encoded terms.
  * @throws Error if any execution parameters are invalid.
  */
 export function createExactExecutionTerms(
@@ -97,7 +105,6 @@ export function decodeExactExecutionTerms(
 ): ExactExecutionTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: target (20 bytes) + value (32 bytes) + callData (remaining)
   const target = extractAddress(hexTerms, 0);
   const value = extractBigInt(hexTerms, 20, 32);
   const callData = extractRemainingHex(hexTerms, 52);

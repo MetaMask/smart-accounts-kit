@@ -1,3 +1,11 @@
+/**
+ * ## AllowedMethodsEnforcer
+ *
+ * Specifies 4 byte method selectors that the delegate is allowed to call.
+ *
+ * Terms are encoded as a concatenation of 4-byte function selectors with no padding between selectors.
+ */
+
 import { bytesToHex, isHexString, type BytesLike } from '@metamask/utils';
 
 import { concatHex, extractHex } from '../internalUtils';
@@ -27,7 +35,7 @@ const INVALID_SELECTOR_ERROR =
  *
  * @param terms - The terms for the AllowedMethods caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated method selectors.
+ * @returns Encoded terms.
  * @throws Error if the selectors array is empty or contains invalid selectors.
  */
 export function createAllowedMethodsTerms(
@@ -43,7 +51,7 @@ export function createAllowedMethodsTerms(
  *
  * @param terms - The terms for the AllowedMethods caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated method selectors.
+ * @returns Encoded terms.
  * @throws Error if the selectors array is empty or contains invalid selectors.
  */
 export function createAllowedMethodsTerms(
@@ -89,7 +97,6 @@ export function decodeAllowedMethodsTerms(
 ): AllowedMethodsTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Each selector is 4 bytes
   const selectorSize = 4;
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
   const selectorCount = totalBytes / selectorSize;

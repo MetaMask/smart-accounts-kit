@@ -1,3 +1,11 @@
+/**
+ * ## LimitedCallsEnforcer
+ *
+ * Caps how many times the delegation may be redeemed.
+ *
+ * Terms are encoded as a single 32-byte big-endian uint256 call limit.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { extractNumber, toHexString } from '../internalUtils';
@@ -23,7 +31,7 @@ export type LimitedCallsTerms = {
  *
  * @param terms - The terms for the LimitedCalls caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the limit is not a positive integer.
  */
 export function createLimitedCallsTerms(
@@ -39,7 +47,7 @@ export function createLimitedCallsTerms(
  *
  * @param terms - The terms for the LimitedCalls caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the limit is not a positive integer.
  */
 export function createLimitedCallsTerms(

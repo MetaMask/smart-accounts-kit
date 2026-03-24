@@ -1,3 +1,11 @@
+/**
+ * ## NativeBalanceChangeEnforcer
+ *
+ * Constrains native balance change for a recipient relative to a reference balance.
+ *
+ * Terms are encoded as 1-byte change type, 20-byte recipient (normalized lowercase), then 32-byte big-endian balance in wei.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import {
@@ -35,7 +43,7 @@ export type NativeBalanceChangeTerms = {
  *
  * @param terms - The terms for the NativeBalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + recipient + balance.
+ * @returns Encoded terms.
  * @throws Error if the recipient address is invalid or balance/changeType are invalid.
  */
 export function createNativeBalanceChangeTerms(
@@ -51,7 +59,7 @@ export function createNativeBalanceChangeTerms(
  *
  * @param terms - The terms for the NativeBalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + recipient + balance.
+ * @returns Encoded terms.
  * @throws Error if the recipient address is invalid or balance/changeType are invalid.
  */
 export function createNativeBalanceChangeTerms(
@@ -96,7 +104,6 @@ export function decodeNativeBalanceChangeTerms(
 ): NativeBalanceChangeTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: changeType (1 byte) + recipient (20 bytes) + balance (32 bytes)
   const changeType = extractNumber(hexTerms, 0, 1);
   const recipient = extractAddress(hexTerms, 1);
   const balance = extractBigInt(hexTerms, 21, 32);

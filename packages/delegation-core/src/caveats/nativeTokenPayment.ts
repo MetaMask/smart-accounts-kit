@@ -1,3 +1,11 @@
+/**
+ * ## NativeTokenPaymentEnforcer
+ *
+ * Requires a fixed native token payment to a recipient.
+ *
+ * Terms are encoded as 20-byte recipient followed by a 32-byte big-endian uint256 amount in wei.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import {
@@ -31,7 +39,7 @@ export type NativeTokenPaymentTerms = {
  *
  * @param terms - The terms for the NativeTokenPayment caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as recipient + amount.
+ * @returns Encoded terms.
  * @throws Error if the recipient address is invalid or amount is not positive.
  */
 export function createNativeTokenPaymentTerms(
@@ -47,7 +55,7 @@ export function createNativeTokenPaymentTerms(
  *
  * @param terms - The terms for the NativeTokenPayment caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as recipient + amount.
+ * @returns Encoded terms.
  * @throws Error if the recipient address is invalid or amount is not positive.
  */
 export function createNativeTokenPaymentTerms(
@@ -82,7 +90,6 @@ export function decodeNativeTokenPaymentTerms(
 ): NativeTokenPaymentTerms {
   const hexTerms = bytesLikeToHex(terms);
 
-  // Structure: recipient (20 bytes) + amount (32 bytes)
   const recipient = extractAddress(hexTerms, 0);
   const amount = extractBigInt(hexTerms, 20, 32);
 

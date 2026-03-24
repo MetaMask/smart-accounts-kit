@@ -1,3 +1,11 @@
+/**
+ * ## ArgsEqualityCheckEnforcer
+ *
+ * Requires args on the caveat to equal an expected byte sequence.
+ *
+ * Terms are encoded as the raw expected args hex.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import { normalizeHex } from '../internalUtils';
@@ -23,7 +31,7 @@ export type ArgsEqualityCheckTerms = {
  *
  * @param terms - The terms for the ArgsEqualityCheck caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the args themselves.
+ * @returns Encoded terms.
  * @throws Error if args is not a valid hex string.
  */
 export function createArgsEqualityCheckTerms(
@@ -39,7 +47,7 @@ export function createArgsEqualityCheckTerms(
  *
  * @param terms - The terms for the ArgsEqualityCheck caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the args themselves.
+ * @returns Encoded terms.
  * @throws Error if args is not a valid hex string.
  */
 export function createArgsEqualityCheckTerms(

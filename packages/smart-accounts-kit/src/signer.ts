@@ -5,7 +5,7 @@ import type {
   TypedData,
   TypedDataDefinition,
 } from 'viem';
-import type { SignReturnType as WebAuthnSignReturnType } from 'webauthn-p256';
+import type { WebAuthnAccount } from 'viem/account-abstraction';
 
 import { Implementation } from './constants';
 import { aggregateSignature } from './signatures';
@@ -72,12 +72,12 @@ const resolveHybridSigner = (config: HybridSignerConfig): InternalSigner => {
     throw new Error('Account is not a webAuthn account');
   }
 
-  const encodeSignature = ({ signature, webauthn }: WebAuthnSignReturnType) =>
+  const encodeSignature = (result: Awaited<ReturnType<WebAuthnAccount['signMessage']>>) =>
     encodeDeleGatorSignature(
       keyId,
-      signature,
-      webauthn.clientDataJSON,
-      webauthn.authenticatorData,
+      result.signature,
+      result.webauthn.clientDataJSON,
+      result.webauthn.authenticatorData,
     );
 
   const signMessage = async (args: { message: SignableMessage }) =>

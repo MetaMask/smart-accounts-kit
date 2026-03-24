@@ -7,7 +7,7 @@ import {
   concat,
   hexToBytes,
 } from 'viem';
-import { parseSignature } from 'webauthn-p256';
+import { Signature } from 'ox';
 
 export const FIELD_MODULUS =
   115792089210356248762697446949407573529996955224135760342422259061068512044369n;
@@ -96,15 +96,15 @@ export function encodeDeleGatorSignature(
 ): Hex {
   const keyIdHash = keccak256(encodePacked(['string'], [keyId]));
 
-  const parsedSignature = parseSignature(signature);
+  const parsedSignature = Signature.fromHex(signature);
 
-  let { s } = parsedSignature;
+  let s = parsedSignature.s;
 
   while (s > MALLEABILITY_THRESHOLD) {
     s = FIELD_MODULUS - s;
   }
 
-  const { r } = parsedSignature;
+  const r = parsedSignature.r;
 
   const [clientDataComponent1, clientDataComponent2] =
     splitOnChallenge(clientDataJSON);

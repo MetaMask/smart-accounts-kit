@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createValueLteTerms, decodeValueLteTerms } from '../../src/caveats/valueLte';
+import {
+  createValueLteTerms,
+  decodeValueLteTerms,
+} from '../../src/caveats/valueLte';
 
 describe('ValueLte', () => {
   describe('createValueLteTerms', () => {
@@ -68,7 +71,9 @@ describe('ValueLte', () => {
     });
 
     it('throws an error for undefined maxValue', () => {
-      expect(() => createValueLteTerms({ maxValue: undefined as any })).toThrow();
+      expect(() =>
+        createValueLteTerms({ maxValue: undefined as any }),
+      ).toThrow();
     });
 
     it('throws an error for null maxValue', () => {
@@ -136,26 +141,34 @@ describe('ValueLte', () => {
 
   describe('decodeValueLteTerms', () => {
     it('decodes zero maxValue', () => {
-      expect(decodeValueLteTerms(createValueLteTerms({ maxValue: 0n }))).toStrictEqual({
+      expect(
+        decodeValueLteTerms(createValueLteTerms({ maxValue: 0n })),
+      ).toStrictEqual({
         maxValue: 0n,
       });
     });
 
     it('decodes one wei', () => {
-      expect(decodeValueLteTerms(createValueLteTerms({ maxValue: 1n }))).toStrictEqual({
+      expect(
+        decodeValueLteTerms(createValueLteTerms({ maxValue: 1n })),
+      ).toStrictEqual({
         maxValue: 1n,
       });
     });
 
     it('decodes 1 ETH in wei', () => {
       const maxValue = 1000000000000000000n;
-      expect(decodeValueLteTerms(createValueLteTerms({ maxValue }))).toStrictEqual({
+      expect(
+        decodeValueLteTerms(createValueLteTerms({ maxValue })),
+      ).toStrictEqual({
         maxValue,
       });
     });
 
     it('decodes 255 padded as uint256', () => {
-      expect(decodeValueLteTerms(createValueLteTerms({ maxValue: 255n }))).toStrictEqual({
+      expect(
+        decodeValueLteTerms(createValueLteTerms({ maxValue: 255n })),
+      ).toStrictEqual({
         maxValue: 255n,
       });
     });
@@ -163,7 +176,9 @@ describe('ValueLte', () => {
     it('decodes maximum uint256', () => {
       const maxValue =
         115792089237316195423570985008687907853269984665640564039457584007913129639935n;
-      expect(decodeValueLteTerms(createValueLteTerms({ maxValue }))).toStrictEqual({
+      expect(
+        decodeValueLteTerms(createValueLteTerms({ maxValue })),
+      ).toStrictEqual({
         maxValue,
       });
     });

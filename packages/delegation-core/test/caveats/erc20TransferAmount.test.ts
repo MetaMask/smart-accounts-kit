@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createERC20TransferAmountTerms, decodeERC20TransferAmountTerms } from '../../src/caveats/erc20TransferAmount';
+import {
+  createERC20TransferAmountTerms,
+  decodeERC20TransferAmountTerms,
+} from '../../src/caveats/erc20TransferAmount';
 
 describe('ERC20TransferAmount', () => {
   describe('createERC20TransferAmountTerms', () => {
@@ -54,7 +57,9 @@ describe('ERC20TransferAmount', () => {
     it('decodes token address and max amount', () => {
       const original = { tokenAddress, maxAmount: 10n };
       expect(
-        decodeERC20TransferAmountTerms(createERC20TransferAmountTerms(original)),
+        decodeERC20TransferAmountTerms(
+          createERC20TransferAmountTerms(original),
+        ),
       ).toStrictEqual(original);
     });
 

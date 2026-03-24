@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createRedeemerTerms, decodeRedeemerTerms } from '../../src/caveats/redeemer';
+import {
+  createRedeemerTerms,
+  decodeRedeemerTerms,
+} from '../../src/caveats/redeemer';
 
 describe('Redeemer', () => {
   describe('createRedeemerTerms', () => {
@@ -18,7 +21,9 @@ describe('Redeemer', () => {
     it('throws when redeemers is undefined', () => {
       expect(() =>
         createRedeemerTerms({} as Parameters<typeof createRedeemerTerms>[0]),
-      ).toThrow('Invalid redeemers: must specify at least one redeemer address');
+      ).toThrow(
+        'Invalid redeemers: must specify at least one redeemer address',
+      );
     });
 
     it('throws for empty redeemers', () => {
@@ -45,17 +50,23 @@ describe('Redeemer', () => {
   });
 
   describe('decodeRedeemerTerms', () => {
-    const redeemerA = '0x0000000000000000000000000000000000000001' as `0x${string}`;
-    const redeemerB = '0x0000000000000000000000000000000000000002' as `0x${string}`;
+    const redeemerA =
+      '0x0000000000000000000000000000000000000001' as `0x${string}`;
+    const redeemerB =
+      '0x0000000000000000000000000000000000000002' as `0x${string}`;
 
     it('decodes multiple redeemers', () => {
       const original = { redeemers: [redeemerA, redeemerB] };
-      expect(decodeRedeemerTerms(createRedeemerTerms(original))).toStrictEqual(original);
+      expect(decodeRedeemerTerms(createRedeemerTerms(original))).toStrictEqual(
+        original,
+      );
     });
 
     it('decodes a single redeemer', () => {
       const original = { redeemers: [redeemerA] };
-      expect(decodeRedeemerTerms(createRedeemerTerms(original))).toStrictEqual(original);
+      expect(decodeRedeemerTerms(createRedeemerTerms(original))).toStrictEqual(
+        original,
+      );
     });
 
     it('accepts Uint8Array terms from the encoder', () => {

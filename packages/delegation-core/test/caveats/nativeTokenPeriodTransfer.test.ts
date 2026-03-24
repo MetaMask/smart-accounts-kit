@@ -1,7 +1,10 @@
 import { isStrictHexString } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
-import { createNativeTokenPeriodTransferTerms, decodeNativeTokenPeriodTransferTerms } from '../../src/caveats/nativeTokenPeriodTransfer';
+import {
+  createNativeTokenPeriodTransferTerms,
+  decodeNativeTokenPeriodTransferTerms,
+} from '../../src/caveats/nativeTokenPeriodTransfer';
 
 describe('NativeTokenPeriodTransfer', () => {
   describe('createNativeTokenPeriodTransferTerms', () => {
@@ -360,8 +363,12 @@ describe('NativeTokenPeriodTransfer', () => {
         periodDuration: 3600,
         startDate: 1640995200,
       };
-      const bytes = createNativeTokenPeriodTransferTerms(original, { out: 'bytes' });
-      expect(decodeNativeTokenPeriodTransferTerms(bytes)).toStrictEqual(original);
+      const bytes = createNativeTokenPeriodTransferTerms(original, {
+        out: 'bytes',
+      });
+      expect(decodeNativeTokenPeriodTransferTerms(bytes)).toStrictEqual(
+        original,
+      );
     });
   });
 });

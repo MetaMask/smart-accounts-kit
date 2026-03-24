@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createBlockNumberTerms, decodeBlockNumberTerms } from '../../src/caveats/blockNumber';
+import {
+  createBlockNumberTerms,
+  decodeBlockNumberTerms,
+} from '../../src/caveats/blockNumber';
 
 describe('BlockNumber', () => {
   describe('createBlockNumberTerms', () => {

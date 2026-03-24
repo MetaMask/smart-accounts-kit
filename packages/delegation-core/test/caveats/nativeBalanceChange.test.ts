@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createNativeBalanceChangeTerms, decodeNativeBalanceChangeTerms } from '../../src/caveats/nativeBalanceChange';
+import {
+  createNativeBalanceChangeTerms,
+  decodeNativeBalanceChangeTerms,
+} from '../../src/caveats/nativeBalanceChange';
 import { BalanceChangeType } from '../../src/caveats/types';
 
 describe('NativeBalanceChange', () => {
@@ -67,7 +70,8 @@ describe('NativeBalanceChange', () => {
   });
 
   describe('decodeNativeBalanceChangeTerms', () => {
-    const recipient = '0x00000000000000000000000000000000000000cc' as `0x${string}`;
+    const recipient =
+      '0x00000000000000000000000000000000000000cc' as `0x${string}`;
 
     it('decodes increase balance change', () => {
       const original = {
@@ -79,7 +83,9 @@ describe('NativeBalanceChange', () => {
         createNativeBalanceChangeTerms(original),
       );
       expect(decoded.changeType).toBe(original.changeType);
-      expect((decoded.recipient as string).toLowerCase()).toBe(recipient.toLowerCase());
+      expect((decoded.recipient as string).toLowerCase()).toBe(
+        recipient.toLowerCase(),
+      );
       expect(decoded.balance).toBe(original.balance);
     });
 

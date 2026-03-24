@@ -1,9 +1,9 @@
 import {
   bytesToHex,
-  Hex,
   hexToBytes,
   isHexString,
   remove0x,
+  type Hex,
   type BytesLike,
 } from '@metamask/utils';
 
@@ -161,10 +161,7 @@ export const extractNumber = (
  * @param offset - The byte offset to start extraction.
  * @returns The extracted address as a 0x-prefixed hex string.
  */
-export const extractAddress = (
-  value: Hex,
-  offset: number,
-): Hex => {
+export const extractAddress = (value: Hex, offset: number): Hex => {
   const start = 2 + offset * 2;
   const end = start + 40;
 
@@ -179,11 +176,7 @@ export const extractAddress = (
  * @param size - The number of bytes to extract.
  * @returns The extracted hex string (0x-prefixed).
  */
-export const extractHex = (
-  value: Hex,
-  offset: number,
-  size: number,
-): Hex => {
+export const extractHex = (value: Hex, offset: number, size: number): Hex => {
   const start = 2 + offset * 2;
   const end = start + size * 2;
 
@@ -197,10 +190,7 @@ export const extractHex = (
  * @param offset - The byte offset to start extraction.
  * @returns The extracted hex string (0x-prefixed).
  */
-export const extractRemainingHex = (
-  value: Hex,
-  offset: number,
-): Hex => {
+export const extractRemainingHex = (value: Hex, offset: number): Hex => {
   const start = 2 + offset * 2;
 
   return `0x${value.slice(start)}`;

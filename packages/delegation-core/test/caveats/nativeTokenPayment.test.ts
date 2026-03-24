@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createNativeTokenPaymentTerms, decodeNativeTokenPaymentTerms } from '../../src/caveats/nativeTokenPayment';
+import {
+  createNativeTokenPaymentTerms,
+  decodeNativeTokenPaymentTerms,
+} from '../../src/caveats/nativeTokenPayment';
 
 describe('NativeTokenPayment', () => {
   describe('createNativeTokenPaymentTerms', () => {
@@ -48,14 +51,17 @@ describe('NativeTokenPayment', () => {
   });
 
   describe('decodeNativeTokenPaymentTerms', () => {
-    const recipient = '0x00000000000000000000000000000000000000bb' as `0x${string}`;
+    const recipient =
+      '0x00000000000000000000000000000000000000bb' as `0x${string}`;
 
     it('decodes recipient and amount', () => {
       const original = { recipient, amount: 10n };
       const decoded = decodeNativeTokenPaymentTerms(
         createNativeTokenPaymentTerms(original),
       );
-      expect((decoded.recipient as string).toLowerCase()).toBe(recipient.toLowerCase());
+      expect((decoded.recipient as string).toLowerCase()).toBe(
+        recipient.toLowerCase(),
+      );
       expect(decoded.amount).toBe(original.amount);
     });
 
@@ -63,7 +69,9 @@ describe('NativeTokenPayment', () => {
       const original = { recipient, amount: 5n };
       const bytes = createNativeTokenPaymentTerms(original, { out: 'bytes' });
       const decoded = decodeNativeTokenPaymentTerms(bytes);
-      expect((decoded.recipient as string).toLowerCase()).toBe(recipient.toLowerCase());
+      expect((decoded.recipient as string).toLowerCase()).toBe(
+        recipient.toLowerCase(),
+      );
       expect(decoded.amount).toBe(5n);
     });
   });

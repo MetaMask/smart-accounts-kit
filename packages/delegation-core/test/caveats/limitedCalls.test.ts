@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createLimitedCallsTerms, decodeLimitedCallsTerms } from '../../src/caveats/limitedCalls';
+import {
+  createLimitedCallsTerms,
+  decodeLimitedCallsTerms,
+} from '../../src/caveats/limitedCalls';
 
 describe('LimitedCalls', () => {
   describe('createLimitedCallsTerms', () => {
@@ -35,16 +38,16 @@ describe('LimitedCalls', () => {
   describe('decodeLimitedCallsTerms', () => {
     it('decodes a positive limit', () => {
       const original = { limit: 5 };
-      expect(decodeLimitedCallsTerms(createLimitedCallsTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeLimitedCallsTerms(createLimitedCallsTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes a larger limit', () => {
       const original = { limit: 999_999 };
-      expect(decodeLimitedCallsTerms(createLimitedCallsTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeLimitedCallsTerms(createLimitedCallsTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('accepts Uint8Array terms from the encoder', () => {

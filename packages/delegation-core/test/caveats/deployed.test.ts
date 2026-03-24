@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createDeployedTerms, decodeDeployedTerms } from '../../src/caveats/deployed';
+import {
+  createDeployedTerms,
+  decodeDeployedTerms,
+} from '../../src/caveats/deployed';
 
 describe('Deployed', () => {
   describe('createDeployedTerms', () => {

@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createOwnershipTransferTerms, decodeOwnershipTransferTerms } from '../../src/caveats/ownershipTransfer';
+import {
+  createOwnershipTransferTerms,
+  decodeOwnershipTransferTerms,
+} from '../../src/caveats/ownershipTransfer';
 
 describe('OwnershipTransfer', () => {
   describe('createOwnershipTransferTerms', () => {
@@ -35,13 +38,20 @@ describe('OwnershipTransfer', () => {
 
     it('decodes contract address', () => {
       expect(
-        decodeOwnershipTransferTerms(createOwnershipTransferTerms({ contractAddress })),
+        decodeOwnershipTransferTerms(
+          createOwnershipTransferTerms({ contractAddress }),
+        ),
       ).toStrictEqual({ contractAddress });
     });
 
     it('accepts Uint8Array terms from the encoder', () => {
-      const bytes = createOwnershipTransferTerms({ contractAddress }, { out: 'bytes' });
-      expect(decodeOwnershipTransferTerms(bytes)).toStrictEqual({ contractAddress });
+      const bytes = createOwnershipTransferTerms(
+        { contractAddress },
+        { out: 'bytes' },
+      );
+      expect(decodeOwnershipTransferTerms(bytes)).toStrictEqual({
+        contractAddress,
+      });
     });
   });
 });

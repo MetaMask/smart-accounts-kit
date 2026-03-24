@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createArgsEqualityCheckTerms, decodeArgsEqualityCheckTerms } from '../../src/caveats/argsEqualityCheck';
+import {
+  createArgsEqualityCheckTerms,
+  decodeArgsEqualityCheckTerms,
+} from '../../src/caveats/argsEqualityCheck';
 
 describe('ArgsEqualityCheck', () => {
   describe('createArgsEqualityCheckTerms', () => {
@@ -35,14 +38,18 @@ describe('ArgsEqualityCheck', () => {
   describe('decodeArgsEqualityCheckTerms', () => {
     it('decodes arbitrary args hex', () => {
       const args = '0x1234abcd' as `0x${string}`;
-      expect(decodeArgsEqualityCheckTerms(createArgsEqualityCheckTerms({ args }))).toStrictEqual({
+      expect(
+        decodeArgsEqualityCheckTerms(createArgsEqualityCheckTerms({ args })),
+      ).toStrictEqual({
         args,
       });
     });
 
     it('decodes empty args', () => {
       expect(
-        decodeArgsEqualityCheckTerms(createArgsEqualityCheckTerms({ args: '0x' })),
+        decodeArgsEqualityCheckTerms(
+          createArgsEqualityCheckTerms({ args: '0x' }),
+        ),
       ).toStrictEqual({ args: '0x' });
     });
 

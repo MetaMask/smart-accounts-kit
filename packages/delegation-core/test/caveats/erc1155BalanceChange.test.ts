@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createERC1155BalanceChangeTerms, decodeERC1155BalanceChangeTerms } from '../../src/caveats/erc1155BalanceChange';
+import {
+  createERC1155BalanceChangeTerms,
+  decodeERC1155BalanceChangeTerms,
+} from '../../src/caveats/erc1155BalanceChange';
 import { BalanceChangeType } from '../../src/caveats/types';
 
 describe('ERC1155BalanceChange', () => {

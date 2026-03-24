@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createTimestampTerms, decodeTimestampTerms } from '../../src/caveats/timestamp';
+import {
+  createTimestampTerms,
+  decodeTimestampTerms,
+} from '../../src/caveats/timestamp';
 
 describe('Timestamp', () => {
   describe('createTimestampTerms', () => {
@@ -268,13 +271,13 @@ describe('Timestamp', () => {
 
         // 1640995200 == 0x61cf9980
         const afterThresholdBytes = [
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-          0x61, 0xcf, 0x99, 0x80,
+          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+          0x00, 0x61, 0xcf, 0x99, 0x80,
         ];
         // 1672531200 == 0x63b0cd00
         const beforeThresholdBytes = [
-          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-          0x63, 0xb0, 0xcd, 0x00,
+          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+          0x00, 0x63, 0xb0, 0xcd, 0x00,
         ];
         const expectedButes = new Uint8Array([
           ...afterThresholdBytes,
@@ -305,7 +308,9 @@ describe('Timestamp', () => {
         timestampAfterThreshold: 1640995200,
         timestampBeforeThreshold: 1672531200,
       };
-      expect(decodeTimestampTerms(createTimestampTerms(original))).toStrictEqual(original);
+      expect(
+        decodeTimestampTerms(createTimestampTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes both thresholds zero', () => {
@@ -313,7 +318,9 @@ describe('Timestamp', () => {
         timestampAfterThreshold: 0,
         timestampBeforeThreshold: 0,
       };
-      expect(decodeTimestampTerms(createTimestampTerms(original))).toStrictEqual(original);
+      expect(
+        decodeTimestampTerms(createTimestampTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes only after threshold set', () => {
@@ -321,7 +328,9 @@ describe('Timestamp', () => {
         timestampAfterThreshold: 1640995200,
         timestampBeforeThreshold: 0,
       };
-      expect(decodeTimestampTerms(createTimestampTerms(original))).toStrictEqual(original);
+      expect(
+        decodeTimestampTerms(createTimestampTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes only before threshold set', () => {
@@ -329,7 +338,9 @@ describe('Timestamp', () => {
         timestampAfterThreshold: 0,
         timestampBeforeThreshold: 1672531200,
       };
-      expect(decodeTimestampTerms(createTimestampTerms(original))).toStrictEqual(original);
+      expect(
+        decodeTimestampTerms(createTimestampTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes small positive timestamps', () => {
@@ -337,7 +348,9 @@ describe('Timestamp', () => {
         timestampAfterThreshold: 1,
         timestampBeforeThreshold: 2,
       };
-      expect(decodeTimestampTerms(createTimestampTerms(original))).toStrictEqual(original);
+      expect(
+        decodeTimestampTerms(createTimestampTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes maximum allowed before threshold', () => {
@@ -346,7 +359,9 @@ describe('Timestamp', () => {
         timestampAfterThreshold: 0,
         timestampBeforeThreshold: maxTimestamp,
       };
-      expect(decodeTimestampTerms(createTimestampTerms(original))).toStrictEqual(original);
+      expect(
+        decodeTimestampTerms(createTimestampTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('accepts Uint8Array terms from the encoder', () => {

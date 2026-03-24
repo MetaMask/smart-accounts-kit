@@ -95,9 +95,7 @@ describe('internal utils', () => {
   describe('toHexString', () => {
     it('pads a small number to the requested byte width', () => {
       expect(toHexString({ value: 255, size: 2 })).toBe('00ff');
-      expect(toHexString({ value: 1, size: 32 })).toBe(
-        `${'0'.repeat(62)}01`,
-      );
+      expect(toHexString({ value: 1, size: 32 })).toBe(`${'0'.repeat(62)}01`);
     });
 
     it('works with bigint', () => {
@@ -117,11 +115,11 @@ describe('internal utils', () => {
   });
 
   describe('extractBigInt', () => {
-    const hex =
+    const value =
       '0x0000000000000000000000000000000000000000000000000de0b6b3a7640000' as const;
 
     it('reads uint256 at offset 0', () => {
-      expect(extractBigInt(hex, 0, 32)).toBe(1000000000000000000n);
+      expect(extractBigInt(value, 0, 32)).toBe(1000000000000000000n);
     });
 
     it('reads a slice at a non-zero offset', () => {

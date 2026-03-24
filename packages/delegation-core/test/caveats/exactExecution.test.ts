@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createExactExecutionTerms, decodeExactExecutionTerms } from '../../src/caveats/exactExecution';
+import {
+  createExactExecutionTerms,
+  decodeExactExecutionTerms,
+} from '../../src/caveats/exactExecution';
 
 describe('ExactExecution', () => {
   describe('createExactExecutionTerms', () => {
@@ -76,7 +79,8 @@ describe('ExactExecution', () => {
   });
 
   describe('decodeExactExecutionTerms', () => {
-    const target = '0x00000000000000000000000000000000000000ab' as `0x${string}`;
+    const target =
+      '0x00000000000000000000000000000000000000ab' as `0x${string}`;
 
     it('decodes target, value, and calldata', () => {
       const original = {
@@ -86,9 +90,9 @@ describe('ExactExecution', () => {
           callData: '0x1234' as `0x${string}`,
         },
       };
-      expect(decodeExactExecutionTerms(createExactExecutionTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeExactExecutionTerms(createExactExecutionTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes zero value and empty calldata', () => {
@@ -99,9 +103,9 @@ describe('ExactExecution', () => {
           callData: '0x' as `0x${string}`,
         },
       };
-      expect(decodeExactExecutionTerms(createExactExecutionTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeExactExecutionTerms(createExactExecutionTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('accepts Uint8Array terms from the encoder', () => {

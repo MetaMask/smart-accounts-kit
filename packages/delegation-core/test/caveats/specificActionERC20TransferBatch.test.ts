@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createSpecificActionERC20TransferBatchTerms, decodeSpecificActionERC20TransferBatchTerms } from '../../src/caveats/specificActionERC20TransferBatch';
+import {
+  createSpecificActionERC20TransferBatchTerms,
+  decodeSpecificActionERC20TransferBatchTerms,
+} from '../../src/caveats/specificActionERC20TransferBatch';
 
 describe('SpecificActionERC20TransferBatch', () => {
   describe('createSpecificActionERC20TransferBatchTerms', () => {
@@ -113,7 +116,9 @@ describe('SpecificActionERC20TransferBatch', () => {
       const bytes = createSpecificActionERC20TransferBatchTerms(original, {
         out: 'bytes',
       });
-      expect(decodeSpecificActionERC20TransferBatchTerms(bytes)).toStrictEqual(original);
+      expect(decodeSpecificActionERC20TransferBatchTerms(bytes)).toStrictEqual(
+        original,
+      );
     });
   });
 });

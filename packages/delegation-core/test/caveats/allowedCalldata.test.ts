@@ -1,7 +1,10 @@
 import { hexToBytes } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
-import { createAllowedCalldataTerms, decodeAllowedCalldataTerms } from '../../src/caveats/allowedCalldata';
+import {
+  createAllowedCalldataTerms,
+  decodeAllowedCalldataTerms,
+} from '../../src/caveats/allowedCalldata';
 import { toHexString } from '../../src/internalUtils';
 import type { Hex } from '../../src/types';
 
@@ -132,7 +135,9 @@ describe('AllowedCalldata', () => {
         startIndex,
         value: functionSelector,
       });
-      expect(result).toStrictEqual(prefixWithIndex(startIndex, functionSelector));
+      expect(result).toStrictEqual(
+        prefixWithIndex(startIndex, functionSelector),
+      );
     });
 
     it('handles calldata with odd length', () => {
@@ -383,54 +388,57 @@ describe('AllowedCalldata', () => {
   describe('decodeAllowedCalldataTerms', () => {
     it('decodes simple value and start index', () => {
       const original = { startIndex: 0, value: '0x1234567890abcdef' as Hex };
-      expect(decodeAllowedCalldataTerms(createAllowedCalldataTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeAllowedCalldataTerms(createAllowedCalldataTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes empty value with non-zero start index', () => {
       const original = { startIndex: 5, value: '0x' as Hex };
-      expect(decodeAllowedCalldataTerms(createAllowedCalldataTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeAllowedCalldataTerms(createAllowedCalldataTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes function call shaped calldata', () => {
       const value =
         '0xa9059cbb000000000000000000000000742d35cc6634c0532925a3b8d40ec49b0e8baa5e0000000000000000000000000000000000000000000000000de0b6b3a7640000' as Hex;
       const original = { startIndex: 12, value };
-      expect(decodeAllowedCalldataTerms(createAllowedCalldataTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeAllowedCalldataTerms(createAllowedCalldataTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('preserves hex casing in the value slice', () => {
       const original = { startIndex: 0, value: '0x1234567890ABCDEF' as Hex };
-      expect(decodeAllowedCalldataTerms(createAllowedCalldataTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeAllowedCalldataTerms(createAllowedCalldataTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes odd-length hex value', () => {
       const original = { startIndex: 0, value: '0x123' as Hex };
-      expect(decodeAllowedCalldataTerms(createAllowedCalldataTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeAllowedCalldataTerms(createAllowedCalldataTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes very long value', () => {
-      const value = `0x${'a'.repeat(1000)}` as Hex;
+      const value: Hex = `0x${'a'.repeat(1000)}`;
       const original = { startIndex: 31, value };
-      expect(decodeAllowedCalldataTerms(createAllowedCalldataTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeAllowedCalldataTerms(createAllowedCalldataTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes large start index', () => {
-      const original = { startIndex: Number.MAX_SAFE_INTEGER, value: '0x00' as Hex };
-      expect(decodeAllowedCalldataTerms(createAllowedCalldataTerms(original))).toStrictEqual(
-        original,
-      );
+      const original = {
+        startIndex: Number.MAX_SAFE_INTEGER,
+        value: '0x00' as Hex,
+      };
+      expect(
+        decodeAllowedCalldataTerms(createAllowedCalldataTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes terms created from Uint8Array value', () => {
@@ -438,7 +446,10 @@ describe('AllowedCalldata', () => {
         0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
       ]);
       const startIndex = 3;
-      const encoded = createAllowedCalldataTerms({ startIndex, value: valueBytes });
+      const encoded = createAllowedCalldataTerms({
+        startIndex,
+        value: valueBytes,
+      });
       expect(decodeAllowedCalldataTerms(encoded)).toStrictEqual({
         startIndex,
         value: '0x1234567890abcdef',

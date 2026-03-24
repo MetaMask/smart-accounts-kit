@@ -2,7 +2,10 @@ import { encodeSingle } from '@metamask/abi-utils';
 import { bytesToHex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
-import { createExactExecutionBatchTerms, decodeExactExecutionBatchTerms } from '../../src/caveats/exactExecutionBatch';
+import {
+  createExactExecutionBatchTerms,
+  decodeExactExecutionBatchTerms,
+} from '../../src/caveats/exactExecutionBatch';
 import type { Hex } from '../../src/types';
 
 describe('ExactExecutionBatch', () => {
@@ -63,7 +66,9 @@ describe('ExactExecutionBatch', () => {
     it('decodes multiple executions', () => {
       const original = { executions };
       expect(
-        decodeExactExecutionBatchTerms(createExactExecutionBatchTerms(original)),
+        decodeExactExecutionBatchTerms(
+          createExactExecutionBatchTerms(original),
+        ),
       ).toStrictEqual(original);
     });
 

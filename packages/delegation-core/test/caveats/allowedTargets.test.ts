@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createAllowedTargetsTerms, decodeAllowedTargetsTerms } from '../../src/caveats/allowedTargets';
+import {
+  createAllowedTargetsTerms,
+  decodeAllowedTargetsTerms,
+} from '../../src/caveats/allowedTargets';
 
 describe('AllowedTargets', () => {
   describe('createAllowedTargetsTerms', () => {
@@ -8,7 +11,9 @@ describe('AllowedTargets', () => {
     const addressB = '0x0000000000000000000000000000000000000002';
 
     it('creates valid terms for multiple addresses', () => {
-      const result = createAllowedTargetsTerms({ targets: [addressA, addressB] });
+      const result = createAllowedTargetsTerms({
+        targets: [addressA, addressB],
+      });
 
       expect(result).toStrictEqual(
         '0x00000000000000000000000000000000000000010000000000000000000000000000000000000002',
@@ -49,21 +54,23 @@ describe('AllowedTargets', () => {
   });
 
   describe('decodeAllowedTargetsTerms', () => {
-    const addressA = '0x0000000000000000000000000000000000000001' as `0x${string}`;
-    const addressB = '0x0000000000000000000000000000000000000002' as `0x${string}`;
+    const addressA =
+      '0x0000000000000000000000000000000000000001' as `0x${string}`;
+    const addressB =
+      '0x0000000000000000000000000000000000000002' as `0x${string}`;
 
     it('decodes multiple targets', () => {
       const original = { targets: [addressA, addressB] };
-      expect(decodeAllowedTargetsTerms(createAllowedTargetsTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeAllowedTargetsTerms(createAllowedTargetsTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes a single target', () => {
       const original = { targets: [addressA] };
-      expect(decodeAllowedTargetsTerms(createAllowedTargetsTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeAllowedTargetsTerms(createAllowedTargetsTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('accepts Uint8Array terms from the encoder', () => {

@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createMultiTokenPeriodTerms, decodeMultiTokenPeriodTerms } from '../../src/caveats/multiTokenPeriod';
+import {
+  createMultiTokenPeriodTerms,
+  decodeMultiTokenPeriodTerms,
+} from '../../src/caveats/multiTokenPeriod';
 
 describe('MultiTokenPeriod', () => {
   describe('createMultiTokenPeriodTerms', () => {
@@ -114,7 +117,8 @@ describe('MultiTokenPeriod', () => {
 
   describe('decodeMultiTokenPeriodTerms', () => {
     const token = '0x0000000000000000000000000000000000000011' as `0x${string}`;
-    const token2 = '0x0000000000000000000000000000000000000022' as `0x${string}`;
+    const token2 =
+      '0x0000000000000000000000000000000000000022' as `0x${string}`;
 
     it('decodes a single token config', () => {
       const original = {

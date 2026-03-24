@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createAllowedMethodsTerms, decodeAllowedMethodsTerms } from '../../src/caveats/allowedMethods';
+import {
+  createAllowedMethodsTerms,
+  decodeAllowedMethodsTerms,
+} from '../../src/caveats/allowedMethods';
 
 describe('AllowedMethods', () => {
   describe('createAllowedMethodsTerms', () => {
@@ -66,16 +69,16 @@ describe('AllowedMethods', () => {
 
     it('decodes multiple selectors', () => {
       const original = { selectors: [selectorA, selectorB] };
-      expect(decodeAllowedMethodsTerms(createAllowedMethodsTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeAllowedMethodsTerms(createAllowedMethodsTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes a single selector', () => {
       const original = { selectors: [selectorA] };
-      expect(decodeAllowedMethodsTerms(createAllowedMethodsTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeAllowedMethodsTerms(createAllowedMethodsTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('accepts Uint8Array terms from the encoder', () => {

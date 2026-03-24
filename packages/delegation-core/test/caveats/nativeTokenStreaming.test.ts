@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createNativeTokenStreamingTerms, decodeNativeTokenStreamingTerms } from '../../src/caveats/nativeTokenStreaming';
+import {
+  createNativeTokenStreamingTerms,
+  decodeNativeTokenStreamingTerms,
+} from '../../src/caveats/nativeTokenStreaming';
 
 describe('NativeTokenStreaming', () => {
   describe('createNativeTokenStreamingTerms', () => {
@@ -274,7 +277,9 @@ describe('NativeTokenStreaming', () => {
           amountPerSecond,
           startTime,
         }),
-      ).toThrow('Invalid startTime: must be less than or equal to 253402300799');
+      ).toThrow(
+        'Invalid startTime: must be less than or equal to 253402300799',
+      );
     });
 
     it('throws an error for undefined initialAmount', () => {
@@ -559,7 +564,9 @@ describe('NativeTokenStreaming', () => {
         expect(result).toBeInstanceOf(Uint8Array);
         expect(result).toHaveLength(128);
         // First three 32-byte chunks should be all 0xff
-        expect(Array.from(result.slice(0, 32))).toEqual(new Array(32).fill(0xff));
+        expect(Array.from(result.slice(0, 32))).toEqual(
+          new Array(32).fill(0xff),
+        );
         expect(Array.from(result.slice(32, 64))).toEqual(
           new Array(32).fill(0xff),
         );
@@ -579,7 +586,9 @@ describe('NativeTokenStreaming', () => {
         startTime: 1640995200,
       };
       expect(
-        decodeNativeTokenStreamingTerms(createNativeTokenStreamingTerms(original)),
+        decodeNativeTokenStreamingTerms(
+          createNativeTokenStreamingTerms(original),
+        ),
       ).toStrictEqual(original);
     });
 
@@ -591,7 +600,9 @@ describe('NativeTokenStreaming', () => {
         startTime: 1672531200,
       };
       expect(
-        decodeNativeTokenStreamingTerms(createNativeTokenStreamingTerms(original)),
+        decodeNativeTokenStreamingTerms(
+          createNativeTokenStreamingTerms(original),
+        ),
       ).toStrictEqual(original);
     });
 
@@ -603,7 +614,9 @@ describe('NativeTokenStreaming', () => {
         startTime: 1640995200,
       };
       expect(
-        decodeNativeTokenStreamingTerms(createNativeTokenStreamingTerms(original)),
+        decodeNativeTokenStreamingTerms(
+          createNativeTokenStreamingTerms(original),
+        ),
       ).toStrictEqual(original);
     });
 
@@ -615,7 +628,9 @@ describe('NativeTokenStreaming', () => {
         startTime: 1,
       };
       expect(
-        decodeNativeTokenStreamingTerms(createNativeTokenStreamingTerms(original)),
+        decodeNativeTokenStreamingTerms(
+          createNativeTokenStreamingTerms(original),
+        ),
       ).toStrictEqual(original);
     });
 
@@ -627,7 +642,9 @@ describe('NativeTokenStreaming', () => {
         startTime: 253402300799,
       };
       expect(
-        decodeNativeTokenStreamingTerms(createNativeTokenStreamingTerms(original)),
+        decodeNativeTokenStreamingTerms(
+          createNativeTokenStreamingTerms(original),
+        ),
       ).toStrictEqual(original);
     });
 
@@ -641,7 +658,9 @@ describe('NativeTokenStreaming', () => {
         startTime: 1640995200,
       };
       expect(
-        decodeNativeTokenStreamingTerms(createNativeTokenStreamingTerms(original)),
+        decodeNativeTokenStreamingTerms(
+          createNativeTokenStreamingTerms(original),
+        ),
       ).toStrictEqual(original);
     });
 

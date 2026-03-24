@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createExactCalldataTerms, decodeExactCalldataTerms } from '../../src/caveats/exactCalldata';
+import {
+  createExactCalldataTerms,
+  decodeExactCalldataTerms,
+} from '../../src/caveats/exactCalldata';
 import type { Hex } from '../../src/types';
 
 describe('ExactCalldata', () => {
@@ -95,7 +98,9 @@ describe('ExactCalldata', () => {
     });
 
     it('throws an error for non-string non-Uint8Array callData', () => {
-      expect(() => createExactCalldataTerms({ calldata: 1234 as any })).toThrow();
+      expect(() =>
+        createExactCalldataTerms({ calldata: 1234 as any }),
+      ).toThrow();
     });
 
     it('handles single function selector', () => {
@@ -255,13 +260,17 @@ describe('ExactCalldata', () => {
   describe('decodeExactCalldataTerms', () => {
     it('decodes simple calldata', () => {
       const calldata = '0x1234567890abcdef' as Hex;
-      expect(decodeExactCalldataTerms(createExactCalldataTerms({ calldata }))).toStrictEqual({
+      expect(
+        decodeExactCalldataTerms(createExactCalldataTerms({ calldata })),
+      ).toStrictEqual({
         calldata,
       });
     });
 
     it('decodes empty calldata', () => {
-      expect(decodeExactCalldataTerms(createExactCalldataTerms({ calldata: '0x' }))).toStrictEqual({
+      expect(
+        decodeExactCalldataTerms(createExactCalldataTerms({ calldata: '0x' })),
+      ).toStrictEqual({
         calldata: '0x',
       });
     });
@@ -269,35 +278,45 @@ describe('ExactCalldata', () => {
     it('decodes transfer calldata', () => {
       const calldata =
         '0xa9059cbb000000000000000000000000742d35cc6634c0532925a3b8d40ec49b0e8baa5e0000000000000000000000000000000000000000000000000de0b6b3a7640000' as Hex;
-      expect(decodeExactCalldataTerms(createExactCalldataTerms({ calldata }))).toStrictEqual({
+      expect(
+        decodeExactCalldataTerms(createExactCalldataTerms({ calldata })),
+      ).toStrictEqual({
         calldata,
       });
     });
 
     it('preserves hex casing', () => {
       const calldata = '0x1234567890AbCdEf' as Hex;
-      expect(decodeExactCalldataTerms(createExactCalldataTerms({ calldata }))).toStrictEqual({
+      expect(
+        decodeExactCalldataTerms(createExactCalldataTerms({ calldata })),
+      ).toStrictEqual({
         calldata,
       });
     });
 
     it('decodes very long calldata', () => {
-      const calldata = `0x${'a'.repeat(1000)}` as Hex;
-      expect(decodeExactCalldataTerms(createExactCalldataTerms({ calldata }))).toStrictEqual({
+      const calldata: Hex = `0x${'a'.repeat(1000)}`;
+      expect(
+        decodeExactCalldataTerms(createExactCalldataTerms({ calldata })),
+      ).toStrictEqual({
         calldata,
       });
     });
 
     it('decodes selector-only calldata', () => {
       const calldata = '0xa9059cbb' as Hex;
-      expect(decodeExactCalldataTerms(createExactCalldataTerms({ calldata }))).toStrictEqual({
+      expect(
+        decodeExactCalldataTerms(createExactCalldataTerms({ calldata })),
+      ).toStrictEqual({
         calldata,
       });
     });
 
     it('decodes odd-length calldata', () => {
       const calldata = '0x123' as Hex;
-      expect(decodeExactCalldataTerms(createExactCalldataTerms({ calldata }))).toStrictEqual({
+      expect(
+        decodeExactCalldataTerms(createExactCalldataTerms({ calldata })),
+      ).toStrictEqual({
         calldata,
       });
     });
@@ -307,7 +326,9 @@ describe('ExactCalldata', () => {
         0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xcd, 0xef,
       ]);
       expect(
-        decodeExactCalldataTerms(createExactCalldataTerms({ calldata: callDataBytes })),
+        decodeExactCalldataTerms(
+          createExactCalldataTerms({ calldata: callDataBytes }),
+        ),
       ).toStrictEqual({ calldata: '0x1234567890abcdef' });
     });
 

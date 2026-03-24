@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createNativeTokenTransferAmountTerms, decodeNativeTokenTransferAmountTerms } from '../../src/caveats/nativeTokenTransferAmount';
+import {
+  createNativeTokenTransferAmountTerms,
+  decodeNativeTokenTransferAmountTerms,
+} from '../../src/caveats/nativeTokenTransferAmount';
 
 describe('NativeTokenTransferAmount', () => {
   describe('createNativeTokenTransferAmountTerms', () => {
@@ -59,7 +62,9 @@ describe('NativeTokenTransferAmount', () => {
         { maxAmount: 1n },
         { out: 'bytes' },
       );
-      expect(decodeNativeTokenTransferAmountTerms(bytes)).toStrictEqual({ maxAmount: 1n });
+      expect(decodeNativeTokenTransferAmountTerms(bytes)).toStrictEqual({
+        maxAmount: 1n,
+      });
     });
   });
 });

@@ -1,6 +1,9 @@
 import { describe, it, expect } from 'vitest';
 
-import { createERC721TransferTerms, decodeERC721TransferTerms } from '../../src/caveats/erc721Transfer';
+import {
+  createERC721TransferTerms,
+  decodeERC721TransferTerms,
+} from '../../src/caveats/erc721Transfer';
 
 describe('ERC721Transfer', () => {
   describe('createERC721TransferTerms', () => {
@@ -53,16 +56,16 @@ describe('ERC721Transfer', () => {
 
     it('decodes token address and token id', () => {
       const original = { tokenAddress, tokenId: 42n };
-      expect(decodeERC721TransferTerms(createERC721TransferTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeERC721TransferTerms(createERC721TransferTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('decodes token id zero', () => {
       const original = { tokenAddress, tokenId: 0n };
-      expect(decodeERC721TransferTerms(createERC721TransferTerms(original))).toStrictEqual(
-        original,
-      );
+      expect(
+        decodeERC721TransferTerms(createERC721TransferTerms(original)),
+      ).toStrictEqual(original);
     });
 
     it('accepts Uint8Array terms from the encoder', () => {

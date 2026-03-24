@@ -2,7 +2,10 @@ import { encodeSingle } from '@metamask/abi-utils';
 import { bytesToHex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
-import { createExactCalldataBatchTerms, decodeExactCalldataBatchTerms } from '../../src/caveats/exactCalldataBatch';
+import {
+  createExactCalldataBatchTerms,
+  decodeExactCalldataBatchTerms,
+} from '../../src/caveats/exactCalldataBatch';
 import type { Hex } from '../../src/types';
 
 describe('ExactCalldataBatch', () => {

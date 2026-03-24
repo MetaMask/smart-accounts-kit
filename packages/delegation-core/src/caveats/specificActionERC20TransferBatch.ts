@@ -1,9 +1,15 @@
 /**
  * ## SpecificActionERC20TransferBatchEnforcer
  *
- * Ties an ERC-20 transfer batch to a specific preceding action (target and calldata).
+ * Encodes caveat terms for a batch of exactly two executions: first call must match
+ * `target` + `calldata`; second must be `IERC20.transfer` to `recipient` for `amount`
+ * on `tokenAddress` (see on-chain `beforeHook`).
  *
- * Terms are encoded as 20-byte token, 20-byte recipient, 32-byte amount, 20-byte target, then calldata bytes without a separate ABI length prefix.
+ * - bytes 0–19: ERC-20 token address
+ * - bytes 20–39: transfer recipient
+ * - bytes 40–71: transfer amount (uint256, 32 bytes)
+ * - bytes 72–91: first execution target (`firstTarget` in Enforcer)
+ * - bytes 92–end: first execution calldata, raw body only (no ABI length prefix; `firstCalldata` in Enforcer)
  */
 
 import { bytesToHex, type BytesLike } from '@metamask/utils';
@@ -38,9 +44,9 @@ export type SpecificActionERC20TransferBatchTerms<
   recipient: TBytesLike;
   /** The amount of tokens to transfer. */
   amount: bigint;
-  /** The target address for the first transaction. */
+  /** The target address for the first batch execution (`firstTarget` in the enforcer). */
   target: TBytesLike;
-  /** The calldata for the first transaction. */
+  /** Calldata for the first execution only, without an ABI length prefix (`firstCalldata` on-chain). */
   calldata: TBytesLike;
 };
 
@@ -134,9 +140,9 @@ export function decodeSpecificActionERC20TransferBatchTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): SpecificActionERC20TransferBatchTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses and calldata are returned as hex or bytes.
+ * @returns The decoded SpecificActionERC20TransferBatchTerms object.
  */
 export function decodeSpecificActionERC20TransferBatchTerms(
   terms: BytesLike,

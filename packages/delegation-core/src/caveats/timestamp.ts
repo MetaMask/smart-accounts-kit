@@ -1,9 +1,9 @@
 /**
  * ## TimestampEnforcer
  *
- * Restricts redemption to a unix timestamp window (after / before thresholds).
+ * Restricts redemption to a unix timestamp window (strict inequalities on-chain: valid when `block.timestamp > afterThreshold` if after is set, and `block.timestamp < beforeThreshold` if before is set).
  *
- * Terms are encoded as two 16-byte big-endian fields: timestamp after, then timestamp before (each zero-padded).
+ * Terms are encoded as two 16-byte big-endian fields: timestamp after, then timestamp before (each zero-padded; interpreted as `uint128`).
  */
 
 import type { BytesLike } from '@metamask/utils';

@@ -1,9 +1,9 @@
 /**
  * ## BlockNumberEnforcer
  *
- * Restricts redemption to a block number range.
+ * Restricts redemption to a block number range (strict inequalities on-chain: valid when `block.number > afterThreshold` if after is set, and `block.number < beforeThreshold` if before is set).
  *
- * Terms are encoded as a 16-byte after threshold followed by a 16-byte before threshold (each big-endian, zero-padded).
+ * Terms are encoded as a 16-byte after threshold followed by a 16-byte before threshold (each big-endian, zero-padded; interpreted as `uint128`).
  */
 
 import type { BytesLike } from '@metamask/utils';

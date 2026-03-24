@@ -103,9 +103,9 @@ export function decodeAllowedMethodsTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): AllowedMethodsTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded selector values are returned as hex or bytes.
+ * @returns The decoded AllowedMethodsTerms object.
  */
 export function decodeAllowedMethodsTerms(
   terms: BytesLike,

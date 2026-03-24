@@ -1,9 +1,9 @@
 /**
  * ## ExactCalldataBatchEnforcer
  *
- * Requires a batch of executions to match exactly on calldata and metadata.
+ * Requires each execution in a batch to match the corresponding expected calldata (the enforcer compares only `callData`; target and value in terms must still align with `Execution[]` layout used by `decodeBatch`).
  *
- * Terms are encoded as ABI-encoded (address,uint256,bytes)[].
+ * Terms are encoded as ABI-encoded `(address,uint256,bytes)[]`, i.e. the same tuple-array shape as batch executions.
  */
 
 import { decodeSingle, encodeSingle } from '@metamask/abi-utils';
@@ -114,9 +114,9 @@ export function decodeExactCalldataBatchTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): ExactCalldataBatchTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded targets and calldata are returned as hex or bytes.
+ * @returns The decoded ExactCalldataBatchTerms object.
  */
 export function decodeExactCalldataBatchTerms(
   terms: BytesLike,

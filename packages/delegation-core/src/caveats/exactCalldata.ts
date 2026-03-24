@@ -85,9 +85,9 @@ export function decodeExactCalldataTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): ExactCalldataTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded calldata is returned as hex or bytes.
+ * @returns The decoded ExactCalldataTerms object.
  */
 export function decodeExactCalldataTerms(
   terms: BytesLike,

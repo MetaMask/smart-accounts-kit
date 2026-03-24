@@ -96,9 +96,9 @@ export function decodeERC721TransferTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): ERC721TransferTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded token address is returned as hex or bytes.
+ * @returns The decoded ERC721TransferTerms object.
  */
 export function decodeERC721TransferTerms(
   terms: BytesLike,

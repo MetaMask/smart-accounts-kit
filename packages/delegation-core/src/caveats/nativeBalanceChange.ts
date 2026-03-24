@@ -3,7 +3,7 @@
  *
  * Constrains native balance change for a recipient relative to a reference balance.
  *
- * Terms are encoded as 1-byte change type, 20-byte recipient (normalized lowercase), then 32-byte big-endian balance in wei.
+ * Terms are encoded as 1-byte direction (`0x00` = minimum increase, any non-zero e.g. `0x01` = maximum decrease), 20-byte recipient, then 32-byte big-endian balance in wei.
  */
 
 import type { BytesLike } from '@metamask/utils';
@@ -111,9 +111,9 @@ export function decodeNativeBalanceChangeTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): NativeBalanceChangeTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded recipient is returned as hex or bytes.
+ * @returns The decoded NativeBalanceChangeTerms object.
  */
 export function decodeNativeBalanceChangeTerms(
   terms: BytesLike,

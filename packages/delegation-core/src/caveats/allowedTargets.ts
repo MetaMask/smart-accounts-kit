@@ -87,9 +87,9 @@ export function decodeAllowedTargetsTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): AllowedTargetsTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded AllowedTargetsTerms object.
  */
 export function decodeAllowedTargetsTerms(
   terms: BytesLike,

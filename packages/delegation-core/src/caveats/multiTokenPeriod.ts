@@ -1,9 +1,9 @@
 /**
  * ## MultiTokenPeriodEnforcer
  *
- * Sets independent periodic transfer limits for multiple ERC-20 tokens.
+ * Sets independent periodic transfer limits for multiple tokens (ERC-20 or native).
  *
- * Terms are encoded by repeating, per token: 20-byte token address then three 32-byte big-endian uint256 words (period amount, period duration, start date).
+ * Terms are encoded by repeating, per entry: 20-byte token address (`address(0)` denotes native token) then three 32-byte big-endian uint256 words (period amount, period duration, start date).
  */
 
 import type { BytesLike } from '@metamask/utils';
@@ -127,9 +127,9 @@ export function decodeMultiTokenPeriodTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): MultiTokenPeriodTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded token addresses are returned as hex or bytes.
+ * @returns The decoded MultiTokenPeriodTerms object.
  */
 export function decodeMultiTokenPeriodTerms(
   terms: BytesLike,

@@ -110,9 +110,9 @@ export function decodeNonceTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): NonceTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded nonce is returned as hex or bytes.
+ * @returns The decoded NonceTerms object.
  */
 export function decodeNonceTerms(
   terms: BytesLike,

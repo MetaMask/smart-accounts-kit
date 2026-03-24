@@ -3,7 +3,7 @@
  *
  * Constrains ERC-721 balance (id count) change for a recipient.
  *
- * Terms are encoded as 1-byte change type, 20-byte token and recipient (each normalized lowercase), then 32-byte big-endian amount.
+ * Terms are encoded as 1-byte direction (`0x00` = minimum increase, any non-zero e.g. `0x01` = maximum decrease), 20-byte token address, 20-byte recipient, then 32-byte big-endian amount.
  */
 
 import type { BytesLike } from '@metamask/utils';
@@ -127,9 +127,9 @@ export function decodeERC721BalanceChangeTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): ERC721BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded ERC721BalanceChangeTerms object.
  */
 export function decodeERC721BalanceChangeTerms(
   terms: BytesLike,

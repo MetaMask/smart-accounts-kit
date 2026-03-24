@@ -85,9 +85,9 @@ export function decodeArgsEqualityCheckTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): ArgsEqualityCheckTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded args are returned as hex or bytes.
+ * @returns The decoded ArgsEqualityCheckTerms object.
  */
 export function decodeArgsEqualityCheckTerms(
   terms: BytesLike,

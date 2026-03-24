@@ -108,9 +108,9 @@ export function decodeDeployedTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): DeployedTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded address, salt, and bytecode are returned as hex or bytes.
+ * @returns The decoded DeployedTerms object.
  */
 export function decodeDeployedTerms(
   terms: BytesLike,

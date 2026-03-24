@@ -3,7 +3,7 @@
  *
  * Constrains ERC-20 balance change for a recipient relative to a reference balance.
  *
- * Terms are encoded as 1-byte change type, 20-byte token and recipient (each normalized lowercase), then 32-byte big-endian balance.
+ * Terms are encoded as 1-byte direction (`0x00` = minimum increase, any non-zero e.g. `0x01` = maximum decrease), 20-byte token address, 20-byte recipient, then 32-byte big-endian balance amount.
  */
 
 import type { BytesLike } from '@metamask/utils';
@@ -127,9 +127,9 @@ export function decodeERC20BalanceChangeTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): ERC20BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded ERC20BalanceChangeTerms object.
  */
 export function decodeERC20BalanceChangeTerms(
   terms: BytesLike,

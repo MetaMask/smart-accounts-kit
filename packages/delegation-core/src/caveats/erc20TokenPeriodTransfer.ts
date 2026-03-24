@@ -128,9 +128,9 @@ export function decodeERC20TokenPeriodTransferTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): ERC20TokenPeriodTransferTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded token address is returned as hex or bytes.
+ * @returns The decoded ERC20TokenPeriodTransferTerms object.
  */
 export function decodeERC20TokenPeriodTransferTerms(
   terms: BytesLike,

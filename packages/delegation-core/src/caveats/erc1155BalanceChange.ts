@@ -3,7 +3,7 @@
  *
  * Constrains ERC-1155 balance change for a token id and recipient.
  *
- * Terms are encoded as 1-byte change type, 20-byte token and recipient (normalized lowercase), then two 32-byte big-endian uint256 words: token id and balance.
+ * Terms are encoded as 1-byte direction (`0x00` = minimum increase, any non-zero e.g. `0x01` = maximum decrease), 20-byte token address, 20-byte recipient, then 32-byte token id and 32-byte balance (each big-endian uint256).
  */
 
 import type { BytesLike } from '@metamask/utils';
@@ -137,9 +137,9 @@ export function decodeERC1155BalanceChangeTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): ERC1155BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded ERC1155BalanceChangeTerms object.
  */
 export function decodeERC1155BalanceChangeTerms(
   terms: BytesLike,

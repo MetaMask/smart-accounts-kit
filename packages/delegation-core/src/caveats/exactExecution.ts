@@ -111,9 +111,9 @@ export function decodeExactExecutionTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): ExactExecutionTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded target and calldata are returned as hex or bytes.
+ * @returns The decoded ExactExecutionTerms object.
  */
 export function decodeExactExecutionTerms(
   terms: BytesLike,

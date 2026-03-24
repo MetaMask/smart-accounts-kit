@@ -81,9 +81,9 @@ export function decodeOwnershipTransferTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): OwnershipTransferTerms<DecodedBytesLike<'bytes'>>;
 /**
- *
- * @param terms
- * @param encodingOptions
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded contract address is returned as hex or bytes.
+ * @returns The decoded OwnershipTransferTerms object.
  */
 export function decodeOwnershipTransferTerms(
   terms: BytesLike,

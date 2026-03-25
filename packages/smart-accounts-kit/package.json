@@ -95,7 +95,12 @@
   "engines": {
     "node": "^18.18 || >=20"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "./dist/index.cjs",
+    "./dist/index.mjs",
+    "./dist/*/index.cjs",
+    "./dist/*/index.mjs"
+  ],
   "scripts": {
     "build": "yarn typecheck && tsup",
     "typecheck": "tsc --noEmit",

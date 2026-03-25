@@ -73,7 +73,6 @@ class Sender<T> {
       await this.sendFn(current);
       this.failureCount = 0;
     } catch (error) {
-      console.error('Sender: Failed to send batch', error);
       this.failureCount += 1;
       if (this.failureCount >= this.maxFailureCount) {
         this.#isDisabled = true;

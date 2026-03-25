@@ -81,7 +81,7 @@ export const normalizeAddress = (
 /**
  * Normalizes an address into a lowercased hex string.
  *
- * @param value - The address as a hex string or bytes.
+ * @param value - The address as a hex strin0 or bytes.
  * @param errorMessage - Error message used for invalid input.
  * @returns The address as a lowercased 0x-prefixed hex string.
  * @throws Error if the input is not a 20-byte address.
@@ -123,7 +123,7 @@ export const concatHex = (parts: string[]): string => {
  * @returns The extracted bigint value.
  */
 export const extractBigInt = (
-  value: string,
+  value: Hex,
   offset: number,
   size: number,
 ): bigint => {
@@ -147,11 +147,13 @@ export const extractNumber = (
   offset: number,
   size: number,
 ): number => {
-  const start = 2 + offset * 2;
-  const end = start + size * 2;
-  const slice = value.slice(start, end);
+  const bigIntValue = extractBigInt(value, offset, size);
 
-  return Number.parseInt(slice, 16);
+  if (bigIntValue > Number.MAX_SAFE_INTEGER) {
+    throw new Error('Number is too large');
+  }
+
+  return Number(bigIntValue);
 };
 
 /**

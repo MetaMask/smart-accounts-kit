@@ -151,6 +151,13 @@ describe('internal utils', () => {
     it('reads small packed values', () => {
       expect(extractNumber('0x000a', 0, 2)).toBe(10);
     });
+
+    it('throws when extracted value exceeds MAX_SAFE_INTEGER', () => {
+      const aboveMaxSafe = '0x0020000000000000' as Hex;
+      expect(() => extractNumber(aboveMaxSafe, 0, 8)).toThrow(
+        'Number is too large',
+      );
+    });
   });
 
   describe('extractAddress', () => {

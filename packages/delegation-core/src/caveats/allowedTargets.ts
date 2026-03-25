@@ -101,6 +101,10 @@ export function decodeAllowedTargetsTerms(
 
   const addressSize = 20;
   const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
+  if (totalBytes % addressSize !== 0) {
+    throw new Error('Invalid targets: must be a multiple of 20');
+  }
+
   const addressCount = totalBytes / addressSize;
 
   const targets: (Hex | Uint8Array)[] = [];

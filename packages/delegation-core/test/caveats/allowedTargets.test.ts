@@ -4,6 +4,7 @@ import {
   createAllowedTargetsTerms,
   decodeAllowedTargetsTerms,
 } from '../../src/caveats/allowedTargets';
+import type { Hex } from 'src/types';
 
 describe('AllowedTargets', () => {
   describe('createAllowedTargetsTerms', () => {
@@ -77,6 +78,14 @@ describe('AllowedTargets', () => {
       const original = { targets: [addressA, addressB] };
       const bytes = createAllowedTargetsTerms(original, { out: 'bytes' });
       expect(decodeAllowedTargetsTerms(bytes)).toStrictEqual(original);
+    });
+
+    it('throws when encoded terms length is not a multiple of 20 bytes', () => {
+      // 20 bytes + 19 bytes
+      const thirtyNineBytes = `0x${'00'.repeat(39)}`;
+      expect(() => decodeAllowedTargetsTerms(thirtyNineBytes)).toThrow(
+        'Invalid targets: must be a multiple of 20',
+      );
     });
   });
 });

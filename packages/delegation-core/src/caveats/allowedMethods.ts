@@ -8,7 +8,12 @@
 
 import { bytesToHex, isHexString, type BytesLike } from '@metamask/utils';
 
-import { concatHex, extractHex } from '../internalUtils';
+import {
+  assertHexByteLengthMultipleOf,
+  concatHex,
+  extractHex,
+  getByteLength,
+} from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
@@ -116,8 +121,12 @@ export function decodeAllowedMethodsTerms(
   const hexTerms = bytesLikeToHex(terms);
 
   const selectorSize = 4;
-  const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
-  const selectorCount = totalBytes / selectorSize;
+  assertHexByteLengthMultipleOf(
+    hexTerms,
+    selectorSize,
+    'Invalid selectors: must be a multiple of 4',
+  );
+  const selectorCount = getByteLength(hexTerms) / selectorSize;
 
   const selectors: (Hex | Uint8Array)[] = [];
   for (let i = 0; i < selectorCount; i++) {

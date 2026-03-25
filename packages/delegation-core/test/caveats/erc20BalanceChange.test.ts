@@ -116,5 +116,11 @@ describe('ERC20BalanceChange', () => {
       const decoded = decodeERC20BalanceChangeTerms(bytes);
       expect(decoded.balance).toBe(1n);
     });
+
+    it('throws when encoded terms are not exactly 73 bytes', () => {
+      expect(() =>
+        decodeERC20BalanceChangeTerms(`0x${'00'.repeat(72)}`),
+      ).toThrow('Invalid ERC20BalanceChange terms: must be exactly 73 bytes');
+    });
   });
 });

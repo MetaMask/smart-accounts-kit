@@ -81,7 +81,7 @@ export const normalizeAddress = (
 /**
  * Normalizes an address into a lowercased hex string.
  *
- * @param value - The address as a hex strin0 or bytes.
+ * @param value - The address as a hex string or bytes.
  * @param errorMessage - Error message used for invalid input.
  * @returns The address as a lowercased 0x-prefixed hex string.
  * @throws Error if the input is not a 20-byte address.
@@ -197,3 +197,59 @@ export const extractRemainingHex = (value: Hex, offset: number): Hex => {
 
   return `0x${value.slice(start)}`;
 };
+
+/**
+ * @param value - `0x`-prefixed hex string.
+ * @returns Byte length of the hex data (excluding the `0x` prefix).
+ */
+export function getByteLength(value: Hex): number {
+  return (value.length - 2) / 2;
+}
+
+/**
+ * @param hexTerms - `0x`-prefixed hex string (encoded caveat terms).
+ * @param expectedBytes - Required payload length in bytes.
+ * @param errorMessage - Message for the thrown `Error` when length does not match.
+ * @throws Error if the payload is not exactly `expectedBytes` long.
+ */
+export function assertHexByteExactLength(
+  hexTerms: Hex,
+  expectedBytes: number,
+  errorMessage: string,
+): void {
+  if (getByteLength(hexTerms) !== expectedBytes) {
+    throw new Error(errorMessage);
+  }
+}
+
+/**
+ * @param hexTerms - `0x`-prefixed hex string (encoded caveat terms).
+ * @param unitBytes - Payload length must be divisible by this many bytes.
+ * @param errorMessage - Message for the thrown `Error` when length is not a multiple.
+ * @throws Error if the payload length is not a multiple of `unitBytes`.
+ */
+export function assertHexByteLengthMultipleOf(
+  hexTerms: Hex,
+  unitBytes: number,
+  errorMessage: string,
+): void {
+  if (getByteLength(hexTerms) % unitBytes !== 0) {
+    throw new Error(errorMessage);
+  }
+}
+
+/**
+ * @param hexTerms - `0x`-prefixed hex string (encoded caveat terms).
+ * @param minBytes - Minimum payload length in bytes (inclusive).
+ * @param errorMessage - Message for the thrown `Error` when payload is too short.
+ * @throws Error if the payload is shorter than `minBytes`.
+ */
+export function assertHexBytesMinLength(
+  hexTerms: Hex,
+  minBytes: number,
+  errorMessage: string,
+): void {
+  if (getByteLength(hexTerms) < minBytes) {
+    throw new Error(errorMessage);
+  }
+}

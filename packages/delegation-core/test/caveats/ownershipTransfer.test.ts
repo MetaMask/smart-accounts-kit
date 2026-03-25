@@ -53,5 +53,11 @@ describe('OwnershipTransfer', () => {
         contractAddress,
       });
     });
+
+    it('throws when encoded terms are not exactly 20 bytes', () => {
+      expect(() =>
+        decodeOwnershipTransferTerms(`0x${'00'.repeat(19)}`),
+      ).toThrow('Invalid OwnershipTransfer terms: must be exactly 20 bytes');
+    });
   });
 });

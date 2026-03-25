@@ -74,5 +74,11 @@ describe('Redeemer', () => {
       const bytes = createRedeemerTerms(original, { out: 'bytes' });
       expect(decodeRedeemerTerms(bytes)).toStrictEqual(original);
     });
+
+    it('throws when encoded terms length is not a multiple of 20 bytes', () => {
+      expect(() => decodeRedeemerTerms(`0x${'00'.repeat(19)}`)).toThrow(
+        'Invalid redeemers: must be a multiple of 20',
+      );
+    });
   });
 });

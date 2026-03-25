@@ -82,5 +82,11 @@ describe('BlockNumber', () => {
         beforeThreshold: 2n,
       });
     });
+
+    it('throws when encoded terms are not exactly 32 bytes', () => {
+      expect(() => decodeBlockNumberTerms(`0x${'00'.repeat(31)}`)).toThrow(
+        'Invalid BlockNumber terms: must be exactly 32 bytes',
+      );
+    });
   });
 });

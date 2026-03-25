@@ -674,5 +674,13 @@ describe('NativeTokenStreaming', () => {
       const bytes = createNativeTokenStreamingTerms(original, { out: 'bytes' });
       expect(decodeNativeTokenStreamingTerms(bytes)).toStrictEqual(original);
     });
+
+    it('throws when encoded terms are not exactly 128 bytes', () => {
+      expect(() =>
+        decodeNativeTokenStreamingTerms(`0x${'00'.repeat(127)}`),
+      ).toThrow(
+        'Invalid NativeTokenStreaming terms: must be exactly 128 bytes',
+      );
+    });
   });
 });

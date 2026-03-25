@@ -9,6 +9,7 @@
 import type { BytesLike } from '@metamask/utils';
 
 import {
+  assertHexByteExactLength,
   concatHex,
   extractAddress,
   extractBigInt,
@@ -108,6 +109,11 @@ export function decodeERC20TransferAmountTerms(
   | ERC20TransferAmountTerms<DecodedBytesLike<'hex'>>
   | ERC20TransferAmountTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    52,
+    'Invalid ERC20TransferAmount terms: must be exactly 52 bytes',
+  );
 
   const tokenAddressHex = extractAddress(hexTerms, 0);
   const maxAmount = extractBigInt(hexTerms, 20, 32);

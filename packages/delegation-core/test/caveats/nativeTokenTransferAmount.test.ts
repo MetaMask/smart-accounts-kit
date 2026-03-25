@@ -66,5 +66,13 @@ describe('NativeTokenTransferAmount', () => {
         maxAmount: 1n,
       });
     });
+
+    it('throws when encoded terms are not exactly 32 bytes', () => {
+      expect(() =>
+        decodeNativeTokenTransferAmountTerms(`0x${'00'.repeat(31)}`),
+      ).toThrow(
+        'Invalid NativeTokenTransferAmount terms: must be exactly 32 bytes',
+      );
+    });
   });
 });

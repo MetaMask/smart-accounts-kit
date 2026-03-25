@@ -4,7 +4,6 @@ import {
   createAllowedTargetsTerms,
   decodeAllowedTargetsTerms,
 } from '../../src/caveats/allowedTargets';
-import type { Hex } from 'src/types';
 
 describe('AllowedTargets', () => {
   describe('createAllowedTargetsTerms', () => {

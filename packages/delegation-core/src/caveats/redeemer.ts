@@ -8,7 +8,13 @@
 
 import type { BytesLike } from '@metamask/utils';
 
-import { concatHex, extractAddress, normalizeAddress } from '../internalUtils';
+import {
+  assertHexByteLengthMultipleOf,
+  concatHex,
+  extractAddress,
+  getByteLength,
+  normalizeAddress,
+} from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
@@ -100,8 +106,12 @@ export function decodeRedeemerTerms(
   const hexTerms = bytesLikeToHex(terms);
 
   const addressSize = 20;
-  const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
-  const addressCount = totalBytes / addressSize;
+  assertHexByteLengthMultipleOf(
+    hexTerms,
+    addressSize,
+    'Invalid redeemers: must be a multiple of 20',
+  );
+  const addressCount = getByteLength(hexTerms) / addressSize;
 
   const redeemers: (Hex | Uint8Array)[] = [];
   for (let i = 0; i < addressCount; i++) {

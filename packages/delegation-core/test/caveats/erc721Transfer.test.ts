@@ -73,5 +73,11 @@ describe('ERC721Transfer', () => {
       const bytes = createERC721TransferTerms(original, { out: 'bytes' });
       expect(decodeERC721TransferTerms(bytes)).toStrictEqual(original);
     });
+
+    it('throws when encoded terms are not exactly 52 bytes', () => {
+      expect(() => decodeERC721TransferTerms(`0x${'00'.repeat(51)}`)).toThrow(
+        'Invalid ERC721Transfer terms: must be exactly 52 bytes',
+      );
+    });
   });
 });

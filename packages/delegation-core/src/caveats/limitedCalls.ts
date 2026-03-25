@@ -8,7 +8,11 @@
 
 import type { BytesLike } from '@metamask/utils';
 
-import { extractNumber, toHexString } from '../internalUtils';
+import {
+  assertHexByteExactLength,
+  extractNumber,
+  toHexString,
+} from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
@@ -76,6 +80,11 @@ export function createLimitedCallsTerms(
  */
 export function decodeLimitedCallsTerms(terms: BytesLike): LimitedCallsTerms {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    32,
+    'Invalid LimitedCalls terms: must be exactly 32 bytes',
+  );
   const limit = extractNumber(hexTerms, 0, 32);
   return { limit };
 }

@@ -54,5 +54,11 @@ describe('LimitedCalls', () => {
       const bytes = createLimitedCallsTerms({ limit: 3 }, { out: 'bytes' });
       expect(decodeLimitedCallsTerms(bytes)).toStrictEqual({ limit: 3 });
     });
+
+    it('throws when encoded terms are not exactly 32 bytes', () => {
+      expect(() => decodeLimitedCallsTerms(`0x${'00'.repeat(31)}`)).toThrow(
+        'Invalid LimitedCalls terms: must be exactly 32 bytes',
+      );
+    });
   });
 });

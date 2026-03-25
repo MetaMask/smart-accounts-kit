@@ -370,5 +370,13 @@ describe('NativeTokenPeriodTransfer', () => {
         original,
       );
     });
+
+    it('throws when encoded terms are not exactly 96 bytes', () => {
+      expect(() =>
+        decodeNativeTokenPeriodTransferTerms(`0x${'00'.repeat(95)}`),
+      ).toThrow(
+        'Invalid NativeTokenPeriodTransfer terms: must be exactly 96 bytes',
+      );
+    });
   });
 });

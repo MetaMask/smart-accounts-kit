@@ -9,6 +9,7 @@
 import { bytesToHex, remove0x, type BytesLike } from '@metamask/utils';
 
 import {
+  assertHexBytesMinLength,
   extractNumber,
   extractRemainingHex,
   toHexString,
@@ -114,6 +115,11 @@ export function decodeAllowedCalldataTerms(
   | AllowedCalldataTerms<DecodedBytesLike<'hex'>>
   | AllowedCalldataTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexBytesMinLength(
+    hexTerms,
+    32,
+    'Invalid AllowedCalldata terms: must be at least 32 bytes',
+  );
 
   const startIndex = extractNumber(hexTerms, 0, 32);
   const valueHex = extractRemainingHex(hexTerms, 32);

@@ -172,5 +172,13 @@ describe('MultiTokenPeriod', () => {
       const bytes = createMultiTokenPeriodTerms(original, { out: 'bytes' });
       expect(decodeMultiTokenPeriodTerms(bytes)).toStrictEqual(original);
     });
+
+    it('throws when encoded terms length is not a multiple of 116 bytes', () => {
+      expect(() =>
+        decodeMultiTokenPeriodTerms(`0x${'00'.repeat(115)}`),
+      ).toThrow(
+        'Invalid MultiTokenPeriod terms: must be a multiple of 116 bytes',
+      );
+    });
   });
 });

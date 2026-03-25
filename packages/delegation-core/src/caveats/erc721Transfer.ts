@@ -9,6 +9,7 @@
 import type { BytesLike } from '@metamask/utils';
 
 import {
+  assertHexByteExactLength,
   concatHex,
   extractAddress,
   extractBigInt,
@@ -107,6 +108,11 @@ export function decodeERC721TransferTerms(
   | ERC721TransferTerms<DecodedBytesLike<'hex'>>
   | ERC721TransferTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    52,
+    'Invalid ERC721Transfer terms: must be exactly 52 bytes',
+  );
 
   const tokenAddressHex = extractAddress(hexTerms, 0);
   const tokenId = extractBigInt(hexTerms, 20, 32);

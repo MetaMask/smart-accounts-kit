@@ -76,5 +76,11 @@ describe('Id', () => {
       const bytes = createIdTerms({ id: 42n }, { out: 'bytes' });
       expect(decodeIdTerms(bytes)).toStrictEqual({ id: 42n });
     });
+
+    it('throws when encoded terms are not exactly 32 bytes', () => {
+      expect(() => decodeIdTerms(`0x${'00'.repeat(31)}`)).toThrow(
+        'Invalid Id terms: must be exactly 32 bytes',
+      );
+    });
   });
 });

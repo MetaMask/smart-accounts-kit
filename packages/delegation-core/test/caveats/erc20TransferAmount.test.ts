@@ -68,5 +68,11 @@ describe('ERC20TransferAmount', () => {
       const bytes = createERC20TransferAmountTerms(original, { out: 'bytes' });
       expect(decodeERC20TransferAmountTerms(bytes)).toStrictEqual(original);
     });
+
+    it('throws when encoded terms are not exactly 52 bytes', () => {
+      expect(() =>
+        decodeERC20TransferAmountTerms(`0x${'00'.repeat(51)}`),
+      ).toThrow('Invalid ERC20TransferAmount terms: must be exactly 52 bytes');
+    });
   });
 });

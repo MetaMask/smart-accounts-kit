@@ -90,5 +90,11 @@ describe('AllowedMethods', () => {
         selectors: [selectorA, selectorB],
       });
     });
+
+    it('throws when encoded terms length is not a multiple of 4 bytes', () => {
+      expect(() => decodeAllowedMethodsTerms(`0x${'00'.repeat(3)}`)).toThrow(
+        'Invalid selectors: must be a multiple of 4',
+      );
+    });
   });
 });

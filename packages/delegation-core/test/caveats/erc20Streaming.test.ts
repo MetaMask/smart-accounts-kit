@@ -972,5 +972,11 @@ describe('ERC20Streaming', () => {
       const bytes = createERC20StreamingTerms(original, { out: 'bytes' });
       expect(decodeERC20StreamingTerms(bytes)).toStrictEqual(original);
     });
+
+    it('throws when encoded terms are not exactly 148 bytes', () => {
+      expect(() => decodeERC20StreamingTerms(`0x${'00'.repeat(147)}`)).toThrow(
+        'Invalid ERC20Streaming terms: must be exactly 148 bytes',
+      );
+    });
   });
 });

@@ -487,5 +487,11 @@ describe('Nonce', () => {
         '0x000000000000000000000000000000000000000000000000000000000000abcd',
       );
     });
+
+    it('throws when encoded terms are not exactly 32 bytes', () => {
+      expect(() => decodeNonceTerms(`0x${'00'.repeat(31)}`)).toThrow(
+        'Invalid Nonce terms: must be exactly 32 bytes',
+      );
+    });
   });
 });

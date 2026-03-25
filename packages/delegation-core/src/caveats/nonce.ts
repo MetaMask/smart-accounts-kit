@@ -9,6 +9,7 @@
 import { isHexString } from '@metamask/utils';
 import type { BytesLike } from '@metamask/utils';
 
+import { assertHexByteExactLength } from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
@@ -119,6 +120,11 @@ export function decodeNonceTerms(
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
 ): NonceTerms<DecodedBytesLike<'hex'>> | NonceTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    32,
+    'Invalid Nonce terms: must be exactly 32 bytes',
+  );
 
   const nonce = prepareResult(hexTerms, encodingOptions);
 

@@ -74,5 +74,11 @@ describe('NativeTokenPayment', () => {
       );
       expect(decoded.amount).toBe(5n);
     });
+
+    it('throws when encoded terms are not exactly 52 bytes', () => {
+      expect(() =>
+        decodeNativeTokenPaymentTerms(`0x${'00'.repeat(51)}`),
+      ).toThrow('Invalid NativeTokenPayment terms: must be exactly 52 bytes');
+    });
   });
 });

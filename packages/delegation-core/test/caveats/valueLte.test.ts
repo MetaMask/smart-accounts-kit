@@ -187,5 +187,11 @@ describe('ValueLte', () => {
       const bytes = createValueLteTerms({ maxValue: 1000n }, { out: 'bytes' });
       expect(decodeValueLteTerms(bytes)).toStrictEqual({ maxValue: 1000n });
     });
+
+    it('throws when encoded terms are not exactly 32 bytes', () => {
+      expect(() => decodeValueLteTerms(`0x${'00'.repeat(31)}`)).toThrow(
+        'Invalid ValueLte terms: must be exactly 32 bytes',
+      );
+    });
   });
 });

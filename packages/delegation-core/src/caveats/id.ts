@@ -8,7 +8,11 @@
 
 import type { BytesLike } from '@metamask/utils';
 
-import { extractBigInt, toHexString } from '../internalUtils';
+import {
+  assertHexByteExactLength,
+  extractBigInt,
+  toHexString,
+} from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
@@ -91,6 +95,11 @@ export function createIdTerms(
  */
 export function decodeIdTerms(terms: BytesLike): IdTerms {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    32,
+    'Invalid Id terms: must be exactly 32 bytes',
+  );
   const id = extractBigInt(hexTerms, 0, 32);
   return { id };
 }

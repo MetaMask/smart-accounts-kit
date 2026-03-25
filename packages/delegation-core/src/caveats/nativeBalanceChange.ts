@@ -9,6 +9,7 @@
 import type { BytesLike } from '@metamask/utils';
 
 import {
+  assertHexByteExactLength,
   concatHex,
   extractAddress,
   extractBigInt,
@@ -122,6 +123,11 @@ export function decodeNativeBalanceChangeTerms(
   | NativeBalanceChangeTerms<DecodedBytesLike<'hex'>>
   | NativeBalanceChangeTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    53,
+    'Invalid NativeBalanceChange terms: must be exactly 53 bytes',
+  );
 
   const changeType = extractNumber(hexTerms, 0, 1);
   const recipientHex = extractAddress(hexTerms, 1);

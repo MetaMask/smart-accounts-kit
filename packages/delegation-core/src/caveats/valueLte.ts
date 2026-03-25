@@ -8,7 +8,11 @@
 
 import type { BytesLike } from '@metamask/utils';
 
-import { extractBigInt, toHexString } from '../internalUtils';
+import {
+  assertHexByteExactLength,
+  extractBigInt,
+  toHexString,
+} from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
@@ -72,6 +76,11 @@ export function createValueLteTerms(
  */
 export function decodeValueLteTerms(terms: BytesLike): ValueLteTerms {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    32,
+    'Invalid ValueLte terms: must be exactly 32 bytes',
+  );
   const maxValue = extractBigInt(hexTerms, 0, 32);
   return { maxValue };
 }

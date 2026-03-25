@@ -8,7 +8,12 @@
 
 import type { BytesLike } from '@metamask/utils';
 
-import { extractBigInt, extractNumber, toHexString } from '../internalUtils';
+import {
+  assertHexByteExactLength,
+  extractBigInt,
+  extractNumber,
+  toHexString,
+} from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
@@ -94,6 +99,11 @@ export function decodeNativeTokenPeriodTransferTerms(
   terms: BytesLike,
 ): NativeTokenPeriodTransferTerms {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    96,
+    'Invalid NativeTokenPeriodTransfer terms: must be exactly 96 bytes',
+  );
 
   const periodAmount = extractBigInt(hexTerms, 0, 32);
   const periodDuration = extractNumber(hexTerms, 32, 32);

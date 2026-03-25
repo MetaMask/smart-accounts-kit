@@ -9,6 +9,7 @@
 import { bytesToHex, type BytesLike } from '@metamask/utils';
 
 import {
+  assertHexBytesMinLength,
   concatHex,
   extractAddress,
   extractBigInt,
@@ -122,6 +123,11 @@ export function decodeExactExecutionTerms(
   | ExactExecutionTerms<DecodedBytesLike<'hex'>>
   | ExactExecutionTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexBytesMinLength(
+    hexTerms,
+    52,
+    'Invalid ExactExecution terms: must be at least 52 bytes',
+  );
 
   const targetHex = extractAddress(hexTerms, 0);
   const value = extractBigInt(hexTerms, 20, 32);

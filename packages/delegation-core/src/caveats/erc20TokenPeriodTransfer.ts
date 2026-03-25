@@ -9,6 +9,7 @@
 import { type BytesLike, isHexString, bytesToHex } from '@metamask/utils';
 
 import {
+  assertHexByteExactLength,
   extractAddress,
   extractBigInt,
   extractNumber,
@@ -139,6 +140,11 @@ export function decodeERC20TokenPeriodTransferTerms(
   | ERC20TokenPeriodTransferTerms<DecodedBytesLike<'hex'>>
   | ERC20TokenPeriodTransferTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    116,
+    'Invalid ERC20TokenPeriodTransfer terms: must be exactly 116 bytes',
+  );
 
   const tokenAddressHex = extractAddress(hexTerms, 0);
   const periodAmount = extractBigInt(hexTerms, 20, 32);

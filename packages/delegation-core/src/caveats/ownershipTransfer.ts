@@ -8,7 +8,11 @@
 
 import type { BytesLike } from '@metamask/utils';
 
-import { extractAddress, normalizeAddress } from '../internalUtils';
+import {
+  assertHexByteExactLength,
+  extractAddress,
+  normalizeAddress,
+} from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
@@ -92,6 +96,11 @@ export function decodeOwnershipTransferTerms(
   | OwnershipTransferTerms<DecodedBytesLike<'hex'>>
   | OwnershipTransferTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    20,
+    'Invalid OwnershipTransfer terms: must be exactly 20 bytes',
+  );
   const contractAddressHex = extractAddress(hexTerms, 0);
   return {
     contractAddress: prepareResult(contractAddressHex, encodingOptions),

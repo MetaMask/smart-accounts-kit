@@ -108,5 +108,13 @@ describe('ERC1155BalanceChange', () => {
       expect(decoded.tokenId).toBe(1n);
       expect(decoded.balance).toBe(1n);
     });
+
+    it('throws when encoded terms are not exactly 105 bytes', () => {
+      expect(() =>
+        decodeERC1155BalanceChangeTerms(`0x${'00'.repeat(104)}`),
+      ).toThrow(
+        'Invalid ERC1155BalanceChange terms: must be exactly 105 bytes',
+      );
+    });
   });
 });

@@ -9,6 +9,7 @@
 import { type BytesLike, bytesToHex, isHexString } from '@metamask/utils';
 
 import {
+  assertHexByteExactLength,
   extractAddress,
   extractBigInt,
   extractNumber,
@@ -163,6 +164,11 @@ export function decodeERC20StreamingTerms(
   | ERC20StreamingTerms<DecodedBytesLike<'hex'>>
   | ERC20StreamingTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    148,
+    'Invalid ERC20Streaming terms: must be exactly 148 bytes',
+  );
 
   const tokenAddressHex = extractAddress(hexTerms, 0);
   const initialAmount = extractBigInt(hexTerms, 20, 32);

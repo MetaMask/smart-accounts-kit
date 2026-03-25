@@ -84,5 +84,11 @@ describe('Deployed', () => {
       const decoded = decodeDeployedTerms(bytes);
       expect(decoded.bytecode).toBe(bytecode);
     });
+
+    it('throws when encoded terms are shorter than 52 bytes', () => {
+      expect(() => decodeDeployedTerms(`0x${'00'.repeat(51)}`)).toThrow(
+        'Invalid Deployed terms: must be at least 52 bytes',
+      );
+    });
   });
 });

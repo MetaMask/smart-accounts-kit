@@ -10,6 +10,7 @@ import type { BytesLike } from '@metamask/utils';
 import { remove0x } from '@metamask/utils';
 
 import {
+  assertHexBytesMinLength,
   concatHex,
   extractAddress,
   extractHex,
@@ -119,6 +120,11 @@ export function decodeDeployedTerms(
   | DeployedTerms<DecodedBytesLike<'hex'>>
   | DeployedTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexBytesMinLength(
+    hexTerms,
+    52,
+    'Invalid Deployed terms: must be at least 52 bytes',
+  );
 
   const contractAddressHex = extractAddress(hexTerms, 0);
   const saltHex = extractHex(hexTerms, 20, 32);

@@ -120,5 +120,13 @@ describe('SpecificActionERC20TransferBatch', () => {
         original,
       );
     });
+
+    it('throws when encoded terms are shorter than 92 bytes', () => {
+      expect(() =>
+        decodeSpecificActionERC20TransferBatchTerms(`0x${'00'.repeat(91)}`),
+      ).toThrow(
+        'Invalid SpecificActionERC20TransferBatch terms: must be at least 92 bytes',
+      );
+    });
   });
 });

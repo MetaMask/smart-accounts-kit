@@ -15,6 +15,7 @@
 import { bytesToHex, type BytesLike } from '@metamask/utils';
 
 import {
+  assertHexBytesMinLength,
   concatHex,
   extractAddress,
   extractBigInt,
@@ -151,6 +152,11 @@ export function decodeSpecificActionERC20TransferBatchTerms(
   | SpecificActionERC20TransferBatchTerms<DecodedBytesLike<'hex'>>
   | SpecificActionERC20TransferBatchTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexBytesMinLength(
+    hexTerms,
+    92,
+    'Invalid SpecificActionERC20TransferBatch terms: must be at least 92 bytes',
+  );
 
   const tokenAddressHex = extractAddress(hexTerms, 0);
   const recipientHex = extractAddress(hexTerms, 20);

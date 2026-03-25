@@ -1,12 +1,16 @@
 import { describe, it, expect } from 'vitest';
 
 import {
+  assertHexBytesMinLength,
+  assertHexByteExactLength,
+  assertHexByteLengthMultipleOf,
   concatHex,
   extractAddress,
   extractBigInt,
   extractHex,
   extractNumber,
   extractRemainingHex,
+  getByteLength,
   normalizeAddress,
   normalizeAddressLowercase,
   normalizeHex,
@@ -15,6 +19,60 @@ import {
 import type { Hex } from '../src/types';
 
 describe('internal utils', () => {
+  describe('getByteLength', () => {
+    it('returns byte count excluding 0x prefix', () => {
+      expect(getByteLength('0x')).toBe(0);
+      expect(getByteLength('0x00')).toBe(1);
+      expect(getByteLength('0xabcd')).toBe(2);
+      expect(getByteLength(`0x${'00'.repeat(32)}`)).toBe(32);
+    });
+  });
+
+  describe('assertHexByteExactLength', () => {
+    it('does not throw when length matches', () => {
+      expect(() =>
+        assertHexByteExactLength(`0x${'00'.repeat(32)}`, 32, 'err'),
+      ).not.toThrow();
+    });
+
+    it('throws with the given message when length differs', () => {
+      expect(() =>
+        assertHexByteExactLength(`0x${'00'.repeat(31)}`, 32, 'bad len'),
+      ).toThrow('bad len');
+    });
+  });
+
+  describe('assertHexByteLengthMultipleOf', () => {
+    it('does not throw when length is a multiple', () => {
+      expect(() =>
+        assertHexByteLengthMultipleOf(`0x${'00'.repeat(40)}`, 20, 'err'),
+      ).not.toThrow();
+    });
+
+    it('throws when length is not a multiple', () => {
+      expect(() =>
+        assertHexByteLengthMultipleOf(`0x${'00'.repeat(19)}`, 20, 'bad'),
+      ).toThrow('bad');
+    });
+  });
+
+  describe('assertHexBytesMinLength', () => {
+    it('does not throw when at or above minimum', () => {
+      expect(() =>
+        assertHexBytesMinLength(`0x${'00'.repeat(32)}`, 32, 'err'),
+      ).not.toThrow();
+      expect(() =>
+        assertHexBytesMinLength(`0x${'00'.repeat(40)}`, 32, 'err'),
+      ).not.toThrow();
+    });
+
+    it('throws when shorter than minimum', () => {
+      expect(() =>
+        assertHexBytesMinLength(`0x${'00'.repeat(31)}`, 32, 'short'),
+      ).toThrow('short');
+    });
+  });
+
   describe('normalizeHex', () => {
     it('returns a valid hex string as-is', () => {
       const value = '0x1234';

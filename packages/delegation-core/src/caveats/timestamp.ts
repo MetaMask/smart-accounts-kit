@@ -8,7 +8,11 @@
 
 import type { BytesLike } from '@metamask/utils';
 
-import { extractNumber, toHexString } from '../internalUtils';
+import {
+  assertHexByteExactLength,
+  extractNumber,
+  toHexString,
+} from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
@@ -109,6 +113,11 @@ export function createTimestampTerms(
  */
 export function decodeTimestampTerms(terms: BytesLike): TimestampTerms {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    32,
+    'Invalid Timestamp terms: must be exactly 32 bytes',
+  );
   const afterThreshold = extractNumber(hexTerms, 0, 16);
   const beforeThreshold = extractNumber(hexTerms, 16, 16);
   return { afterThreshold, beforeThreshold };

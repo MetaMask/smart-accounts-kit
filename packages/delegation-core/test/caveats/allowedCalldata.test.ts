@@ -461,5 +461,11 @@ describe('AllowedCalldata', () => {
       const bytes = createAllowedCalldataTerms(original, { out: 'bytes' });
       expect(decodeAllowedCalldataTerms(bytes)).toStrictEqual(original);
     });
+
+    it('throws when encoded terms are shorter than 32 bytes', () => {
+      expect(() => decodeAllowedCalldataTerms(`0x${'00'.repeat(31)}`)).toThrow(
+        'Invalid AllowedCalldata terms: must be at least 32 bytes',
+      );
+    });
   });
 });

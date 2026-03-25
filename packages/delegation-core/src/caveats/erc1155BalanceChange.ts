@@ -9,6 +9,7 @@
 import type { BytesLike } from '@metamask/utils';
 
 import {
+  assertHexByteExactLength,
   concatHex,
   extractAddress,
   extractBigInt,
@@ -148,6 +149,11 @@ export function decodeERC1155BalanceChangeTerms(
   | ERC1155BalanceChangeTerms<DecodedBytesLike<'hex'>>
   | ERC1155BalanceChangeTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    105,
+    'Invalid ERC1155BalanceChange terms: must be exactly 105 bytes',
+  );
 
   const changeType = extractNumber(hexTerms, 0, 1);
   const tokenAddressHex = extractAddress(hexTerms, 1);

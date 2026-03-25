@@ -9,10 +9,12 @@
 import type { BytesLike } from '@metamask/utils';
 
 import {
+  assertHexByteLengthMultipleOf,
   concatHex,
   extractAddress,
   extractBigInt,
   extractNumber,
+  getByteLength,
   normalizeAddress,
   toHexString,
 } from '../internalUtils';
@@ -140,8 +142,12 @@ export function decodeMultiTokenPeriodTerms(
   const hexTerms = bytesLikeToHex(terms);
 
   const configSize = 116;
-  const totalBytes = (hexTerms.length - 2) / 2; // Remove '0x' and divide by 2
-  const configCount = totalBytes / configSize;
+  assertHexByteLengthMultipleOf(
+    hexTerms,
+    configSize,
+    'Invalid MultiTokenPeriod terms: must be a multiple of 116 bytes',
+  );
+  const configCount = getByteLength(hexTerms) / configSize;
 
   const tokenConfigs: TokenPeriodConfig[] = [];
   for (let i = 0; i < configCount; i++) {

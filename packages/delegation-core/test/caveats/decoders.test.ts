@@ -383,6 +383,14 @@ describe('Terms Decoders', () => {
       const decoded = decodeERC20TokenPeriodTransferTerms(encoded);
       expect(decoded).toEqual(original);
     });
+
+    it('throws when encoded terms are not exactly 116 bytes', () => {
+      expect(() =>
+        decodeERC20TokenPeriodTransferTerms(`0x${'00'.repeat(115)}`),
+      ).toThrow(
+        'Invalid ERC20TokenPeriodTransfer terms: must be exactly 116 bytes',
+      );
+    });
   });
 
   describe('decodeERC20StreamingTerms', () => {

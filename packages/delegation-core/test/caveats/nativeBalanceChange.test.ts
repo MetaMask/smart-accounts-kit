@@ -113,5 +113,11 @@ describe('NativeBalanceChange', () => {
       expect(decoded.balance).toBe(2n);
       expect(decoded.changeType).toBe(BalanceChangeType.Decrease);
     });
+
+    it('throws when encoded terms are not exactly 53 bytes', () => {
+      expect(() =>
+        decodeNativeBalanceChangeTerms(`0x${'00'.repeat(52)}`),
+      ).toThrow('Invalid NativeBalanceChange terms: must be exactly 53 bytes');
+    });
   });
 });

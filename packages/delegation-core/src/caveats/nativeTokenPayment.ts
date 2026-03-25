@@ -9,6 +9,7 @@
 import type { BytesLike } from '@metamask/utils';
 
 import {
+  assertHexByteExactLength,
   concatHex,
   extractAddress,
   extractBigInt,
@@ -108,6 +109,11 @@ export function decodeNativeTokenPaymentTerms(
   | NativeTokenPaymentTerms<DecodedBytesLike<'hex'>>
   | NativeTokenPaymentTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    52,
+    'Invalid NativeTokenPayment terms: must be exactly 52 bytes',
+  );
 
   const recipientHex = extractAddress(hexTerms, 0);
   const amount = extractBigInt(hexTerms, 20, 32);

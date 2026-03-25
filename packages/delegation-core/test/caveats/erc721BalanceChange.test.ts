@@ -115,5 +115,11 @@ describe('ERC721BalanceChange', () => {
       const bytes = createERC721BalanceChangeTerms(original, { out: 'bytes' });
       expect(decodeERC721BalanceChangeTerms(bytes).amount).toBe(2n);
     });
+
+    it('throws when encoded terms are not exactly 73 bytes', () => {
+      expect(() =>
+        decodeERC721BalanceChangeTerms(`0x${'00'.repeat(72)}`),
+      ).toThrow('Invalid ERC721BalanceChange terms: must be exactly 73 bytes');
+    });
   });
 });

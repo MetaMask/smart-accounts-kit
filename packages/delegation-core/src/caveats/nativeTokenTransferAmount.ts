@@ -8,7 +8,11 @@
 
 import type { BytesLike } from '@metamask/utils';
 
-import { extractBigInt, toHexString } from '../internalUtils';
+import {
+  assertHexByteExactLength,
+  extractBigInt,
+  toHexString,
+} from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
@@ -74,6 +78,11 @@ export function decodeNativeTokenTransferAmountTerms(
   terms: BytesLike,
 ): NativeTokenTransferAmountTerms {
   const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    32,
+    'Invalid NativeTokenTransferAmount terms: must be exactly 32 bytes',
+  );
   const maxAmount = extractBigInt(hexTerms, 0, 32);
   return { maxAmount };
 }

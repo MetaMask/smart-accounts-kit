@@ -119,5 +119,11 @@ describe('ExactExecution', () => {
       const bytes = createExactExecutionTerms(original, { out: 'bytes' });
       expect(decodeExactExecutionTerms(bytes)).toStrictEqual(original);
     });
+
+    it('throws when encoded terms are shorter than 52 bytes', () => {
+      expect(() => decodeExactExecutionTerms(`0x${'00'.repeat(51)}`)).toThrow(
+        'Invalid ExactExecution terms: must be at least 52 bytes',
+      );
+    });
   });
 });

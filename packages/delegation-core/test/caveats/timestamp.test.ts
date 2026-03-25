@@ -372,5 +372,11 @@ describe('Timestamp', () => {
       const bytes = createTimestampTerms(original, { out: 'bytes' });
       expect(decodeTimestampTerms(bytes)).toStrictEqual(original);
     });
+
+    it('throws when encoded terms are not exactly 32 bytes', () => {
+      expect(() => decodeTimestampTerms(`0x${'00'.repeat(31)}`)).toThrow(
+        'Invalid Timestamp terms: must be exactly 32 bytes',
+      );
+    });
   });
 });

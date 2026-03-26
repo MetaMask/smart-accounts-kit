@@ -1,3 +1,4 @@
+import { Signature } from 'ox';
 import {
   parseAbiParameters,
   encodeAbiParameters,
@@ -7,7 +8,6 @@ import {
   concat,
   hexToBytes,
 } from 'viem';
-import { parseSignature } from 'webauthn-p256';
 
 export const FIELD_MODULUS =
   115792089210356248762697446949407573529996955224135760342422259061068512044369n;
@@ -96,15 +96,13 @@ export function encodeDeleGatorSignature(
 ): Hex {
   const keyIdHash = keccak256(encodePacked(['string'], [keyId]));
 
-  const parsedSignature = parseSignature(signature);
+  const { r: rValue, s: sValue } = Signature.fromHex(signature);
 
-  let { s } = parsedSignature;
+  let normalizedS = sValue;
 
-  while (s > MALLEABILITY_THRESHOLD) {
-    s = FIELD_MODULUS - s;
+  while (normalizedS > MALLEABILITY_THRESHOLD) {
+    normalizedS = FIELD_MODULUS - normalizedS;
   }
-
-  const { r } = parsedSignature;
 
   const [clientDataComponent1, clientDataComponent2] =
     splitOnChallenge(clientDataJSON);
@@ -115,8 +113,8 @@ export function encodeDeleGatorSignature(
 
   const encodedSignature = encodeAbiParameters(SIGNATURE_ABI_PARAMS, [
     keyIdHash,
-    r,
-    s,
+    rValue,
+    normalizedS,
     authenticatorData,
     userVerified,
     clientDataComponent1,

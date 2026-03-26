@@ -33,6 +33,36 @@ function isCompleteBase(
   );
 }
 
+/**
+ * Deep-clones analytics payloads, stringifying bigint values like `42n` to `"42n"`,
+ * so they can be JSON-serialized.
+ *
+ * @param batch - Batch of analytics events to normalise.
+ * @returns Normalised batch of analytics events.
+ */
+function normalise(batch: AnalyticsEventV2[]): AnalyticsEventV2[] {
+  const walk = (value: unknown): unknown => {
+    if (typeof value === 'bigint') {
+      return `${value}n`;
+    }
+    if (value === null || typeof value !== 'object') {
+      return value;
+    }
+    if (Array.isArray(value)) {
+      return value.map((item) => walk(item));
+    }
+    const result: Record<string, unknown> = {};
+    for (const [key, child] of Object.entries(
+      value as Record<string, unknown>,
+    )) {
+      result[key] = walk(child);
+    }
+    return result;
+  };
+
+  return walk(batch) as AnalyticsEventV2[];
+}
+
 export class Analytics {
   private enabled = false;
 
@@ -42,7 +72,9 @@ export class Analytics {
     const client = createClient<paths>({ baseUrl });
 
     const sendFn = async (batch: AnalyticsEventV2[]): Promise<void> => {
-      const res = await client.POST('/v2/events', { body: batch });
+      const normalisedBatch = normalise(batch);
+
+      const res = await client.POST('/v2/events', { body: normalisedBatch });
       if (res.response.status !== 200) {
         throw new Error(String(res.error));
       }

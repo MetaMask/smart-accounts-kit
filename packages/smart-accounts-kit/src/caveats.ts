@@ -101,113 +101,113 @@ export const decodeCaveat = ({
   caveat: Caveat;
   environment: SmartAccountsEnvironment;
 }): CoreCaveatConfiguration => {
-  switch (enforcer) {
-    case caveatEnforcers.AllowedCalldataEnforcer:
+  switch (enforcer.toLowerCase()) {
+    case caveatEnforcers.AllowedCalldataEnforcer?.toLowerCase():
       return { type: 'allowedCalldata', ...decodeAllowedCalldataTerms(terms) };
-    case caveatEnforcers.AllowedMethodsEnforcer:
+    case caveatEnforcers.AllowedMethodsEnforcer?.toLowerCase():
       return { type: 'allowedMethods', ...decodeAllowedMethodsTerms(terms) };
-    case caveatEnforcers.AllowedTargetsEnforcer:
+    case caveatEnforcers.AllowedTargetsEnforcer?.toLowerCase():
       return { type: 'allowedTargets', ...decodeAllowedTargetsTerms(terms) };
-    case caveatEnforcers.ArgsEqualityCheckEnforcer:
+    case caveatEnforcers.ArgsEqualityCheckEnforcer?.toLowerCase():
       return {
         type: 'argsEqualityCheck',
         ...decodeArgsEqualityCheckTerms(terms),
       };
-    case caveatEnforcers.BlockNumberEnforcer:
+    case caveatEnforcers.BlockNumberEnforcer?.toLowerCase():
       return { type: 'blockNumber', ...decodeBlockNumberTerms(terms) };
-    case caveatEnforcers.DeployedEnforcer:
+    case caveatEnforcers.DeployedEnforcer?.toLowerCase():
       return { type: 'deployed', ...decodeDeployedTerms(terms) };
-    case caveatEnforcers.ERC20BalanceChangeEnforcer:
+    case caveatEnforcers.ERC20BalanceChangeEnforcer?.toLowerCase():
       return {
         type: 'erc20BalanceChange',
         ...decodeERC20BalanceChangeTerms(terms),
       };
-    case caveatEnforcers.ERC20TransferAmountEnforcer:
+    case caveatEnforcers.ERC20TransferAmountEnforcer?.toLowerCase():
       return {
         type: 'erc20TransferAmount',
         ...decodeERC20TransferAmountTerms(terms),
       };
-    case caveatEnforcers.ERC20StreamingEnforcer:
+    case caveatEnforcers.ERC20StreamingEnforcer?.toLowerCase():
       return { type: 'erc20Streaming', ...decodeERC20StreamingTerms(terms) };
-    case caveatEnforcers.ERC721BalanceChangeEnforcer:
+    case caveatEnforcers.ERC721BalanceChangeEnforcer?.toLowerCase():
       return {
         type: 'erc721BalanceChange',
         ...decodeERC721BalanceChangeTerms(terms),
       };
-    case caveatEnforcers.ERC721TransferEnforcer:
+    case caveatEnforcers.ERC721TransferEnforcer?.toLowerCase():
       return { type: 'erc721Transfer', ...decodeERC721TransferTerms(terms) };
-    case caveatEnforcers.ERC1155BalanceChangeEnforcer:
+    case caveatEnforcers.ERC1155BalanceChangeEnforcer?.toLowerCase():
       return {
         type: 'erc1155BalanceChange',
         ...decodeERC1155BalanceChangeTerms(terms),
       };
-    case caveatEnforcers.IdEnforcer:
+    case caveatEnforcers.IdEnforcer?.toLowerCase():
       return { type: 'id', ...decodeIdTerms(terms) };
-    case caveatEnforcers.LimitedCallsEnforcer:
+    case caveatEnforcers.LimitedCallsEnforcer?.toLowerCase():
       return { type: 'limitedCalls', ...decodeLimitedCallsTerms(terms) };
-    case caveatEnforcers.NonceEnforcer:
+    case caveatEnforcers.NonceEnforcer?.toLowerCase():
       return { type: 'nonce', ...decodeNonceTerms(terms) };
-    case caveatEnforcers.TimestampEnforcer:
+    case caveatEnforcers.TimestampEnforcer?.toLowerCase():
       return { type: 'timestamp', ...decodeTimestampTerms(terms) };
-    case caveatEnforcers.ValueLteEnforcer:
+    case caveatEnforcers.ValueLteEnforcer?.toLowerCase():
       return { type: 'valueLte', ...decodeValueLteTerms(terms) };
-    case caveatEnforcers.NativeTokenTransferAmountEnforcer:
+    case caveatEnforcers.NativeTokenTransferAmountEnforcer?.toLowerCase():
       return {
         type: 'nativeTokenTransferAmount',
         ...decodeNativeTokenTransferAmountTerms(terms),
       };
-    case caveatEnforcers.NativeBalanceChangeEnforcer:
+    case caveatEnforcers.NativeBalanceChangeEnforcer?.toLowerCase():
       return {
         type: 'nativeBalanceChange',
         ...decodeNativeBalanceChangeTerms(terms),
       };
-    case caveatEnforcers.NativeTokenStreamingEnforcer:
+    case caveatEnforcers.NativeTokenStreamingEnforcer?.toLowerCase():
       return {
         type: 'nativeTokenStreaming',
         ...decodeNativeTokenStreamingTerms(terms),
       };
-    case caveatEnforcers.NativeTokenPaymentEnforcer:
+    case caveatEnforcers.NativeTokenPaymentEnforcer?.toLowerCase():
       return {
         type: 'nativeTokenPayment',
         ...decodeNativeTokenPaymentTerms(terms),
       };
-    case caveatEnforcers.RedeemerEnforcer:
+    case caveatEnforcers.RedeemerEnforcer?.toLowerCase():
       return { type: 'redeemer', ...decodeRedeemerTerms(terms) };
-    case caveatEnforcers.SpecificActionERC20TransferBatchEnforcer:
+    case caveatEnforcers.SpecificActionERC20TransferBatchEnforcer?.toLowerCase():
       return {
         type: 'specificActionERC20TransferBatch',
         ...decodeSpecificActionERC20TransferBatchTerms(terms),
       };
-    case caveatEnforcers.ERC20PeriodTransferEnforcer:
+    case caveatEnforcers.ERC20PeriodTransferEnforcer?.toLowerCase():
       return {
         type: 'erc20PeriodTransfer',
         ...decodeERC20TokenPeriodTransferTerms(terms),
       };
-    case caveatEnforcers.NativeTokenPeriodTransferEnforcer:
+    case caveatEnforcers.NativeTokenPeriodTransferEnforcer?.toLowerCase():
       return {
         type: 'nativeTokenPeriodTransfer',
         ...decodeNativeTokenPeriodTransferTerms(terms),
       };
-    case caveatEnforcers.ExactCalldataBatchEnforcer:
+    case caveatEnforcers.ExactCalldataBatchEnforcer?.toLowerCase():
       return {
         type: 'exactCalldataBatch',
         ...decodeExactCalldataBatchTerms(terms),
       };
-    case caveatEnforcers.ExactCalldataEnforcer:
+    case caveatEnforcers.ExactCalldataEnforcer?.toLowerCase():
       return { type: 'exactCalldata', ...decodeExactCalldataTerms(terms) };
-    case caveatEnforcers.ExactExecutionEnforcer:
+    case caveatEnforcers.ExactExecutionEnforcer?.toLowerCase():
       return { type: 'exactExecution', ...decodeExactExecutionTerms(terms) };
-    case caveatEnforcers.ExactExecutionBatchEnforcer:
+    case caveatEnforcers.ExactExecutionBatchEnforcer?.toLowerCase():
       return {
         type: 'exactExecutionBatch',
         ...decodeExactExecutionBatchTerms(terms),
       };
-    case caveatEnforcers.MultiTokenPeriodEnforcer:
+    case caveatEnforcers.MultiTokenPeriodEnforcer?.toLowerCase():
       return {
         type: 'multiTokenPeriod',
         ...decodeMultiTokenPeriodTerms(terms),
       };
-    case caveatEnforcers.OwnershipTransferEnforcer:
+    case caveatEnforcers.OwnershipTransferEnforcer?.toLowerCase():
       return {
         type: 'ownershipTransfer',
         ...decodeOwnershipTransferTerms(terms),

@@ -134,6 +134,7 @@
     "@metamask/delegation-core": "^0.4.0",
     "@metamask/delegation-deployments": "^0.17.0",
     "buffer": "^6.0.3",
+    "openapi-fetch": "^0.13.5",
     "webauthn-p256": "^0.0.10"
   },
   "devDependencies": {
@@ -156,7 +157,6 @@
     "eslint-plugin-n": "^17.10.3",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-promise": "^7.1.0",
-    "openapi-fetch": "^0.13.5",
     "prettier": "^3.5.3",
     "sinon": "^18.0.0",
     "ts-node": "^10.9.2",
@@ -169,7 +169,6 @@
     "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "openapi-fetch": "^0.13.5",
     "viem": "^2.31.4"
   }
 }

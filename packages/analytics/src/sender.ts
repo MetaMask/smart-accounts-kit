@@ -72,7 +72,7 @@ class Sender<T> {
     try {
       await this.sendFn(current);
       this.failureCount = 0;
-    } catch (error) {
+    } catch {
       this.failureCount += 1;
       if (this.failureCount >= this.maxFailureCount) {
         this.#isDisabled = true;

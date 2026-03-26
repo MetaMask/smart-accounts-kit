@@ -829,7 +829,6 @@ __metadata:
     vitest: "npm:^3.2.4"
     webauthn-p256: "npm:^0.0.10"
   peerDependencies:
-    openapi-fetch: ^0.13.5
     viem: ^2.31.4
   languageName: unknown
   linkType: soft

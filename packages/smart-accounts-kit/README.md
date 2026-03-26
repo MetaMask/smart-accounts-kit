@@ -19,16 +19,16 @@ The MetaMask Smart Accounts Kit is a [Viem](https://viem.sh)-based collection of
 Yarn:
 
 ```sh
-yarn add @metamask/smart-accounts-kit viem openapi-fetch
+yarn add @metamask/smart-accounts-kit viem
 ```
 
 Npm:
 
 ```sh
-npm install @metamask/smart-accounts-kit viem openapi-fetch
+npm install @metamask/smart-accounts-kit viem
 ```
 
-`viem` and [`openapi-fetch`](https://github.com/drwpow/openapi-typescript/tree/main/packages/openapi-fetch) are peer dependencies; install compatible versions alongside the kit.
+`viem` is a peer dependency; install a compatible version alongside the kit.
 
 ## Overview
 

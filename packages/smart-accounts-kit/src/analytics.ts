@@ -15,10 +15,21 @@ import { version as sdk_version } from '../package.json';
  * @returns True when DNT is enabled.
  */
 function isAnalyticsDisabled(): boolean {
-  let dntIndicator: string | undefined;
   /* eslint-disable no-restricted-globals */
+  let env: NodeJS.ProcessEnv | undefined;
+  if (typeof process !== 'undefined') {
+    env = process.env;
+  }
+
+  // disable analytics in CI
+  if (env?.CI === 'true') {
+    return true;
+  }
+
+  // disable analytics if any DNT indicator is set
+  let dntIndicator: string | undefined;
   if (typeof window === 'undefined') {
-    dntIndicator = process?.env?.DO_NOT_TRACK;
+    dntIndicator = env?.DO_NOT_TRACK;
   } else {
     dntIndicator =
       navigator.doNotTrack ?? (window as { doNotTrack?: string }).doNotTrack;

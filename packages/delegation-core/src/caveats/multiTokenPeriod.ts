@@ -9,7 +9,7 @@
 import type { BytesLike } from '@metamask/utils';
 
 import {
-  assertHexByteLengthMultipleOf,
+  assertHexByteLengthAtLeastOneMultipleOf,
   concatHex,
   extractAddress,
   extractBigInt,
@@ -142,7 +142,7 @@ export function decodeMultiTokenPeriodTerms(
   const hexTerms = bytesLikeToHex(terms);
 
   const configSize = 116;
-  assertHexByteLengthMultipleOf(
+  assertHexByteLengthAtLeastOneMultipleOf(
     hexTerms,
     configSize,
     'Invalid MultiTokenPeriod terms: must be a multiple of 116 bytes',

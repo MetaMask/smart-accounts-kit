@@ -9,7 +9,7 @@
 import type { BytesLike } from '@metamask/utils';
 
 import {
-  assertHexByteLengthMultipleOf,
+  assertHexByteLengthAtLeastOneMultipleOf,
   concatHex,
   extractAddress,
   getByteLength,
@@ -106,7 +106,7 @@ export function decodeRedeemerTerms(
   const hexTerms = bytesLikeToHex(terms);
 
   const addressSize = 20;
-  assertHexByteLengthMultipleOf(
+  assertHexByteLengthAtLeastOneMultipleOf(
     hexTerms,
     addressSize,
     'Invalid redeemers: must be a multiple of 20',

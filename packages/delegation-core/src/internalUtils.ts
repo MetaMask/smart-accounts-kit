@@ -226,14 +226,15 @@ export function assertHexByteExactLength(
  * @param hexTerms - `0x`-prefixed hex string (encoded caveat terms).
  * @param unitBytes - Payload length must be divisible by this many bytes.
  * @param errorMessage - Message for the thrown `Error` when length is not a multiple.
- * @throws Error if the payload length is not a multiple of `unitBytes`.
+ * @throws Error if the payload length is not (at least one) a multiple of `unitBytes`.
  */
-export function assertHexByteLengthMultipleOf(
+export function assertHexByteLengthAtLeastOneMultipleOf(
   hexTerms: Hex,
   unitBytes: number,
   errorMessage: string,
 ): void {
-  if (getByteLength(hexTerms) % unitBytes !== 0) {
+  const byteLength = getByteLength(hexTerms);
+  if (byteLength === 0 || byteLength % unitBytes !== 0) {
     throw new Error(errorMessage);
   }
 }

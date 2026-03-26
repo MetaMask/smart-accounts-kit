@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import {
   assertHexBytesMinLength,
   assertHexByteExactLength,
-  assertHexByteLengthMultipleOf,
+  assertHexByteLengthAtLeastOneMultipleOf,
   concatHex,
   extractAddress,
   extractBigInt,
@@ -42,16 +42,30 @@ describe('internal utils', () => {
     });
   });
 
-  describe('assertHexByteLengthMultipleOf', () => {
+  describe('assertHexByteLengthAtLeastOneMultipleOf', () => {
     it('does not throw when length is a multiple', () => {
       expect(() =>
-        assertHexByteLengthMultipleOf(`0x${'00'.repeat(40)}`, 20, 'err'),
+        assertHexByteLengthAtLeastOneMultipleOf(
+          `0x${'00'.repeat(40)}`,
+          20,
+          'err',
+        ),
       ).not.toThrow();
     });
 
     it('throws when length is not a multiple', () => {
       expect(() =>
-        assertHexByteLengthMultipleOf(`0x${'00'.repeat(19)}`, 20, 'bad'),
+        assertHexByteLengthAtLeastOneMultipleOf(
+          `0x${'00'.repeat(19)}`,
+          20,
+          'bad',
+        ),
+      ).toThrow('bad');
+    });
+
+    it('throws when length is 0', () => {
+      expect(() =>
+        assertHexByteLengthAtLeastOneMultipleOf(`0x`, 20, 'bad'),
       ).toThrow('bad');
     });
   });

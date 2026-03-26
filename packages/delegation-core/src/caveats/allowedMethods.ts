@@ -9,7 +9,7 @@
 import { bytesToHex, isHexString, type BytesLike } from '@metamask/utils';
 
 import {
-  assertHexByteLengthMultipleOf,
+  assertHexByteLengthAtLeastOneMultipleOf,
   concatHex,
   extractHex,
   getByteLength,
@@ -121,7 +121,7 @@ export function decodeAllowedMethodsTerms(
   const hexTerms = bytesLikeToHex(terms);
 
   const selectorSize = 4;
-  assertHexByteLengthMultipleOf(
+  assertHexByteLengthAtLeastOneMultipleOf(
     hexTerms,
     selectorSize,
     'Invalid selectors: must be a multiple of 4',

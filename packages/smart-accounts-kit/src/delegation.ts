@@ -313,7 +313,7 @@ export const createOpenDelegation = (
 ): Delegation => {
   const caveats = resolveCaveats(options);
 
-  trackSmartAccountsKitFunctionCall('createDelegation', {
+  trackSmartAccountsKitFunctionCall('createOpenDelegation', {
     hasParentDelegation: options.parentDelegation !== undefined,
     scope: options.scope,
     caveatNames: getCaveatNames({

@@ -81,7 +81,7 @@ describe('AllowedTargets', () => {
 
     it('throws when encoded terms length is not a multiple of 20 bytes', () => {
       // 20 bytes + 19 bytes
-      const thirtyNineBytes = `0x${'00'.repeat(39)}`;
+      const thirtyNineBytes = `0x${'00'.repeat(39)}` as const;
       expect(() => decodeAllowedTargetsTerms(thirtyNineBytes)).toThrow(
         'Invalid targets: must be a multiple of 20',
       );

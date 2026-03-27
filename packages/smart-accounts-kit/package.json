@@ -1,6 +1,6 @@
 {
   "name": "@metamask/smart-accounts-kit",
-  "version": "0.4.0-beta.2",
+  "version": "1.0.0",
   "type": "module",
   "description": "Toolkit for managing and interacting with MetaMask Smart Accounts, built on Viem",
   "license": "(MIT-0 OR Apache-2.0)",
@@ -125,9 +125,9 @@
   },
   "dependencies": {
     "@metamask/7715-permission-types": "^0.5.0",
-    "@metamask/delegation-abis": "^0.12.0-beta.0",
-    "@metamask/delegation-core": "^0.4.0",
-    "@metamask/delegation-deployments": "^0.17.0",
+    "@metamask/delegation-abis": "^1.0.0",
+    "@metamask/delegation-core": "^1.0.0",
+    "@metamask/delegation-deployments": "^1.0.0",
     "buffer": "^6.0.3",
     "ox": "0.8.1"
   },

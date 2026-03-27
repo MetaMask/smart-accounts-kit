@@ -50,7 +50,7 @@ export type { ExecutionStruct, CreateExecutionArgs } from './executions';
 
 export type { Caveats } from './caveatBuilder';
 
-export { createCaveat, decodeCaveat } from './caveats';
+export { createCaveat } from './caveats';
 
 export { BalanceChangeType } from './caveatBuilder/types';
 

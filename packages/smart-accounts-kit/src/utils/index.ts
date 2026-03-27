@@ -1,8 +1,11 @@
+export { decodeCaveat } from '../caveats';
+
 export {
   encodeDelegations,
   decodeDelegations,
   encodeDelegation,
   decodeDelegation,
+  hashDelegation,
   toDelegationStruct,
   toDelegation,
   DELEGATION_ARRAY_ABI_TYPE,
@@ -11,8 +14,6 @@ export {
   DELEGATION_TYPEHASH,
   SIGNABLE_DELEGATION_TYPED_DATA,
 } from '../delegation';
-
-export { hashDelegation } from '../delegation';
 
 export type { DelegationStruct } from '../delegation';
 

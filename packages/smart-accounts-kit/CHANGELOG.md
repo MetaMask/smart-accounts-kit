@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- Migrate from webauthn-p256 to 0x p256 module (ox) ([#193](https://github.com/metamask/smart-accounts-kit/pull/193))
+- Make `signer` param optional in `toMetaMaskSmartAccount` ([#178](https://github.com/metamask/smart-accounts-kit/pull/178))
+
 ## [0.4.0-beta.2]
 
 ### Added

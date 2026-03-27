@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import nock from 'nock';
-/* eslint-disable-next-line id-length */
-import * as t from 'vitest';
+import { describe, beforeEach, afterAll, it, expect } from 'vitest';
 
 import { Analytics } from '.';
 import {
@@ -10,19 +9,19 @@ import {
 } from './environment';
 import type { AnalyticsEventV2 } from './schema';
 
-t.describe('Analytics', () => {
+describe('Analytics', () => {
   let analytics: Analytics;
 
-  t.beforeEach(() => {
+  beforeEach(() => {
     resetAnalyticsSessionForTests();
   });
 
-  t.afterAll(() => {
+  afterAll(() => {
     /* eslint-disable-next-line import-x/no-named-as-default-member */
     nock.cleanAll();
   });
 
-  t.it('should do nothing when disabled', async () => {
+  it('should do nothing when disabled', async () => {
     let captured: AnalyticsEventV2[] = [];
     const scope = nock('http://127.0.0.1')
       .post('/v2/events', (body) => {
@@ -45,12 +44,12 @@ t.describe('Analytics', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 300));
 
-    t.expect(captured).toEqual([]);
+    expect(captured).toEqual([]);
 
     scope.done();
   });
 
-  t.it('should track initialization when enabled', async () => {
+  it('should track initialization when enabled', async () => {
     let captured: AnalyticsEventV2[] = [];
     const scope = nock('http://127.0.0.2')
       .post('/v2/events', (body) => {
@@ -76,7 +75,7 @@ t.describe('Analytics', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 300));
 
-    t.expect(captured).toEqual([
+    expect(captured).toEqual([
       {
         namespace: 'metamask/smart-accounts-kit',
         event_name: 'smart_accounts_kit_initialized',
@@ -92,89 +91,83 @@ t.describe('Analytics', () => {
     scope.done();
   });
 
-  t.it(
-    'should track using session base only when trackInitialized has no args',
-    async () => {
-      let captured: AnalyticsEventV2[] = [];
-      const scope = nock('http://127.0.0.3')
-        .post('/v2/events', (body) => {
-          captured = body;
-          return true;
-        })
-        .reply(
-          200,
-          { status: 'success' },
-          { 'Content-Type': 'application/json' },
-        );
+  it('should track using session base only when trackInitialized has no args', async () => {
+    let captured: AnalyticsEventV2[] = [];
+    const scope = nock('http://127.0.0.3')
+      .post('/v2/events', (body) => {
+        captured = body;
+        return true;
+      })
+      .reply(
+        200,
+        { status: 'success' },
+        { 'Content-Type': 'application/json' },
+      );
 
-      getInitializationContext({
-        sdk_version: '2.0.0',
-        anon_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-      });
-      analytics = new Analytics('http://127.0.0.3');
-      analytics.enable();
-      analytics.trackInitialized();
+    getInitializationContext({
+      sdk_version: '2.0.0',
+      anon_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    });
+    analytics = new Analytics('http://127.0.0.3');
+    analytics.enable();
+    analytics.trackInitialized();
 
-      await new Promise((resolve) => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-      t.expect(captured).toEqual([
-        {
-          namespace: 'metamask/smart-accounts-kit',
-          event_name: 'smart_accounts_kit_initialized',
-          properties: {
-            sdk_version: '2.0.0',
-            anon_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-            platform: 'nodejs',
-          },
+    expect(captured).toEqual([
+      {
+        namespace: 'metamask/smart-accounts-kit',
+        event_name: 'smart_accounts_kit_initialized',
+        properties: {
+          sdk_version: '2.0.0',
+          anon_id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+          platform: 'nodejs',
         },
-      ]);
+      },
+    ]);
 
-      scope.done();
-    },
-  );
+    scope.done();
+  });
 
-  t.it(
-    'merges setGlobalProperty into session before trackInitialized',
-    async () => {
-      let captured: AnalyticsEventV2[] = [];
-      const scope = nock('http://127.0.0.4')
-        .post('/v2/events', (body) => {
-          captured = body;
-          return true;
-        })
-        .reply(
-          200,
-          { status: 'success' },
-          { 'Content-Type': 'application/json' },
-        );
+  it('merges setGlobalProperty into session before trackInitialized', async () => {
+    let captured: AnalyticsEventV2[] = [];
+    const scope = nock('http://127.0.0.4')
+      .post('/v2/events', (body) => {
+        captured = body;
+        return true;
+      })
+      .reply(
+        200,
+        { status: 'success' },
+        { 'Content-Type': 'application/json' },
+      );
 
-      getInitializationContext({
-        sdk_version: '1.0.0',
-        anon_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
-      });
-      analytics = new Analytics('http://127.0.0.4');
-      analytics.enable();
-      analytics.setGlobalProperty('sdk_version', '3.0.0');
-      analytics.trackInitialized();
+    getInitializationContext({
+      sdk_version: '1.0.0',
+      anon_id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+    });
+    analytics = new Analytics('http://127.0.0.4');
+    analytics.enable();
+    analytics.setGlobalProperty('sdk_version', '3.0.0');
+    analytics.trackInitialized();
 
-      await new Promise((resolve) => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-      t.expect(captured[0]?.properties?.sdk_version).toBe('3.0.0');
+    expect(captured[0]?.properties?.sdk_version).toBe('3.0.0');
 
-      scope.done();
-    },
-  );
+    scope.done();
+  });
 
-  t.it('throws when session was never started', () => {
+  it('throws when session was never started', () => {
     resetAnalyticsSessionForTests();
     analytics = new Analytics('http://127.0.0.5');
     analytics.enable();
-    t.expect(() => analytics.trackInitialized()).toThrow(
+    expect(() => analytics.trackInitialized()).toThrow(
       /getInitializationContext/iu,
     );
   });
 
-  t.it('should track SDK function call when enabled', async () => {
+  it('should track SDK function call when enabled', async () => {
     let captured: AnalyticsEventV2[] = [];
     const scope = nock('http://127.0.0.6')
       .post('/v2/events', (body) => {
@@ -197,7 +190,7 @@ t.describe('Analytics', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 300));
 
-    t.expect(captured).toEqual([
+    expect(captured).toEqual([
       {
         namespace: 'metamask/smart-accounts-kit',
         event_name: 'smart_accounts_kit_function_called',
@@ -214,11 +207,11 @@ t.describe('Analytics', () => {
     scope.done();
   });
 
-  t.it('throws when trackSdkFunctionCall session was never started', () => {
+  it('throws when trackSdkFunctionCall session was never started', () => {
     resetAnalyticsSessionForTests();
     analytics = new Analytics('http://127.0.0.7');
     analytics.enable();
-    t.expect(() => analytics.trackSdkFunctionCall('x')).toThrow(
+    expect(() => analytics.trackSdkFunctionCall('x')).toThrow(
       /getInitializationContext/iu,
     );
   });

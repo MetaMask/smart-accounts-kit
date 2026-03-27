@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0]
+
 ### Uncategorized
 
 - Migrate from webauthn-p256 to 0x p256 module (ox) ([#193](https://github.com/metamask/smart-accounts-kit/pull/193))
@@ -93,7 +95,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.2...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.0.0...HEAD
+[1.0.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.2...@metamask/smart-accounts-kit@1.0.0
 [0.4.0-beta.2]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.1...@metamask/smart-accounts-kit@0.4.0-beta.2
 [0.4.0-beta.1]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.0...@metamask/smart-accounts-kit@0.4.0-beta.1
 [0.4.0-beta.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.3.0...@metamask/smart-accounts-kit@0.4.0-beta.0

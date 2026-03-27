@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0]
 
-### Uncategorized
+### Changed
 
-- Align linting scripts, add turbo lint:fix task ([#149](https://github.com/metamask/smart-accounts-kit/pull/149))
+- Bumped from `0.12.0-beta.0` to `1.0.0` ([#194](https://github.com/metamask/smart-accounts-kit/pull/194))
 
 ## [0.12.0-beta.0]
 

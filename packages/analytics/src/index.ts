@@ -14,7 +14,7 @@ import type {
   SmartAccountsKitBaseProperties,
   paths,
 } from './schema';
-import Sender from './sender';
+import { Sender } from './sender';
 
 /**
  * @param value - Candidate merged base properties.

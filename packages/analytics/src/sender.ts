@@ -68,7 +68,7 @@ class Sender<T> {
     }
 
     this.#isSending = true;
-    const current = [...this.#batch.slice(0, this.#batchSize)];
+    const current = this.#batch.slice(0, this.#batchSize);
     this.#batch = this.#batch.slice(this.#batchSize);
 
     try {
@@ -100,4 +100,4 @@ class Sender<T> {
   }
 }
 
-export default Sender;
+export { Sender }

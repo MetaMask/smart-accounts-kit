@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-/* eslint-disable no-restricted-syntax */
+
 type SenderOptions<T> = {
   batchSize: number;
   baseTimeoutMs: number;
   maxFailureCount: number;
+  maxTimeoutMs: number;
   sendFn: (batch: T[]) => Promise<void>;
 };
 
@@ -12,88 +13,89 @@ type SenderOptions<T> = {
  * with exponential backoff on errors.
  */
 class Sender<T> {
+  readonly #sendFn: (batch: T[]) => Promise<void>;
+
+  readonly #batchSize: number;
+
+  readonly #baseTimeoutMs: number;
+
+  readonly #maxFailureCount: number;
+
+  readonly #maxTimeoutMs: number;
+
   #isDisabled = false;
 
-  private readonly sendFn: (batch: T[]) => Promise<void>;
+  #batch: T[] = [];
 
-  private batch: T[] = [];
+  #failureCount: number = 0;
 
-  private readonly batchSize: number;
+  #timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  private readonly baseTimeoutMs: number;
-
-  private readonly maxFailureCount: number;
-
-  private failureCount: number = 0;
-
-  private readonly maxTimeoutMs: number = 30_000;
-
-  private timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-  private isSending: boolean = false;
+  #isSending: boolean = false;
 
   constructor(options: SenderOptions<T>) {
-    this.batchSize = options.batchSize;
-    this.baseTimeoutMs = options.baseTimeoutMs;
-    this.maxFailureCount = options.maxFailureCount;
-    this.sendFn = options.sendFn;
+    this.#batchSize = options.batchSize;
+    this.#baseTimeoutMs = options.baseTimeoutMs;
+    this.#maxFailureCount = options.maxFailureCount;
+    this.#sendFn = options.sendFn;
+    this.#maxTimeoutMs = options.maxTimeoutMs;
   }
 
   public enqueue(item: T): void {
     if (this.#isDisabled) {
       return;
     }
-    this.batch.push(item);
-    this.schedule();
+    this.#batch.push(item);
+    this.#schedule();
   }
 
-  private schedule(): void {
+  #schedule(): void {
     if (this.#isDisabled) {
       return;
     }
-    if (this.batch.length > 0 && !this.timeoutId) {
-      this.timeoutId = setTimeout(() => {
-        this.timeoutId = null;
+    if (this.#batch.length > 0 && !this.#timeoutId) {
+      this.#timeoutId = setTimeout(() => {
+        this.#timeoutId = null;
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        this.flush();
-      }, this.getTimeoutMs());
+        this.#flush();
+      }, this.#getTimeoutMs());
     }
   }
 
-  private async flush(): Promise<void> {
-    if (this.#isDisabled || this.isSending || this.batch.length === 0) {
+  async #flush(): Promise<void> {
+    if (this.#isDisabled || this.#isSending || this.#batch.length === 0) {
       return;
     }
 
-    this.isSending = true;
-    const current = [...this.batch.slice(0, this.batchSize)];
-    this.batch = this.batch.slice(this.batchSize);
+    this.#isSending = true;
+    const current = [...this.#batch.slice(0, this.#batchSize)];
+    this.#batch = this.#batch.slice(this.#batchSize);
 
     try {
-      await this.sendFn(current);
-      this.failureCount = 0;
+      await this.#sendFn(current);
+      this.#failureCount = 0;
     } catch {
-      this.failureCount += 1;
-      if (this.failureCount >= this.maxFailureCount) {
+      this.#failureCount += 1;
+      if (this.#failureCount >= this.#maxFailureCount) {
         this.#isDisabled = true;
-        this.batch = [];
-        if (this.timeoutId !== null) {
-          clearTimeout(this.timeoutId);
-          this.timeoutId = null;
+        this.#batch = [];
+        if (this.#timeoutId !== null) {
+          clearTimeout(this.#timeoutId);
+          this.#timeoutId = null;
         }
       } else {
-        this.batch = [...current, ...this.batch];
+        this.#batch = [...current, ...this.#batch];
       }
     } finally {
-      this.isSending = false;
-      this.schedule();
+      this.#isSending = false;
+      this.#schedule();
     }
   }
 
-  private getTimeoutMs(): number {
+  #getTimeoutMs(): number {
     return Math.min(
-      this.baseTimeoutMs * 2 ** this.failureCount,
-      this.maxTimeoutMs,
+      this.#baseTimeoutMs * 2 ** this.#failureCount,
+      this.#maxTimeoutMs,
     );
   }
 }

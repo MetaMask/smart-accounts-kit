@@ -80,10 +80,12 @@ export class Analytics {
       }
     };
 
+    // timeout maximums are kept low, to avoid failing analytics requests keeping the process alive for too long
     this.sender = new Sender({
       batchSize: 100,
-      baseTimeoutMs: 200,
-      maxFailureCount: 10,
+      baseTimeoutMs: 100,
+      maxFailureCount: 3,
+      maxTimeoutMs: 500,
       sendFn,
     });
   }

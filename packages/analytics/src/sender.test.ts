@@ -15,6 +15,7 @@ t.describe('Sender', () => {
       batchSize: 2,
       baseTimeoutMs: 50,
       maxFailureCount: 10,
+      maxTimeoutMs: 30_000,
       sendFn,
     });
   });
@@ -59,6 +60,7 @@ t.describe('Sender', () => {
         batchSize: 100,
         baseTimeoutMs: 50,
         maxFailureCount: 100,
+        maxTimeoutMs: 30_000,
         sendFn,
       });
 
@@ -94,6 +96,7 @@ t.describe('Sender', () => {
         batchSize: 100,
         baseTimeoutMs: 50,
         maxFailureCount: 2,
+        maxTimeoutMs: 30_000,
         sendFn,
       });
 
@@ -121,6 +124,7 @@ t.describe('Sender', () => {
       batchSize: 100,
       baseTimeoutMs: 1000,
       maxFailureCount: 100,
+      maxTimeoutMs: 30_000,
       sendFn,
     });
 

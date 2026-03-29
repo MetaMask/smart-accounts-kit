@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [23.0.0]
+
+## [22.0.0]
+
 ## [21.0.0]
 
 ## [20.0.0]
@@ -37,7 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [7.0.0]
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/delegator-sdk-monorepo@21.0.0...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/delegator-sdk-monorepo@23.0.0...HEAD
+[23.0.0]: https://github.com/metamask/smart-accounts-kit/compare/delegator-sdk-monorepo@22.0.0...delegator-sdk-monorepo@23.0.0
+[22.0.0]: https://github.com/metamask/smart-accounts-kit/compare/delegator-sdk-monorepo@21.0.0...delegator-sdk-monorepo@22.0.0
 [21.0.0]: https://github.com/metamask/smart-accounts-kit/compare/delegator-sdk-monorepo@20.0.0...delegator-sdk-monorepo@21.0.0
 [20.0.0]: https://github.com/metamask/smart-accounts-kit/compare/delegator-sdk-monorepo@19.0.0...delegator-sdk-monorepo@20.0.0
 [19.0.0]: https://github.com/metamask/smart-accounts-kit/compare/delegator-sdk-monorepo@18.0.0...delegator-sdk-monorepo@19.0.0

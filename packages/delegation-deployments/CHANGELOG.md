@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Uncategorized
+## [Added]
 
-- Resolve yarn peer dependency warnings ([#123](https://github.com/metamask/smart-accounts-kit/pull/123))
+- Add chain deployment for Citrea mainnet ([#180](https://github.com/MetaMask/smart-accounts-kit/pull/180))
+
+## [1.0.0]
+
+### Changed
+
+- Bumped from `0.17.0` to `1.0.0` ([#194](https://github.com/metamask/smart-accounts-kit/pull/194))
+
+## [0.17.0]
 
 ### Added
 
-- Add chain deployment for Celo and Ronin mainnet and testnets ([#173](https://github.com/MetaMask/smart-accounts-kit/pull/173))
-- Add chain deployment for Citrea mainnet ([#180](https://github.com/MetaMask/smart-accounts-kit/pull/180))
+- Tempo mainnet and Tempo Moderato testnet ([#177](https://github.com/metamask/smart-accounts-kit/pull/177))
+- Celo and Ronin mainnet and testnets ([#173](https://github.com/MetaMask/smart-accounts-kit/pull/173))
 
 ## [0.16.0]
 
@@ -48,7 +56,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add deployments for Sei mainnet ([#84](https://github.com/metamask/smart-accounts-kit/pull/84))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.16.0...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.0.0...HEAD
+[1.0.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.17.0...@metamask/delegation-deployments@1.0.0
+[0.17.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.16.0...@metamask/delegation-deployments@0.17.0
 [0.16.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.15.0...@metamask/delegation-deployments@0.16.0
 [0.15.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.14.0...@metamask/delegation-deployments@0.15.0
 [0.14.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.13.0...@metamask/delegation-deployments@0.14.0

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [Added]
+### Added
 
 - Add chain deployment for Citrea mainnet ([#180](https://github.com/MetaMask/smart-accounts-kit/pull/180))
 - Add chain deployment for Mantle mainnet and Mantle Sepolia ([#197](https://github.com/MetaMask/smart-accounts-kit/pull/197))

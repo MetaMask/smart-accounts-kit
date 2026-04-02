@@ -254,7 +254,6 @@ const citreaMainnetChain: Chain = {
   },
 };
 
-
 const mantleMainnetChain: Chain = {
   id: 5000,
   name: 'Mantle Mainnet',
@@ -267,9 +266,8 @@ const mantleMainnetChain: Chain = {
     name: 'Mantle',
     symbol: 'MNT',
     decimals: 18,
-  }
+  },
 };
-
 
 const mantleSepoliaChain: Chain = {
   id: 5003,
@@ -283,7 +281,7 @@ const mantleSepoliaChain: Chain = {
     name: 'Mantle',
     symbol: 'MNT',
     decimals: 18,
-  }
+  },
 };
 
 export const chains = {

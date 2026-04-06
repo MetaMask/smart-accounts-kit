@@ -49,8 +49,6 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "changelog:update": "../../scripts/update-changelog.sh @metamask/smart-accounts-kit-analytics",
-    "changelog:validate": "../../scripts/validate-changelog.sh @metamask/smart-accounts-kit-analytics",
     "clean": "rm -rf dist",
     "lint": "yarn lint:eslint",
     "lint:eslint": "eslint . --cache --ext js,ts",

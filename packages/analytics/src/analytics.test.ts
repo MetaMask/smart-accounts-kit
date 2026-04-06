@@ -1,6 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import nock from 'nock';
-import { describe, beforeEach, afterAll, it, expect } from 'vitest';
+import {
+  describe,
+  beforeEach,
+  afterEach,
+  afterAll,
+  it,
+  expect,
+  vi,
+} from 'vitest';
 
 import { Analytics } from '.';
 import {
@@ -9,11 +17,28 @@ import {
 } from './environment';
 import type { AnalyticsEventV2 } from './schema';
 
+/** The same as `Sender` `baseTimeoutMs` in the `Analytics` constructor (`index.ts`). */
+const ANALYTICS_BASE_TIMEOUT_MS = 100;
+
+/**
+ * Runs the `Sender` debounce timer (fake) then yields so the real `fetch` + nock can finish
+ * (the `setTimeout` callback fires `Sender`'s async flush without awaiting it).
+ */
+async function flushAnalyticsSender(): Promise<void> {
+  await vi.advanceTimersByTimeAsync(ANALYTICS_BASE_TIMEOUT_MS);
+  await new Promise<void>((resolve) => resolve());
+}
+
 describe('Analytics', () => {
   let analytics: Analytics;
 
   beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
     resetAnalyticsSessionForTests();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   afterAll(() => {
@@ -41,8 +66,6 @@ describe('Analytics', () => {
     });
     analytics = new Analytics('http://127.0.0.1');
     analytics.trackInitialized();
-
-    await new Promise((resolve) => setTimeout(resolve, 300));
 
     expect(captured).toEqual([]);
 
@@ -73,7 +96,7 @@ describe('Analytics', () => {
       domain: 'example.com',
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await flushAnalyticsSender();
 
     expect(captured).toEqual([
       {
@@ -112,7 +135,7 @@ describe('Analytics', () => {
     analytics.enable();
     analytics.trackInitialized();
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await flushAnalyticsSender();
 
     expect(captured).toEqual([
       {
@@ -151,7 +174,7 @@ describe('Analytics', () => {
     analytics.setGlobalProperty('sdk_version', '3.0.0');
     analytics.trackInitialized();
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await flushAnalyticsSender();
 
     expect(captured[0]?.properties?.sdk_version).toBe('3.0.0');
 
@@ -188,7 +211,7 @@ describe('Analytics', () => {
     analytics.enable();
     analytics.trackSdkFunctionCall('testFn', { foo: 'bar' });
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await flushAnalyticsSender();
 
     expect(captured).toEqual([
       {

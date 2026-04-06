@@ -10,34 +10,39 @@ import {
 import { version as sdk_version } from '../package.json';
 
 /**
- * Whether Do Not Track (browser or `DO_NOT_TRACK` in Node) disables analytics.
+ * Whether CI or Do Not Track disables analytics.
  *
- * @returns True when DNT is enabled.
+ * Collects every available indicator (`CI` when `process.env` exists,
+ * `DO_NOT_TRACK` when `process.env` exists, `navigator.doNotTrack` and
+ * `window.doNotTrack` when `window` exists) and disables if any value
+ * is `1`, `yes`, or `true`.
+ *
+ * @returns True when analytics should not run.
  */
 function isAnalyticsDisabled(): boolean {
+  const dntValues: (string | undefined | null)[] = [];
+
   /* eslint-disable no-restricted-globals */
-  let env: NodeJS.ProcessEnv | undefined;
   if (typeof process !== 'undefined') {
-    env = process.env;
+    dntValues.push(process.env?.CI);
+
+    dntValues.push(process.env?.DO_NOT_TRACK);
   }
 
-  // disable analytics in CI
-  if (env?.CI === 'true') {
-    return true;
+  if (typeof navigator !== 'undefined') {
+    dntValues.push(navigator.doNotTrack);
   }
 
-  // disable analytics if any DNT indicator is set
-  let dntIndicator: string | undefined;
-  if (typeof window === 'undefined') {
-    dntIndicator = env?.DO_NOT_TRACK;
-  } else {
-    dntIndicator =
-      navigator.doNotTrack ?? (window as { doNotTrack?: string }).doNotTrack;
+  if (typeof window !== 'undefined') {
+    dntValues.push((window as { doNotTrack?: string }).doNotTrack);
   }
   /* eslint-enable no-restricted-globals */
 
-  return (
-    dntIndicator === '1' || dntIndicator === 'yes' || dntIndicator === 'true'
+  return dntValues.some(
+    (dntValue) =>
+      dntValue === '1' ||
+      dntValue?.toLowerCase() === 'yes' ||
+      dntValue?.toLowerCase() === 'true',
   );
 }
 

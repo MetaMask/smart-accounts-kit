@@ -80,12 +80,12 @@ export class Analytics {
       }
     };
 
-    // timeout maximums are kept low, to avoid failing analytics requests keeping the process alive for too long
+    // timeouts are unref'd to avoid keeping the process alive. This allows us to use longer, and more timeouts.
     this.sender = new Sender({
       batchSize: 100,
       baseTimeoutMs: 100,
-      maxFailureCount: 3,
-      maxTimeoutMs: 500,
+      maxFailureCount: 6,
+      maxTimeoutMs: 10_000,
       sendFn,
     });
   }

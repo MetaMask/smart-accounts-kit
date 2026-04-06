@@ -54,11 +54,20 @@ class Sender<T> {
       return;
     }
     if (this.#batch.length > 0 && !this.#timeoutId) {
-      this.#timeoutId = setTimeout(() => {
+      const { isRetry, timeoutMs } = this.#getTimeout();
+
+      const timeout = setTimeout(() => {
         this.#timeoutId = null;
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         this.#flush();
-      }, this.#getTimeoutMs());
+      }, timeoutMs);
+
+      if (isRetry && timeout.unref) {
+        // unref retries - the first timeout should always run, to avoid unnecessarily losing events.
+        timeout.unref();
+      }
+
+      this.#timeoutId = timeout;
     }
   }
 
@@ -92,11 +101,13 @@ class Sender<T> {
     }
   }
 
-  #getTimeoutMs(): number {
-    return Math.min(
+  #getTimeout(): { isRetry: boolean; timeoutMs: number } {
+    const isRetry = this.#failureCount > 0;
+    const timeoutMs = Math.min(
       this.#baseTimeoutMs * 2 ** this.#failureCount,
       this.#maxTimeoutMs,
     );
+    return { isRetry, timeoutMs };
   }
 }
 

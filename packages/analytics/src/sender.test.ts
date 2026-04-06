@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-
 import type { Mock } from 'vitest';
 import { describe, beforeEach, afterEach, it, vi, expect } from 'vitest';
 

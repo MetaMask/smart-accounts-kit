@@ -100,4 +100,4 @@ class Sender<T> {
   }
 }
 
-export { Sender }
+export { Sender };

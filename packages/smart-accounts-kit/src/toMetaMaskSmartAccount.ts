@@ -56,6 +56,7 @@ export async function toMetaMaskSmartAccount<
     client,
     client: { chain },
     implementation,
+    nonceKeyManager,
   } = params;
 
   if (!chain) {
@@ -229,6 +230,7 @@ export async function toMetaMaskSmartAccount<
     getNonce,
     signUserOperation,
     signDelegation,
+    nonceKeyManager,
     ...signerMethods,
   });
 

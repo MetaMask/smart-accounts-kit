@@ -8,6 +8,7 @@ import {
   entryPoint07Abi,
   toPackedUserOperation,
   toSmartAccount,
+  type ToSmartAccountParameters,
 } from 'viem/account-abstraction';
 
 import { isValid7702Implementation } from './actions/isValid7702Implementation';
@@ -32,6 +33,8 @@ import type {
 import { SIGNABLE_USER_OP_TYPED_DATA } from './userOp';
 
 const ENTRYPOINT_VERSION = '0.7' as const;
+
+type GetNonce = NonNullable<ToSmartAccountParameters['getNonce']>;
 
 /**
  * Creates a MetaMask DeleGator smart account instance.
@@ -186,12 +189,12 @@ export async function toMetaMaskSmartAccount<
 
   const getAddress = async () => address;
 
-  const getNonce = async () =>
+  const getNonce: GetNonce = async (parameters) =>
     _getNonce({
       client,
       entryPoint: environment.EntryPoint,
       contractAddress: address,
-      key: 0n,
+      key: parameters?.key ?? 0n,
     });
 
   const encodeCalls = async (calls: readonly Call[]) =>

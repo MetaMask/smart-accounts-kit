@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.0]
 
-### Uncategorized
+### Added
 
-- feat: respect nonce keys, and accept `NonceKeyManager` ([#199](https://github.com/metamask/smart-accounts-kit/pull/199))
+- A `nonceKeyManager` can now be specified when calling `toMetaMaskSmartAccount` ([#199](https://github.com/metamask/smart-accounts-kit/pull/199))
+
+### Fixed
+
+- Nonce is always generated with nonce key `0n`, ignoring any specified nonce key value ([#199](https://github.com/metamask/smart-accounts-kit/pull/199))
 
 ## [1.0.0]
 

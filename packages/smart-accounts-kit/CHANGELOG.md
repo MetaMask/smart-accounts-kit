@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- feat: respect nonce keys, and accept `NonceKeyManager` ([#199](https://github.com/metamask/smart-accounts-kit/pull/199))
+
 ## [1.0.0]
 
 ### Changed

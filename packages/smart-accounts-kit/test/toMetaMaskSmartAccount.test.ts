@@ -1,5 +1,6 @@
 import type { Account, PublicClient } from 'viem';
 import {
+  createNonceManager,
   createPublicClient,
   custom,
   hashTypedData,
@@ -7,10 +8,14 @@ import {
   isHex,
   recoverAddress,
 } from 'viem';
-import { toPackedUserOperation } from 'viem/account-abstraction';
+import {
+  toPackedUserOperation,
+  toSmartAccount,
+} from 'viem/account-abstraction';
+import type * as viemAccountAbstraction from 'viem/account-abstraction';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { hardhat as chain } from 'viem/chains';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { randomAddress } from './utils';
 import { Implementation } from '../src/constants';
@@ -21,6 +26,16 @@ import type {
 } from '../src/types';
 import { SIGNABLE_USER_OP_TYPED_DATA } from '../src/userOp';
 
+vi.mock('viem/account-abstraction', async (importOriginal) => {
+  const actual = await importOriginal<typeof viemAccountAbstraction>();
+  return {
+    ...actual,
+    toSmartAccount: vi.fn(async (implementation) =>
+      actual.toSmartAccount(implementation),
+    ),
+  };
+});
+
 describe('MetaMaskSmartAccount', () => {
   let publicClient: PublicClient;
   let alice: Account;
@@ -28,6 +43,8 @@ describe('MetaMaskSmartAccount', () => {
   let environment: SmartAccountsEnvironment;
 
   beforeEach(async () => {
+    vi.mocked(toSmartAccount).mockClear();
+
     const transport = custom({
       request: async () => '0x',
     });
@@ -140,6 +157,41 @@ describe('MetaMaskSmartAccount', () => {
       });
 
       expect(smartAccount).toBeInstanceOf(Object);
+    });
+
+    it('passes nonceKeyManager as undefined when not specified', async () => {
+      await toMetaMaskSmartAccount({
+        client: publicClient,
+        implementation: Implementation.Hybrid,
+        deployParams: [alice.address, [], [], []],
+        deploySalt: '0x0',
+        signer: { account: alice },
+        environment,
+      });
+
+      expect(vi.mocked(toSmartAccount)).toHaveBeenCalledWith(
+        expect.objectContaining({ nonceKeyManager: undefined }),
+      );
+    });
+
+    it('passes nonceKeyManager into toSmartAccount when specified', async () => {
+      const nonceKeyManager = createNonceManager({
+        source: { get: () => 0, set: () => undefined },
+      });
+
+      await toMetaMaskSmartAccount({
+        client: publicClient,
+        implementation: Implementation.Hybrid,
+        deployParams: [alice.address, [], [], []],
+        deploySalt: '0x0',
+        signer: { account: alice },
+        environment,
+        nonceKeyManager,
+      });
+
+      expect(vi.mocked(toSmartAccount)).toHaveBeenCalledWith(
+        expect.objectContaining({ nonceKeyManager }),
+      );
     });
   });
   describe('optional signer', () => {

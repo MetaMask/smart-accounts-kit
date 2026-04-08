@@ -9,6 +9,7 @@ import type {
   Address,
   Chain,
   Hex,
+  NonceManager,
   OneOf,
   PublicClient,
   Transport,
@@ -154,6 +155,7 @@ export type ToMetaMaskSmartAccountParameters<
   implementation: TImplementation;
   signer?: SignerConfigByImplementation<TImplementation>;
   environment?: SmartAccountsEnvironment;
+  nonceKeyManager?: NonceManager;
 } & OneOf<
   | {
       deployParams: DeployParams<TImplementation>;

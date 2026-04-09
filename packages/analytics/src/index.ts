@@ -199,7 +199,6 @@ export {
   getSessionBaseProperties,
   isAnalyticsSessionStarted,
   mergeSessionProperties,
-  resetAnalyticsSessionForTests,
   type GetInitializationContextParams,
 } from './environment';
 export type {

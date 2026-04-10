@@ -285,7 +285,7 @@ export const createDelegation = (
 
   trackSmartAccountsKitFunctionCall('createDelegation', {
     hasParentDelegation: options.parentDelegation !== undefined,
-    scope: options.scope,
+    scope: options.scope.type,
     caveatNames: getCaveatNames({
       caveats,
       environment: options.environment,
@@ -315,7 +315,7 @@ export const createOpenDelegation = (
 
   trackSmartAccountsKitFunctionCall('createOpenDelegation', {
     hasParentDelegation: options.parentDelegation !== undefined,
-    scope: options.scope,
+    scope: options.scope.type,
     caveatNames: getCaveatNames({
       caveats,
       environment: options.environment,

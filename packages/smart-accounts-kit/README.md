@@ -65,6 +65,36 @@ const smartAccount = await toMetaMaskSmartAccount({
 
 [Head to our documentation](https://docs.gator.metamask.io) to learn more about the MetaMask Smart Accounts Kit.
 
+## Analytics
+
+This package collects anonymous usage analytics to help us understand how it's being used and prioritize improvements. No personal information is collected. **[Analytics can be disabled](#disabling-analytics)**.
+
+### What's collected
+
+Two event types are sent (namespace `metamask/smart-accounts-kit`): a one-time **initialized** event when analytics starts, and **function called** events when instrumented APIs run. Both include a small **session base**; function events add which API was used and optional **parameters**.
+
+- **`sdk_version`** — Kit version.
+- **`anon_id`** — Random id regenerated on each SDK initialization for correlating events within that session. It is not derived from wallet or personal data, is not written to local storage or cookies for tracking purposes, and is not used to identify or track a user across sites or apps.
+- **`platform`** — Coarse runtime (`web-desktop`, `web-mobile`, or `nodejs`).
+- **`domain`** *(web only, when available)* — Current page hostname.
+
+- **`function_name`** — Stable internal name of the API that was called.
+- **`parameters`** *(optional)* — Only coarse, non-identifying data: things like numeric **chain id**, **counts** (e.g. calls, caveats, signatures), **booleans** (whether optional inputs were present), **implementation or scope _type_** from fixed enums, and **high-level labels** (e.g. which known delegation-storage tier or filter mode). No raw addresses, hashes, calldata, keys, or permission payloads.
+
+### What's NOT collected
+
+- **Secrets and credentials** — Private keys, API keys, bearer tokens, RPC or bundler URLs, and similar.
+- **On-chain identifiers and payloads** — Account or contract addresses, transaction `to` / `data` / `value`, user operation calldata, delegation bodies, delegation hashes, permission request or response payloads, and signature bytes.
+- **Personal information** — No names, emails, or other PII is sent as part of this analytics design.
+
+### Disabling analytics
+
+Analytics is not initialized when any of the following is set to: `1`, or `yes` / `true` (case-insensitive):
+
+- **`CI`** environment variable (Node.js)
+- **`DO_NOT_TRACK`** environment variable (Node.js)
+- **`navigator.doNotTrack`** or **`window.doNotTrack`** (in browsers).
+
 ## Contributing
 
 ---

@@ -1,6 +1,3 @@
-// eslint-disable-next-line import-x/no-unassigned-import
-import '../analytics';
-
 export {
   encodeDelegations,
   decodeDelegations,

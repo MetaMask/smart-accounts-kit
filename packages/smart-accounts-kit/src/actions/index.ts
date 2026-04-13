@@ -1,6 +1,3 @@
-// eslint-disable-next-line import-x/no-unassigned-import
-import '../analytics';
-
 import type { Client, WalletClient } from 'viem';
 import type { BundlerClient } from 'viem/account-abstraction';
 

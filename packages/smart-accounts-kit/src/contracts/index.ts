@@ -1,6 +1,3 @@
-// eslint-disable-next-line import-x/no-unassigned-import
-import '../analytics';
-
 import * as DelegationManager from '../DelegationFramework/DelegationManager';
 import * as DeleGatorCore from '../DelegationFramework/DeleGatorCore';
 import * as EIP712 from '../DelegationFramework/EIP712';

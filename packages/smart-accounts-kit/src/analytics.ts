@@ -48,30 +48,12 @@ function isAnalyticsDisabled(): boolean {
 
 export const analytics = new Analytics(METAMASK_ANALYTICS_ENDPOINT);
 
-/**
- * Records `smart_accounts_kit_function_called` when analytics is enabled and session exists.
- * Pass only non-sensitive primitive fields in `parameters`.
- *
- * @param functionName - Stable SDK entry identifier (e.g. `createDelegation`, `aggregateSignature`).
- * @param parameters - Optional safe argument metadata; use camelCase keys, no secrets or PII.
- */
-export function trackSmartAccountsKitFunctionCall(
-  functionName: string,
-  parameters?: SmartAccountsKitFunctionCallParameters,
-): void {
-  try {
-    analytics.trackSdkFunctionCall(functionName, parameters);
-    // eslint-disable-next-line no-empty
-  } catch {}
-}
-
 let hasBootstrapped = false;
 
 /**
  * One-time internal setup: session base (stable anon_id, platform, domain), enable client,
  * emit `smart_accounts_kit_initialized`. No-op when `DO_NOT_TRACK` is `true`.
  *
- * Kit source files should import the same singleton: `import { analytics } from '@metamask/smart-accounts-kit-analytics'`.
  * Do not use `setGlobalProperty` before {@link getInitializationContext} — session must exist first.
  */
 function ensureSmartAccountsKitAnalyticsBootstrapped(): void {
@@ -93,5 +75,22 @@ function ensureSmartAccountsKitAnalyticsBootstrapped(): void {
   } catch {}
 }
 
-// execute this function simply by importing the analytics file
-ensureSmartAccountsKitAnalyticsBootstrapped();
+/**
+ * Records `smart_accounts_kit_function_called` when analytics is enabled and session exists.
+ * Pass only non-sensitive primitive fields in `parameters`.
+ *
+ * On the first call, runs one-time analytics bootstrap (session + **initialized** event) when allowed.
+ *
+ * @param functionName - Stable SDK entry identifier (e.g. `createDelegation`, `aggregateSignature`).
+ * @param parameters - Optional safe argument metadata; use camelCase keys, no secrets or PII.
+ */
+export function trackSmartAccountsKitFunctionCall(
+  functionName: string,
+  parameters?: SmartAccountsKitFunctionCallParameters,
+): void {
+  ensureSmartAccountsKitAnalyticsBootstrapped();
+  try {
+    analytics.trackSdkFunctionCall(functionName, parameters);
+    // eslint-disable-next-line no-empty
+  } catch {}
+}

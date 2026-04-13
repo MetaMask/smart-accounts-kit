@@ -71,7 +71,7 @@ This package collects anonymous usage analytics to help us understand how it's b
 
 ### What's collected
 
-Two event types are sent (namespace `metamask/smart-accounts-kit`): a one-time **initialized** event when analytics starts, and **function called** events when instrumented APIs run. Both include a small **session base**; function events add which API was used and optional **parameters**.
+Two event types are sent (namespace `metamask/smart-accounts-kit`): a one-time **initialized** event when the first instrumented API runs (just before the first **function called** event), and **function called** events when those APIs run afterward. Both include a small **session base**; function events add which API was used and optional **parameters**.
 
 - **`sdk_version`** — Kit version.
 - **`anon_id`** — Random id regenerated on each SDK initialization for correlating events within that session. It is not derived from wallet or personal data, is not written to local storage or cookies for tracking purposes, and is not used to identify or track a user across sites or apps.

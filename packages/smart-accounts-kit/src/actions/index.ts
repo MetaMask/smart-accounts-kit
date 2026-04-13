@@ -1,7 +1,9 @@
+// eslint-disable-next-line import-x/no-unassigned-import
+import '../analytics';
+
 import type { Client, WalletClient } from 'viem';
 import type { BundlerClient } from 'viem/account-abstraction';
 
-import { ensureSmartAccountsKitAnalyticsBootstrapped } from '../analytics';
 import type {
   SendTransactionWithDelegationParameters,
   SendUserOperationWithDelegationParameters,
@@ -17,8 +19,6 @@ import type {
   MetaMaskExtensionClient,
   RequestExecutionPermissionsParameters,
 } from './erc7715RequestExecutionPermissionsAction';
-
-ensureSmartAccountsKitAnalyticsBootstrapped();
 
 export {
   // Individual action functions

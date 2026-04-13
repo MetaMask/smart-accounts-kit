@@ -74,7 +74,7 @@ let hasBootstrapped = false;
  * Kit source files should import the same singleton: `import { analytics } from '@metamask/smart-accounts-kit-analytics'`.
  * Do not use `setGlobalProperty` before {@link getInitializationContext} — session must exist first.
  */
-export function ensureSmartAccountsKitAnalyticsBootstrapped(): void {
+function ensureSmartAccountsKitAnalyticsBootstrapped(): void {
   if (hasBootstrapped) {
     return;
   }
@@ -92,3 +92,6 @@ export function ensureSmartAccountsKitAnalyticsBootstrapped(): void {
     // eslint-disable-next-line no-empty
   } catch {}
 }
+
+// execute this function simply by importing the analytics file
+ensureSmartAccountsKitAnalyticsBootstrapped();

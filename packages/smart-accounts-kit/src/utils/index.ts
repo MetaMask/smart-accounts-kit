@@ -1,6 +1,5 @@
-import { ensureSmartAccountsKitAnalyticsBootstrapped } from '../analytics';
-
-ensureSmartAccountsKitAnalyticsBootstrapped();
+// eslint-disable-next-line import-x/no-unassigned-import
+import '../analytics';
 
 export {
   encodeDelegations,

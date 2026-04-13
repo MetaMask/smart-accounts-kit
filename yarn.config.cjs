@@ -24,6 +24,8 @@ const { inspect } = require('util');
  */
 const ALLOWED_INCONSISTENT_DEPENDENCIES = {
   // '@metamask/json-rpc-engine': ['^9.0.3'],
+  // Internal unpublished workspace; keep `workspace:^` in dependents.
+  '@metamask/smart-accounts-kit-analytics': ['workspace:^'],
 };
 
 /**
@@ -47,10 +49,11 @@ module.exports = defineConfig({
       '',
     );
 
-    // filter out the e2e package, as it is likely going to be removed or reworked
-    const workspaces = Yarn.workspaces().filter(
-      (workspace) => getWorkspaceBasename(workspace) !== 'delegator-e2e',
-    );
+    // filter out packages that should not be subject to published-package constraints
+    const workspaces = Yarn.workspaces().filter((workspace) => {
+      const basename = getWorkspaceBasename(workspace);
+      return basename !== 'delegator-e2e' && basename !== 'analytics';
+    });
 
     for (const workspace of workspaces) {
       const workspaceBasename = getWorkspaceBasename(workspace);
@@ -107,7 +110,7 @@ module.exports = defineConfig({
         await expectWorkspaceLicense(workspace);
 
         // All non-root packages must not have side effects. (An exception is
-        // made for `@metamask/base-controller`).
+        // made for `@metamask/base-controller`.)
         if (workspace.ident !== '@metamask/base-controller') {
           expectWorkspaceField(workspace, 'sideEffects', false);
         }

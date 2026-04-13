@@ -284,8 +284,8 @@ const mantleSepoliaChain: Chain = {
   },
 };
 
-const katanaMainnet: Chain = {
-  id: 	747474,
+const katanaMainnetChain: Chain = {
+  id: 747474,
   name: 'Katana Mainnet',
   rpcUrls: {
     default: {
@@ -299,7 +299,7 @@ const katanaMainnet: Chain = {
   },
 };
 
-const katanaBokuto: Chain = {
+const katanaBokutoChain: Chain = {
   id: 737373,
   name: 'Katana Bokuto',
   rpcUrls: {
@@ -333,8 +333,8 @@ export const chains = {
   citreaMainnet: citreaMainnetChain,
   mantleMainnet: mantleMainnetChain,
   mantleSepolia: mantleSepoliaChain,
-  katanaMainnet: katanaMainnet,
-  katanaBokuto: katanaBokuto,
+  katanaMainnet: katanaMainnetChain,
+  katanaBokuto: katanaBokutoChain,
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them

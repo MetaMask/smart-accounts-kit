@@ -13,9 +13,9 @@
   ],
   "scripts": {
     "build": "turbo build",
-    "build:packages": "turbo run build --filter='!./packages/delegator-e2e'",
-    "changelog:update": "turbo run changelog:update --filter='!./packages/delegator-e2e'",
-    "changelog:validate": "turbo run changelog:validate --filter='!./packages/delegator-e2e'",
+    "build:packages": "turbo run build --filter='!./packages/delegator-e2e' --filter='!./packages/analytics'",
+    "changelog:update": "turbo run changelog:update --filter='!./packages/delegator-e2e' --filter='!./packages/analytics'",
+    "changelog:validate": "turbo run changelog:validate --filter='!./packages/delegator-e2e' --filter='!./packages/analytics'",
     "clean": "turbo clean",
     "dev": "turbo dev",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",

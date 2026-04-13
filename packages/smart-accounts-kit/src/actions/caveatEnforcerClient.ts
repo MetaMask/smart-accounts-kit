@@ -1,5 +1,6 @@
 import type { Client, Transport, Chain, Account } from 'viem';
 
+import { trackSmartAccountsKitFunctionCall } from '../analytics';
 import type { SmartAccountsEnvironment } from '../types';
 import {
   caveatEnforcerActions,
@@ -37,6 +38,10 @@ export function createCaveatEnforcerClient<
   client: Client<TTransport, TChain, TAccount>;
   environment: SmartAccountsEnvironment;
 }): CaveatEnforcerClient<TTransport, TChain, TAccount> {
+  trackSmartAccountsKitFunctionCall('createCaveatEnforcerClient', {
+    chainId: client.chain?.id ?? null,
+  });
+
   return client.extend(caveatEnforcerActions({ environment }));
 }
 

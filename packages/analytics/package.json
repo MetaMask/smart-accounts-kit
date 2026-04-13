@@ -1,0 +1,71 @@
+{
+  "name": "@metamask/smart-accounts-kit-analytics",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Internal analytics client bundled with @metamask/smart-accounts-kit (not published on its own)",
+  "license": "(MIT-0 OR Apache-2.0)",
+  "type": "module",
+  "keywords": [
+    "MetaMask",
+    "Ethereum",
+    "Smart Accounts"
+  ],
+  "contributors": [],
+  "homepage": "https://github.com/metamask/smart-accounts-kit/tree/main/packages/analytics#readme",
+  "bugs": {
+    "url": "https://github.com/metamask/smart-accounts-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/metamask/smart-accounts-kit.git"
+  },
+  "author": "MetaMask <hello@metamask.io>",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**",
+    "dist/"
+  ],
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": "^18.18 || >=20"
+  },
+  "scripts": {
+    "build": "yarn typecheck && tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "lint": "yarn lint:eslint",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix"
+  },
+  "peerDependencies": {
+    "openapi-fetch": "^0.13.5"
+  },
+  "devDependencies": {
+    "@metamask/auto-changelog": "^5.0.2",
+    "@types/node": "^20.19.0",
+    "eslint": "^9.39.2",
+    "nock": "^14.0.4",
+    "openapi-fetch": "^0.13.5",
+    "prettier": "^3.5.3",
+    "tsup": "^8.5.0",
+    "typescript": "5.5.4",
+    "vitest": "^3.2.4"
+  }
+}

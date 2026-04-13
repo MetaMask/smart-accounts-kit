@@ -1,3 +1,4 @@
+import { trackSmartAccountsKitFunctionCall } from '../analytics';
 import { permissionResponsesFromRpc } from './erc7715Mapping';
 import type {
   GetGrantedExecutionPermissionsResult,
@@ -24,6 +25,13 @@ export type { GetGrantedExecutionPermissionsResult } from './erc7715Types';
 export async function erc7715GetGrantedExecutionPermissionsAction(
   client: MetaMaskExtensionClient,
 ): Promise<GetGrantedExecutionPermissionsResult> {
+  trackSmartAccountsKitFunctionCall(
+    'erc7715GetGrantedExecutionPermissionsAction',
+    {
+      chainId: client.chain?.id ?? null,
+    },
+  );
+
   const result = await client.request(
     {
       method: 'wallet_getGrantedExecutionPermissions',

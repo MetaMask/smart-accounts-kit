@@ -17,6 +17,7 @@ import type {
   SmartAccount,
 } from 'viem/account-abstraction';
 
+import { trackSmartAccountsKitFunctionCall } from '../analytics';
 import { encodeDelegations } from '../delegation';
 import {
   createExecution,
@@ -56,6 +57,10 @@ export async function sendTransactionWithDelegationAction<
   client: WalletClient<Transport, TChain, TAccount>,
   args: SendTransactionWithDelegationParameters<TChain, TAccount>,
 ) {
+  trackSmartAccountsKitFunctionCall('sendTransactionWithDelegationAction', {
+    chainId: client.chain?.id ?? null,
+  });
+
   if (!args.to) {
     throw new Error(
       '`to` is required. `sendTransactionWithDelegation` cannot be used to deploy contracts.',
@@ -161,6 +166,12 @@ export async function sendUserOperationWithDelegationAction<
     TAccountOverride
   >,
 ) {
+  trackSmartAccountsKitFunctionCall('sendUserOperationWithDelegationAction', {
+    chainId: client.chain?.id ?? null,
+    callCount: parameters.calls.length,
+    hasDependencies: parameters.dependencies !== undefined,
+  });
+
   if (parameters.dependencies) {
     const { publicClient } = parameters;
 

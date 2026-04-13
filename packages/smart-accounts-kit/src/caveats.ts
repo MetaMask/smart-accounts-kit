@@ -44,8 +44,10 @@ export const createCaveat = (
   enforcer: Hex,
   terms: Hex,
   args: Hex = '0x00',
-): Caveat => ({
-  enforcer,
-  terms,
-  args,
-});
+): Caveat => {
+  return {
+    enforcer,
+    terms,
+    args,
+  };
+};

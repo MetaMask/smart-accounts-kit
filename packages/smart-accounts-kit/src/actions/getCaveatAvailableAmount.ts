@@ -1,5 +1,6 @@
 import type { Address, Hex, Client } from 'viem';
 
+import { trackSmartAccountsKitFunctionCall } from '../analytics';
 import { hashDelegation } from '../delegation';
 import * as ERC20PeriodTransferEnforcer from '../DelegationFramework/ERC20PeriodTransferEnforcer';
 import * as ERC20StreamingEnforcer from '../DelegationFramework/ERC20StreamingEnforcer';
@@ -125,6 +126,12 @@ export async function getErc20PeriodTransferEnforcerAvailableAmount(
   environment: SmartAccountsEnvironment,
   params: CaveatEnforcerParams,
 ): Promise<PeriodTransferResult> {
+  trackSmartAccountsKitFunctionCall(
+    'getErc20PeriodTransferEnforcerAvailableAmount',
+    {
+      chainId: client.chain?.id ?? null,
+    },
+  );
   const enforcerName = 'ERC20PeriodTransferEnforcer';
 
   const delegationManager = getDelegationManager(environment);
@@ -162,6 +169,12 @@ export async function getErc20StreamingEnforcerAvailableAmount(
   environment: SmartAccountsEnvironment,
   params: CaveatEnforcerParams,
 ): Promise<StreamingResult> {
+  trackSmartAccountsKitFunctionCall(
+    'getErc20StreamingEnforcerAvailableAmount',
+    {
+      chainId: client.chain?.id ?? null,
+    },
+  );
   const enforcerName = 'ERC20StreamingEnforcer';
   const delegationManager = getDelegationManager(environment);
   const enforcerAddress = getEnforcerAddress({
@@ -198,6 +211,12 @@ export async function getMultiTokenPeriodEnforcerAvailableAmount(
   environment: SmartAccountsEnvironment,
   params: CaveatEnforcerParams,
 ): Promise<PeriodTransferResult> {
+  trackSmartAccountsKitFunctionCall(
+    'getMultiTokenPeriodEnforcerAvailableAmount',
+    {
+      chainId: client.chain?.id ?? null,
+    },
+  );
   const enforcerName = 'MultiTokenPeriodEnforcer';
   const delegationManager = getDelegationManager(environment);
   const enforcerAddress = getEnforcerAddress({
@@ -235,6 +254,12 @@ export async function getNativeTokenPeriodTransferEnforcerAvailableAmount(
   environment: SmartAccountsEnvironment,
   params: CaveatEnforcerParams,
 ): Promise<PeriodTransferResult> {
+  trackSmartAccountsKitFunctionCall(
+    'getNativeTokenPeriodTransferEnforcerAvailableAmount',
+    {
+      chainId: client.chain?.id ?? null,
+    },
+  );
   const enforcerName = 'NativeTokenPeriodTransferEnforcer';
   const delegationManager = getDelegationManager(environment);
   const enforcerAddress = getEnforcerAddress({
@@ -271,6 +296,12 @@ export async function getNativeTokenStreamingEnforcerAvailableAmount(
   environment: SmartAccountsEnvironment,
   params: CaveatEnforcerParams,
 ): Promise<StreamingResult> {
+  trackSmartAccountsKitFunctionCall(
+    'getNativeTokenStreamingEnforcerAvailableAmount',
+    {
+      chainId: client.chain?.id ?? null,
+    },
+  );
   const enforcerName = 'NativeTokenStreamingEnforcer';
   const delegationManager = getDelegationManager(environment);
   const enforcerAddress = getEnforcerAddress({

@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-restricted-syntax */
+/* eslint-disable camelcase -- sdk_version matches analytics event payload keys */
 import createClient from 'openapi-fetch';
 
 import {
+  getInitializationContext,
   getSessionBaseProperties,
   mergeSessionProperties,
 } from './environment';
@@ -15,6 +17,7 @@ import type {
   paths,
 } from './schema';
 import { Sender } from './sender';
+import { version as sdk_version } from '../../package.json';
 
 /**
  * @param value - Candidate merged base properties.
@@ -62,6 +65,9 @@ function normalise(batch: AnalyticsEventV2[]): AnalyticsEventV2[] {
 
   return walk(batch) as AnalyticsEventV2[];
 }
+
+const METAMASK_ANALYTICS_ENDPOINT =
+  'https://mm-sdk-analytics.api.cx.metamask.io/';
 
 export class Analytics {
   private enabled = false;
@@ -190,23 +196,88 @@ export class Analytics {
   }
 }
 
-/** Default MetaMask SDK analytics API base URL. */
-export const METAMASK_ANALYTICS_ENDPOINT =
-  'https://mm-sdk-analytics.api.cx.metamask.io/';
+const analytics = new Analytics(METAMASK_ANALYTICS_ENDPOINT);
 
-export {
-  getInitializationContext,
-  getSessionBaseProperties,
-  isAnalyticsSessionStarted,
-  mergeSessionProperties,
-  type GetInitializationContextParams,
-} from './environment';
-export type {
-  AnalyticsEventV2,
-  SmartAccountsKitFunctionCallParameters,
-  SmartAccountsKitFunctionCallPayload,
-  SmartAccountsKitFunctionCallProperties,
-  SmartAccountsKitBaseProperties,
-  SmartAccountsKitInitializedProperties,
-  SmartAccountsKitPayload,
-} from './schema';
+/**
+ * Whether CI or Do Not Track disables analytics.
+ *
+ * Collects every available indicator (`CI` when `process.env` exists,
+ * `DO_NOT_TRACK` when `process.env` exists, `navigator.doNotTrack` and
+ * `window.doNotTrack` when `window` exists) and disables if any value
+ * is `1`, `yes`, or `true`.
+ *
+ * @returns True when analytics should not run.
+ */
+function isAnalyticsDisabled(): boolean {
+  const dntValues: (string | undefined | null)[] = [];
+
+  /* eslint-disable no-restricted-globals */
+  if (typeof process !== 'undefined') {
+    dntValues.push(process.env?.CI);
+
+    dntValues.push(process.env?.DO_NOT_TRACK);
+  }
+
+  if (typeof navigator !== 'undefined') {
+    dntValues.push(navigator.doNotTrack);
+  }
+
+  if (typeof window !== 'undefined') {
+    dntValues.push((window as { doNotTrack?: string }).doNotTrack);
+  }
+  /* eslint-enable no-restricted-globals */
+
+  return dntValues.some(
+    (dntValue) =>
+      dntValue === '1' ||
+      dntValue?.toLowerCase() === 'yes' ||
+      dntValue?.toLowerCase() === 'true',
+  );
+}
+
+let hasBootstrapped = false;
+
+/**
+ * One-time internal setup: session base (stable anon_id, platform, domain), enable client,
+ * emit `smart_accounts_kit_initialized`. No-op when `DO_NOT_TRACK` is `true`.
+ *
+ * Do not use `setGlobalProperty` before {@link getInitializationContext} — session must exist first.
+ */
+function ensureSmartAccountsKitAnalyticsBootstrapped(): void {
+  if (hasBootstrapped) {
+    return;
+  }
+
+  hasBootstrapped = true;
+
+  if (isAnalyticsDisabled()) {
+    return;
+  }
+
+  try {
+    getInitializationContext({ sdk_version });
+    analytics.enable();
+    analytics.trackInitialized();
+    // eslint-disable-next-line no-empty
+  } catch {}
+}
+
+/**
+ * Records `smart_accounts_kit_function_called` when analytics is enabled and session exists.
+ * Pass only non-sensitive primitive fields in `parameters`.
+ *
+ * On the first call, runs one-time analytics bootstrap (session + **initialized** event) when allowed.
+ *
+ * @param functionName - Stable SDK entry identifier (e.g. `createDelegation`, `aggregateSignature`).
+ * @param parameters - Optional safe argument metadata; use camelCase keys, no secrets or PII.
+ */
+export function trackSmartAccountsKitFunctionCall(
+  functionName: string,
+  parameters?: SmartAccountsKitFunctionCallParameters,
+): void {
+  ensureSmartAccountsKitAnalyticsBootstrapped();
+  try {
+    analytics.trackSdkFunctionCall(functionName, parameters);
+    // eslint-disable-next-line no-empty
+  } catch {}
+}

@@ -105,7 +105,7 @@ export function getSessionBaseProperties(): SmartAccountsKitBaseProperties {
 }
 
 /**
- * Merges fields into the session base (e.g. {@link import('./analytics').default.setGlobalProperty}).
+ * Merges fields into the session base (e.g. after {@link getInitializationContext}).
  *
  * @param partial - Properties to merge over the current session.
  */

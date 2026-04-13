@@ -10,14 +10,14 @@ import {
   vi,
 } from 'vitest';
 
-import { Analytics } from '.';
+import { Analytics } from '../../src/analytics';
 import {
   getInitializationContext,
   resetAnalyticsSessionForTests,
-} from './environment';
-import type { AnalyticsEventV2 } from './schema';
+} from '../../src/analytics/environment';
+import type { AnalyticsEventV2 } from '../../src/analytics/schema';
 
-/** The same as `Sender` `baseTimeoutMs` in the `Analytics` constructor (`index.ts`). */
+/** The same as `Sender` `baseTimeoutMs` in the `Analytics` constructor (`src/analytics/index.ts`). */
 const ANALYTICS_BASE_TIMEOUT_MS = 100;
 
 /**

@@ -133,7 +133,6 @@
     "@metamask/delegation-abis": "^1.0.0",
     "@metamask/delegation-core": "^1.0.0",
     "@metamask/delegation-deployments": "^1.1.0",
-    "buffer": "^6.0.3",
     "openapi-fetch": "^0.13.5",
     "ox": "0.8.1"
   },

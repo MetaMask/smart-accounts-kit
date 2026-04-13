@@ -1,10 +1,10 @@
-import { Buffer as BufferPolyfill } from 'buffer/';
 import { Signature } from 'ox';
 import {
   decodeAbiParameters,
   isHex,
   keccak256,
   encodePacked,
+  hexToBytes,
   toHex,
   serializeSignature,
 } from 'viem';
@@ -65,9 +65,8 @@ const validWebAuthnData = {
 describe('webAuthn', () => {
   const overwriteAuthenticatorDataFlags = (flags: number) => {
     // we just take the known authenticator data and overwrite the flags
-    const authenticatorDataBuffer = BufferPolyfill.from(
-      validWebAuthnData.authenticatorData.slice(2),
-      'Hex',
+    const authenticatorDataBuffer = hexToBytes(
+      validWebAuthnData.authenticatorData,
     );
 
     // the 33rd byte (index 32) is the flags byte

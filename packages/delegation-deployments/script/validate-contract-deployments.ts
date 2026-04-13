@@ -289,7 +289,7 @@ const katanaMainnet: Chain = {
   name: 'Katana Mainnet',
   rpcUrls: {
     default: {
-      http: ['	https://rpc.katana.network'],
+      http: ['https://rpc.katana.network'],
     },
   },
   nativeCurrency: {

@@ -29,6 +29,7 @@ export const CHAIN_ID = {
   tempoMainnet: 0x1079,
   citreaMainnet: 0x1012,
   mantleMainnet: 0x1388,
+  katanaMainnet: 0xb67d2,
   // Testnets
   bscTestnet: 0x61,
   arbitrumSepolia: 0x66eee,
@@ -51,6 +52,7 @@ export const CHAIN_ID = {
   roninSaigon: 0x31769,
   tempoModeratoTestnet: 0xa5bf,
   mantleSepolia: 0x138b,
+  katanaBokuto: 0xb405d,
   // decommissioned
   lineaGoerli: 0xe704,
 };
@@ -116,6 +118,7 @@ export const DELEGATOR_CONTRACTS: DeployedContracts = {
     [CHAIN_ID.tempoMainnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.citreaMainnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.mantleMainnet]: DEPLOYMENTS_1_3_0,
+    [CHAIN_ID.katanaMainnet]: DEPLOYMENTS_1_3_0,
     // Testnets
     [CHAIN_ID.bscTestnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.citreaTestnet]: DEPLOYMENTS_1_3_0,
@@ -138,5 +141,6 @@ export const DELEGATOR_CONTRACTS: DeployedContracts = {
     [CHAIN_ID.roninSaigon]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.tempoModeratoTestnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.mantleSepolia]: DEPLOYMENTS_1_3_0,
+    [CHAIN_ID.katanaBokuto]: DEPLOYMENTS_1_3_0,
   },
 };

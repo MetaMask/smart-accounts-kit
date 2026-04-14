@@ -284,6 +284,36 @@ const mantleSepoliaChain: Chain = {
   },
 };
 
+const katanaMainnetChain: Chain = {
+  id: 747474,
+  name: 'Katana Mainnet',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.katana.network'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Ether',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+};
+
+const katanaBokutoChain: Chain = {
+  id: 737373,
+  name: 'Katana Bokuto',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc-bokuto.katanarpc.com'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Ether',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+};
+
 export const chains = {
   ...allChains,
   megaEthTestNet: megaEthTestNetChain,
@@ -303,6 +333,8 @@ export const chains = {
   citreaMainnet: citreaMainnetChain,
   mantleMainnet: mantleMainnetChain,
   mantleSepolia: mantleSepoliaChain,
+  katanaMainnet: katanaMainnetChain,
+  katanaBokuto: katanaBokutoChain,
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them

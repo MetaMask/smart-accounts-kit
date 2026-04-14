@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add chain deployment for Katana mainnet and Katana Bokuto ([#203](https://github.com/MetaMask/smart-accounts-kit/pull/203))
+
 ## [1.1.0]
 
 ### Added

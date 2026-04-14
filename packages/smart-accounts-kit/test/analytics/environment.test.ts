@@ -5,7 +5,7 @@ import {
   getInitializationContext,
   getSessionBaseProperties,
   resetAnalyticsSessionForTests,
-} from './environment';
+} from '../../src/analytics/environment';
 
 describe('analytics session (environment)', () => {
   beforeEach(() => {

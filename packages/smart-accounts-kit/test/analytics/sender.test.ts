@@ -1,7 +1,7 @@
 import type { Mock } from 'vitest';
 import { describe, beforeEach, afterEach, it, vi, expect } from 'vitest';
 
-import { Sender } from './sender';
+import { Sender } from '../../src/analytics/sender';
 
 describe('Sender', () => {
   let sendFn: Mock<() => Promise<void>>;

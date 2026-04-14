@@ -1,7 +1,3 @@
-import { ensureSmartAccountsKitAnalyticsBootstrapped } from './analytics';
-
-ensureSmartAccountsKitAnalyticsBootstrapped();
-
 export { toMetaMaskSmartAccount } from './toMetaMaskSmartAccount';
 
 export {

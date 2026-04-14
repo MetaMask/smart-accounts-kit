@@ -1,10 +1,28 @@
+/**
+ * ## DeployedEnforcer
+ *
+ * Constrains contract deployment to a specific address, salt, and bytecode.
+ *
+ * Terms are encoded as 20-byte contract address, 32-byte left-padded salt, then creation bytecode bytes.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 import { remove0x } from '@metamask/utils';
 
-import { concatHex, normalizeAddress, normalizeHex } from '../internalUtils';
 import {
+  assertHexBytesMinLength,
+  concatHex,
+  extractAddress,
+  extractHex,
+  extractRemainingHex,
+  normalizeAddress,
+  normalizeHex,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -13,13 +31,13 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring a Deployed caveat.
  */
-export type DeployedTerms = {
+export type DeployedTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The contract address. */
-  contractAddress: BytesLike;
+  contractAddress: TBytesLike;
   /** The deployment salt. */
-  salt: BytesLike;
+  salt: TBytesLike;
   /** The contract bytecode. */
-  bytecode: BytesLike;
+  bytecode: TBytesLike;
 };
 
 /**
@@ -27,7 +45,7 @@ export type DeployedTerms = {
  *
  * @param terms - The terms for the Deployed caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated contractAddress + salt (32 bytes) + bytecode.
+ * @returns Encoded terms.
  * @throws Error if the contract address, salt, or bytecode is invalid.
  */
 export function createDeployedTerms(
@@ -43,7 +61,7 @@ export function createDeployedTerms(
  *
  * @param terms - The terms for the Deployed caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated contractAddress + salt (32 bytes) + bytecode.
+ * @returns Encoded terms.
  * @throws Error if the contract address, salt, or bytecode is invalid.
  */
 export function createDeployedTerms(
@@ -73,4 +91,50 @@ export function createDeployedTerms(
 
   const hexValue = concatHex([contractAddressHex, paddedSalt, bytecodeHex]);
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a Deployed caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded address, salt, and bytecode are returned as hex or bytes.
+ * @returns The decoded DeployedTerms object.
+ */
+export function decodeDeployedTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): DeployedTerms<DecodedBytesLike<'hex'>>;
+export function decodeDeployedTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): DeployedTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded address, salt, and bytecode are returned as hex or bytes.
+ * @returns The decoded DeployedTerms object.
+ */
+export function decodeDeployedTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | DeployedTerms<DecodedBytesLike<'hex'>>
+  | DeployedTerms<DecodedBytesLike<'bytes'>> {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexBytesMinLength(
+    hexTerms,
+    52,
+    'Invalid Deployed terms: must be at least 52 bytes',
+  );
+
+  const contractAddressHex = extractAddress(hexTerms, 0);
+  const saltHex = extractHex(hexTerms, 20, 32);
+  const bytecodeHex = extractRemainingHex(hexTerms, 52);
+
+  return {
+    contractAddress: prepareResult(contractAddressHex, encodingOptions),
+    salt: prepareResult(saltHex, encodingOptions),
+    bytecode: prepareResult(bytecodeHex, encodingOptions),
+  } as
+    | DeployedTerms<DecodedBytesLike<'hex'>>
+    | DeployedTerms<DecodedBytesLike<'bytes'>>;
 }

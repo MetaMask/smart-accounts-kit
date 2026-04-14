@@ -14,6 +14,13 @@ export type ResultType<TResultValue extends ResultValue> =
   TResultValue extends 'hex' ? Hex : Uint8Array;
 
 /**
+ * Concrete type for a decoded Bytes-like field when using {@link EncodingOptions}.
+ * Matches {@link ResultType}; alias for readability on `*Terms` generics.
+ */
+export type DecodedBytesLike<TResultValue extends ResultValue> =
+  ResultType<TResultValue>;
+
+/**
  * Base options interface for operations that can return hex or bytes.
  */
 export type EncodingOptions<TResultValue extends ResultValue> = {
@@ -23,7 +30,7 @@ export type EncodingOptions<TResultValue extends ResultValue> = {
 /**
  * Default options value with proper typing. Use this as your default parameter.
  */
-export const defaultOptions = { out: 'hex' } as EncodingOptions<any>;
+export const defaultOptions = { out: 'hex' } as EncodingOptions<'hex'>;
 
 /**
  * Prepares a result by converting between hex and bytes based on options.

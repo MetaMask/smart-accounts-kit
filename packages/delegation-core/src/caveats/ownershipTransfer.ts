@@ -1,9 +1,23 @@
+/**
+ * ## OwnershipTransferEnforcer
+ *
+ * Constrains ownership transfer for a specific contract.
+ *
+ * Terms are encoded as the 20-byte contract address only.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
-import { normalizeAddress } from '../internalUtils';
 import {
+  assertHexByteExactLength,
+  extractAddress,
+  normalizeAddress,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -12,9 +26,9 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an OwnershipTransfer caveat.
  */
-export type OwnershipTransferTerms = {
+export type OwnershipTransferTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The contract address for which ownership transfers are allowed. */
-  contractAddress: BytesLike;
+  contractAddress: TBytesLike;
 };
 
 /**
@@ -22,7 +36,7 @@ export type OwnershipTransferTerms = {
  *
  * @param terms - The terms for the OwnershipTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the contract address.
+ * @returns Encoded terms.
  * @throws Error if the contract address is invalid.
  */
 export function createOwnershipTransferTerms(
@@ -38,7 +52,7 @@ export function createOwnershipTransferTerms(
  *
  * @param terms - The terms for the OwnershipTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the contract address.
+ * @returns Encoded terms.
  * @throws Error if the contract address is invalid.
  */
 export function createOwnershipTransferTerms(
@@ -53,4 +67,44 @@ export function createOwnershipTransferTerms(
   );
 
   return prepareResult(contractAddressHex, encodingOptions);
+}
+
+/**
+ * Decodes terms for an OwnershipTransfer caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded contract address is returned as hex or bytes.
+ * @returns The decoded OwnershipTransferTerms object.
+ */
+export function decodeOwnershipTransferTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): OwnershipTransferTerms<DecodedBytesLike<'hex'>>;
+export function decodeOwnershipTransferTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): OwnershipTransferTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded contract address is returned as hex or bytes.
+ * @returns The decoded OwnershipTransferTerms object.
+ */
+export function decodeOwnershipTransferTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | OwnershipTransferTerms<DecodedBytesLike<'hex'>>
+  | OwnershipTransferTerms<DecodedBytesLike<'bytes'>> {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    20,
+    'Invalid OwnershipTransfer terms: must be exactly 20 bytes',
+  );
+  const contractAddressHex = extractAddress(hexTerms, 0);
+  return {
+    contractAddress: prepareResult(contractAddressHex, encodingOptions),
+  } as
+    | OwnershipTransferTerms<DecodedBytesLike<'hex'>>
+    | OwnershipTransferTerms<DecodedBytesLike<'bytes'>>;
 }

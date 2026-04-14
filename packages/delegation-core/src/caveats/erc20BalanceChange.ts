@@ -1,13 +1,27 @@
+/**
+ * ## ERC20BalanceChangeEnforcer
+ *
+ * Constrains ERC-20 balance change for a recipient relative to a reference balance.
+ *
+ * Terms are encoded as 1-byte direction (`0x00` = minimum increase, any non-zero e.g. `0x01` = maximum decrease), 20-byte token address, 20-byte recipient, then 32-byte big-endian balance amount.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import {
+  assertHexByteExactLength,
   concatHex,
+  extractAddress,
+  extractBigInt,
+  extractNumber,
   normalizeAddressLowercase,
   toHexString,
 } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -17,23 +31,24 @@ import { BalanceChangeType } from './types';
 /**
  * Terms for configuring an ERC20BalanceChange caveat.
  */
-export type ERC20BalanceChangeTerms = {
-  /** The ERC-20 token address. */
-  tokenAddress: BytesLike;
-  /** The recipient address. */
-  recipient: BytesLike;
-  /** The balance change amount. */
-  balance: bigint;
-  /** The balance change type. */
-  changeType: number;
-};
+export type ERC20BalanceChangeTerms<TBytesLike extends BytesLike = BytesLike> =
+  {
+    /** The ERC-20 token address. */
+    tokenAddress: TBytesLike;
+    /** The recipient address. */
+    recipient: TBytesLike;
+    /** The balance change amount. */
+    balance: bigint;
+    /** The balance change type. */
+    changeType: number;
+  };
 
 /**
  * Creates terms for an ERC20BalanceChange caveat that checks token balance changes.
  *
  * @param terms - The terms for the ERC20BalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + tokenAddress + recipient + balance.
+ * @returns Encoded terms.
  * @throws Error if any parameter is invalid.
  */
 export function createERC20BalanceChangeTerms(
@@ -49,7 +64,7 @@ export function createERC20BalanceChangeTerms(
  *
  * @param terms - The terms for the ERC20BalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + tokenAddress + recipient + balance.
+ * @returns Encoded terms.
  * @throws Error if any parameter is invalid.
  */
 export function createERC20BalanceChangeTerms(
@@ -95,4 +110,52 @@ export function createERC20BalanceChangeTerms(
   ]);
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an ERC20BalanceChange caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded ERC20BalanceChangeTerms object.
+ */
+export function decodeERC20BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): ERC20BalanceChangeTerms<DecodedBytesLike<'hex'>>;
+export function decodeERC20BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ERC20BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded ERC20BalanceChangeTerms object.
+ */
+export function decodeERC20BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ERC20BalanceChangeTerms<DecodedBytesLike<'hex'>>
+  | ERC20BalanceChangeTerms<DecodedBytesLike<'bytes'>> {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    73,
+    'Invalid ERC20BalanceChange terms: must be exactly 73 bytes',
+  );
+
+  const changeType = extractNumber(hexTerms, 0, 1);
+  const tokenAddressHex = extractAddress(hexTerms, 1);
+  const recipientHex = extractAddress(hexTerms, 21);
+  const balance = extractBigInt(hexTerms, 41, 32);
+
+  return {
+    changeType,
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    recipient: prepareResult(recipientHex, encodingOptions),
+    balance,
+  } as
+    | ERC20BalanceChangeTerms<DecodedBytesLike<'hex'>>
+    | ERC20BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
 }

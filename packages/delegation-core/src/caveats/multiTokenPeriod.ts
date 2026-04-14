@@ -1,9 +1,28 @@
+/**
+ * ## MultiTokenPeriodEnforcer
+ *
+ * Sets independent periodic transfer limits for multiple tokens (ERC-20 or native).
+ *
+ * Terms are encoded by repeating, per entry: 20-byte token address (`address(0)` denotes native token) then three 32-byte big-endian uint256 words (period amount, period duration, start date).
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
-import { concatHex, normalizeAddress, toHexString } from '../internalUtils';
 import {
+  assertHexByteLengthAtLeastOneMultipleOf,
+  concatHex,
+  extractAddress,
+  extractBigInt,
+  extractNumber,
+  getByteLength,
+  normalizeAddress,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -12,8 +31,8 @@ import type { Hex } from '../types';
 /**
  * Configuration for a single token in MultiTokenPeriod terms.
  */
-export type TokenPeriodConfig = {
-  token: BytesLike;
+export type TokenPeriodConfig<TBytesLike extends BytesLike = BytesLike> = {
+  token: TBytesLike;
   periodAmount: bigint;
   periodDuration: number;
   startDate: number;
@@ -22,8 +41,8 @@ export type TokenPeriodConfig = {
 /**
  * Terms for configuring a MultiTokenPeriod caveat.
  */
-export type MultiTokenPeriodTerms = {
-  tokenConfigs: TokenPeriodConfig[];
+export type MultiTokenPeriodTerms<TBytesLike extends BytesLike = BytesLike> = {
+  tokenConfigs: TokenPeriodConfig<TBytesLike>[];
 };
 
 /**
@@ -31,7 +50,7 @@ export type MultiTokenPeriodTerms = {
  *
  * @param terms - The terms for the MultiTokenPeriod caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated token period configs.
+ * @returns Encoded terms.
  * @throws Error if the tokenConfigs array is empty or contains invalid parameters.
  */
 export function createMultiTokenPeriodTerms(
@@ -47,7 +66,7 @@ export function createMultiTokenPeriodTerms(
  *
  * @param terms - The terms for the MultiTokenPeriod caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated token period configs.
+ * @returns Encoded terms.
  * @throws Error if the tokenConfigs array is empty or contains invalid parameters.
  */
 export function createMultiTokenPeriodTerms(
@@ -92,4 +111,61 @@ export function createMultiTokenPeriodTerms(
 
   const hexValue = concatHex(hexParts);
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a MultiTokenPeriod caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded token addresses are returned as hex or bytes.
+ * @returns The decoded MultiTokenPeriodTerms object.
+ */
+export function decodeMultiTokenPeriodTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): MultiTokenPeriodTerms<DecodedBytesLike<'hex'>>;
+export function decodeMultiTokenPeriodTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): MultiTokenPeriodTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded token addresses are returned as hex or bytes.
+ * @returns The decoded MultiTokenPeriodTerms object.
+ */
+export function decodeMultiTokenPeriodTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | MultiTokenPeriodTerms<DecodedBytesLike<'hex'>>
+  | MultiTokenPeriodTerms<DecodedBytesLike<'bytes'>> {
+  const hexTerms = bytesLikeToHex(terms);
+
+  const configSize = 116;
+  assertHexByteLengthAtLeastOneMultipleOf(
+    hexTerms,
+    configSize,
+    'Invalid MultiTokenPeriod terms: must be a multiple of 116 bytes',
+  );
+  const configCount = getByteLength(hexTerms) / configSize;
+
+  const tokenConfigs: TokenPeriodConfig[] = [];
+  for (let i = 0; i < configCount; i++) {
+    const offset = i * configSize;
+    const tokenHex = extractAddress(hexTerms, offset);
+    const periodAmount = extractBigInt(hexTerms, offset + 20, 32);
+    const periodDuration = extractNumber(hexTerms, offset + 52, 32);
+    const startDate = extractNumber(hexTerms, offset + 84, 32);
+
+    tokenConfigs.push({
+      token: prepareResult(tokenHex, encodingOptions),
+      periodAmount,
+      periodDuration,
+      startDate,
+    });
+  }
+
+  return { tokenConfigs } as
+    | MultiTokenPeriodTerms<DecodedBytesLike<'hex'>>
+    | MultiTokenPeriodTerms<DecodedBytesLike<'bytes'>>;
 }

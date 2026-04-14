@@ -32,8 +32,8 @@ export const timestampBuilder = (
   const { afterThreshold, beforeThreshold } = config;
 
   const terms = createTimestampTerms({
-    timestampAfterThreshold: afterThreshold,
-    timestampBeforeThreshold: beforeThreshold,
+    afterThreshold,
+    beforeThreshold,
   });
 
   const {

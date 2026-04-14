@@ -23,19 +23,19 @@ describe('timestampBuilder()', () => {
   describe('validation', () => {
     it('should fail with negative timestamps', () => {
       expect(() => buildWithTimestamps(-1, 100)).to.throw(
-        'Invalid timestampAfterThreshold: must be zero or positive',
+        'Invalid afterThreshold: must be zero or positive',
       );
       expect(() => buildWithTimestamps(100, -100)).to.throw(
-        'Invalid timestampBeforeThreshold: must be zero or positive',
+        'Invalid beforeThreshold: must be zero or positive',
       );
     });
 
-    it('should fail when timestampBeforeThreshold is not greater than timestampAfterThreshold', () => {
+    it('should fail when beforeThreshold is not greater than afterThreshold', () => {
       expect(() => buildWithTimestamps(100, 100)).to.throw(
-        'Invalid thresholds: timestampBeforeThreshold must be greater than timestampAfterThreshold',
+        'Invalid thresholds: beforeThreshold must be greater than afterThreshold when both are specified',
       );
       expect(() => buildWithTimestamps(101, 100)).to.throw(
-        'Invalid thresholds: timestampBeforeThreshold must be greater than timestampAfterThreshold',
+        'Invalid thresholds: beforeThreshold must be greater than afterThreshold when both are specified',
       );
     });
   });
@@ -82,19 +82,19 @@ describe('timestampBuilder()', () => {
     expect(size(caveat.terms)).to.equal(EXPECTED_TERMS_LENGTH);
   });
 
-  it('should fail when timestampBeforeThreshold is greater than the upper bound', () => {
+  it('should fail when beforeThreshold is greater than the upper bound', () => {
     expect(() =>
       buildWithTimestamps(0, TIMESTAMP_UPPER_BOUND_SECONDS + 1),
     ).to.throw(
-      'Invalid timestampBeforeThreshold: must be less than or equal to 253402300799',
+      'Invalid beforeThreshold: must be less than or equal to 253402300799',
     );
   });
 
-  it('should fail when timestampAfterThreshold is greater than the upper bound', () => {
+  it('should fail when afterThreshold is greater than the upper bound', () => {
     expect(() =>
       buildWithTimestamps(TIMESTAMP_UPPER_BOUND_SECONDS + 1, 0),
     ).to.throw(
-      'Invalid timestampAfterThreshold: must be less than or equal to 253402300799',
+      'Invalid afterThreshold: must be less than or equal to 253402300799',
     );
   });
 });

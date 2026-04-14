@@ -1,5 +1,20 @@
-import { toHexString } from '../internalUtils';
+/**
+ * ## ValueLteEnforcer
+ *
+ * Limits the native token (wei) value allowed per execution.
+ *
+ * Terms are encoded as a single 32-byte big-endian uint256 max value.
+ */
+
+import type { BytesLike } from '@metamask/utils';
+
 import {
+  assertHexByteExactLength,
+  extractBigInt,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -20,7 +35,7 @@ export type ValueLteTerms = {
  *
  * @param terms - The terms for the ValueLte caveat.
  * @param options - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the maxValue is negative.
  */
 export function createValueLteTerms(
@@ -36,7 +51,7 @@ export function createValueLteTerms(
  *
  * @param terms - The terms for the ValueLte caveat.
  * @param options - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the maxValue is negative.
  */
 export function createValueLteTerms(
@@ -51,4 +66,21 @@ export function createValueLteTerms(
   const hexValue = toHexString({ value: maxValue, size: 32 });
 
   return prepareResult(hexValue, options);
+}
+
+/**
+ * Decodes terms for a ValueLte caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded ValueLteTerms object.
+ */
+export function decodeValueLteTerms(terms: BytesLike): ValueLteTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    32,
+    'Invalid ValueLte terms: must be exactly 32 bytes',
+  );
+  const maxValue = extractBigInt(hexTerms, 0, 32);
+  return { maxValue };
 }

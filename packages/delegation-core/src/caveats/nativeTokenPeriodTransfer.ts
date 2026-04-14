@@ -1,5 +1,21 @@
-import { toHexString } from '../internalUtils';
+/**
+ * ## NativeTokenPeriodTransferEnforcer
+ *
+ * Limits periodic native token transfers using amount, period length, and start date.
+ *
+ * Terms are encoded as three consecutive 32-byte big-endian uint256 words: period amount, period duration, start date.
+ */
+
+import type { BytesLike } from '@metamask/utils';
+
 import {
+  assertHexByteExactLength,
+  extractBigInt,
+  extractNumber,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -26,7 +42,7 @@ export type NativeTokenPeriodTransferTerms = {
  *
  * @param terms - The terms for the NativeTokenPeriodTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 96-byte hex string (32 bytes for each parameter).
+ * @returns Encoded terms.
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createNativeTokenPeriodTransferTerms(
@@ -43,7 +59,7 @@ export function createNativeTokenPeriodTransferTerms(
  *
  * @param terms - The terms for the NativeTokenPeriodTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 96-byte hex string (32 bytes for each parameter).
+ * @returns Encoded terms.
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createNativeTokenPeriodTransferTerms(
@@ -71,4 +87,27 @@ export function createNativeTokenPeriodTransferTerms(
   const hexValue = `0x${periodAmountHex}${periodDurationHex}${startDateHex}`;
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a NativeTokenPeriodTransfer caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded NativeTokenPeriodTransferTerms object.
+ */
+export function decodeNativeTokenPeriodTransferTerms(
+  terms: BytesLike,
+): NativeTokenPeriodTransferTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    96,
+    'Invalid NativeTokenPeriodTransfer terms: must be exactly 96 bytes',
+  );
+
+  const periodAmount = extractBigInt(hexTerms, 0, 32);
+  const periodDuration = extractNumber(hexTerms, 32, 32);
+  const startDate = extractNumber(hexTerms, 64, 32);
+
+  return { periodAmount, periodDuration, startDate };
 }

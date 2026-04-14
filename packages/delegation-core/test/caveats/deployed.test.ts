@@ -1,59 +1,94 @@
 import { describe, it, expect } from 'vitest';
 
-import { createDeployedTerms } from '../../src/caveats/deployed';
+import {
+  createDeployedTerms,
+  decodeDeployedTerms,
+} from '../../src/caveats/deployed';
 
-describe('createDeployedTerms', () => {
-  const contractAddress = '0x00000000000000000000000000000000000000aa';
-  const salt = '0x01';
-  const bytecode = '0x1234';
+describe('Deployed', () => {
+  describe('createDeployedTerms', () => {
+    const contractAddress = '0x00000000000000000000000000000000000000aa';
+    const salt = '0x01';
+    const bytecode = '0x1234';
 
-  it('creates valid terms for deployment parameters', () => {
-    const result = createDeployedTerms({ contractAddress, salt, bytecode });
+    it('creates valid terms for deployment parameters', () => {
+      const result = createDeployedTerms({ contractAddress, salt, bytecode });
 
-    expect(result).toStrictEqual(
-      '0x00000000000000000000000000000000000000aa' +
-        '0000000000000000000000000000000000000000000000000000000000000001' +
-        '1234',
-    );
+      expect(result).toStrictEqual(
+        '0x00000000000000000000000000000000000000aa' +
+          '0000000000000000000000000000000000000000000000000000000000000001' +
+          '1234',
+      );
+    });
+
+    it('throws for invalid contract address', () => {
+      expect(() =>
+        createDeployedTerms({
+          contractAddress: '0x1234',
+          salt,
+          bytecode,
+        }),
+      ).toThrow('Invalid contractAddress: must be a valid Ethereum address');
+    });
+
+    it('throws for invalid salt', () => {
+      expect(() =>
+        createDeployedTerms({
+          contractAddress,
+          salt: 'invalid' as any,
+          bytecode,
+        }),
+      ).toThrow('Invalid salt: must be a valid hexadecimal string');
+    });
+
+    it('throws for invalid bytecode', () => {
+      expect(() =>
+        createDeployedTerms({
+          contractAddress,
+          salt,
+          bytecode: 'invalid' as any,
+        }),
+      ).toThrow('Invalid bytecode: must be a valid hexadecimal string');
+    });
+
+    it('returns Uint8Array when bytes encoding is specified', () => {
+      const result = createDeployedTerms(
+        { contractAddress, salt, bytecode },
+        { out: 'bytes' },
+      );
+
+      expect(result).toBeInstanceOf(Uint8Array);
+      expect(result).toHaveLength(20 + 32 + 2);
+    });
   });
 
-  it('throws for invalid contract address', () => {
-    expect(() =>
-      createDeployedTerms({
-        contractAddress: '0x1234',
-        salt,
-        bytecode,
-      }),
-    ).toThrow('Invalid contractAddress: must be a valid Ethereum address');
-  });
+  describe('decodeDeployedTerms', () => {
+    const contractAddress =
+      '0x00000000000000000000000000000000000000aa' as `0x${string}`;
+    const salt = '0x01' as `0x${string}`;
+    const bytecode = '0x1234' as `0x${string}`;
 
-  it('throws for invalid salt', () => {
-    expect(() =>
-      createDeployedTerms({
-        contractAddress,
-        salt: 'invalid' as any,
-        bytecode,
-      }),
-    ).toThrow('Invalid salt: must be a valid hexadecimal string');
-  });
+    it('decodes deployment parameters with padded salt', () => {
+      const original = { contractAddress, salt, bytecode };
+      const decoded = decodeDeployedTerms(createDeployedTerms(original));
+      expect(decoded.contractAddress).toBe(contractAddress);
+      expect((decoded.salt as string).toLowerCase()).toBe(
+        '0x0000000000000000000000000000000000000000000000000000000000000001',
+      );
+      expect(decoded.bytecode).toBe(bytecode);
+    });
 
-  it('throws for invalid bytecode', () => {
-    expect(() =>
-      createDeployedTerms({
-        contractAddress,
-        salt,
-        bytecode: 'invalid' as any,
-      }),
-    ).toThrow('Invalid bytecode: must be a valid hexadecimal string');
-  });
+    it('accepts Uint8Array terms from the encoder', () => {
+      const original = { contractAddress, salt, bytecode };
+      const bytes = createDeployedTerms(original, { out: 'bytes' });
+      const decoded = decodeDeployedTerms(bytes);
+      expect(decoded.bytecode).toBe(bytecode);
+    });
 
-  it('returns Uint8Array when bytes encoding is specified', () => {
-    const result = createDeployedTerms(
-      { contractAddress, salt, bytecode },
-      { out: 'bytes' },
-    );
-
-    expect(result).toBeInstanceOf(Uint8Array);
-    expect(result).toHaveLength(20 + 32 + 2);
+    it('throws when encoded terms are shorter than 52 bytes', () => {
+      expect(() => decodeDeployedTerms(`0x${'00'.repeat(51)}`)).toThrow(
+        'Invalid Deployed terms: must be at least 52 bytes',
+      );
+    });
   });
 });

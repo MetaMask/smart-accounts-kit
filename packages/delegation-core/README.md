@@ -67,8 +67,8 @@ Creates terms for a Timestamp caveat that enforces time-based constraints on del
 **Parameters:**
 
 - `terms: TimestampTerms`
-  - `timestampAfterThreshold: number` - Timestamp (seconds) after which delegation can be used
-  - `timestampBeforeThreshold: number` - Timestamp (seconds) before which delegation can be used
+  - `afterThreshold: number` - Timestamp (seconds) after which delegation can be used
+  - `beforeThreshold: number` - Timestamp (seconds) before which delegation can be used
 - `options?: EncodingOptions` - Optional encoding options
 
 **Returns:** `Hex | Uint8Array` - 32-byte encoded terms (16 bytes per timestamp)
@@ -80,14 +80,14 @@ import { createTimestampTerms } from '@metamask/delegation-core';
 
 // Valid between Jan 1, 2022 and Jan 1, 2023
 const terms = createTimestampTerms({
-  timestampAfterThreshold: 1640995200, // 2022-01-01 00:00:00 UTC
-  timestampBeforeThreshold: 1672531200, // 2023-01-01 00:00:00 UTC
+  afterThreshold: 1640995200, // 2022-01-01 00:00:00 UTC
+  beforeThreshold: 1672531200, // 2023-01-01 00:00:00 UTC
 });
 
 // Only valid after a certain time (no end time)
 const openEndedTerms = createTimestampTerms({
-  timestampAfterThreshold: 1640995200,
-  timestampBeforeThreshold: 0,
+  afterThreshold: 1640995200,
+  beforeThreshold: 0,
 });
 ```
 
@@ -354,8 +354,8 @@ export type ValueLteTerms = {
 };
 
 export type TimestampTerms = {
-  timestampAfterThreshold: number;
-  timestampBeforeThreshold: number;
+  afterThreshold: number;
+  beforeThreshold: number;
 };
 
 export type ExactCalldataTerms = {

@@ -1,10 +1,20 @@
+/**
+ * ## NonceEnforcer
+ *
+ * Binds the delegation to a nonce word for revocation and replay semantics.
+ *
+ * Terms are encoded as one 32-byte word with the nonce right-aligned and zero-padded on the left.
+ */
+
 import { isHexString } from '@metamask/utils';
 import type { BytesLike } from '@metamask/utils';
 
+import { assertHexByteExactLength } from '../internalUtils';
 import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -16,9 +26,9 @@ const MAX_NONCE_STRING_LENGTH = 66;
 /**
  * Terms for configuring a Nonce caveat.
  */
-export type NonceTerms = {
+export type NonceTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The nonce as BytesLike (0x-prefixed hex string or Uint8Array) to allow bulk revocation of delegations. */
-  nonce: BytesLike;
+  nonce: TBytesLike;
 };
 
 /**
@@ -26,7 +36,7 @@ export type NonceTerms = {
  *
  * @param terms - The terms for the Nonce caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the nonce is invalid.
  */
 export function createNonceTerms(
@@ -42,7 +52,7 @@ export function createNonceTerms(
  *
  * @param terms - The terms for the Nonce caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte padded value in the specified encoding format.
+ * @returns Encoded terms.
  * @throws Error if the nonce is invalid or empty.
  */
 export function createNonceTerms(
@@ -83,4 +93,42 @@ export function createNonceTerms(
   const hexValue = `0x${paddedNonce}`;
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a Nonce caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded nonce is returned as hex or bytes.
+ * @returns The decoded NonceTerms object.
+ */
+export function decodeNonceTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): NonceTerms<DecodedBytesLike<'hex'>>;
+export function decodeNonceTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): NonceTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded nonce is returned as hex or bytes.
+ * @returns The decoded NonceTerms object.
+ */
+export function decodeNonceTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+): NonceTerms<DecodedBytesLike<'hex'>> | NonceTerms<DecodedBytesLike<'bytes'>> {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    32,
+    'Invalid Nonce terms: must be exactly 32 bytes',
+  );
+
+  const nonce = prepareResult(hexTerms, encodingOptions);
+
+  return { nonce } as
+    | NonceTerms<DecodedBytesLike<'hex'>>
+    | NonceTerms<DecodedBytesLike<'bytes'>>;
 }

@@ -1,13 +1,27 @@
+/**
+ * ## ERC721BalanceChangeEnforcer
+ *
+ * Constrains ERC-721 balance (id count) change for a recipient.
+ *
+ * Terms are encoded as 1-byte direction (`0x00` = minimum increase, any non-zero e.g. `0x01` = maximum decrease), 20-byte token address, 20-byte recipient, then 32-byte big-endian amount.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import {
+  assertHexByteExactLength,
   concatHex,
+  extractAddress,
+  extractBigInt,
+  extractNumber,
   normalizeAddressLowercase,
   toHexString,
 } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -17,23 +31,24 @@ import { BalanceChangeType } from './types';
 /**
  * Terms for configuring an ERC721BalanceChange caveat.
  */
-export type ERC721BalanceChangeTerms = {
-  /** The ERC-721 token address. */
-  tokenAddress: BytesLike;
-  /** The recipient address. */
-  recipient: BytesLike;
-  /** The balance change amount. */
-  amount: bigint;
-  /** The balance change type. */
-  changeType: number;
-};
+export type ERC721BalanceChangeTerms<TBytesLike extends BytesLike = BytesLike> =
+  {
+    /** The ERC-721 token address. */
+    tokenAddress: TBytesLike;
+    /** The recipient address. */
+    recipient: TBytesLike;
+    /** The balance change amount. */
+    amount: bigint;
+    /** The balance change type. */
+    changeType: number;
+  };
 
 /**
  * Creates terms for an ERC721BalanceChange caveat that checks token balance changes.
  *
  * @param terms - The terms for the ERC721BalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + tokenAddress + recipient + amount.
+ * @returns Encoded terms.
  * @throws Error if any parameter is invalid.
  */
 export function createERC721BalanceChangeTerms(
@@ -49,7 +64,7 @@ export function createERC721BalanceChangeTerms(
  *
  * @param terms - The terms for the ERC721BalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + tokenAddress + recipient + amount.
+ * @returns Encoded terms.
  * @throws Error if any parameter is invalid.
  */
 export function createERC721BalanceChangeTerms(
@@ -95,4 +110,52 @@ export function createERC721BalanceChangeTerms(
   ]);
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an ERC721BalanceChange caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded ERC721BalanceChangeTerms object.
+ */
+export function decodeERC721BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): ERC721BalanceChangeTerms<DecodedBytesLike<'hex'>>;
+export function decodeERC721BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ERC721BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded ERC721BalanceChangeTerms object.
+ */
+export function decodeERC721BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ERC721BalanceChangeTerms<DecodedBytesLike<'hex'>>
+  | ERC721BalanceChangeTerms<DecodedBytesLike<'bytes'>> {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    73,
+    'Invalid ERC721BalanceChange terms: must be exactly 73 bytes',
+  );
+
+  const changeType = extractNumber(hexTerms, 0, 1);
+  const tokenAddressHex = extractAddress(hexTerms, 1);
+  const recipientHex = extractAddress(hexTerms, 21);
+  const amount = extractBigInt(hexTerms, 41, 32);
+
+  return {
+    changeType,
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    recipient: prepareResult(recipientHex, encodingOptions),
+    amount,
+  } as
+    | ERC721BalanceChangeTerms<DecodedBytesLike<'hex'>>
+    | ERC721BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
 }

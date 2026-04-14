@@ -1,5 +1,20 @@
-import { toHexString } from '../internalUtils';
+/**
+ * ## NativeTokenTransferAmountEnforcer
+ *
+ * Limits how much native token (wei) may be transferred in a single execution.
+ *
+ * Terms are encoded as a single 32-byte big-endian uint256 max amount.
+ */
+
+import type { BytesLike } from '@metamask/utils';
+
 import {
+  assertHexByteExactLength,
+  extractBigInt,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -20,7 +35,7 @@ export type NativeTokenTransferAmountTerms = {
  *
  * @param terms - The terms for the NativeTokenTransferAmount caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if maxAmount is negative.
  */
 export function createNativeTokenTransferAmountTerms(
@@ -36,7 +51,7 @@ export function createNativeTokenTransferAmountTerms(
  *
  * @param terms - The terms for the NativeTokenTransferAmount caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if maxAmount is negative.
  */
 export function createNativeTokenTransferAmountTerms(
@@ -51,4 +66,23 @@ export function createNativeTokenTransferAmountTerms(
 
   const hexValue = `0x${toHexString({ value: maxAmount, size: 32 })}`;
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a NativeTokenTransferAmount caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded NativeTokenTransferAmountTerms object.
+ */
+export function decodeNativeTokenTransferAmountTerms(
+  terms: BytesLike,
+): NativeTokenTransferAmountTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    32,
+    'Invalid NativeTokenTransferAmount terms: must be exactly 32 bytes',
+  );
+  const maxAmount = extractBigInt(hexTerms, 0, 32);
+  return { maxAmount };
 }

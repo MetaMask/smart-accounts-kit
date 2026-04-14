@@ -1,10 +1,20 @@
-import { encodeSingle } from '@metamask/abi-utils';
+/**
+ * ## ExactExecutionBatchEnforcer
+ *
+ * Requires a batch of executions to match exactly on target, value, and calldata.
+ *
+ * Terms are encoded as ABI-encoded (address,uint256,bytes)[].
+ */
+
+import { decodeSingle, encodeSingle } from '@metamask/abi-utils';
 import { bytesToHex, type BytesLike } from '@metamask/utils';
 
 import { normalizeAddress } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -13,14 +23,15 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an ExactExecutionBatch caveat.
  */
-export type ExactExecutionBatchTerms = {
-  /** The executions that must be matched exactly in the batch. */
-  executions: {
-    target: BytesLike;
-    value: bigint;
-    callData: BytesLike;
-  }[];
-};
+export type ExactExecutionBatchTerms<TBytesLike extends BytesLike = BytesLike> =
+  {
+    /** The executions that must be matched exactly in the batch. */
+    executions: {
+      target: TBytesLike;
+      value: bigint;
+      callData: TBytesLike;
+    }[];
+  };
 
 const EXECUTION_ARRAY_ABI = '(address,uint256,bytes)[]';
 
@@ -29,7 +40,7 @@ const EXECUTION_ARRAY_ABI = '(address,uint256,bytes)[]';
  *
  * @param terms - The terms for the ExactExecutionBatch caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as ABI-encoded execution array.
+ * @returns Encoded terms.
  * @throws Error if any execution parameters are invalid.
  */
 export function createExactExecutionBatchTerms(
@@ -45,7 +56,7 @@ export function createExactExecutionBatchTerms(
  *
  * @param terms - The terms for the ExactExecutionBatch caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as ABI-encoded execution array.
+ * @returns Encoded terms.
  * @throws Error if any execution parameters are invalid.
  */
 export function createExactExecutionBatchTerms(
@@ -85,4 +96,47 @@ export function createExactExecutionBatchTerms(
 
   const hexValue = encodeSingle(EXECUTION_ARRAY_ABI, encodableExecutions);
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an ExactExecutionBatch caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded targets and calldata are returned as hex or bytes.
+ * @returns The decoded ExactExecutionBatchTerms object.
+ */
+export function decodeExactExecutionBatchTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): ExactExecutionBatchTerms<DecodedBytesLike<'hex'>>;
+export function decodeExactExecutionBatchTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ExactExecutionBatchTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded targets and calldata are returned as hex or bytes.
+ * @returns The decoded ExactExecutionBatchTerms object.
+ */
+export function decodeExactExecutionBatchTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ExactExecutionBatchTerms<DecodedBytesLike<'hex'>>
+  | ExactExecutionBatchTerms<DecodedBytesLike<'bytes'>> {
+  const hexTerms = bytesLikeToHex(terms);
+
+  const decoded = decodeSingle(EXECUTION_ARRAY_ABI, hexTerms);
+
+  const executions = (decoded as [string, bigint, Uint8Array][]).map(
+    ([target, value, callData]) => ({
+      target: prepareResult(target, encodingOptions),
+      value,
+      callData: prepareResult(bytesToHex(callData), encodingOptions),
+    }),
+  );
+
+  return { executions } as
+    | ExactExecutionBatchTerms<DecodedBytesLike<'hex'>>
+    | ExactExecutionBatchTerms<DecodedBytesLike<'bytes'>>;
 }

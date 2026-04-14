@@ -1,79 +1,132 @@
 import { describe, it, expect } from 'vitest';
 
-import { createSpecificActionERC20TransferBatchTerms } from '../../src/caveats/specificActionERC20TransferBatch';
+import {
+  createSpecificActionERC20TransferBatchTerms,
+  decodeSpecificActionERC20TransferBatchTerms,
+} from '../../src/caveats/specificActionERC20TransferBatch';
 
-describe('createSpecificActionERC20TransferBatchTerms', () => {
-  const tokenAddress = '0x0000000000000000000000000000000000000011';
-  const recipient = '0x0000000000000000000000000000000000000022';
-  const target = '0x0000000000000000000000000000000000000033';
+describe('SpecificActionERC20TransferBatch', () => {
+  describe('createSpecificActionERC20TransferBatchTerms', () => {
+    const tokenAddress = '0x0000000000000000000000000000000000000011';
+    const recipient = '0x0000000000000000000000000000000000000022';
+    const target = '0x0000000000000000000000000000000000000033';
 
-  it('creates valid terms for specific action batch', () => {
-    const result = createSpecificActionERC20TransferBatchTerms({
-      tokenAddress,
-      recipient,
-      amount: 1n,
-      target,
-      calldata: '0x1234',
+    it('creates valid terms for specific action batch', () => {
+      const result = createSpecificActionERC20TransferBatchTerms({
+        tokenAddress,
+        recipient,
+        amount: 1n,
+        target,
+        calldata: '0x1234',
+      });
+
+      expect(result).toStrictEqual(
+        '0x0000000000000000000000000000000000000011' +
+          '0000000000000000000000000000000000000022' +
+          '0000000000000000000000000000000000000000000000000000000000000001' +
+          '0000000000000000000000000000000000000033' +
+          '1234',
+      );
     });
 
-    expect(result).toStrictEqual(
-      '0x0000000000000000000000000000000000000011' +
-        '0000000000000000000000000000000000000022' +
-        '0000000000000000000000000000000000000000000000000000000000000001' +
-        '0000000000000000000000000000000000000033' +
-        '1234',
-    );
+    it('throws for invalid token address', () => {
+      expect(() =>
+        createSpecificActionERC20TransferBatchTerms({
+          tokenAddress: '0x1234',
+          recipient,
+          amount: 1n,
+          target,
+          calldata: '0x',
+        }),
+      ).toThrow('Invalid tokenAddress: must be a valid address');
+    });
+
+    it('throws for invalid amount', () => {
+      expect(() =>
+        createSpecificActionERC20TransferBatchTerms({
+          tokenAddress,
+          recipient,
+          amount: 0n,
+          target,
+          calldata: '0x',
+        }),
+      ).toThrow('Invalid amount: must be a positive number');
+    });
+
+    it('throws when calldata string does not start with 0x', () => {
+      expect(() =>
+        createSpecificActionERC20TransferBatchTerms({
+          tokenAddress,
+          recipient,
+          amount: 1n,
+          target,
+          calldata: '1234' as `0x${string}`,
+        }),
+      ).toThrow('Invalid calldata: must be a hex string starting with 0x');
+    });
+
+    it('returns Uint8Array when bytes encoding is specified', () => {
+      const result = createSpecificActionERC20TransferBatchTerms(
+        {
+          tokenAddress,
+          recipient,
+          amount: 2n,
+          target,
+          calldata: '0x1234',
+        },
+        { out: 'bytes' },
+      );
+
+      expect(result).toBeInstanceOf(Uint8Array);
+      expect(result).toHaveLength(94);
+    });
   });
 
-  it('throws for invalid token address', () => {
-    expect(() =>
-      createSpecificActionERC20TransferBatchTerms({
-        tokenAddress: '0x1234',
+  describe('decodeSpecificActionERC20TransferBatchTerms', () => {
+    const tokenAddress =
+      '0x0000000000000000000000000000000000000011' as `0x${string}`;
+    const recipient =
+      '0x0000000000000000000000000000000000000022' as `0x${string}`;
+    const target =
+      '0x0000000000000000000000000000000000000033' as `0x${string}`;
+
+    it('decodes all fields', () => {
+      const original = {
+        tokenAddress,
         recipient,
         amount: 1n,
         target,
-        calldata: '0x',
-      }),
-    ).toThrow('Invalid tokenAddress: must be a valid address');
-  });
+        calldata: '0x1234' as `0x${string}`,
+      };
+      expect(
+        decodeSpecificActionERC20TransferBatchTerms(
+          createSpecificActionERC20TransferBatchTerms(original),
+        ),
+      ).toStrictEqual(original);
+    });
 
-  it('throws for invalid amount', () => {
-    expect(() =>
-      createSpecificActionERC20TransferBatchTerms({
-        tokenAddress,
-        recipient,
-        amount: 0n,
-        target,
-        calldata: '0x',
-      }),
-    ).toThrow('Invalid amount: must be a positive number');
-  });
-
-  it('throws when calldata string does not start with 0x', () => {
-    expect(() =>
-      createSpecificActionERC20TransferBatchTerms({
-        tokenAddress,
-        recipient,
-        amount: 1n,
-        target,
-        calldata: '1234' as `0x${string}`,
-      }),
-    ).toThrow('Invalid calldata: must be a hex string starting with 0x');
-  });
-
-  it('returns Uint8Array when bytes encoding is specified', () => {
-    const result = createSpecificActionERC20TransferBatchTerms(
-      {
+    it('accepts Uint8Array terms from the encoder', () => {
+      const original = {
         tokenAddress,
         recipient,
         amount: 2n,
         target,
-        calldata: '0x1234',
-      },
-      { out: 'bytes' },
-    );
+        calldata: '0x1234' as `0x${string}`,
+      };
+      const bytes = createSpecificActionERC20TransferBatchTerms(original, {
+        out: 'bytes',
+      });
+      expect(decodeSpecificActionERC20TransferBatchTerms(bytes)).toStrictEqual(
+        original,
+      );
+    });
 
-    expect(result).toBeInstanceOf(Uint8Array);
-    expect(result).toHaveLength(94);
+    it('throws when encoded terms are shorter than 92 bytes', () => {
+      expect(() =>
+        decodeSpecificActionERC20TransferBatchTerms(`0x${'00'.repeat(91)}`),
+      ).toThrow(
+        'Invalid SpecificActionERC20TransferBatch terms: must be at least 92 bytes',
+      );
+    });
   });
 });

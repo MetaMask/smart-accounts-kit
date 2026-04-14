@@ -1,9 +1,24 @@
+/**
+ * ## AllowedCalldataEnforcer
+ *
+ * Constrains the calldata bytes starting at a given byte offset to match an expected fragment.
+ *
+ * Terms are encoded as a 32-byte big-endian start index followed by the expected calldata bytes (not ABI-wrapped).
+ */
+
 import { bytesToHex, remove0x, type BytesLike } from '@metamask/utils';
 
-import { toHexString } from '../internalUtils';
 import {
+  assertHexBytesMinLength,
+  extractNumber,
+  extractRemainingHex,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -12,9 +27,9 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring an AllowedCalldata caveat.
  */
-export type AllowedCalldataTerms = {
+export type AllowedCalldataTerms<TBytesLike extends BytesLike = BytesLike> = {
   startIndex: number;
-  value: BytesLike;
+  value: TBytesLike;
 };
 
 /**
@@ -23,7 +38,7 @@ export type AllowedCalldataTerms = {
  *
  * @param terms - The terms for the AllowedCalldata caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the calldata itself.
+ * @returns Encoded terms.
  * @throws Error if the `calldata` is invalid.
  */
 export function createAllowedCalldataTerms(
@@ -40,7 +55,7 @@ export function createAllowedCalldataTerms(
  *
  * @param terms - The terms for the AllowedCalldata caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as the calldata itself.
+ * @returns Encoded terms.
  * @throws Error if the `calldata` is invalid.
  */
 export function createAllowedCalldataTerms(
@@ -70,6 +85,47 @@ export function createAllowedCalldataTerms(
 
   const indexHex = toHexString({ value: startIndex, size: 32 });
 
-  // The terms are the index encoded as 32 bytes followed by the expected value.
   return prepareResult(`0x${indexHex}${unprefixedValue}`, encodingOptions);
+}
+
+/**
+ * Decodes terms for an AllowedCalldata caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether the decoded value fragment is returned as hex or bytes.
+ * @returns The decoded AllowedCalldataTerms object.
+ */
+export function decodeAllowedCalldataTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): AllowedCalldataTerms<DecodedBytesLike<'hex'>>;
+export function decodeAllowedCalldataTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): AllowedCalldataTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether the decoded value fragment is returned as hex or bytes.
+ * @returns The decoded AllowedCalldataTerms object.
+ */
+export function decodeAllowedCalldataTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | AllowedCalldataTerms<DecodedBytesLike<'hex'>>
+  | AllowedCalldataTerms<DecodedBytesLike<'bytes'>> {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexBytesMinLength(
+    hexTerms,
+    32,
+    'Invalid AllowedCalldata terms: must be at least 32 bytes',
+  );
+
+  const startIndex = extractNumber(hexTerms, 0, 32);
+  const valueHex = extractRemainingHex(hexTerms, 32);
+  const value = prepareResult(valueHex, encodingOptions);
+
+  return { startIndex, value } as
+    | AllowedCalldataTerms<DecodedBytesLike<'hex'>>
+    | AllowedCalldataTerms<DecodedBytesLike<'bytes'>>;
 }

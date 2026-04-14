@@ -1,9 +1,25 @@
+/**
+ * ## RedeemerEnforcer
+ *
+ * Restricts which addresses may redeem the delegation.
+ *
+ * Terms are encoded as the concatenation of 20-byte redeemer addresses in order with no padding between addresses.
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
-import { concatHex, normalizeAddress } from '../internalUtils';
 import {
+  assertHexByteLengthAtLeastOneMultipleOf,
+  concatHex,
+  extractAddress,
+  getByteLength,
+  normalizeAddress,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -12,9 +28,9 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring a Redeemer caveat.
  */
-export type RedeemerTerms = {
+export type RedeemerTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** An array of addresses allowed to redeem the delegation. */
-  redeemers: BytesLike[];
+  redeemers: TBytesLike[];
 };
 
 /**
@@ -22,7 +38,7 @@ export type RedeemerTerms = {
  *
  * @param terms - The terms for the Redeemer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated redeemer addresses.
+ * @returns Encoded terms.
  * @throws Error if the redeemers array is empty or contains invalid addresses.
  */
 export function createRedeemerTerms(
@@ -38,7 +54,7 @@ export function createRedeemerTerms(
  *
  * @param terms - The terms for the Redeemer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as concatenated redeemer addresses.
+ * @returns Encoded terms.
  * @throws Error if the redeemers array is empty or contains invalid addresses.
  */
 export function createRedeemerTerms(
@@ -59,4 +75,51 @@ export function createRedeemerTerms(
 
   const hexValue = concatHex(normalizedRedeemers);
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a Redeemer caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded RedeemerTerms object.
+ */
+export function decodeRedeemerTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): RedeemerTerms<DecodedBytesLike<'hex'>>;
+export function decodeRedeemerTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): RedeemerTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded RedeemerTerms object.
+ */
+export function decodeRedeemerTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | RedeemerTerms<DecodedBytesLike<'hex'>>
+  | RedeemerTerms<DecodedBytesLike<'bytes'>> {
+  const hexTerms = bytesLikeToHex(terms);
+
+  const addressSize = 20;
+  assertHexByteLengthAtLeastOneMultipleOf(
+    hexTerms,
+    addressSize,
+    'Invalid redeemers: must be a multiple of 20',
+  );
+  const addressCount = getByteLength(hexTerms) / addressSize;
+
+  const redeemers: (Hex | Uint8Array)[] = [];
+  for (let i = 0; i < addressCount; i++) {
+    const redeemer = extractAddress(hexTerms, i * addressSize);
+    redeemers.push(prepareResult(redeemer, encodingOptions));
+  }
+
+  return { redeemers } as
+    | RedeemerTerms<DecodedBytesLike<'hex'>>
+    | RedeemerTerms<DecodedBytesLike<'bytes'>>;
 }

@@ -1,9 +1,25 @@
+/**
+ * ## ERC20TokenPeriodTransferEnforcer
+ *
+ * Limits periodic ERC-20 transfers for a token using amount, period length, and start date.
+ *
+ * Terms are encoded as 20-byte token address then three 32-byte big-endian uint256 words: period amount, period duration, start date.
+ */
+
 import { type BytesLike, isHexString, bytesToHex } from '@metamask/utils';
 
-import { toHexString } from '../internalUtils';
 import {
+  assertHexByteExactLength,
+  extractAddress,
+  extractBigInt,
+  extractNumber,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -12,9 +28,11 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring a periodic transfer allowance of ERC20 tokens.
  */
-export type ERC20TokenPeriodTransferTerms = {
+export type ERC20TokenPeriodTransferTerms<
+  TBytesLike extends BytesLike = BytesLike,
+> = {
   /** The address of the ERC20 token. */
-  tokenAddress: BytesLike;
+  tokenAddress: TBytesLike;
   /** The maximum amount that can be transferred within each period. */
   periodAmount: bigint;
   /** The duration of each period in seconds. */
@@ -30,7 +48,7 @@ export type ERC20TokenPeriodTransferTerms = {
  *
  * @param terms - The terms for the ERC20TokenPeriodTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 128-byte hex string (32 bytes for each parameter).
+ * @returns Encoded terms.
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createERC20TokenPeriodTransferTerms(
@@ -47,7 +65,7 @@ export function createERC20TokenPeriodTransferTerms(
  *
  * @param terms - The terms for the ERC20TokenPeriodTransfer caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 128-byte hex string (32 bytes for each parameter).
+ * @returns Encoded terms.
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createERC20TokenPeriodTransferTerms(
@@ -93,4 +111,52 @@ export function createERC20TokenPeriodTransferTerms(
   const hexValue = `${prefixedTokenAddressHex}${periodAmountHex}${periodDurationHex}${startDateHex}`;
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an ERC20TokenPeriodTransfer caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded token address is returned as hex or bytes.
+ * @returns The decoded ERC20TokenPeriodTransferTerms object.
+ */
+export function decodeERC20TokenPeriodTransferTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): ERC20TokenPeriodTransferTerms<DecodedBytesLike<'hex'>>;
+export function decodeERC20TokenPeriodTransferTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ERC20TokenPeriodTransferTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded token address is returned as hex or bytes.
+ * @returns The decoded ERC20TokenPeriodTransferTerms object.
+ */
+export function decodeERC20TokenPeriodTransferTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ERC20TokenPeriodTransferTerms<DecodedBytesLike<'hex'>>
+  | ERC20TokenPeriodTransferTerms<DecodedBytesLike<'bytes'>> {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    116,
+    'Invalid ERC20TokenPeriodTransfer terms: must be exactly 116 bytes',
+  );
+
+  const tokenAddressHex = extractAddress(hexTerms, 0);
+  const periodAmount = extractBigInt(hexTerms, 20, 32);
+  const periodDuration = extractNumber(hexTerms, 52, 32);
+  const startDate = extractNumber(hexTerms, 84, 32);
+
+  return {
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    periodAmount,
+    periodDuration,
+    startDate,
+  } as
+    | ERC20TokenPeriodTransferTerms<DecodedBytesLike<'hex'>>
+    | ERC20TokenPeriodTransferTerms<DecodedBytesLike<'bytes'>>;
 }

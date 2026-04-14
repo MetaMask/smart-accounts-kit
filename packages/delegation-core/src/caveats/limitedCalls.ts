@@ -1,5 +1,20 @@
-import { toHexString } from '../internalUtils';
+/**
+ * ## LimitedCallsEnforcer
+ *
+ * Caps how many times the delegation may be redeemed.
+ *
+ * Terms are encoded as a single 32-byte big-endian uint256 call limit.
+ */
+
+import type { BytesLike } from '@metamask/utils';
+
 import {
+  assertHexByteExactLength,
+  extractNumber,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -20,7 +35,7 @@ export type LimitedCallsTerms = {
  *
  * @param terms - The terms for the LimitedCalls caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the limit is not a positive integer.
  */
 export function createLimitedCallsTerms(
@@ -36,7 +51,7 @@ export function createLimitedCallsTerms(
  *
  * @param terms - The terms for the LimitedCalls caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if the limit is not a positive integer.
  */
 export function createLimitedCallsTerms(
@@ -55,4 +70,21 @@ export function createLimitedCallsTerms(
 
   const hexValue = `0x${toHexString({ value: limit, size: 32 })}`;
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a LimitedCalls caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded LimitedCallsTerms object.
+ */
+export function decodeLimitedCallsTerms(terms: BytesLike): LimitedCallsTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    32,
+    'Invalid LimitedCalls terms: must be exactly 32 bytes',
+  );
+  const limit = extractNumber(hexTerms, 0, 32);
+  return { limit };
 }

@@ -1,5 +1,21 @@
-import { toHexString } from '../internalUtils';
+/**
+ * ## NativeTokenStreamingEnforcer
+ *
+ * Configures a linear streaming allowance of native token over time.
+ *
+ * Terms are encoded as four consecutive 32-byte big-endian uint256 words: initial amount, max amount, amount per second, start time.
+ */
+
+import type { BytesLike } from '@metamask/utils';
+
 import {
+  assertHexByteExactLength,
+  extractBigInt,
+  extractNumber,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -52,7 +68,7 @@ export function createNativeTokenStreamingTerms(
  *
  * @param terms - The terms for the NativeTokenStreaming caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 128-byte hex string.
+ * @returns Encoded terms.
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createNativeTokenStreamingTerms(
@@ -95,4 +111,28 @@ export function createNativeTokenStreamingTerms(
   const hexValue = `0x${initialAmountHex}${maxAmountHex}${amountPerSecondHex}${startTimeHex}`;
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a NativeTokenStreaming caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded NativeTokenStreamingTerms object.
+ */
+export function decodeNativeTokenStreamingTerms(
+  terms: BytesLike,
+): NativeTokenStreamingTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    128,
+    'Invalid NativeTokenStreaming terms: must be exactly 128 bytes',
+  );
+
+  const initialAmount = extractBigInt(hexTerms, 0, 32);
+  const maxAmount = extractBigInt(hexTerms, 32, 32);
+  const amountPerSecond = extractBigInt(hexTerms, 64, 32);
+  const startTime = extractNumber(hexTerms, 96, 32);
+
+  return { initialAmount, maxAmount, amountPerSecond, startTime };
 }

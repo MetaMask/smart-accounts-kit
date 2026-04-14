@@ -1,5 +1,20 @@
-import { toHexString } from '../internalUtils';
+/**
+ * ## BlockNumberEnforcer
+ *
+ * Restricts redemption to a block number range (strict inequalities on-chain: valid when `block.number > afterThreshold` if after is set, and `block.number < beforeThreshold` if before is set).
+ *
+ * Terms are encoded as a 16-byte after threshold followed by a 16-byte before threshold (each big-endian, zero-padded; interpreted as `uint128`).
+ */
+
+import type { BytesLike } from '@metamask/utils';
+
 import {
+  assertHexByteExactLength,
+  extractBigInt,
+  toHexString,
+} from '../internalUtils';
+import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
   type EncodingOptions,
@@ -22,7 +37,7 @@ export type BlockNumberTerms = {
  *
  * @param terms - The terms for the BlockNumber caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string (16 bytes for each threshold).
+ * @returns Encoded terms.
  * @throws Error if both thresholds are zero or if afterThreshold >= beforeThreshold when both are set.
  */
 export function createBlockNumberTerms(
@@ -38,7 +53,7 @@ export function createBlockNumberTerms(
  *
  * @param terms - The terms for the BlockNumber caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as a 32-byte hex string (16 bytes for each threshold).
+ * @returns Encoded terms.
  * @throws Error if both thresholds are zero or if afterThreshold >= beforeThreshold when both are set.
  */
 export function createBlockNumberTerms(
@@ -68,4 +83,22 @@ export function createBlockNumberTerms(
   const hexValue = `0x${afterThresholdHex}${beforeThresholdHex}`;
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for a BlockNumber caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @returns The decoded BlockNumberTerms object.
+ */
+export function decodeBlockNumberTerms(terms: BytesLike): BlockNumberTerms {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    32,
+    'Invalid BlockNumber terms: must be exactly 32 bytes',
+  );
+  const afterThreshold = extractBigInt(hexTerms, 0, 16);
+  const beforeThreshold = extractBigInt(hexTerms, 16, 16);
+  return { afterThreshold, beforeThreshold };
 }

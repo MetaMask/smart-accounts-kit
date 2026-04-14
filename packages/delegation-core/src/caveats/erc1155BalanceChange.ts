@@ -1,13 +1,27 @@
+/**
+ * ## ERC1155BalanceChangeEnforcer
+ *
+ * Constrains ERC-1155 balance change for a token id and recipient.
+ *
+ * Terms are encoded as 1-byte direction (`0x00` = minimum increase, any non-zero e.g. `0x01` = maximum decrease), 20-byte token address, 20-byte recipient, then 32-byte token id and 32-byte balance (each big-endian uint256).
+ */
+
 import type { BytesLike } from '@metamask/utils';
 
 import {
+  assertHexByteExactLength,
   concatHex,
+  extractAddress,
+  extractBigInt,
+  extractNumber,
   normalizeAddressLowercase,
   toHexString,
 } from '../internalUtils';
 import {
+  bytesLikeToHex,
   defaultOptions,
   prepareResult,
+  type DecodedBytesLike,
   type EncodingOptions,
   type ResultValue,
 } from '../returns';
@@ -17,11 +31,13 @@ import { BalanceChangeType } from './types';
 /**
  * Terms for configuring an ERC1155BalanceChange caveat.
  */
-export type ERC1155BalanceChangeTerms = {
+export type ERC1155BalanceChangeTerms<
+  TBytesLike extends BytesLike = BytesLike,
+> = {
   /** The ERC-1155 token address. */
-  tokenAddress: BytesLike;
+  tokenAddress: TBytesLike;
   /** The recipient address. */
-  recipient: BytesLike;
+  recipient: TBytesLike;
   /** The token id. */
   tokenId: bigint;
   /** The balance change amount. */
@@ -35,7 +51,7 @@ export type ERC1155BalanceChangeTerms = {
  *
  * @param terms - The terms for the ERC1155BalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + tokenAddress + recipient + tokenId + balance.
+ * @returns Encoded terms.
  * @throws Error if any parameter is invalid.
  */
 export function createERC1155BalanceChangeTerms(
@@ -51,7 +67,7 @@ export function createERC1155BalanceChangeTerms(
  *
  * @param terms - The terms for the ERC1155BalanceChange caveat.
  * @param encodingOptions - The encoding options for the result.
- * @returns The terms as changeType + tokenAddress + recipient + tokenId + balance.
+ * @returns Encoded terms.
  * @throws Error if any parameter is invalid.
  */
 export function createERC1155BalanceChangeTerms(
@@ -104,4 +120,54 @@ export function createERC1155BalanceChangeTerms(
   ]);
 
   return prepareResult(hexValue, encodingOptions);
+}
+
+/**
+ * Decodes terms for an ERC1155BalanceChange caveat from encoded hex data.
+ *
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded ERC1155BalanceChangeTerms object.
+ */
+export function decodeERC1155BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions?: EncodingOptions<'hex'>,
+): ERC1155BalanceChangeTerms<DecodedBytesLike<'hex'>>;
+export function decodeERC1155BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): ERC1155BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded addresses are returned as hex or bytes.
+ * @returns The decoded ERC1155BalanceChangeTerms object.
+ */
+export function decodeERC1155BalanceChangeTerms(
+  terms: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | ERC1155BalanceChangeTerms<DecodedBytesLike<'hex'>>
+  | ERC1155BalanceChangeTerms<DecodedBytesLike<'bytes'>> {
+  const hexTerms = bytesLikeToHex(terms);
+  assertHexByteExactLength(
+    hexTerms,
+    105,
+    'Invalid ERC1155BalanceChange terms: must be exactly 105 bytes',
+  );
+
+  const changeType = extractNumber(hexTerms, 0, 1);
+  const tokenAddressHex = extractAddress(hexTerms, 1);
+  const recipientHex = extractAddress(hexTerms, 21);
+  const tokenId = extractBigInt(hexTerms, 41, 32);
+  const balance = extractBigInt(hexTerms, 73, 32);
+
+  return {
+    changeType,
+    tokenAddress: prepareResult(tokenAddressHex, encodingOptions),
+    recipient: prepareResult(recipientHex, encodingOptions),
+    tokenId,
+    balance,
+  } as
+    | ERC1155BalanceChangeTerms<DecodedBytesLike<'hex'>>
+    | ERC1155BalanceChangeTerms<DecodedBytesLike<'bytes'>>;
 }

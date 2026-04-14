@@ -239,6 +239,51 @@ const roninSaigonChain: Chain = {
   },
 };
 
+const citreaMainnetChain: Chain = {
+  id: 4114,
+  name: 'Citrea Mainnet',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.mainnet.citrea.xyz'],
+    },
+  },
+  nativeCurrency: {
+    name: 'cBTC',
+    symbol: 'cBTC',
+    decimals: 18,
+  },
+};
+
+const mantleMainnetChain: Chain = {
+  id: 5000,
+  name: 'Mantle Mainnet',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.mantle.xyz'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Mantle',
+    symbol: 'MNT',
+    decimals: 18,
+  },
+};
+
+const mantleSepoliaChain: Chain = {
+  id: 5003,
+  name: 'Mantle Sepolia',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.sepolia.mantle.xyz'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Mantle',
+    symbol: 'MNT',
+    decimals: 18,
+  },
+};
+
 export const chains = {
   ...allChains,
   megaEthTestNet: megaEthTestNetChain,
@@ -255,6 +300,9 @@ export const chains = {
   roninSaigon: roninSaigonChain,
   tempoModeratoTestnet: tempoModeratoTestnetChain,
   tempoMainnet: tempoMainnetChain,
+  citreaMainnet: citreaMainnetChain,
+  mantleMainnet: mantleMainnetChain,
+  mantleSepolia: mantleSepoliaChain,
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them

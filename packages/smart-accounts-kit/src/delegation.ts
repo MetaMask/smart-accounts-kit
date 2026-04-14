@@ -13,6 +13,7 @@ import { toHex, getAddress, isHex } from 'viem';
 import type { TypedData, AbiParameter, Address, Hex } from 'viem';
 import { signTypedData } from 'viem/accounts';
 
+import { trackSmartAccountsKitFunctionCall } from './analytics';
 import { type Caveats, resolveCaveats } from './caveatBuilder';
 import type { ScopeConfig } from './caveatBuilder/scope';
 import { CAVEAT_ABI_TYPE_COMPONENTS } from './caveats';
@@ -247,6 +248,30 @@ export const resolveAuthority = (parentDelegation?: Delegation | Hex): Hex => {
   return hashDelegation(parentDelegation);
 };
 
+const getCaveatNames = ({
+  caveats,
+  environment: { caveatEnforcers },
+}: {
+  caveats: DelegationStruct['caveats'];
+  environment: SmartAccountsEnvironment;
+}): string[] => {
+  if (Array.isArray(caveats)) {
+    const knownEnforcers = Object.entries(caveatEnforcers).map(
+      ([name, address]) => ({ name, address: address.toLowerCase() }),
+    );
+
+    return caveats.map((caveat) => {
+      const enforcerAddressLowercase = caveat.enforcer?.toLowerCase();
+      const matchingCaveat = knownEnforcers.find(
+        ({ address }) => address === enforcerAddressLowercase,
+      );
+      return matchingCaveat?.name ?? 'Unknown';
+    });
+  }
+
+  return [];
+};
+
 /**
  * Creates a delegation with specific delegate.
  *
@@ -256,11 +281,22 @@ export const resolveAuthority = (parentDelegation?: Delegation | Hex): Hex => {
 export const createDelegation = (
   options: CreateDelegationOptions,
 ): Delegation => {
+  const caveats = resolveCaveats(options);
+
+  trackSmartAccountsKitFunctionCall('createDelegation', {
+    hasParentDelegation: options.parentDelegation !== undefined,
+    scope: options.scope.type,
+    caveatNames: getCaveatNames({
+      caveats,
+      environment: options.environment,
+    }),
+  });
+
   return {
     delegate: options.to,
     delegator: options.from,
     authority: resolveAuthority(options.parentDelegation),
-    caveats: resolveCaveats(options),
+    caveats,
     salt: options.salt ?? '0x00',
     signature: '0x',
   };
@@ -275,11 +311,22 @@ export const createDelegation = (
 export const createOpenDelegation = (
   options: CreateOpenDelegationOptions,
 ): Delegation => {
+  const caveats = resolveCaveats(options);
+
+  trackSmartAccountsKitFunctionCall('createOpenDelegation', {
+    hasParentDelegation: options.parentDelegation !== undefined,
+    scope: options.scope.type,
+    caveatNames: getCaveatNames({
+      caveats,
+      environment: options.environment,
+    }),
+  });
+
   return {
     delegate: ANY_BENEFICIARY,
     delegator: options.from,
     authority: resolveAuthority(options.parentDelegation),
-    caveats: resolveCaveats(options),
+    caveats,
     salt: options.salt ?? '0x00',
     signature: '0x',
   };

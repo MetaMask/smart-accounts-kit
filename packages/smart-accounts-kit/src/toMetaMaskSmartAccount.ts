@@ -11,13 +11,13 @@ import {
 } from 'viem/account-abstraction';
 
 import { isValid7702Implementation } from './actions/isValid7702Implementation';
+import { trackSmartAccountsKitFunctionCall } from './analytics';
 import { Implementation } from './constants';
 import { getCounterfactualAccountData } from './counterfactualAccountData';
 import {
   SIGNABLE_DELEGATION_TYPED_DATA,
   toDelegationStruct,
 } from './delegation';
-import { entryPointGetNonce as _getNonce } from './DelegationFramework/EntryPoint/read';
 import { encodeCallsForCaller } from './encodeCalls';
 import { resolveSigner } from './signer';
 import { getSmartAccountsEnvironment } from './smartAccountsEnvironment';
@@ -53,7 +53,15 @@ export async function toMetaMaskSmartAccount<
     client,
     client: { chain },
     implementation,
+    nonceKeyManager,
   } = params;
+
+  trackSmartAccountsKitFunctionCall('toMetaMaskSmartAccount', {
+    implementation,
+    hasAddress: params.address !== undefined,
+    hasEnvironment: params.environment !== undefined,
+    chainId: chain?.id ?? null,
+  });
 
   if (!chain) {
     throw new Error('Chain not specified');
@@ -186,14 +194,6 @@ export async function toMetaMaskSmartAccount<
 
   const getAddress = async () => address;
 
-  const getNonce = async () =>
-    _getNonce({
-      client,
-      entryPoint: environment.EntryPoint,
-      contractAddress: address,
-      key: 0n,
-    });
-
   const encodeCalls = async (calls: readonly Call[]) =>
     encodeCallsForCaller(address, calls);
 
@@ -223,9 +223,9 @@ export async function toMetaMaskSmartAccount<
     getAddress,
     getFactoryArgs,
     encodeCalls,
-    getNonce,
     signUserOperation,
     signDelegation,
+    nonceKeyManager,
     ...signerMethods,
   });
 

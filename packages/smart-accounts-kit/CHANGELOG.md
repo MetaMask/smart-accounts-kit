@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0]
+
+### Added
+
+- A `nonceKeyManager` can now be specified when calling `toMetaMaskSmartAccount` ([#199](https://github.com/metamask/smart-accounts-kit/pull/199))
+
+### Fixed
+
+- Nonce is always generated with nonce key `0n`, ignoring any specified nonce key value ([#199](https://github.com/metamask/smart-accounts-kit/pull/199))
+
+## [1.0.0]
+
+### Changed
+
+- Migrate from `webauthn-p256` to `0x` p256 module ([#193](https://github.com/metamask/smart-accounts-kit/pull/193))
+- `signer` param is now optional in `toMetaMaskSmartAccount` ([#178](https://github.com/metamask/smart-accounts-kit/pull/178))
+
 ## [0.4.0-beta.2]
 
 ### Added
@@ -88,7 +105,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.2...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.1.0...HEAD
+[1.1.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.0.0...@metamask/smart-accounts-kit@1.1.0
+[1.0.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.2...@metamask/smart-accounts-kit@1.0.0
 [0.4.0-beta.2]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.1...@metamask/smart-accounts-kit@0.4.0-beta.2
 [0.4.0-beta.1]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.0...@metamask/smart-accounts-kit@0.4.0-beta.1
 [0.4.0-beta.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.3.0...@metamask/smart-accounts-kit@0.4.0-beta.0

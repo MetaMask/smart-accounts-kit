@@ -1,3 +1,4 @@
+import { trackSmartAccountsKitFunctionCall } from '../analytics';
 import {
   permissionRequestToRpc,
   permissionResponsesFromRpc,
@@ -47,6 +48,13 @@ export async function erc7715RequestExecutionPermissionsAction(
   client: MetaMaskExtensionClient,
   parameters: RequestExecutionPermissionsParameters,
 ): Promise<RequestExecutionPermissionsReturnType> {
+  trackSmartAccountsKitFunctionCall(
+    'erc7715RequestExecutionPermissionsAction',
+    {
+      chainId: client.chain?.id ?? null,
+      requestCount: parameters.length,
+    },
+  );
   const formattedPermissionRequest = parameters.map(permissionRequestToRpc);
 
   const result = await client.request(

@@ -17,7 +17,7 @@ const options: Options = {
       'src/utils/index.ts',
       'src/contracts/index.ts',
       'src/actions/index.ts',
-    ],
+    ]
   },
 };
 

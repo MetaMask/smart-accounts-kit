@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0]
+
+### Added
+
+- Add chain deployment for Citrea mainnet ([#180](https://github.com/MetaMask/smart-accounts-kit/pull/180))
+- Add chain deployment for Mantle mainnet and Mantle Sepolia ([#197](https://github.com/MetaMask/smart-accounts-kit/pull/197))
+
+## [1.0.0]
+
+### Changed
+
+- Bumped from `0.17.0` to `1.0.0` ([#194](https://github.com/metamask/smart-accounts-kit/pull/194))
+
 ## [0.17.0]
 
 ### Added
@@ -46,7 +59,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add deployments for Sei mainnet ([#84](https://github.com/metamask/smart-accounts-kit/pull/84))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.17.0...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.1.0...HEAD
+[1.1.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.0.0...@metamask/delegation-deployments@1.1.0
+[1.0.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.17.0...@metamask/delegation-deployments@1.0.0
 [0.17.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.16.0...@metamask/delegation-deployments@0.17.0
 [0.16.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.15.0...@metamask/delegation-deployments@0.16.0
 [0.15.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@0.14.0...@metamask/delegation-deployments@0.15.0

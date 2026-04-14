@@ -78,11 +78,13 @@ export const createCaveat = (
   enforcer: Hex,
   terms: Hex,
   args: Hex = '0x00',
-): Caveat => ({
-  enforcer,
-  terms,
-  args,
-});
+): Caveat => {
+  return {
+    enforcer,
+    terms,
+    args,
+  };
+};
 
 /**
  * Decodes a caveat's encoded `terms` bytes by matching `enforcer` to the known enforcer addresses

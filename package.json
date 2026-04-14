@@ -37,7 +37,6 @@
     "@types/keccak": "^3.0.4",
     "@yarnpkg/types": "^4.0.1",
     "abitype": "^1.0.2",
-    "buffer": "^6.0.3",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-turbo": "^1.11.3",

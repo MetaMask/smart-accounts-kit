@@ -30,7 +30,7 @@ export type EncodingOptions<TResultValue extends ResultValue> = {
 /**
  * Default options value with proper typing. Use this as your default parameter.
  */
-export const defaultOptions = { out: 'hex' } as EncodingOptions<any>;
+export const defaultOptions = { out: 'hex' } as EncodingOptions<'hex'>;
 
 /**
  * Prepares a result by converting between hex and bytes based on options.

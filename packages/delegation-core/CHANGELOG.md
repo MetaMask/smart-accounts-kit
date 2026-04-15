@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.1.0]
 
-### Uncategorized
+### Added
 
-- feat: add terms decoding utils ([#191](https://github.com/metamask/smart-accounts-kit/pull/191))
+- `Caveat` terms decoding utils ([#191](https://github.com/metamask/smart-accounts-kit/pull/191))
 
 ## [1.0.0]
 

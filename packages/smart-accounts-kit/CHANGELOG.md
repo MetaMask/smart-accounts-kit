@@ -9,12 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.0]
 
-### Uncategorized
+### Added
 
-- feat: add terms decoding utils ([#191](https://github.com/metamask/smart-accounts-kit/pull/191))
-- Remove unused dependency on buffer polyfill. Use hexToBytes from viem instead. ([#201](https://github.com/metamask/smart-accounts-kit/pull/201))
-- Fix yarn constraints ([#202](https://github.com/metamask/smart-accounts-kit/pull/202))
-- Add analytics tracking to smart accounts kit ([#185](https://github.com/metamask/smart-accounts-kit/pull/185))
+- `decodeCaveat` util function ([#191](https://github.com/metamask/smart-accounts-kit/pull/191))
+- Chain deployment for Katana mainnet and Katana Bokuto ([#203](https://github.com/MetaMask/smart-accounts-kit/pull/203))
+- Anonymous usage statistics to help improve the SDK ([#185](https://github.com/metamask/smart-accounts-kit/pull/185))
+  - Opt out by setting environment variables `CI` or `DO_NOT_TRACK`, or `navigator.doNotTrack` or `window.doNotTrack` to either '1', 'true', or 'yes'
 
 ## [1.1.0]
 

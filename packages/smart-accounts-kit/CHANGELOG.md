@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0]
+
+### Added
+
+- `decodeCaveat` util function ([#191](https://github.com/metamask/smart-accounts-kit/pull/191))
+- Chain deployment for Katana mainnet and Katana Bokuto ([#203](https://github.com/MetaMask/smart-accounts-kit/pull/203))
+- Anonymous usage statistics to help improve the SDK ([#185](https://github.com/metamask/smart-accounts-kit/pull/185))
+  - Opt out by setting environment variables `CI` or `DO_NOT_TRACK`, or `navigator.doNotTrack` or `window.doNotTrack` to either '1', 'true', or 'yes'
+
 ## [1.1.0]
 
 ### Added
@@ -105,7 +114,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.1.0...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.2.0...HEAD
+[1.2.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.1.0...@metamask/smart-accounts-kit@1.2.0
 [1.1.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.0.0...@metamask/smart-accounts-kit@1.1.0
 [1.0.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.2...@metamask/smart-accounts-kit@1.0.0
 [0.4.0-beta.2]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.1...@metamask/smart-accounts-kit@0.4.0-beta.2

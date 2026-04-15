@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- feat: add terms decoding utils ([#191](https://github.com/metamask/smart-accounts-kit/pull/191))
+- Remove unused dependency on buffer polyfill. Use hexToBytes from viem instead. ([#201](https://github.com/metamask/smart-accounts-kit/pull/201))
+- Fix yarn constraints ([#202](https://github.com/metamask/smart-accounts-kit/pull/202))
+- Add analytics tracking to smart accounts kit ([#185](https://github.com/metamask/smart-accounts-kit/pull/185))
+
 ## [1.1.0]
 
 ### Added

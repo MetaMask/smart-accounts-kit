@@ -4,6 +4,8 @@ export type {
   CaveatStruct as Caveat,
 } from './types';
 
+export { BalanceChangeType } from './caveats/types';
+
 export {
   createValueLteTerms,
   decodeValueLteTerms,

@@ -40,7 +40,7 @@ export type ERC20BalanceChangeTerms<TBytesLike extends BytesLike = BytesLike> =
     /** The balance change amount. */
     balance: bigint;
     /** The balance change type. */
-    changeType: number;
+    changeType: BalanceChangeType;
   };
 
 /**
@@ -71,12 +71,7 @@ export function createERC20BalanceChangeTerms(
   terms: ERC20BalanceChangeTerms,
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
 ): Hex | Uint8Array {
-  const {
-    tokenAddress,
-    recipient,
-    balance,
-    changeType: changeTypeNumber,
-  } = terms;
+  const { tokenAddress, recipient, balance, changeType } = terms;
 
   const tokenAddressHex = normalizeAddressLowercase(
     tokenAddress,
@@ -90,8 +85,6 @@ export function createERC20BalanceChangeTerms(
   if (balance <= 0n) {
     throw new Error('Invalid balance: must be a positive number');
   }
-
-  const changeType = changeTypeNumber as BalanceChangeType;
 
   if (
     changeType !== BalanceChangeType.Increase &&

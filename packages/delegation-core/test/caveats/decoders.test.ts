@@ -64,6 +64,7 @@ import {
   createSpecificActionERC20TransferBatchTerms,
   decodeSpecificActionERC20TransferBatchTerms,
 } from '../../src/caveats';
+import { BalanceChangeType } from '../../src/caveats/types';
 
 describe('Terms Decoders', () => {
   describe('decodeValueLteTerms', () => {
@@ -295,7 +296,7 @@ describe('Terms Decoders', () => {
         recipient:
           '0x1234567890123456789012345678901234567890' as `0x${string}`,
         balance: 1000000000000000000n,
-        changeType: 0,
+        changeType: BalanceChangeType.Increase,
       };
       const encoded = createNativeBalanceChangeTerms(original);
       const decoded = decodeNativeBalanceChangeTerms(encoded);
@@ -355,7 +356,7 @@ describe('Terms Decoders', () => {
         recipient:
           '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
         balance: 1000000000000000000n,
-        changeType: 0,
+        changeType: BalanceChangeType.Increase,
       };
       const encoded = createERC20BalanceChangeTerms(original);
       const decoded = decodeERC20BalanceChangeTerms(encoded);
@@ -430,7 +431,7 @@ describe('Terms Decoders', () => {
         recipient:
           '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
         amount: 5n,
-        changeType: 0,
+        changeType: BalanceChangeType.Increase,
       };
       const encoded = createERC721BalanceChangeTerms(original);
       const decoded = decodeERC721BalanceChangeTerms(encoded);
@@ -454,7 +455,7 @@ describe('Terms Decoders', () => {
           '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
         tokenId: 123n,
         balance: 1000n,
-        changeType: 0,
+        changeType: BalanceChangeType.Increase,
       };
       const encoded = createERC1155BalanceChangeTerms(original);
       const decoded = decodeERC1155BalanceChangeTerms(encoded);

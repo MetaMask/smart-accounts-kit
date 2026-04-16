@@ -49,6 +49,17 @@ describe('ERC721BalanceChange', () => {
       ).toThrow('Invalid balance: must be a positive number');
     });
 
+    it('throws for invalid changeType', () => {
+      expect(() =>
+        createERC721BalanceChangeTerms({
+          tokenAddress,
+          recipient,
+          amount: 1n,
+          changeType: 2 as any,
+        }),
+      ).toThrow('Invalid changeType: must be either Increase or Decrease');
+    });
+
     it('returns Uint8Array when bytes encoding is specified', () => {
       const result = createERC721BalanceChangeTerms(
         {

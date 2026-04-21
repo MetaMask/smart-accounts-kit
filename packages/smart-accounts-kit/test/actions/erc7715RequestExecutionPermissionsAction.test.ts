@@ -7,8 +7,8 @@ import type {
   PermissionRequest,
 } from '@metamask/7715-permission-types';
 import { stub } from 'sinon';
-import type { Account, Client } from 'viem';
-import { createClient, custom } from 'viem';
+import type { Account, Address, Client } from 'viem';
+import { createClient, custom, getAddress } from 'viem';
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import { beforeEach, describe, expect, it } from 'vitest';
 
@@ -134,6 +134,45 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
         ],
       });
       expect(result).to.deep.equal(expectedResult);
+    });
+
+    it('includes redeemer rule in wallet RPC params when redeemer is set', async () => {
+      const redeemer = '0x1111111111111111111111111111111111111111' as Address;
+      const permissionRequest = {
+        chainId: 31337,
+        from: bob.address,
+        expiry: 1234567890,
+        redeemer: [redeemer],
+        permission: {
+          type: 'native-token-stream' as const,
+          data: {
+            amountPerSecond: 0x1n,
+            maxAmount: 2n,
+            startTime: 2,
+            justification: 'Test justification',
+          },
+          isAdjustmentAllowed: false,
+        },
+        to: alice.address,
+      };
+      const parameters: RequestExecutionPermissionsParameters = [
+        permissionRequest,
+      ];
+
+      stubRequest.resolves(mockRpcResponse);
+
+      await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
+
+      expect(stubRequest.firstCall.args[0].params[0].rules).to.deep.equal([
+        {
+          type: 'expiry',
+          data: { timestamp: 1234567890 },
+        },
+        {
+          type: 'redeemer',
+          data: { addresses: [getAddress(redeemer)] },
+        },
+      ]);
     });
 
     it('should set retryCount to 0', async () => {

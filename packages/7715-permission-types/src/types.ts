@@ -28,16 +28,45 @@ export type BasePermission = {
 };
 
 /**
- * A base rule type that all rules must extend.
- *
- * type - is an enum defined by the ERCs
- *
- * data - is a record of the data that is associated with the rule, and the structure is defined by the ERCs.
+ * Rule restricting permission use to before a Unix timestamp (seconds).
  */
-export type Rule = {
+export type ExpiryRule = {
+  type: 'expiry';
+  data: {
+    timestamp: number;
+  };
+};
+
+/**
+ * Rule restricting which addresses may redeem the permission (e.g. delegation context).
+ * Applies to every permission type in {@link PermissionTypes}. Only the DApp supplies this rule.
+ *
+ * data.addresses - EIP-55 checksum hex addresses allowed to redeem.
+ */
+export type RedeemerRule = {
+  type: 'redeemer';
+  data: {
+    addresses: Hex[];
+  };
+};
+
+/**
+ * Well-known execution permission rules for ERC-7715.
+ */
+export type KnownRule = ExpiryRule | RedeemerRule;
+
+/**
+ * Fallback for rule types returned by the wallet that are not yet modeled here.
+ */
+export type UnknownRule = {
   type: string;
   data: Record<string, any>;
 };
+
+/**
+ * A rule: restrictions or conditions on how a permission may be used or redeemed.
+ */
+export type Rule = KnownRule | UnknownRule;
 
 // //////////////////////////////////////////////////
 // MetaMask Permission Types
@@ -180,7 +209,7 @@ export type PermissionTypes =
  *
  * permission - permission defines the allowed behavior the signer can do on behalf of the account. See the "Permission" section for details.
  *
- * rules - rules defined the restrictions or conditions that a signer MUST abide by when using a permission to act on behalf of an account. See the "Rule" section for details.
+ * rules - restrictions or conditions (e.g. {@link ExpiryRule}, {@link RedeemerRule}) that apply to this request regardless of `permission.type`.
  */
 export type PermissionRequest<TPermission extends PermissionTypes> = {
   chainId: Hex; // hex-encoding of uint256

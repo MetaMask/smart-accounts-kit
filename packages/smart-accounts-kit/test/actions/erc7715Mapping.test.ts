@@ -1,4 +1,5 @@
 import type { Hex } from 'viem';
+import { getAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -7,7 +8,10 @@ import {
   permissionTypeFromRpc,
   rpcSupportedPermissionsToDeveloper,
 } from '../../src/actions/erc7715Mapping';
-import type { RpcGetSupportedExecutionPermissionsResult } from '../../src/actions/erc7715Types';
+import type {
+  RpcGetGrantedExecutionPermissionsResult,
+  RpcGetSupportedExecutionPermissionsResult,
+} from '../../src/actions/erc7715Types';
 
 describe('erc7715Mapping', () => {
   const basePermissionFields = {
@@ -179,6 +183,45 @@ describe('erc7715Mapping', () => {
         },
       });
     });
+
+    it('checksum-normalizes redeemer rule addresses', () => {
+      const rpcPermissions = [
+        {
+          ...basePermissionFields,
+          rules: [
+            {
+              type: 'redeemer',
+              data: {
+                addresses: ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
+              },
+            },
+          ],
+          permission: {
+            type: 'native-token-stream',
+            isAdjustmentAllowed: true,
+            data: {
+              amountPerSecond: '0x64',
+              startTime: 1700000000,
+            },
+          },
+        },
+      ];
+
+      const result = permissionResponsesFromRpc(
+        rpcPermissions as RpcGetGrantedExecutionPermissionsResult,
+      );
+
+      expect(result[0]?.rules).toStrictEqual([
+        {
+          type: 'redeemer',
+          data: {
+            addresses: [
+              getAddress('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'),
+            ],
+          },
+        },
+      ]);
+    });
   });
 
   describe('rpcSupportedPermissionsToDeveloper', () => {
@@ -259,6 +302,97 @@ describe('erc7715Mapping', () => {
           },
         ],
       });
+    });
+
+    it('adds redeemer rule with checksummed addresses', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        redeemer: ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result.rules).toStrictEqual([
+        {
+          type: 'redeemer',
+          data: {
+            addresses: [
+              getAddress('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'),
+            ],
+          },
+        },
+      ]);
+    });
+
+    it('adds expiry then redeemer when both are set', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        expiry: 1234567890,
+        redeemer: ['0x1111111111111111111111111111111111111111'],
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result.rules).toStrictEqual([
+        {
+          type: 'expiry',
+          data: { timestamp: 1234567890 },
+        },
+        {
+          type: 'redeemer',
+          data: {
+            addresses: [
+              getAddress('0x1111111111111111111111111111111111111111'),
+            ],
+          },
+        },
+      ]);
+    });
+
+    it('throws when redeemer is empty', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        redeemer: [],
+      } as const;
+
+      expect(() => permissionRequestToRpc(permissionRequest)).toThrow(
+        'Invalid redeemers: must specify at least one redeemer address',
+      );
+    });
+
+    it('throws when redeemer contains invalid address', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        redeemer: ['0x1234'],
+      } as const;
+
+      expect(() => permissionRequestToRpc(permissionRequest)).toThrow(
+        'Invalid redeemers: must be a valid address',
+      );
     });
 
     it('converts native-token-periodic: bigint → hex', () => {

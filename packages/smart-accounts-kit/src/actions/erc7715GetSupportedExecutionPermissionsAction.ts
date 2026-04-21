@@ -22,13 +22,16 @@ export type { GetSupportedExecutionPermissionsResult } from './erc7715Types';
  * // {
  * //   "native-token-allowance": {
  * //     "chainIds": [1, 137],
- * //     "ruleTypes": ["expiry"]
+ * //     "ruleTypes": ["expiry", "redeemer"]
  * //   },
  * //   "erc20-token-allowance": {
  * //     "chainIds": [1],
- * //     "ruleTypes": []
+ * //     "ruleTypes": ["expiry"]
  * //   }
  * // }
+ * //
+ * // Which strings appear in `ruleTypes` is defined by the wallet; when supported,
+ * // `"redeemer"` indicates the wallet accepts a redeemer execution rule.
  * ```
  */
 export async function erc7715GetSupportedExecutionPermissionsAction(

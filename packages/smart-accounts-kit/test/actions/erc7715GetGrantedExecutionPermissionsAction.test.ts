@@ -4,7 +4,7 @@ import type {
 } from '@metamask/7715-permission-types';
 import { stub } from 'sinon';
 import type { Client } from 'viem';
-import { createClient, custom } from 'viem';
+import { createClient, custom, getAddress } from 'viem';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -74,6 +74,37 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
               ...mockPermission.permission.data,
               amountPerSecond: 1n,
             },
+          },
+        },
+      ]);
+    });
+
+    it('checksum-normalizes redeemer addresses in rules', async () => {
+      const responseWithRedeemer: RpcGetGrantedExecutionPermissionsResult = [
+        {
+          ...mockPermission,
+          rules: [
+            {
+              type: 'redeemer',
+              data: {
+                addresses: ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
+              },
+            },
+          ],
+        },
+      ];
+      stubRequest.resolves(responseWithRedeemer);
+
+      const result =
+        await erc7715GetGrantedExecutionPermissionsAction(mockClient);
+
+      expect(result[0]?.rules).to.deep.equal([
+        {
+          type: 'redeemer',
+          data: {
+            addresses: [
+              getAddress('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'),
+            ],
           },
         },
       ]);

@@ -53,7 +53,7 @@ describe('erc20BalanceChangeBuilder', () => {
       const token = randomAddress();
       const recipient = randomAddress();
       const balance = 1000n;
-      const invalidChangeType = 2 as BalanceChangeType;
+      const invalidChangeType = 2 as unknown as BalanceChangeType;
 
       expect(() =>
         buildWithParams(token, recipient, balance, invalidChangeType),

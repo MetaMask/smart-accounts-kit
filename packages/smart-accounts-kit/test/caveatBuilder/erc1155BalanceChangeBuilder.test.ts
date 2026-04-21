@@ -101,7 +101,7 @@ describe('erc1155BalanceChangeBuilder', () => {
 
     it('should fail with an invalid changeType', () => {
       const validAddress = randomAddress();
-      const invalidChangeType = 2 as BalanceChangeType;
+      const invalidChangeType = 2 as unknown as BalanceChangeType;
       expect(() =>
         buildWithParams(
           validAddress,

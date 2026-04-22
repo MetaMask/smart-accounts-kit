@@ -1,9 +1,7 @@
 import type {
-  ExpiryRule,
   PermissionTypes as RpcPermissionTypes,
   PermissionRequest as RpcPermissionRequest,
   PermissionResponse as RpcPermissionResponse,
-  RedeemerRule,
   Rule,
 } from '@metamask/7715-permission-types';
 import type {
@@ -16,7 +14,7 @@ import type {
   Address,
 } from 'viem';
 
-export type { ExpiryRule, RedeemerRule, Rule };
+export type { Rule };
 
 // =============================================================================
 // Developer-facing types

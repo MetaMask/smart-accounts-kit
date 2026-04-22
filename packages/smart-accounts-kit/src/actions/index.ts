@@ -65,10 +65,8 @@ export { erc7715GetSupportedExecutionPermissionsAction as getSupportedExecutionP
 export { erc7715GetGrantedExecutionPermissionsAction as getGrantedExecutionPermissions } from './erc7715GetGrantedExecutionPermissionsAction';
 
 export {
-  type ExpiryRule,
   type GetSupportedExecutionPermissionsResult,
   type GetGrantedExecutionPermissionsResult,
-  type RedeemerRule,
   type Rule,
   type SupportedPermissionInfo,
   type PermissionTypes,

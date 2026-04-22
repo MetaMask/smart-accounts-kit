@@ -28,40 +28,16 @@ export type BasePermission = {
 };
 
 /**
- * Rule restricting permission use to before a Unix timestamp (seconds).
- */
-export type ExpiryRule = {
-  type: 'expiry';
-  data: {
-    timestamp: number;
-  };
-};
-
-/**
- * Rule restricting which addresses may redeem the permission (e.g. delegation context).
- * Applies to every permission type in {@link PermissionTypes}. Only the DApp supplies this rule.
+ * A rule: restrictions or conditions on how a permission may be used or redeemed.
  *
- * data.addresses - EIP-55 checksum hex addresses allowed to redeem.
+ * Well-known rule types include:
+ * - `expiry` – restricts permission use to before a Unix timestamp (seconds). Data: `{ timestamp: number }`.
+ * - `redeemer` – restricts which addresses may redeem the permission. Data: `{ addresses: Hex[] }`.
  */
-export type RedeemerRule = {
-  type: 'redeemer';
-  data: {
-    addresses: Hex[];
-  };
-};
-
-/**
- * A generic rule whose type and data are not constrained to a known shape.
- */
-export type GenericRule = {
+export type Rule = {
   type: string;
   data: Record<string, any>;
 };
-
-/**
- * A rule: restrictions or conditions on how a permission may be used or redeemed.
- */
-export type Rule = ExpiryRule | RedeemerRule | GenericRule;
 
 // //////////////////////////////////////////////////
 // MetaMask Permission Types
@@ -204,7 +180,7 @@ export type PermissionTypes =
  *
  * permission - permission defines the allowed behavior the signer can do on behalf of the account. See the "Permission" section for details.
  *
- * rules - restrictions or conditions (e.g. {@link ExpiryRule}, {@link RedeemerRule}) that apply to this request regardless of `permission.type`.
+ * rules - restrictions or conditions (e.g. `expiry`, `redeemer`) that apply to this request regardless of `permission.type`.
  */
 export type PermissionRequest<TPermission extends PermissionTypes> = {
   chainId: Hex; // hex-encoding of uint256

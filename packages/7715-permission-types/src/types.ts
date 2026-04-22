@@ -28,11 +28,11 @@ export type BasePermission = {
 };
 
 /**
- * A rule: restrictions or conditions on how a permission may be used or redeemed.
+ * A base rule type that all rules must extend.
  *
- * Well-known rule types include:
- * - `expiry` – restricts permission use to before a Unix timestamp (seconds). Data: `{ timestamp: number }`.
- * - `redeemer` – restricts which addresses may redeem the permission. Data: `{ addresses: Hex[] }`.
+ * type - is an enum defined by the ERCs
+ *
+ * data - is a record of the data that is associated with the rule, and the structure is defined by the ERCs.
  */
 export type Rule = {
   type: string;
@@ -180,7 +180,7 @@ export type PermissionTypes =
  *
  * permission - permission defines the allowed behavior the signer can do on behalf of the account. See the "Permission" section for details.
  *
- * rules - restrictions or conditions (e.g. `expiry`, `redeemer`) that apply to this request regardless of `permission.type`.
+ * rules - rules defined the restrictions or conditions that a signer MUST abide by when using a permission to act on behalf of an account. See the "Rule" section for details.
  */
 export type PermissionRequest<TPermission extends PermissionTypes> = {
   chainId: Hex; // hex-encoding of uint256

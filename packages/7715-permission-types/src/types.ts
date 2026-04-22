@@ -51,14 +51,9 @@ export type RedeemerRule = {
 };
 
 /**
- * Well-known execution permission rules for ERC-7715.
+ * A generic rule whose type and data are not constrained to a known shape.
  */
-export type KnownRule = ExpiryRule | RedeemerRule;
-
-/**
- * Fallback for rule types returned by the wallet that are not yet modeled here.
- */
-export type UnknownRule = {
+export type GenericRule = {
   type: string;
   data: Record<string, any>;
 };
@@ -66,7 +61,7 @@ export type UnknownRule = {
 /**
  * A rule: restrictions or conditions on how a permission may be used or redeemed.
  */
-export type Rule = KnownRule | UnknownRule;
+export type Rule = ExpiryRule | RedeemerRule | GenericRule;
 
 // //////////////////////////////////////////////////
 // MetaMask Permission Types

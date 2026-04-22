@@ -7,10 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- Typed execution rules: `ExpiryRule`, `RedeemerRule`, and `GenericRule`; `Rule` is now their union.
-
 ## [0.5.0]
 
 ### Changed

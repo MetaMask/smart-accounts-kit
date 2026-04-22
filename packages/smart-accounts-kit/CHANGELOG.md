@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Optional `redeemer` on `PermissionRequestParameter` maps to a `redeemer` execution rule; granted permission responses checksum-normalize redeemer addresses in `rules`.
-- Re-export `Rule`, `ExpiryRule`, and `RedeemerRule` from execution-permissions action types.
 
 ## [1.2.0]
 

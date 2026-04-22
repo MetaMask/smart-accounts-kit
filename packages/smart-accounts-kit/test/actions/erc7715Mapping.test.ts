@@ -121,6 +121,52 @@ describe('erc7715Mapping', () => {
       });
     });
 
+    it('converts native-token-allowance: allowanceAmount hex → bigint', () => {
+      const rpcPermission = {
+        type: 'native-token-allowance',
+        isAdjustmentAllowed: true,
+        data: {
+          allowanceAmount: '0x2386f26fc10000',
+          startTime: 1700000000,
+        },
+      } as const;
+
+      const result = permissionTypeFromRpc(rpcPermission);
+
+      expect(result).toStrictEqual({
+        type: 'native-token-allowance',
+        isAdjustmentAllowed: true,
+        data: {
+          allowanceAmount: 0x2386f26fc10000n,
+          startTime: 1700000000,
+        },
+      });
+    });
+
+    it('converts erc20-token-allowance: allowanceAmount hex → bigint', () => {
+      const rpcPermission = {
+        type: 'erc20-token-allowance',
+        isAdjustmentAllowed: false,
+        data: {
+          allowanceAmount: '0x52b7d2dcc80cd2e4000000',
+          tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcd',
+          startTime: 1700000000,
+        },
+      } as const;
+
+      const result = permissionTypeFromRpc(rpcPermission);
+
+      expect(result).toStrictEqual({
+        type: 'erc20-token-allowance',
+        isAdjustmentAllowed: false,
+        data: {
+          allowanceAmount: 0x52b7d2dcc80cd2e4000000n,
+          tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcd',
+          startTime: 1700000000,
+        },
+      });
+    });
+
     it('preserves erc20-token-revocation data (no hex amounts)', () => {
       const rpcPermission = {
         type: 'erc20-token-revocation',
@@ -351,6 +397,70 @@ describe('erc7715Mapping', () => {
           data: {
             periodAmount: '0x52b7d2dcc80cd2e4000000',
             periodDuration: 604800,
+            tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        rules: [],
+      });
+    });
+
+    it('converts native-token-allowance: bigint → hex', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-allowance',
+          data: {
+            allowanceAmount: 0x2386f26fc10000n,
+            startTime: 1700000000,
+          },
+          isAdjustmentAllowed: true,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result).toStrictEqual({
+        chainId: '0x1',
+        permission: {
+          type: 'native-token-allowance',
+          data: {
+            allowanceAmount: '0x2386f26fc10000',
+            startTime: 1700000000,
+          },
+          isAdjustmentAllowed: true,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        rules: [],
+      });
+    });
+
+    it('converts erc20-token-allowance: bigint → hex', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'erc20-token-allowance',
+          data: {
+            allowanceAmount: 0x52b7d2dcc80cd2e4000000n,
+            startTime: 1700000000,
+            tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result).toStrictEqual({
+        chainId: '0x1',
+        permission: {
+          type: 'erc20-token-allowance',
+          data: {
+            allowanceAmount: '0x52b7d2dcc80cd2e4000000',
+            startTime: 1700000000,
             tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
           },
           isAdjustmentAllowed: false,

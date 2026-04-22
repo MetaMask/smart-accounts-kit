@@ -1,7 +1,9 @@
 import type {
+  Erc20TokenAllowancePermission as RpcErc20TokenAllowancePermission,
   Erc20TokenPeriodicPermission as RpcErc20TokenPeriodicPermission,
   Erc20TokenStreamPermission as RpcErc20TokenStreamPermission,
   Erc20TokenRevocationPermission as RpcErc20TokenRevocationPermission,
+  NativeTokenAllowancePermission as RpcNativeTokenAllowancePermission,
   NativeTokenPeriodicPermission as RpcNativeTokenPeriodicPermission,
   NativeTokenStreamPermission as RpcNativeTokenStreamPermission,
   PermissionRequest,
@@ -12,11 +14,13 @@ import { hexToNumber, toHex } from 'viem';
 
 import { isDefined, toHexOrThrow } from '../utils';
 import type {
+  Erc20TokenAllowancePermission,
   Erc20TokenPeriodicPermission,
   Erc20TokenRevocationPermission,
   Erc20TokenStreamPermission,
   GetGrantedExecutionPermissionsResult,
   GetSupportedExecutionPermissionsResult,
+  NativeTokenAllowancePermission,
   NativeTokenPeriodicPermission,
   NativeTokenStreamPermission,
   PermissionRequestParameter,
@@ -97,10 +101,20 @@ function getPermissionRequestToRpcConverter(
         nativeTokenPeriodicPermissionToRpc(
           permission as NativeTokenPeriodicPermission,
         );
+    case 'native-token-allowance':
+      return (permission) =>
+        nativeTokenAllowancePermissionToRpc(
+          permission as NativeTokenAllowancePermission,
+        );
     case 'erc20-token-periodic':
       return (permission) =>
         erc20TokenPeriodicPermissionToRpc(
           permission as Erc20TokenPeriodicPermission,
+        );
+    case 'erc20-token-allowance':
+      return (permission) =>
+        erc20TokenAllowancePermissionToRpc(
+          permission as Erc20TokenAllowancePermission,
         );
     case 'erc20-token-revocation':
       return (permission) =>
@@ -272,6 +286,69 @@ function erc20TokenPeriodicPermissionToRpc(
 }
 
 /**
+ * Convert native token fixed allowance permission to RPC format.
+ *
+ * @param permission the native token fixed allowance permission
+ * @returns the native token fixed allowance permission in RPC format
+ */
+function nativeTokenAllowancePermissionToRpc(
+  permission: NativeTokenAllowancePermission,
+): RpcNativeTokenAllowancePermission {
+  const {
+    data: { allowanceAmount, startTime, justification },
+    isAdjustmentAllowed,
+  } = permission;
+
+  const optionalFields = {
+    ...(isDefined(startTime) && {
+      startTime: Number(startTime),
+    }),
+    ...(justification ? { justification } : {}),
+  };
+
+  return {
+    type: 'native-token-allowance',
+    data: {
+      allowanceAmount: toHexOrThrow(allowanceAmount, 'allowanceAmount'),
+      ...optionalFields,
+    },
+    isAdjustmentAllowed,
+  };
+}
+
+/**
+ * Convert ERC-20 token fixed allowance permission to RPC format.
+ *
+ * @param permission the ERC-20 token fixed allowance permission
+ * @returns the ERC-20 token fixed allowance permission in RPC format
+ */
+function erc20TokenAllowancePermissionToRpc(
+  permission: Erc20TokenAllowancePermission,
+): RpcErc20TokenAllowancePermission {
+  const {
+    data: { tokenAddress, allowanceAmount, startTime, justification },
+    isAdjustmentAllowed,
+  } = permission;
+
+  const optionalFields = {
+    ...(isDefined(startTime) && {
+      startTime: Number(startTime),
+    }),
+    ...(justification ? { justification } : {}),
+  };
+
+  return {
+    type: 'erc20-token-allowance',
+    data: {
+      tokenAddress: toHexOrThrow(tokenAddress, 'tokenAddress'),
+      allowanceAmount: toHexOrThrow(allowanceAmount, 'allowanceAmount'),
+      ...optionalFields,
+    },
+    isAdjustmentAllowed,
+  };
+}
+
+/**
  * Convert ERC20 token revocation permission to RPC format.
  *
  * @param permission the erc20 token revocation permission
@@ -348,6 +425,12 @@ export function permissionTypeFromRpc(
 
   if ('maxAmount' in convertedData && convertedData.maxAmount) {
     convertedData.maxAmount = BigInt(convertedData.maxAmount as `0x${string}`);
+  }
+
+  if ('allowanceAmount' in convertedData && convertedData.allowanceAmount) {
+    convertedData.allowanceAmount = BigInt(
+      convertedData.allowanceAmount as `0x${string}`,
+    );
   }
 
   return {

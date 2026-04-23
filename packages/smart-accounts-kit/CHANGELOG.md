@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0]
+
 ### Added
 
+- feat: add redeemer rule ([#212](https://github.com/metamask/smart-accounts-kit/pull/212))
 - Optional `redeemer` on `PermissionRequestParameter` maps to a `redeemer` execution rule; granted permission responses checksum-normalize redeemer addresses in `rules`.
 
 ## [1.2.0]
@@ -118,7 +121,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.2.0...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.3.0...HEAD
+[1.3.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.2.0...@metamask/smart-accounts-kit@1.3.0
 [1.2.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.1.0...@metamask/smart-accounts-kit@1.2.0
 [1.1.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.0.0...@metamask/smart-accounts-kit@1.1.0
 [1.0.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@0.4.0-beta.2...@metamask/smart-accounts-kit@1.0.0

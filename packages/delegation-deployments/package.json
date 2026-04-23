@@ -55,7 +55,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@metamask/auto-changelog": "^5.0.2",
+    "@metamask/auto-changelog": "^6.1.0",
     "compare-versions": "^6.1.1",
     "eslint": "^9.39.2",
     "prettier": "^3.5.3",

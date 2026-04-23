@@ -1,9 +1,9 @@
+import { BalanceChangeType } from '@metamask/delegation-core';
 import { encodePacked } from 'viem';
 import type { Address } from 'viem';
 import { expect, describe, it } from 'vitest';
 
 import { erc721BalanceChangeBuilder } from '../../src/caveatBuilder/erc721BalanceChangeBuilder';
-import { BalanceChangeType } from '../../src/caveatBuilder/types';
 import type { SmartAccountsEnvironment } from '../../src/types';
 import { randomAddress } from '../utils';
 

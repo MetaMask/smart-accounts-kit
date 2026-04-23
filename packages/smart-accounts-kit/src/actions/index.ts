@@ -67,6 +67,7 @@ export { erc7715GetGrantedExecutionPermissionsAction as getGrantedExecutionPermi
 export {
   type GetSupportedExecutionPermissionsResult,
   type GetGrantedExecutionPermissionsResult,
+  type Rule,
   type SupportedPermissionInfo,
   type PermissionTypes,
   type NativeTokenStreamPermission,

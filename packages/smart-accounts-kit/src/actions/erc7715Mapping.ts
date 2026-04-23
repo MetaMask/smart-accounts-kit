@@ -8,7 +8,7 @@ import type {
   PermissionTypes as RpcPermissionTypes,
   Rule,
 } from '@metamask/7715-permission-types';
-import { hexToNumber, toHex } from 'viem';
+import { getAddress, hexToNumber, isAddress, toHex, type Hex } from 'viem';
 
 import { isDefined, toHexOrThrow } from '../utils';
 import type {
@@ -38,22 +38,39 @@ import type {
 export function permissionRequestToRpc(
   parameters: PermissionRequestParameter,
 ): PermissionRequest<RpcPermissionTypes> {
-  const { chainId, from, expiry } = parameters;
+  const { chainId, from, expiry, redeemer } = parameters;
 
   const converter = getPermissionRequestToRpcConverter(
     parameters.permission.type,
   );
 
-  const rules: Rule[] = isDefined(expiry)
-    ? [
-        {
-          type: 'expiry',
-          data: {
-            timestamp: expiry,
-          },
-        },
-      ]
-    : [];
+  const rules: Rule[] = [];
+  if (isDefined(expiry)) {
+    rules.push({
+      type: 'expiry',
+      data: {
+        timestamp: expiry,
+      },
+    });
+  }
+  if (isDefined(redeemer)) {
+    if (redeemer.length === 0) {
+      throw new Error(
+        'Invalid redeemers: must specify at least one redeemer address',
+      );
+    }
+    const addresses: Hex[] = [];
+    for (const addr of redeemer) {
+      if (!isAddress(addr)) {
+        throw new Error('Invalid redeemers: must be a valid address');
+      }
+      addresses.push(getAddress(addr));
+    }
+    rules.push({
+      type: 'redeemer',
+      data: { addresses },
+    });
+  }
 
   const optionalFields = {
     ...(from ? { from } : {}),
@@ -313,7 +330,38 @@ export function permissionResponsesFromRpc(
     ...permission,
     chainId: hexToNumber(permission.chainId),
     permission: permissionTypeFromRpc(permission.permission),
+    rules: normalizeRulesFromRpc(permission.rules),
   }));
+}
+
+/**
+ * Checksums addresses in `redeemer` rules; other rules are returned unchanged.
+ *
+ * @param rules - Rules from the wallet RPC response.
+ * @returns The same list with normalized redeemer addresses, or null/undefined if that was the input.
+ */
+function normalizeRulesFromRpc(
+  rules: Rule[] | null | undefined,
+): Rule[] | null | undefined {
+  if (rules === undefined || rules === null) {
+    return rules;
+  }
+  return rules.map((rule) => {
+    if (rule.type !== 'redeemer') {
+      return rule;
+    }
+    const rawAddresses = (rule.data as { addresses?: unknown } | undefined)
+      ?.addresses;
+    if (!Array.isArray(rawAddresses)) {
+      return rule;
+    }
+    return {
+      type: 'redeemer',
+      data: {
+        addresses: rawAddresses.map((addr) => getAddress(addr as Hex)),
+      },
+    };
+  });
 }
 
 /**

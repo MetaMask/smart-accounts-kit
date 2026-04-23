@@ -2,6 +2,7 @@ import type {
   PermissionTypes as RpcPermissionTypes,
   PermissionRequest as RpcPermissionRequest,
   PermissionResponse as RpcPermissionResponse,
+  Rule,
 } from '@metamask/7715-permission-types';
 import type {
   Client,
@@ -12,6 +13,8 @@ import type {
   Chain,
   Address,
 } from 'viem';
+
+export type { Rule };
 
 // =============================================================================
 // Developer-facing types
@@ -111,6 +114,10 @@ export type PermissionRequestParameter = {
   to: Hex;
   from?: Address | undefined | null;
   expiry?: number | undefined | null;
+  /**
+   * When set, adds a `redeemer` execution rule: only these addresses may redeem the permission.
+   */
+  redeemer?: readonly Address[] | undefined | null;
 };
 
 /**
@@ -143,7 +150,7 @@ export type PermissionRequest<TPermission extends PermissionTypes> = {
   from?: Hex;
   to: Hex;
   permission: TPermission;
-  rules?: Record<string, unknown>[] | null;
+  rules?: Rule[] | null;
 };
 
 /**

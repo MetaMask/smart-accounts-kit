@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- Add new erc-7715 simple allowance types: ([#214](https://github.com/metamask/smart-accounts-kit/pull/214))
+- Align linting scripts, add turbo lint:fix task ([#149](https://github.com/metamask/smart-accounts-kit/pull/149))
+
 ## [0.5.0]
 
 ### Changed

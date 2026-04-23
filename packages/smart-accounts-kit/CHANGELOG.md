@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- fix: Balance change type enforcers now use `BalanceChangeType` enum instead of number type ([#205](https://github.com/metamask/smart-accounts-kit/pull/205))
+- Add new erc-7715 simple allowance types: ([#214](https://github.com/metamask/smart-accounts-kit/pull/214))
+
 ## [1.3.0]
 
 ### Added

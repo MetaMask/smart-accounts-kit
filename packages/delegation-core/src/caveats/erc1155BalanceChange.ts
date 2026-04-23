@@ -43,7 +43,7 @@ export type ERC1155BalanceChangeTerms<
   /** The balance change amount. */
   balance: bigint;
   /** The balance change type. */
-  changeType: number;
+  changeType: BalanceChangeType;
 };
 
 /**
@@ -74,13 +74,7 @@ export function createERC1155BalanceChangeTerms(
   terms: ERC1155BalanceChangeTerms,
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
 ): Hex | Uint8Array {
-  const {
-    tokenAddress,
-    recipient,
-    tokenId,
-    balance,
-    changeType: changeTypeNumber,
-  } = terms;
+  const { tokenAddress, recipient, tokenId, balance, changeType } = terms;
 
   const tokenAddressHex = normalizeAddressLowercase(
     tokenAddress,
@@ -98,8 +92,6 @@ export function createERC1155BalanceChangeTerms(
   if (tokenId < 0n) {
     throw new Error('Invalid tokenId: must be a non-negative number');
   }
-
-  const changeType = changeTypeNumber as BalanceChangeType;
 
   if (
     changeType !== BalanceChangeType.Increase &&

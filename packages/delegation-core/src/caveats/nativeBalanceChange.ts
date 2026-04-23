@@ -38,7 +38,7 @@ export type NativeBalanceChangeTerms<TBytesLike extends BytesLike = BytesLike> =
     /** The balance change amount. */
     balance: bigint;
     /** The balance change type. */
-    changeType: number;
+    changeType: BalanceChangeType;
   };
 
 /**
@@ -69,7 +69,7 @@ export function createNativeBalanceChangeTerms(
   terms: NativeBalanceChangeTerms,
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
 ): Hex | Uint8Array {
-  const { recipient, balance, changeType: changeTypeNumber } = terms;
+  const { recipient, balance, changeType } = terms;
 
   const recipientHex = normalizeAddressLowercase(
     recipient,
@@ -79,8 +79,6 @@ export function createNativeBalanceChangeTerms(
   if (balance <= 0n) {
     throw new Error('Invalid balance: must be a positive number');
   }
-
-  const changeType = changeTypeNumber as BalanceChangeType;
 
   if (
     changeType !== BalanceChangeType.Increase &&

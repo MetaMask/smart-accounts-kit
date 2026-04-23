@@ -1,9 +1,9 @@
+import { BalanceChangeType } from '@metamask/delegation-core';
 import { concat, encodePacked, isAddress, pad, toHex } from 'viem';
 import type { Address } from 'viem/accounts';
 import { expect, describe, it } from 'vitest';
 
 import { createCaveatBuilder, CaveatBuilder } from '../../src/caveatBuilder';
-import { BalanceChangeType } from '../../src/caveatBuilder/types';
 import { CaveatType } from '../../src/constants';
 import type { SmartAccountsEnvironment } from '../../src/types';
 import { randomAddress, randomBytes } from '../utils';

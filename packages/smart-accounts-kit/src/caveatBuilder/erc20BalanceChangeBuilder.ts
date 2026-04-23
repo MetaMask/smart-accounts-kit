@@ -1,8 +1,10 @@
-import { createERC20BalanceChangeTerms } from '@metamask/delegation-core';
+import {
+  createERC20BalanceChangeTerms,
+  BalanceChangeType,
+} from '@metamask/delegation-core';
 import { type Address, isAddress } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
-import { BalanceChangeType } from './types';
 
 export const erc20BalanceChange = 'erc20BalanceChange';
 

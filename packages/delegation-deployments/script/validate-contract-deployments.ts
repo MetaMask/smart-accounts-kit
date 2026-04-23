@@ -314,6 +314,36 @@ const katanaBokutoChain: Chain = {
   },
 };
 
+const intuitionMainnetChain: Chain = {
+  id: 1155,
+  name: 'Intuition Mainnet',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.intuition.systems/http'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Trust',
+    symbol: 'TRUST',
+    decimals: 18,
+  },
+};
+
+const intuitionTestnetChain: Chain = {
+  id: 13579,
+  name: 'Intuition Testnet',
+  rpcUrls: {
+    default: {
+      http: ['https://testnet.rpc.intuition.systems/http'],
+    },
+  },
+  nativeCurrency: {
+    name: 'TTrust',
+    symbol: 'TTRUST',
+    decimals: 18,
+  },
+};
+
 export const chains = {
   ...allChains,
   megaEthTestNet: megaEthTestNetChain,
@@ -335,6 +365,8 @@ export const chains = {
   mantleSepolia: mantleSepoliaChain,
   katanaMainnet: katanaMainnetChain,
   katanaBokuto: katanaBokutoChain,
+  intuitionMainnet: intuitionMainnetChain,
+  intuitionTestnet: intuitionTestnetChain,
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them

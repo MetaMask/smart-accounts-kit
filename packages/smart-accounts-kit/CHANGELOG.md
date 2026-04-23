@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- feat: add redeemer rule ([#212](https://github.com/metamask/smart-accounts-kit/pull/212))
+
 ### Added
 
 - Optional `redeemer` on `PermissionRequestParameter` maps to a `redeemer` execution rule; granted permission responses checksum-normalize redeemer addresses in `rules`.

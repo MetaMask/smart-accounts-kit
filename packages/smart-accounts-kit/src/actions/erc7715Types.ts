@@ -86,6 +86,31 @@ export type Erc20TokenPeriodicPermission = BasePermission & {
 };
 
 /**
+ * Native token fixed allowance permission (single cumulative cap).
+ */
+export type NativeTokenAllowancePermission = BasePermission & {
+  type: 'native-token-allowance';
+  data: {
+    allowanceAmount: bigint;
+    startTime?: number;
+    justification?: string;
+  };
+};
+
+/**
+ * ERC-20 token fixed allowance permission (single cumulative cap).
+ */
+export type Erc20TokenAllowancePermission = BasePermission & {
+  type: 'erc20-token-allowance';
+  data: {
+    allowanceAmount: bigint;
+    startTime?: number;
+    tokenAddress: Address;
+    justification?: string;
+  };
+};
+
+/**
  * ERC-20 token revocation permission.
  */
 export type Erc20TokenRevocationPermission = BasePermission & {
@@ -101,8 +126,10 @@ export type Erc20TokenRevocationPermission = BasePermission & {
 export type PermissionTypes =
   | NativeTokenStreamPermission
   | NativeTokenPeriodicPermission
+  | NativeTokenAllowancePermission
   | Erc20TokenStreamPermission
   | Erc20TokenPeriodicPermission
+  | Erc20TokenAllowancePermission
   | Erc20TokenRevocationPermission;
 
 /**

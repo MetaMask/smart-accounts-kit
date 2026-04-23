@@ -137,6 +137,39 @@ export type Erc20TokenPeriodicPermission = BasePermission & {
 };
 
 /**
+ * A permission for a single fixed native token allowance (cumulative cap).
+ *
+ * data.allowanceAmount - is the maximum amount of native token that may be transferred under the permission.
+ *
+ * data.startTime - is when the allowance starts. Defaults to current time.
+ */
+export type NativeTokenAllowancePermission = BasePermission & {
+  type: 'native-token-allowance';
+  data: MetaMaskBasePermissionData & {
+    allowanceAmount: Hex;
+    startTime?: number | null;
+  };
+};
+
+/**
+ * A permission for a single fixed ERC-20 token allowance (cumulative cap).
+ *
+ * data.allowanceAmount - is the maximum amount of the ERC-20 token that may be transferred.
+ *
+ * data.startTime - is when the allowance starts. Defaults to current time.
+ *
+ * data.tokenAddress - is the address of the ERC-20 token.
+ */
+export type Erc20TokenAllowancePermission = BasePermission & {
+  type: 'erc20-token-allowance';
+  data: MetaMaskBasePermissionData & {
+    allowanceAmount: Hex;
+    startTime?: number | null;
+    tokenAddress: Hex;
+  };
+};
+
+/**
  * A permission to revoke an ERC20 token allowance.
  */
 export type Erc20TokenRevocationPermission = BasePermission & {
@@ -161,8 +194,10 @@ export type Erc20TokenRevocationPermission = BasePermission & {
 export type PermissionTypes =
   | NativeTokenStreamPermission
   | NativeTokenPeriodicPermission
+  | NativeTokenAllowancePermission
   | Erc20TokenStreamPermission
   | Erc20TokenPeriodicPermission
+  | Erc20TokenAllowancePermission
   | Erc20TokenRevocationPermission;
 
 // //////////////////////////////////////////////////

@@ -261,8 +261,12 @@ const extractLeafDelegation = (
     throw new Error('Permission context must contain at least one delegation');
   }
 
-  // We've verified the array is not empty, so delegations[0] is guaranteed to exist
-  return delegations[0]!;
+  const leafDelegation = delegations[0];
+  if (!leafDelegation) {
+    throw new Error('Failed to extract leaf delegation');
+  }
+
+  return leafDelegation;
 };
 
 /**
@@ -350,7 +354,8 @@ export const createDelegation = (
 
   trackSmartAccountsKitFunctionCall('createDelegation', {
     hasParentDelegation:
-      ('parentDelegation' in options && options.parentDelegation !== undefined) ||
+      ('parentDelegation' in options &&
+        options.parentDelegation !== undefined) ||
       ('parentPermissionContext' in options &&
         options.parentPermissionContext !== undefined),
     scope: options.scope?.type ?? null,
@@ -394,7 +399,8 @@ export const createOpenDelegation = (
 
   trackSmartAccountsKitFunctionCall('createOpenDelegation', {
     hasParentDelegation:
-      ('parentDelegation' in options && options.parentDelegation !== undefined) ||
+      ('parentDelegation' in options &&
+        options.parentDelegation !== undefined) ||
       ('parentPermissionContext' in options &&
         options.parentPermissionContext !== undefined),
     scope: options.scope?.type ?? null,

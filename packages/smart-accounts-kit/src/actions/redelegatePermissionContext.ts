@@ -11,6 +11,8 @@ import { BaseError } from 'viem';
 import { parseAccount } from 'viem/accounts';
 
 import { trackSmartAccountsKitFunctionCall } from '../analytics';
+import type { Caveats } from '../caveatBuilder';
+import type { ScopeConfig } from '../caveatBuilder/scope';
 import {
   createDelegation,
   createOpenDelegation,
@@ -24,8 +26,6 @@ import type {
   PermissionContext,
   SmartAccountsEnvironment,
 } from '../types';
-import type { Caveats } from '../caveatBuilder';
-import type { ScopeConfig } from '../caveatBuilder/scope';
 import { signDelegation } from './signDelegation';
 
 export type RedelegatePermissionContextParameters = {

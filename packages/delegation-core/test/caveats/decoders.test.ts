@@ -21,6 +21,8 @@ import {
   decodeRedeemerTerms,
   createAllowedCalldataTerms,
   decodeAllowedCalldataTerms,
+  createApprovalRevocationTerms,
+  decodeApprovalRevocationTerms,
   createArgsEqualityCheckTerms,
   decodeArgsEqualityCheckTerms,
   createExactCalldataTerms,
@@ -184,6 +186,19 @@ describe('Terms Decoders', () => {
       const original = { startIndex: 4, value: '0x1234' as `0x${string}` };
       const encoded = createAllowedCalldataTerms(original);
       const decoded = decodeAllowedCalldataTerms(encoded);
+      expect(decoded).toEqual(original);
+    });
+  });
+
+  describe('decodeApprovalRevocationTerms', () => {
+    it('correctly decodes encoded terms', () => {
+      const original = {
+        erc20Approve: true,
+        erc721Approve: false,
+        erc721SetApprovalForAll: true,
+      };
+      const encoded = createApprovalRevocationTerms(original);
+      const decoded = decodeApprovalRevocationTerms(encoded);
       expect(decoded).toEqual(original);
     });
   });

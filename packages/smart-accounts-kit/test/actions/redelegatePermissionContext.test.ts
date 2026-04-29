@@ -7,8 +7,8 @@ import {
   redelegatePermissionContext,
   redelegatePermissionContextActions,
 } from '../../src/actions/redelegatePermissionContext';
-import { createDelegation, encodeDelegations } from '../../src/delegation';
 import { ScopeType } from '../../src/constants';
+import { createDelegation, encodeDelegations } from '../../src/delegation';
 import type { SmartAccountsEnvironment } from '../../src/types';
 
 const mockPrivateKey =
@@ -64,7 +64,8 @@ describe('redelegatePermissionContext', () => {
 
     const timestampCaveat = {
       enforcer: mockEnvironment.caveatEnforcers.TimestampEnforcer as Address,
-      terms: '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
+      terms:
+        '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
       args: '0x00' as Hex,
     };
 
@@ -104,7 +105,8 @@ describe('redelegatePermissionContext', () => {
 
     const timestampCaveat = {
       enforcer: mockEnvironment.caveatEnforcers.TimestampEnforcer as Address,
-      terms: '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
+      terms:
+        '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
       args: '0x00' as Hex,
     };
 
@@ -141,7 +143,8 @@ describe('redelegatePermissionContext', () => {
 
     const timestampCaveat = {
       enforcer: mockEnvironment.caveatEnforcers.TimestampEnforcer as Address,
-      terms: '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
+      terms:
+        '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
       args: '0x00' as Hex,
     };
 
@@ -174,7 +177,8 @@ describe('redelegatePermissionContext', () => {
 
     const timestampCaveat = {
       enforcer: mockEnvironment.caveatEnforcers.TimestampEnforcer as Address,
-      terms: '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
+      terms:
+        '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
       args: '0x00' as Hex,
     };
 
@@ -236,7 +240,9 @@ describe('redelegatePermissionContext', () => {
         chainId: mockChainId,
         delegate: '0x2000000000000000000000000000000000000002',
       }),
-    ).rejects.toThrow('Permission context must contain at least one delegation');
+    ).rejects.toThrow(
+      'Permission context must contain at least one delegation',
+    );
   });
 
   it('should throw error if no account is provided', async () => {
@@ -291,7 +297,8 @@ describe('redelegatePermissionContext', () => {
 
     const timestampCaveat = {
       enforcer: mockEnvironment.caveatEnforcers.TimestampEnforcer as Address,
-      terms: '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
+      terms:
+        '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
       args: '0x00' as Hex,
     };
 
@@ -334,7 +341,8 @@ describe('redelegatePermissionContextActions', () => {
 
     const timestampCaveat = {
       enforcer: mockEnvironment.caveatEnforcers.TimestampEnforcer as Address,
-      terms: '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
+      terms:
+        '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex,
       args: '0x00' as Hex,
     };
 

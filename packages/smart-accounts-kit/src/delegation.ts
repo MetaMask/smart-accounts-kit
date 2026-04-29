@@ -211,12 +211,26 @@ export const hashDelegation = (input: Delegation): Hex => {
 
 type BaseCreateDelegationOptions = {
   environment: SmartAccountsEnvironment;
-  scope: ScopeConfig;
   from: Hex;
   caveats?: Caveats;
-  parentDelegation?: Delegation | Hex;
   salt?: Hex;
-};
+} & (
+  | {
+      scope: ScopeConfig;
+      parentDelegation?: never;
+      parentPermissionContext?: never;
+    }
+  | {
+      scope?: ScopeConfig;
+      parentDelegation: Delegation | Hex;
+      parentPermissionContext?: never;
+    }
+  | {
+      scope?: ScopeConfig;
+      parentDelegation?: never;
+      parentPermissionContext: PermissionContext;
+    }
+);
 
 /**
  * Options for creating a specific delegation
@@ -229,6 +243,46 @@ export type CreateDelegationOptions = BaseCreateDelegationOptions & {
  * Options for creating an open delegation
  */
 export type CreateOpenDelegationOptions = BaseCreateDelegationOptions;
+
+/**
+ * Extracts the leaf delegation from a permission context.
+ * The leaf delegation is the first element in the array (chain is ordered leaf to root).
+ *
+ * @param permissionContext - The permission context containing the delegation chain.
+ * @returns The leaf delegation.
+ * @internal
+ */
+const extractLeafDelegation = (
+  permissionContext: PermissionContext,
+): Delegation => {
+  const delegations = decodeDelegations(permissionContext);
+
+  if (delegations.length === 0) {
+    throw new Error('Permission context must contain at least one delegation');
+  }
+
+  // We've verified the array is not empty, so delegations[0] is guaranteed to exist
+  return delegations[0]!;
+};
+
+/**
+ * Resolves the parent delegation from either a direct delegation or permission context.
+ *
+ * @param parentDelegation - The parent delegation or its hash.
+ * @param parentPermissionContext - The permission context containing the parent delegation.
+ * @returns The resolved parent delegation, or undefined if neither is provided.
+ * @internal
+ */
+const resolveParentDelegation = (
+  parentDelegation?: Delegation | Hex,
+  parentPermissionContext?: PermissionContext,
+): Delegation | Hex | undefined => {
+  if (parentPermissionContext) {
+    return extractLeafDelegation(parentPermissionContext);
+  }
+
+  return parentDelegation;
+};
 
 /**
  * Resolves the authority for a delegation based on the parent delegation.
@@ -281,11 +335,25 @@ const getCaveatNames = ({
 export const createDelegation = (
   options: CreateDelegationOptions,
 ): Delegation => {
-  const caveats = resolveCaveats(options);
+  const parentDelegation = resolveParentDelegation(
+    'parentDelegation' in options ? options.parentDelegation : undefined,
+    'parentPermissionContext' in options
+      ? options.parentPermissionContext
+      : undefined,
+  );
+
+  const caveats = resolveCaveats({
+    environment: options.environment,
+    scope: options.scope,
+    caveats: options.caveats,
+  });
 
   trackSmartAccountsKitFunctionCall('createDelegation', {
-    hasParentDelegation: options.parentDelegation !== undefined,
-    scope: options.scope.type,
+    hasParentDelegation:
+      ('parentDelegation' in options && options.parentDelegation !== undefined) ||
+      ('parentPermissionContext' in options &&
+        options.parentPermissionContext !== undefined),
+    scope: options.scope?.type ?? null,
     caveatNames: getCaveatNames({
       caveats,
       environment: options.environment,
@@ -295,7 +363,7 @@ export const createDelegation = (
   return {
     delegate: options.to,
     delegator: options.from,
-    authority: resolveAuthority(options.parentDelegation),
+    authority: resolveAuthority(parentDelegation),
     caveats,
     salt: options.salt ?? '0x00',
     signature: '0x',
@@ -311,11 +379,25 @@ export const createDelegation = (
 export const createOpenDelegation = (
   options: CreateOpenDelegationOptions,
 ): Delegation => {
-  const caveats = resolveCaveats(options);
+  const parentDelegation = resolveParentDelegation(
+    'parentDelegation' in options ? options.parentDelegation : undefined,
+    'parentPermissionContext' in options
+      ? options.parentPermissionContext
+      : undefined,
+  );
+
+  const caveats = resolveCaveats({
+    environment: options.environment,
+    scope: options.scope,
+    caveats: options.caveats,
+  });
 
   trackSmartAccountsKitFunctionCall('createOpenDelegation', {
-    hasParentDelegation: options.parentDelegation !== undefined,
-    scope: options.scope.type,
+    hasParentDelegation:
+      ('parentDelegation' in options && options.parentDelegation !== undefined) ||
+      ('parentPermissionContext' in options &&
+        options.parentPermissionContext !== undefined),
+    scope: options.scope?.type ?? null,
     caveatNames: getCaveatNames({
       caveats,
       environment: options.environment,
@@ -325,7 +407,7 @@ export const createOpenDelegation = (
   return {
     delegate: ANY_BENEFICIARY,
     delegator: options.from,
-    authority: resolveAuthority(options.parentDelegation),
+    authority: resolveAuthority(parentDelegation),
     caveats,
     salt: options.salt ?? '0x00',
     signature: '0x',

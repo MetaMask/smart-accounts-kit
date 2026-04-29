@@ -918,7 +918,7 @@ describe('parentPermissionContext support', () => {
 
     const differentErc20Scope = {
       type: ScopeType.Erc20TransferAmount as const,
-      tokenAddress: '0xdffe000000000000000000000000000000000000',
+      tokenAddress: '0xdffe000000000000000000000000000000000000' as const,
       maxAmount: 5000n,
     };
 

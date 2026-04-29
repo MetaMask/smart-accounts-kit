@@ -6,6 +6,8 @@ export type {
 
 export { BalanceChangeType } from './caveats/types';
 
+export type { ApprovalRevocationTerms } from './caveats';
+
 export {
   createValueLteTerms,
   decodeValueLteTerms,
@@ -51,6 +53,8 @@ export {
   decodeAllowedMethodsTerms,
   createAllowedTargetsTerms,
   decodeAllowedTargetsTerms,
+  createApprovalRevocationTerms,
+  decodeApprovalRevocationTerms,
   createArgsEqualityCheckTerms,
   decodeArgsEqualityCheckTerms,
   createBlockNumberTerms,

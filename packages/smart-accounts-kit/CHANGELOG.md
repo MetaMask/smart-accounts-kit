@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- feat: add payee rule
+- Optional `payee` on `PermissionRequestParameter` maps to a `payee` execution rule; granted permission responses checksum-normalize payee addresses in `rules`.
+
 ## [1.3.0]
 
 ### Added

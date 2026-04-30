@@ -110,6 +110,37 @@ describe('erc7715GetGrantedExecutionPermissionsAction', () => {
       ]);
     });
 
+    it('checksum-normalizes payee addresses in rules', async () => {
+      const responseWithPayee: RpcGetGrantedExecutionPermissionsResult = [
+        {
+          ...mockPermission,
+          rules: [
+            {
+              type: 'payee',
+              data: {
+                addresses: ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
+              },
+            },
+          ],
+        },
+      ];
+      stubRequest.resolves(responseWithPayee);
+
+      const result =
+        await erc7715GetGrantedExecutionPermissionsAction(mockClient);
+
+      expect(result[0]?.rules).to.deep.equal([
+        {
+          type: 'payee',
+          data: {
+            addresses: [
+              getAddress('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'),
+            ],
+          },
+        },
+      ]);
+    });
+
     it('should set retryCount to 0', async () => {
       stubRequest.resolves(mockResponse);
 

@@ -175,6 +175,45 @@ describe('erc7715RequestExecutionPermissionsAction', () => {
       ]);
     });
 
+    it('includes payee rule in wallet RPC params when payee is set', async () => {
+      const payeeAddr = '0x2222222222222222222222222222222222222222' as Address;
+      const permissionRequest = {
+        chainId: 31337,
+        from: bob.address,
+        expiry: 1234567890,
+        payee: [payeeAddr],
+        permission: {
+          type: 'native-token-stream' as const,
+          data: {
+            amountPerSecond: 0x1n,
+            maxAmount: 2n,
+            startTime: 2,
+            justification: 'Test justification',
+          },
+          isAdjustmentAllowed: false,
+        },
+        to: alice.address,
+      };
+      const parameters: RequestExecutionPermissionsParameters = [
+        permissionRequest,
+      ];
+
+      stubRequest.resolves(mockRpcResponse);
+
+      await erc7715RequestExecutionPermissionsAction(mockClient, parameters);
+
+      expect(stubRequest.firstCall.args[0].params[0].rules).to.deep.equal([
+        {
+          type: 'expiry',
+          data: { timestamp: 1234567890 },
+        },
+        {
+          type: 'payee',
+          data: { addresses: [getAddress(payeeAddr)] },
+        },
+      ]);
+    });
+
     it('should set retryCount to 0', async () => {
       const permissionRequest = {
         chainId: 31337,

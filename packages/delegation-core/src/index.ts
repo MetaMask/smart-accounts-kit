@@ -69,6 +69,10 @@ export {
   decodeRedeemerTerms,
   createSpecificActionERC20TransferBatchTerms,
   decodeSpecificActionERC20TransferBatchTerms,
+  createLogicalOrWrapperTerms,
+  decodeLogicalOrWrapperTerms,
+  createLogicalOrWrapperArgs,
+  decodeLogicalOrWrapperArgs,
 } from './caveats';
 
 export {

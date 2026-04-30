@@ -268,6 +268,45 @@ describe('erc7715Mapping', () => {
         },
       ]);
     });
+
+    it('checksum-normalizes payee rule addresses', () => {
+      const rpcPermissions = [
+        {
+          ...basePermissionFields,
+          rules: [
+            {
+              type: 'payee',
+              data: {
+                addresses: ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
+              },
+            },
+          ],
+          permission: {
+            type: 'native-token-stream',
+            isAdjustmentAllowed: true,
+            data: {
+              amountPerSecond: '0x64',
+              startTime: 1700000000,
+            },
+          },
+        },
+      ];
+
+      const result = permissionResponsesFromRpc(
+        rpcPermissions as RpcGetGrantedExecutionPermissionsResult,
+      );
+
+      expect(result[0]?.rules).toStrictEqual([
+        {
+          type: 'payee',
+          data: {
+            addresses: [
+              getAddress('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'),
+            ],
+          },
+        },
+      ]);
+    });
   });
 
   describe('rpcSupportedPermissionsToDeveloper', () => {
@@ -438,6 +477,106 @@ describe('erc7715Mapping', () => {
 
       expect(() => permissionRequestToRpc(permissionRequest)).toThrow(
         'Invalid redeemers: must be a valid address',
+      );
+    });
+
+    it('adds payee rule with checksummed addresses', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        payee: ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result.rules).toStrictEqual([
+        {
+          type: 'payee',
+          data: {
+            addresses: [
+              getAddress('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'),
+            ],
+          },
+        },
+      ]);
+    });
+
+    it('adds expiry, redeemer, then payee when all are set', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        expiry: 1234567890,
+        redeemer: ['0x1111111111111111111111111111111111111111'],
+        payee: ['0x2222222222222222222222222222222222222222'],
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result.rules).toStrictEqual([
+        {
+          type: 'expiry',
+          data: { timestamp: 1234567890 },
+        },
+        {
+          type: 'redeemer',
+          data: {
+            addresses: [
+              getAddress('0x1111111111111111111111111111111111111111'),
+            ],
+          },
+        },
+        {
+          type: 'payee',
+          data: {
+            addresses: [
+              getAddress('0x2222222222222222222222222222222222222222'),
+            ],
+          },
+        },
+      ]);
+    });
+
+    it('throws when payee is empty', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        payee: [],
+      } as const;
+
+      expect(() => permissionRequestToRpc(permissionRequest)).toThrow(
+        'Invalid payees: must specify at least one payee address',
+      );
+    });
+
+    it('throws when payee contains invalid address', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        payee: ['0x1234'],
+      } as const;
+
+      expect(() => permissionRequestToRpc(permissionRequest)).toThrow(
+        'Invalid payees: must be a valid address',
       );
     });
 

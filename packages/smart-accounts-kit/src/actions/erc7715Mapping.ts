@@ -42,7 +42,7 @@ import type {
 export function permissionRequestToRpc(
   parameters: PermissionRequestParameter,
 ): PermissionRequest<RpcPermissionTypes> {
-  const { chainId, from, expiry, redeemer } = parameters;
+  const { chainId, from, expiry, redeemer, payee } = parameters;
 
   const converter = getPermissionRequestToRpcConverter(
     parameters.permission.type,
@@ -73,6 +73,24 @@ export function permissionRequestToRpc(
     rules.push({
       type: 'redeemer',
       data: { addresses },
+    });
+  }
+  if (isDefined(payee)) {
+    if (payee.length === 0) {
+      throw new Error(
+        'Invalid payees: must specify at least one payee address',
+      );
+    }
+    const payeeAddresses: Hex[] = [];
+    for (const addr of payee) {
+      if (!isAddress(addr)) {
+        throw new Error('Invalid payees: must be a valid address');
+      }
+      payeeAddresses.push(getAddress(addr));
+    }
+    rules.push({
+      type: 'payee',
+      data: { addresses: payeeAddresses },
     });
   }
 
@@ -412,10 +430,10 @@ export function permissionResponsesFromRpc(
 }
 
 /**
- * Checksums addresses in `redeemer` rules; other rules are returned unchanged.
+ * Checksums addresses in `redeemer` and `payee` rules; other rules are returned unchanged.
  *
  * @param rules - Rules from the wallet RPC response.
- * @returns The same list with normalized redeemer addresses, or null/undefined if that was the input.
+ * @returns The same list with normalized addresses, or null/undefined if that was the input.
  */
 function normalizeRulesFromRpc(
   rules: Rule[] | null | undefined,
@@ -424,7 +442,7 @@ function normalizeRulesFromRpc(
     return rules;
   }
   return rules.map((rule) => {
-    if (rule.type !== 'redeemer') {
+    if (rule.type !== 'redeemer' && rule.type !== 'payee') {
       return rule;
     }
     const rawAddresses = (rule.data as { addresses?: unknown } | undefined)
@@ -433,7 +451,7 @@ function normalizeRulesFromRpc(
       return rule;
     }
     return {
-      type: 'redeemer',
+      type: rule.type,
       data: {
         addresses: rawAddresses.map((addr) => getAddress(addr as Hex)),
       },

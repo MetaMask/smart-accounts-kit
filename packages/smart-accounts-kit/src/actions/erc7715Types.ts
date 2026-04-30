@@ -145,6 +145,10 @@ export type PermissionRequestParameter = {
    * When set, adds a `redeemer` execution rule: only these addresses may redeem the permission.
    */
   redeemer?: readonly Address[] | undefined | null;
+  /**
+   * When set, adds a `payee` execution rule: only these addresses may receive funds from the permission.
+   */
+  payee?: readonly Address[] | undefined | null;
 };
 
 /**

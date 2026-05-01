@@ -1,13 +1,11 @@
 /**
  * ## LogicalOrWrapperEnforcer
  *
- * Wraps multiple groups of caveats in a logical OR — redemption succeeds if any single group passes.
+ * Wraps multiple caveat groups in a logical OR: redemption evaluates exactly one group, which passes only if every caveat in that group passes.
  *
- * Terms are ABI-encoded as `((address,bytes,bytes)[])[]` — an array of `CaveatGroup` structs,
- * each containing an array of `Caveat(enforcer, terms, args)`.
+ * Terms are encoded as ABI-encoded `CaveatGroup[]`, i.e. `((address,bytes,bytes)[])[]`, matching Solidity `CaveatGroup` / `Caveat`.
  *
- * Args are ABI-encoded as `(uint256,bytes[])` — a `SelectedGroup` struct with the group index
- * and per-caveat arguments.
+ * Args are encoded as ABI-encoded `(uint256 groupIndex, bytes[] caveatArgs)` (`SelectedGroup`). On redemption, `groupIndex` must be less than the number of groups and `caveatArgs.length` must match the caveat count of the chosen group. Each child enforcer receives `Caveat.terms` from the encoded group and hook args from `caveatArgs[i]` (not `Caveat.args` in terms). If groups differ in restrictiveness, the redeemer can choose the weakest valid group.
  */
 
 import { decodeSingle, encodeSingle } from '@metamask/abi-utils';
@@ -28,7 +26,7 @@ import type { CaveatStruct, Hex } from '../types';
  * Terms for configuring a LogicalOrWrapper caveat.
  */
 export type LogicalOrWrapperTerms<TBytesLike extends BytesLike = BytesLike> = {
-  /** An array of caveat groups — redemption succeeds if any single group passes. */
+  /** An array of caveat groups — redemption evaluates exactly one group via args. */
   caveatGroups: CaveatStruct<TBytesLike>[][];
 };
 
@@ -36,14 +34,64 @@ export type LogicalOrWrapperTerms<TBytesLike extends BytesLike = BytesLike> = {
  * Args for a LogicalOrWrapper caveat at redemption time.
  */
 export type LogicalOrWrapperArgs<TBytesLike extends BytesLike = BytesLike> = {
-  /** The zero-based index of the caveat group to evaluate. */
+  /** Zero-based index into `terms.caveatGroups`; must be `< caveatGroups.length` on-chain. */
   groupIndex: bigint;
-  /** Per-caveat arguments for each caveat in the selected group. */
+  /** One redemption-time arg blob per caveat in the selected group; length must match that group on-chain. */
   caveatArgs: TBytesLike[];
 };
 
 const CAVEAT_GROUPS_ABI = '((address,bytes,bytes)[])[]';
 const SELECTED_GROUP_ABI = '(uint256,bytes[])';
+
+type EncodedCaveatRow = readonly [string, string, string];
+
+/**
+ * Ensures there is at least one group and each group has at least one caveat.
+ *
+ * @param groups - Caveat groups from caller input.
+ */
+function assertValidCaveatGroups(groups: CaveatStruct[][]): void {
+  if (!groups?.length) {
+    throw new Error(
+      'Invalid caveatGroups: must provide at least one caveat group',
+    );
+  }
+  for (let i = 0; i < groups.length; i++) {
+    const group = groups[i];
+    if (!group?.length) {
+      throw new Error(
+        `Invalid caveatGroups: group at index ${i} must contain at least one caveat`,
+      );
+    }
+  }
+}
+
+/**
+ * Builds one ABI `(address,bytes,bytes)` caveat tuple from structured input.
+ *
+ * @param caveat - Caveat fields to normalize.
+ * @returns Tuple accepted by `@metamask/abi-utils` encoders.
+ */
+function normalizeCaveatTuple(caveat: CaveatStruct): EncodedCaveatRow {
+  return [
+    normalizeAddress(
+      caveat.enforcer,
+      'Invalid enforcer: must be a valid address',
+    ),
+    normalizeHex(caveat.terms, 'Invalid terms: must be a valid hex string'),
+    normalizeHex(caveat.args, 'Invalid args: must be a valid hex string'),
+  ];
+}
+
+/**
+ * Encodes one `CaveatGroup` as ABI `tuple(Caveat[] caveats)`.
+ *
+ * @param group - Caveats belonging to this OR-branch.
+ * @returns Single-element tuple wrapping the inner caveat array (Solidity layout).
+ */
+function encodeCaveatGroupTuple(group: CaveatStruct[]): [EncodedCaveatRow[]] {
+  return [group.map(normalizeCaveatTuple)];
+}
 
 /**
  * Creates terms for a LogicalOrWrapper caveat.
@@ -62,55 +110,26 @@ export function createLogicalOrWrapperTerms(
   encodingOptions: EncodingOptions<'bytes'>,
 ): Uint8Array;
 /**
+ * Creates terms for a LogicalOrWrapper caveat.
+ *
  * @param terms - The terms for the LogicalOrWrapper caveat.
  * @param encodingOptions - The encoding options for the result.
  * @returns Encoded terms.
+ * @throws Error if caveatGroups is empty or contains invalid data.
  */
 export function createLogicalOrWrapperTerms(
   terms: LogicalOrWrapperTerms,
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
 ): Hex | Uint8Array {
-  const { caveatGroups } = terms;
+  assertValidCaveatGroups(terms.caveatGroups);
 
-  if (!caveatGroups || caveatGroups.length === 0) {
-    throw new Error(
-      'Invalid caveatGroups: must provide at least one caveat group',
-    );
-  }
-
-  for (let i = 0; i < caveatGroups.length; i++) {
-    const group = caveatGroups[i];
-    if (!group || group.length === 0) {
-      throw new Error(
-        `Invalid caveatGroups: group at index ${i} must contain at least one caveat`,
-      );
-    }
-  }
-
-  const encodableGroups = caveatGroups.map((group) => [
-    group.map((caveat) => {
-      const enforcer = normalizeAddress(
-        caveat.enforcer,
-        'Invalid enforcer: must be a valid address',
-      );
-      const termsHex = normalizeHex(
-        caveat.terms,
-        'Invalid terms: must be a valid hex string',
-      );
-      const argsHex = normalizeHex(
-        caveat.args,
-        'Invalid args: must be a valid hex string',
-      );
-      return [enforcer, termsHex, argsHex];
-    }),
-  ]);
-
+  const encodableGroups = terms.caveatGroups.map(encodeCaveatGroupTuple);
   const hexValue = encodeSingle(CAVEAT_GROUPS_ABI, encodableGroups);
   return prepareResult(hexValue, encodingOptions);
 }
 
 /**
- * Decodes terms for a LogicalOrWrapper caveat from encoded data.
+ * Decodes terms for a LogicalOrWrapper caveat from encoded hex data.
  *
  * @param terms - The encoded terms as a hex string or Uint8Array.
  * @param encodingOptions - Whether decoded values are returned as hex or bytes.
@@ -136,10 +155,10 @@ export function decodeLogicalOrWrapperTerms(
   | LogicalOrWrapperTerms<DecodedBytesLike<'hex'>>
   | LogicalOrWrapperTerms<DecodedBytesLike<'bytes'>> {
   const hexTerms = bytesLikeToHex(terms);
-
-  const decoded = decodeSingle(CAVEAT_GROUPS_ABI, hexTerms) as [
-    [string, Uint8Array, Uint8Array][],
-  ][];
+  const decoded = decodeSingle(
+    CAVEAT_GROUPS_ABI,
+    hexTerms,
+  ) as unknown as readonly [readonly [string, Uint8Array, Uint8Array][]][];
 
   const caveatGroups = decoded.map(([caveats]) =>
     caveats.map(([enforcer, caveatTerms, args]) => ({
@@ -155,11 +174,12 @@ export function decodeLogicalOrWrapperTerms(
 }
 
 /**
- * Creates args for a LogicalOrWrapper caveat specifying which group to evaluate.
+ * Creates args for a LogicalOrWrapper caveat that selects which group to evaluate.
  *
- * @param args - The args containing the group index and per-caveat arguments.
+ * @param args - The group index and per-caveat arguments for redemption.
  * @param encodingOptions - The encoding options for the result.
  * @returns Encoded args.
+ * @throws Error if groupIndex is negative or caveatArgs entries are invalid hex.
  */
 export function createLogicalOrWrapperArgs(
   args: LogicalOrWrapperArgs,
@@ -170,9 +190,12 @@ export function createLogicalOrWrapperArgs(
   encodingOptions: EncodingOptions<'bytes'>,
 ): Uint8Array;
 /**
- * @param args - The args containing the group index and per-caveat arguments.
+ * Creates args for a LogicalOrWrapper caveat that selects which group to evaluate.
+ *
+ * @param args - The group index and per-caveat arguments for redemption.
  * @param encodingOptions - The encoding options for the result.
  * @returns Encoded args.
+ * @throws Error if groupIndex is negative or caveatArgs entries are invalid hex.
  */
 export function createLogicalOrWrapperArgs(
   args: LogicalOrWrapperArgs,
@@ -194,7 +217,7 @@ export function createLogicalOrWrapperArgs(
 }
 
 /**
- * Decodes args for a LogicalOrWrapper caveat.
+ * Decodes args for a LogicalOrWrapper caveat from encoded hex data.
  *
  * @param args - The encoded args as a hex string or Uint8Array.
  * @param encodingOptions - Whether decoded values are returned as hex or bytes.

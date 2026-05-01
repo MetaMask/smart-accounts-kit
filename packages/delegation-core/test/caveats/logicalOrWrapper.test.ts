@@ -20,9 +20,7 @@ describe('LogicalOrWrapper', () => {
       { enforcer: enforcerA, terms: '0x1234' as Hex, args: '0x00' as Hex },
       { enforcer: enforcerB, terms: '0x5678' as Hex, args: '0x00' as Hex },
     ],
-    [
-      { enforcer: enforcerC, terms: '0xabcd' as Hex, args: '0x00' as Hex },
-    ],
+    [{ enforcer: enforcerC, terms: '0xabcd' as Hex, args: '0x00' as Hex }],
   ];
 
   describe('createLogicalOrWrapperTerms', () => {
@@ -42,15 +40,13 @@ describe('LogicalOrWrapper', () => {
     });
 
     it('throws for empty caveatGroups array', () => {
-      expect(() =>
-        createLogicalOrWrapperTerms({ caveatGroups: [] }),
-      ).toThrow('Invalid caveatGroups: must provide at least one caveat group');
+      expect(() => createLogicalOrWrapperTerms({ caveatGroups: [] })).toThrow(
+        'Invalid caveatGroups: must provide at least one caveat group',
+      );
     });
 
     it('throws for empty group within caveatGroups', () => {
-      expect(() =>
-        createLogicalOrWrapperTerms({ caveatGroups: [[]] }),
-      ).toThrow(
+      expect(() => createLogicalOrWrapperTerms({ caveatGroups: [[]] })).toThrow(
         'Invalid caveatGroups: group at index 0 must contain at least one caveat',
       );
     });
@@ -58,9 +54,7 @@ describe('LogicalOrWrapper', () => {
     it('throws for invalid enforcer address', () => {
       expect(() =>
         createLogicalOrWrapperTerms({
-          caveatGroups: [
-            [{ enforcer: '0x1234', terms: '0x00', args: '0x00' }],
-          ],
+          caveatGroups: [[{ enforcer: '0x1234', terms: '0x00', args: '0x00' }]],
         }),
       ).toThrow('Invalid enforcer: must be a valid address');
     });
@@ -79,9 +73,7 @@ describe('LogicalOrWrapper', () => {
     it('round-trips through encode and decode', () => {
       const original = { caveatGroups };
       expect(
-        decodeLogicalOrWrapperTerms(
-          createLogicalOrWrapperTerms(original),
-        ),
+        decodeLogicalOrWrapperTerms(createLogicalOrWrapperTerms(original)),
       ).toStrictEqual(original);
     });
 
@@ -95,9 +87,10 @@ describe('LogicalOrWrapper', () => {
       const encoded = createLogicalOrWrapperTerms({ caveatGroups });
       const decoded = decodeLogicalOrWrapperTerms(encoded, { out: 'bytes' });
 
-      expect(decoded.caveatGroups[0]![0]!.enforcer).toBeInstanceOf(Uint8Array);
-      expect(decoded.caveatGroups[0]![0]!.terms).toBeInstanceOf(Uint8Array);
-      expect(decoded.caveatGroups[0]![0]!.args).toBeInstanceOf(Uint8Array);
+      const firstCaveat = decoded.caveatGroups[0]?.[0];
+      expect(firstCaveat?.enforcer).toBeInstanceOf(Uint8Array);
+      expect(firstCaveat?.terms).toBeInstanceOf(Uint8Array);
+      expect(firstCaveat?.args).toBeInstanceOf(Uint8Array);
     });
   });
 
@@ -117,9 +110,9 @@ describe('LogicalOrWrapper', () => {
     });
 
     it('throws for negative group index', () => {
-      expect(() =>
-        createLogicalOrWrapperArgs({ groupIndex: -1n }),
-      ).toThrow('Invalid groupIndex: must be a non-negative number');
+      expect(() => createLogicalOrWrapperArgs({ groupIndex: -1n })).toThrow(
+        'Invalid groupIndex: must be a non-negative number',
+      );
     });
 
     it('returns Uint8Array when bytes encoding is specified', () => {

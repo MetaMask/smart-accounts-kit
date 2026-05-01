@@ -58,6 +58,11 @@ export function createLogicalOrWrapperTerms(
   terms: LogicalOrWrapperTerms,
   encodingOptions: EncodingOptions<'bytes'>,
 ): Uint8Array;
+/**
+ * @param terms - The terms for the LogicalOrWrapper caveat.
+ * @param encodingOptions - The encoding options for the result.
+ * @returns Encoded terms.
+ */
 export function createLogicalOrWrapperTerms(
   terms: LogicalOrWrapperTerms,
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
@@ -116,6 +121,11 @@ export function decodeLogicalOrWrapperTerms(
   terms: BytesLike,
   encodingOptions: EncodingOptions<'bytes'>,
 ): LogicalOrWrapperTerms<DecodedBytesLike<'bytes'>>;
+/**
+ * @param terms - The encoded terms as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded values are returned as hex or bytes.
+ * @returns The decoded LogicalOrWrapperTerms object.
+ */
 export function decodeLogicalOrWrapperTerms(
   terms: BytesLike,
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
@@ -158,6 +168,11 @@ export function createLogicalOrWrapperArgs(
   args: LogicalOrWrapperArgs,
   encodingOptions: EncodingOptions<'bytes'>,
 ): Uint8Array;
+/**
+ * @param args - The args containing the group index.
+ * @param encodingOptions - The encoding options for the result.
+ * @returns Encoded args.
+ */
 export function createLogicalOrWrapperArgs(
   args: LogicalOrWrapperArgs,
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
@@ -176,8 +191,10 @@ export function createLogicalOrWrapperArgs(
  * @param args - The encoded args as a hex string or Uint8Array.
  * @returns The decoded LogicalOrWrapperArgs object.
  */
-export function decodeLogicalOrWrapperArgs(args: BytesLike): LogicalOrWrapperArgs {
+export function decodeLogicalOrWrapperArgs(
+  args: BytesLike,
+): LogicalOrWrapperArgs {
   const hexArgs = bytesLikeToHex(args);
-  const groupIndex = decodeSingle(GROUP_INDEX_ABI, hexArgs) as bigint;
+  const groupIndex = decodeSingle(GROUP_INDEX_ABI, hexArgs);
   return { groupIndex };
 }

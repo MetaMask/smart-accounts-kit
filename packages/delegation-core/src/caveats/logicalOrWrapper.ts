@@ -3,10 +3,11 @@
  *
  * Wraps multiple groups of caveats in a logical OR — redemption succeeds if any single group passes.
  *
- * Terms are ABI-encoded as `(address,bytes,bytes)[][]`, an array of caveat groups where each
- * caveat is `(enforcer, terms, args)`.
+ * Terms are ABI-encoded as `((address,bytes,bytes)[])[]` — an array of `CaveatGroup` structs,
+ * each containing an array of `Caveat(enforcer, terms, args)`.
  *
- * Args are ABI-encoded as `uint256`, the index of the caveat group to evaluate.
+ * Args are ABI-encoded as `(uint256,bytes[])` — a `SelectedGroup` struct with the group index
+ * and per-caveat arguments.
  */
 
 import { decodeSingle, encodeSingle } from '@metamask/abi-utils';
@@ -34,13 +35,15 @@ export type LogicalOrWrapperTerms<TBytesLike extends BytesLike = BytesLike> = {
 /**
  * Args for a LogicalOrWrapper caveat at redemption time.
  */
-export type LogicalOrWrapperArgs = {
+export type LogicalOrWrapperArgs<TBytesLike extends BytesLike = BytesLike> = {
   /** The zero-based index of the caveat group to evaluate. */
   groupIndex: bigint;
+  /** Per-caveat arguments for each caveat in the selected group. */
+  caveatArgs: TBytesLike[];
 };
 
-const CAVEAT_GROUPS_ABI = '(address,bytes,bytes)[][]';
-const GROUP_INDEX_ABI = 'uint256';
+const CAVEAT_GROUPS_ABI = '((address,bytes,bytes)[])[]';
+const SELECTED_GROUP_ABI = '(uint256,bytes[])';
 
 /**
  * Creates terms for a LogicalOrWrapper caveat.
@@ -84,7 +87,7 @@ export function createLogicalOrWrapperTerms(
     }
   }
 
-  const encodableGroups = caveatGroups.map((group) =>
+  const encodableGroups = caveatGroups.map((group) => [
     group.map((caveat) => {
       const enforcer = normalizeAddress(
         caveat.enforcer,
@@ -100,7 +103,7 @@ export function createLogicalOrWrapperTerms(
       );
       return [enforcer, termsHex, argsHex];
     }),
-  );
+  ]);
 
   const hexValue = encodeSingle(CAVEAT_GROUPS_ABI, encodableGroups);
   return prepareResult(hexValue, encodingOptions);
@@ -135,13 +138,11 @@ export function decodeLogicalOrWrapperTerms(
   const hexTerms = bytesLikeToHex(terms);
 
   const decoded = decodeSingle(CAVEAT_GROUPS_ABI, hexTerms) as [
-    string,
-    Uint8Array,
-    Uint8Array,
-  ][][];
+    [string, Uint8Array, Uint8Array][],
+  ][];
 
-  const caveatGroups = decoded.map((group) =>
-    group.map(([enforcer, caveatTerms, args]) => ({
+  const caveatGroups = decoded.map(([caveats]) =>
+    caveats.map(([enforcer, caveatTerms, args]) => ({
       enforcer: prepareResult(enforcer, encodingOptions),
       terms: prepareResult(bytesToHex(caveatTerms), encodingOptions),
       args: prepareResult(bytesToHex(args), encodingOptions),
@@ -156,7 +157,7 @@ export function decodeLogicalOrWrapperTerms(
 /**
  * Creates args for a LogicalOrWrapper caveat specifying which group to evaluate.
  *
- * @param args - The args containing the group index.
+ * @param args - The args containing the group index and per-caveat arguments.
  * @param encodingOptions - The encoding options for the result.
  * @returns Encoded args.
  */
@@ -169,7 +170,7 @@ export function createLogicalOrWrapperArgs(
   encodingOptions: EncodingOptions<'bytes'>,
 ): Uint8Array;
 /**
- * @param args - The args containing the group index.
+ * @param args - The args containing the group index and per-caveat arguments.
  * @param encodingOptions - The encoding options for the result.
  * @returns Encoded args.
  */
@@ -181,7 +182,14 @@ export function createLogicalOrWrapperArgs(
     throw new Error('Invalid groupIndex: must be a non-negative number');
   }
 
-  const hexValue = encodeSingle(GROUP_INDEX_ABI, args.groupIndex);
+  const caveatArgsHex = args.caveatArgs.map((arg) =>
+    normalizeHex(arg, 'Invalid caveatArgs: must be valid hex strings'),
+  );
+
+  const hexValue = encodeSingle(SELECTED_GROUP_ABI, [
+    args.groupIndex,
+    caveatArgsHex,
+  ]);
   return prepareResult(hexValue, encodingOptions);
 }
 
@@ -189,12 +197,39 @@ export function createLogicalOrWrapperArgs(
  * Decodes args for a LogicalOrWrapper caveat.
  *
  * @param args - The encoded args as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded values are returned as hex or bytes.
  * @returns The decoded LogicalOrWrapperArgs object.
  */
 export function decodeLogicalOrWrapperArgs(
   args: BytesLike,
-): LogicalOrWrapperArgs {
+  encodingOptions?: EncodingOptions<'hex'>,
+): LogicalOrWrapperArgs<DecodedBytesLike<'hex'>>;
+export function decodeLogicalOrWrapperArgs(
+  args: BytesLike,
+  encodingOptions: EncodingOptions<'bytes'>,
+): LogicalOrWrapperArgs<DecodedBytesLike<'bytes'>>;
+/**
+ * @param args - The encoded args as a hex string or Uint8Array.
+ * @param encodingOptions - Whether decoded values are returned as hex or bytes.
+ * @returns The decoded LogicalOrWrapperArgs object.
+ */
+export function decodeLogicalOrWrapperArgs(
+  args: BytesLike,
+  encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
+):
+  | LogicalOrWrapperArgs<DecodedBytesLike<'hex'>>
+  | LogicalOrWrapperArgs<DecodedBytesLike<'bytes'>> {
   const hexArgs = bytesLikeToHex(args);
-  const groupIndex = decodeSingle(GROUP_INDEX_ABI, hexArgs);
-  return { groupIndex };
+  const [groupIndex, caveatArgsRaw] = decodeSingle(
+    SELECTED_GROUP_ABI,
+    hexArgs,
+  ) as [bigint, Uint8Array[]];
+
+  const caveatArgs = caveatArgsRaw.map((arg) =>
+    prepareResult(bytesToHex(arg), encodingOptions),
+  );
+
+  return { groupIndex, caveatArgs } as
+    | LogicalOrWrapperArgs<DecodedBytesLike<'hex'>>
+    | LogicalOrWrapperArgs<DecodedBytesLike<'bytes'>>;
 }

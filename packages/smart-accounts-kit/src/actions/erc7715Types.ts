@@ -147,6 +147,7 @@ export type PermissionRequestParameter = {
   redeemer?: readonly Address[] | undefined | null;
   /**
    * When set, adds a `payee` execution rule: only these addresses may receive funds from the permission.
+   * Only supported on allowance-type permissions (allowance, stream, periodic).
    */
   payee?: readonly Address[] | undefined | null;
 };

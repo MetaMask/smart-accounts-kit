@@ -9,8 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- feat: add payee rule
-- Optional `payee` on `PermissionRequestParameter` maps to a `payee` execution rule; granted permission responses checksum-normalize payee addresses in `rules`.
+- Add optional `payee` execution rule to `PermissionRequestParameter` for allowance-type permissions ([#219](https://github.com/MetaMask/smart-accounts-kit/pull/219))
 
 ## [1.3.0]
 

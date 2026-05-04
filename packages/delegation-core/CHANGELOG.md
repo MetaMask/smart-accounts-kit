@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0]
+
 ### Uncategorized
 
 - feat: add payee rule and LogicalOrWrapper enforcer ([#219](https://github.com/metamask/smart-accounts-kit/pull/219))
@@ -95,7 +97,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add @metamask/delegation-core package, providing utility types, delegation hashing, and terms encoding for a limited set of caveat enforcers.
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@1.1.0...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@1.2.0...HEAD
+[1.2.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@1.1.0...@metamask/delegation-core@1.2.0
 [1.1.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@1.0.0...@metamask/delegation-core@1.1.0
 [1.0.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@0.4.0...@metamask/delegation-core@1.0.0
 [0.4.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@0.3.0...@metamask/delegation-core@0.4.0

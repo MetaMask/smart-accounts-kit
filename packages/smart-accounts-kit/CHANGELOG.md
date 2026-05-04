@@ -7,15 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.4.0]
-
-### Uncategorized
-
-- Release/27.0.0 ([#216](https://github.com/metamask/smart-accounts-kit/pull/216))
-- fix: Balance change type enforcers now use `BalanceChangeType` enum instead of number type ([#205](https://github.com/metamask/smart-accounts-kit/pull/205))
-- Add new erc-7715 simple allowance types: ([#214](https://github.com/metamask/smart-accounts-kit/pull/214))
-- Add new erc-7715 `payee` rule ([#219](https://github.com/metamask/smart-accounts-kit/pull/219))
-
 ### Added
 
 - Add optional `payee` execution rule to `PermissionRequestParameter` for allowance-type permissions ([#219](https://github.com/MetaMask/smart-accounts-kit/pull/219))
@@ -134,8 +125,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.4.0...HEAD
-[1.4.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.3.0...@metamask/smart-accounts-kit@1.4.0
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.3.0...HEAD
 [1.3.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.2.0...@metamask/smart-accounts-kit@1.3.0
 [1.2.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.1.0...@metamask/smart-accounts-kit@1.2.0
 [1.1.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.0.0...@metamask/smart-accounts-kit@1.1.0

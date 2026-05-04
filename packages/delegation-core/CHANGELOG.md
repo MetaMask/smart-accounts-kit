@@ -7,17 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.2.0]
-
-### Added
-
-- ERC-7715 `payee` rule to `PermissionRequestParameter` ([#219](https://github.com/metamask/smart-accounts-kit/pull/219))
-- Encoding and decoding utils for `LogicalOrWrapper` enforcer args and terms ([#219](https://github.com/metamask/smart-accounts-kit/pull/219))
-
-### Changed
-
-- Balance change type enforcers now use `BalanceChangeType` enum instead of number type ([#205](https://github.com/metamask/smart-accounts-kit/pull/205))
-
 ## [1.1.0]
 
 ### Added
@@ -101,8 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add @metamask/delegation-core package, providing utility types, delegation hashing, and terms encoding for a limited set of caveat enforcers.
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@1.2.0...HEAD
-[1.2.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@1.1.0...@metamask/delegation-core@1.2.0
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@1.1.0...HEAD
 [1.1.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@1.0.0...@metamask/delegation-core@1.1.0
 [1.0.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@0.4.0...@metamask/delegation-core@1.0.0
 [0.4.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@0.3.0...@metamask/delegation-core@0.4.0

@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.0]
 
-### Uncategorized
+### Added
 
-- feat: add LogicalOrWrapperEnforcer address to contractAddresses ([#220](https://github.com/metamask/smart-accounts-kit/pull/220))
+- `LogicalOrWrapperEnforcer` address added to contract addresses ([#220](https://github.com/metamask/smart-accounts-kit/pull/220))
 
 ## [1.2.0]
 

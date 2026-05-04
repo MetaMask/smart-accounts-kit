@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- Revert "Release/28.0.0 (#222)" ([#222](https://github.com/metamask/smart-accounts-kit/pull/222))
+- Release/28.0.0 ([#222](https://github.com/metamask/smart-accounts-kit/pull/222))
+- Release/27.0.0 ([#216](https://github.com/metamask/smart-accounts-kit/pull/216))
+- fix: Balance change type enforcers now use `BalanceChangeType` enum instead of number type ([#205](https://github.com/metamask/smart-accounts-kit/pull/205))
+- Add new erc-7715 simple allowance types: ([#214](https://github.com/metamask/smart-accounts-kit/pull/214))
+
 ### Added
 
 - Add optional `payee` execution rule to `PermissionRequestParameter` for allowance-type permissions ([#219](https://github.com/MetaMask/smart-accounts-kit/pull/219))

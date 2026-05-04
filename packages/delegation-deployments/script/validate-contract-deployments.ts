@@ -359,7 +359,7 @@ export const rpcUrlOverrides = {
   [mainnet.id]: 'https://eth.drpc.org',
   [bsc.id]: 'https://bsc-dataseed1.binance.org/',
   [bscTestnet.id]: 'https://bsc-testnet-rpc.publicnode.com',
-  [polygon.id]: 'https://polygon.drpc.org'
+  [polygon.id]: 'https://polygon.drpc.org',
 } as Record<number, string>;
 
 const latestVersion = Object.keys(DELEGATOR_CONTRACTS).reduce(

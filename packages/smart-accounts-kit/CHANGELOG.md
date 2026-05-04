@@ -14,9 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add optional `payee` execution rule to `PermissionRequestParameter` for allowance-type permissions ([#219](https://github.com/MetaMask/smart-accounts-kit/pull/219))
 - Add new erc-7715 simple allowance types: ([#214](https://github.com/metamask/smart-accounts-kit/pull/214))
 
-### Changed
-
-
 ## [1.3.0]
 
 ### Added

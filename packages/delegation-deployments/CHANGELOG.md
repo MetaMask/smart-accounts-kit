@@ -9,12 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.0]
 
-### Uncategorized
+### Added
 
-- Revert "Release/28.0.0 (#222)" ([#222](https://github.com/metamask/smart-accounts-kit/pull/222))
-- Release/28.0.0 ([#222](https://github.com/metamask/smart-accounts-kit/pull/222))
-- Fix contract validations ([#221](https://github.com/metamask/smart-accounts-kit/pull/221))
-- feat: add LogicalOrWrapperEnforcer address to contractAddresses ([#220](https://github.com/metamask/smart-accounts-kit/pull/220))
+- `LogicalOrWrapperEnforcer` address added to contract addresses ([#220](https://github.com/metamask/smart-accounts-kit/pull/220))
 
 ## [1.2.0]
 

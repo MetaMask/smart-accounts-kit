@@ -323,8 +323,8 @@ const celoSepoliaChain: Chain = {
     },
   },
   nativeCurrency: {
-    name: 'Ether',
-    symbol: 'ETH',
+    name: 'Celo',
+    symbol: 'CELO',
     decimals: 18,
   },
 };

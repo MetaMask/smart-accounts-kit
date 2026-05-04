@@ -11,10 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- ERC-7715 `payee` rule  to `PermissionRequestParameter` ([#219](https://github.com/metamask/smart-accounts-kit/pull/219))
+- ERC-7715 `payee` rule to `PermissionRequestParameter` ([#219](https://github.com/metamask/smart-accounts-kit/pull/219))
 - Encoding and decoding utils for `LogicalOrWrapper` enforcer args and terms ([#219](https://github.com/metamask/smart-accounts-kit/pull/219))
 
-### Changed 
+### Changed
 
 - Balance change type enforcers now use `BalanceChangeType` enum instead of number type ([#205](https://github.com/metamask/smart-accounts-kit/pull/205))
 

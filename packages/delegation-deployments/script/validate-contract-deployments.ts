@@ -1,7 +1,7 @@
 import { compareVersions } from 'compare-versions';
 import { createPublicClient, http } from 'viem';
 import * as allChains from 'viem/chains';
-import { mainnet, bsc, bscTestnet } from 'viem/chains';
+import { mainnet, bsc, bscTestnet, polygon } from 'viem/chains';
 import type { Chain } from 'viem/chains';
 
 import { DELEGATOR_CONTRACTS } from '../src';
@@ -314,6 +314,21 @@ const katanaBokutoChain: Chain = {
   },
 };
 
+const celoSepoliaChain: Chain = {
+  id: 11142220,
+  name: 'Celo Sepolia',
+  rpcUrls: {
+    default: {
+      http: ['https://celo-sepolia.drpc.org'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Ether',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+};
+
 export const chains = {
   ...allChains,
   megaEthTestNet: megaEthTestNetChain,
@@ -335,14 +350,16 @@ export const chains = {
   mantleSepolia: mantleSepoliaChain,
   katanaMainnet: katanaMainnetChain,
   katanaBokuto: katanaBokutoChain,
+  celoSepolia: celoSepoliaChain,
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them
 // This may be a game of cat and mouse, so a better solution may be needed.
 export const rpcUrlOverrides = {
-  [mainnet.id]: 'https://eth.merkle.io',
+  [mainnet.id]: 'https://eth.drpc.org',
   [bsc.id]: 'https://bsc-dataseed1.binance.org/',
   [bscTestnet.id]: 'https://bsc-testnet-rpc.publicnode.com',
+  [polygon.id]: 'https://polygon.drpc.org'
 } as Record<number, string>;
 
 const latestVersion = Object.keys(DELEGATOR_CONTRACTS).reduce(

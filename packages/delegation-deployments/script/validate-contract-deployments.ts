@@ -229,7 +229,7 @@ const roninSaigonChain: Chain = {
   name: 'Ronin Saigon',
   rpcUrls: {
     default: {
-      http: ['https://ronin-saigon.drpc.org'],
+      http: ['https://saigon-testnet.roninchain.com/rpc'],
     },
   },
   nativeCurrency: {

@@ -18,8 +18,6 @@ import {
   createOpenDelegation,
   decodeDelegations,
   encodeDelegations,
-  type CreateDelegationOptions,
-  type CreateOpenDelegationOptions,
 } from '../delegation';
 import type {
   Delegation,
@@ -33,10 +31,8 @@ export type RedelegatePermissionContextParameters = {
   account?: Account | Address;
   /** Environment configuration */
   environment: SmartAccountsEnvironment;
-  /** The permission context to redelegate from (from ERC-7715 response) */
+  /** The permission context to redelegate from (i.e., from ERC-7715 response) */
   permissionContext: PermissionContext;
-  /** The address of the delegation manager contract */
-  delegationManager: Address;
   /** The chain ID for the signature */
   chainId: number;
   /** Optional scope - if not provided, inherits from parent */
@@ -45,16 +41,9 @@ export type RedelegatePermissionContextParameters = {
   caveats?: Caveats;
   /** Optional salt for uniqueness */
   salt?: Hex;
-  /** Name of the DelegationManager contract */
-  name?: string;
-  /** Version of the DelegationManager contract */
-  version?: string;
-  /** Whether to allow insecure unrestricted delegation */
-  allowInsecureUnrestrictedDelegation?: boolean;
-} & (
-  | { delegate: Address } // Specific delegate
-  | { delegate?: never } // Open delegation
-);
+  /** The address of the delegate to redelegate to */
+  to?: Address;
+};
 
 export type RedelegatePermissionContextReturnType = {
   /** The signed delegation that was created */
@@ -127,14 +116,11 @@ export async function redelegatePermissionContext<
     account: accountParam = client.account,
     environment,
     permissionContext,
-    delegationManager,
     chainId,
     scope,
     caveats,
     salt,
-    name = 'DelegationManager',
-    version = '1',
-    allowInsecureUnrestrictedDelegation = false,
+    to,
   } = parameters;
 
   if (!accountParam) {
@@ -145,72 +131,57 @@ export async function redelegatePermissionContext<
 
   trackSmartAccountsKitFunctionCall('redelegatePermissionContext', {
     chainId,
-    hasDelegate: 'delegate' in parameters && parameters.delegate !== undefined,
+    hasDelegate: Boolean(parameters.to),
     hasScope: scope !== undefined,
     hasCaveats: caveats !== undefined,
   });
 
-  // Decode the permission context to get the delegation chain
   const delegations = decodeDelegations(permissionContext);
 
-  if (delegations.length === 0) {
+  const parentDelegation = delegations[0];
+
+  if (!parentDelegation) {
     throw new BaseError(
       'Permission context must contain at least one delegation',
     );
   }
 
-  // The leaf delegation is the first element (chain ordered leaf to root)
-  const leafDelegation = delegations[0];
-
-  // Create the unsigned delegation
-  // We always pass parentDelegation as the leaf delegation
-  // TypeScript struggles with the discriminated union, so we build the object explicitly
-  let unsignedDelegation: Omit<Delegation, 'signature'>;
-
-  const commonOptions = {
+  const createDelegationOptions = {
     environment,
     from: account.address,
-    parentDelegation: leafDelegation as Delegation | Hex,
-    ...(scope !== undefined && { scope }),
-    ...(caveats !== undefined && { caveats }),
-    ...(salt !== undefined && { salt }),
+    scope,
+    caveats,
+    parentDelegation,
+    salt,
   };
 
-  if ('delegate' in parameters && parameters.delegate) {
-    unsignedDelegation = createDelegation({
-      ...commonOptions,
-      to: parameters.delegate,
-    } as CreateDelegationOptions);
-  } else {
-    unsignedDelegation = createOpenDelegation(
-      commonOptions as CreateOpenDelegationOptions,
-    );
-  }
+  const unsignedDelegation = to
+    ? createDelegation({
+        ...createDelegationOptions,
+        to,
+      })
+    : createOpenDelegation(createDelegationOptions);
 
-  // Sign the delegation
   const signature = await signDelegation(client, {
-    account: accountParam,
+    account,
     delegation: unsignedDelegation,
-    delegationManager,
+    delegationManager: environment.DelegationManager,
     chainId,
-    name,
-    version,
-    allowInsecureUnrestrictedDelegation,
   });
 
-  // Create the signed delegation
   const signedDelegation: Delegation = {
     ...unsignedDelegation,
     signature,
   };
 
-  // Prepend the new delegation to create the new chain
-  const newDelegationChain = [signedDelegation, ...delegations];
+  const newPermissionContext = encodeDelegations([
+    signedDelegation,
+    ...delegations,
+  ]);
 
-  // Return both the delegation and the encoded permission context
   return {
     delegation: signedDelegation,
-    permissionContext: encodeDelegations(newDelegationChain),
+    permissionContext: newPermissionContext,
   };
 }
 
@@ -227,10 +198,9 @@ export async function redelegatePermissionContext<
  *
  * // Now you can call it directly on the client
  * const result = await walletClient.redelegatePermissionContext({
- *   permissionContext: erc7715Response.context,
- *   delegate: charlie.address,
  *   environment,
- *   delegationManager: environment.DelegationManager,
+ *   permissionContext: erc7715Response.context,
+ *   to: charlie.address,
  * });
  * ```
  */

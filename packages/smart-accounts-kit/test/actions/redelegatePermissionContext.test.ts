@@ -32,8 +32,6 @@ const mockEnvironment: SmartAccountsEnvironment = {
   },
 };
 
-const mockDelegationManager: Address =
-  '0x1234567890123456789012345678901234567890';
 const mockChainId = sepolia.id;
 
 describe('redelegatePermissionContext', () => {
@@ -72,9 +70,8 @@ describe('redelegatePermissionContext', () => {
     const result = await redelegatePermissionContext(client, {
       environment: mockEnvironment,
       permissionContext,
-      delegationManager: mockDelegationManager,
       chainId: mockChainId,
-      delegate: newDelegate,
+      to: newDelegate,
       caveats: [timestampCaveat],
     });
 
@@ -113,9 +110,8 @@ describe('redelegatePermissionContext', () => {
     const result = await redelegatePermissionContext(client, {
       environment: mockEnvironment,
       permissionContext,
-      delegationManager: mockDelegationManager,
       chainId: mockChainId,
-      // No delegate specified
+      // No `to` specified - creates an open delegation
       caveats: [timestampCaveat],
     });
 
@@ -151,9 +147,8 @@ describe('redelegatePermissionContext', () => {
     const result = await redelegatePermissionContext(client, {
       environment: mockEnvironment,
       permissionContext,
-      delegationManager: mockDelegationManager,
       chainId: mockChainId,
-      delegate: newDelegate,
+      to: newDelegate,
       caveats: [timestampCaveat],
     });
 
@@ -185,9 +180,8 @@ describe('redelegatePermissionContext', () => {
     const result = await redelegatePermissionContext(client, {
       environment: mockEnvironment,
       permissionContext,
-      delegationManager: mockDelegationManager,
       chainId: mockChainId,
-      delegate: newDelegate,
+      to: newDelegate,
       // No scope provided - should inherit from parent
       caveats: [timestampCaveat], // Add a caveat so signature doesn't fail
     });
@@ -215,9 +209,8 @@ describe('redelegatePermissionContext', () => {
     const result = await redelegatePermissionContext(client, {
       environment: mockEnvironment,
       permissionContext,
-      delegationManager: mockDelegationManager,
       chainId: mockChainId,
-      delegate: newDelegate,
+      to: newDelegate,
       scope: {
         type: ScopeType.NativeTokenTransferAmount,
         maxAmount: 500n,
@@ -236,9 +229,8 @@ describe('redelegatePermissionContext', () => {
       redelegatePermissionContext(client, {
         environment: mockEnvironment,
         permissionContext: emptyContext,
-        delegationManager: mockDelegationManager,
         chainId: mockChainId,
-        delegate: '0x2000000000000000000000000000000000000002',
+        to: '0x2000000000000000000000000000000000000002',
       }),
     ).rejects.toThrow(
       'Permission context must contain at least one delegation',
@@ -268,9 +260,8 @@ describe('redelegatePermissionContext', () => {
       redelegatePermissionContext(clientWithoutAccount, {
         environment: mockEnvironment,
         permissionContext,
-        delegationManager: mockDelegationManager,
         chainId: mockChainId,
-        delegate: '0x2000000000000000000000000000000000000002',
+        to: '0x2000000000000000000000000000000000000002',
       }),
     ).rejects.toThrow('Account not found');
   });
@@ -306,9 +297,8 @@ describe('redelegatePermissionContext', () => {
       account,
       environment: mockEnvironment,
       permissionContext,
-      delegationManager: mockDelegationManager,
       chainId: mockChainId,
-      delegate: newDelegate,
+      to: newDelegate,
       caveats: [timestampCaveat],
     });
 
@@ -349,8 +339,7 @@ describe('redelegatePermissionContextActions', () => {
     const result = await client.redelegatePermissionContext({
       environment: mockEnvironment,
       permissionContext,
-      delegationManager: mockDelegationManager,
-      delegate: newDelegate,
+      to: newDelegate,
       caveats: [timestampCaveat],
       // chainId should be inferred from client
     });
@@ -382,8 +371,7 @@ describe('redelegatePermissionContextActions', () => {
       clientWithoutChain.redelegatePermissionContext({
         environment: mockEnvironment,
         permissionContext,
-        delegationManager: mockDelegationManager,
-        delegate: '0x2000000000000000000000000000000000000002',
+        to: '0x2000000000000000000000000000000000000002',
       }),
     ).rejects.toThrow('Chain ID is required');
   });

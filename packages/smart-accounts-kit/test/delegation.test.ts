@@ -353,6 +353,16 @@ describe('createDelegation', () => {
     });
   });
 
+  it('throws if no scope no inheritance is provided', () => {
+    expect(() => {
+      createDelegation({
+        environment: smartAccountEnvironment,
+        to: mockDelegate,
+        from: mockDelegator,
+      } as any);
+    }).toThrow('Scope is required when the delegation has no inheritance');
+  });
+
   describe('parentPermissionContext support', () => {
     it('should create a delegation using parentPermissionContext with Delegation array', () => {
       const parentDelegation = createDelegation({
@@ -651,6 +661,15 @@ describe('createOpenDelegation', () => {
       salt: '0x00',
       signature: '0x',
     });
+  });
+
+  it('throws if no scope no inheritance is provided', () => {
+    expect(() => {
+      createOpenDelegation({
+        environment: smartAccountEnvironment,
+        from: mockDelegator,
+      } as any);
+    }).toThrow('Scope is required when the delegation has no inheritance');
   });
 
   describe('parentPermissionContext support', () => {

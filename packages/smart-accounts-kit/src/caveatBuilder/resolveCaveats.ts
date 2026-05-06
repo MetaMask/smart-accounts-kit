@@ -15,17 +15,24 @@ export type Caveats = CaveatBuilder | (Caveat | CoreCaveatConfiguration)[];
  * @param config.environment - The environment to be used for the caveat builder.
  * @param config.scope - The scope to be used for the caveat builder. Optional - when not provided and redelegating, scope is inherited from the parent delegation.
  * @param config.caveats - The caveats to be resolved, which can be either a CaveatBuilder or an array of Caveat or CaveatConfiguration. Optional - if not provided, only scope caveats will be used.
+ * @param config.hasInheritance - Whether the delegation has inheritance.
  * @returns The resolved array of caveats.
  */
 export const resolveCaveats = ({
   environment,
   scope,
   caveats,
+  hasInheritance,
 }: {
   environment: SmartAccountsEnvironment;
   scope?: ScopeConfig;
   caveats?: Caveats;
+  hasInheritance: boolean;
 }) => {
+  if (!scope && !hasInheritance) {
+    throw new Error('Scope is required when the delegation has no inheritance');
+  }
+
   // Create base caveat builder from scope if provided, otherwise use core caveat builder
   const scopeCaveatBuilder = scope
     ? createCaveatBuilderFromScope(environment, scope)

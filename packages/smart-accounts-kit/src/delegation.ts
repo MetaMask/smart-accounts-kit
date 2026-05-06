@@ -349,6 +349,7 @@ export const createDelegation = (
     environment: options.environment,
     scope: options.scope,
     caveats: options.caveats,
+    hasInheritance: Boolean(parentDelegation),
   });
 
   trackSmartAccountsKitFunctionCall('createDelegation', {
@@ -387,6 +388,7 @@ export const createOpenDelegation = (
     environment: options.environment,
     scope: options.scope,
     caveats: options.caveats,
+    hasInheritance: Boolean(parentDelegation),
   });
 
   trackSmartAccountsKitFunctionCall('createOpenDelegation', {

@@ -26,7 +26,7 @@ import type {
 } from '../types';
 import { signDelegation } from './signDelegation';
 
-export type RedelegatePermissionContextParameters = {
+type BaseRedelegatePermissionContextParameters = {
   /** Account to sign the delegation with */
   account?: Account | Address;
   /** Environment configuration */
@@ -41,9 +41,16 @@ export type RedelegatePermissionContextParameters = {
   caveats?: Caveats;
   /** Optional salt for uniqueness */
   salt?: Hex;
-  /** The address of the delegate to redelegate to */
-  to?: Address;
 };
+
+export type RedelegatePermissionContextParameters =
+  BaseRedelegatePermissionContextParameters & {
+    /** The address of the delegate to redelegate to */
+    to: Address;
+  };
+
+export type RedelegatePermissionContextOpenParameters =
+  BaseRedelegatePermissionContextParameters;
 
 export type RedelegatePermissionContextReturnType = {
   /** The signed delegation that was created */
@@ -52,115 +59,39 @@ export type RedelegatePermissionContextReturnType = {
   permissionContext: Hex;
 };
 
-/**
- * Creates a redelegation from an existing permission context and returns
- * both the signed delegation and the updated permission context.
- *
- * This action handles the complete redelegation workflow:
- * 1. Extracts the leaf delegation from the permission context
- * 2. Creates a new delegation inheriting from it
- * 3. Signs the new delegation
- * 4. Prepends it to the delegation chain
- * 5. Returns the encoded permission context
- *
- * @param client - Wallet client with signing capability
- * @param parameters - Redelegation parameters
- * @returns Object containing the signed delegation and new permission context
- *
- * @example
- * ```ts
- * // Redelegate to a specific address
- * const result = await redelegatePermissionContext(walletClient, {
- *   permissionContext: erc7715Response.context,
- *   delegationManager: environment.DelegationManager,
- *   chainId: 11155111,
- *   environment,
- *   delegate: charlie.address,
- *   caveats: [timestampCaveat],
- * });
- *
- * // Use the new permission context in a transaction
- * await client.sendUserOperationWithDelegation({
- *   calls: [{
- *     to: contractAddress,
- *     data: callData,
- *     permissionContext: result.permissionContext,
- *     delegationManager: environment.DelegationManager,
- *   }],
- * });
- * ```
- *
- * @example
- * ```ts
- * // Create an open redelegation (anyone can use it)
- * const result = await redelegatePermissionContext(walletClient, {
- *   permissionContext: erc7715Response.context,
- *   delegationManager: environment.DelegationManager,
- *   chainId: 11155111,
- *   environment,
- *   // No delegate = open delegation
- *   caveats: [limitedCallsCaveat],
- * });
- * ```
- */
-export async function redelegatePermissionContext<
+type SigningClient<
   TChain extends Chain | undefined,
   TAccount extends Account | undefined,
->(
-  client: Client<Transport, TChain, TAccount> & {
-    signTypedData: WalletClient['signTypedData'];
+> = Client<Transport, TChain, TAccount> & {
+  signTypedData: WalletClient['signTypedData'];
+};
+
+/**
+ * Shared workflow for creating, signing and prepending a redelegation to a
+ * permission context. The caller decides whether to produce a specific or open
+ * redelegation by supplying the appropriate `unsignedDelegation`.
+ *
+ * @param client - Wallet client with signing capability.
+ * @param options - Workflow options.
+ * @param options.account - Account to sign the delegation with.
+ * @param options.environment - Environment configuration.
+ * @param options.delegations - The decoded delegation chain (leaf first).
+ * @param options.unsignedDelegation - The new (unsigned) redelegation to prepend.
+ * @param options.chainId - The chain ID for the signature.
+ * @returns The signed delegation and updated, encoded permission context.
+ */
+async function signAndPrependRedelegation(
+  client: SigningClient<Chain | undefined, Account | undefined>,
+  options: {
+    account: Account;
+    environment: SmartAccountsEnvironment;
+    delegations: Delegation[];
+    unsignedDelegation: Delegation;
+    chainId: number;
   },
-  parameters: RedelegatePermissionContextParameters,
 ): Promise<RedelegatePermissionContextReturnType> {
-  const {
-    account: accountParam = client.account,
-    environment,
-    permissionContext,
-    chainId,
-    scope,
-    caveats,
-    salt,
-    to,
-  } = parameters;
-
-  if (!accountParam) {
-    throw new BaseError('Account not found. Please provide an account.');
-  }
-
-  const account = parseAccount(accountParam);
-
-  trackSmartAccountsKitFunctionCall('redelegatePermissionContext', {
-    chainId,
-    hasDelegate: Boolean(parameters.to),
-    hasScope: scope !== undefined,
-    hasCaveats: caveats !== undefined,
-  });
-
-  const delegations = decodeDelegations(permissionContext);
-
-  const parentDelegation = delegations[0];
-
-  if (!parentDelegation) {
-    throw new BaseError(
-      'Permission context must contain at least one delegation',
-    );
-  }
-
-  const createDelegationOptions = {
-    environment,
-    from: account.address,
-    scope,
-    caveats,
-    parentDelegation,
-    salt,
-  };
-
-  const unsignedDelegation = to
-    ? createDelegation({
-        ...createDelegationOptions,
-        to,
-      })
-    : createOpenDelegation(createDelegationOptions);
+  const { account, environment, delegations, unsignedDelegation, chainId } =
+    options;
 
   const signature = await signDelegation(client, {
     account,
@@ -186,21 +117,231 @@ export async function redelegatePermissionContext<
 }
 
 /**
+ * Resolves and validates shared inputs used by both redelegation actions.
+ *
+ * @param client - Wallet client with signing capability.
+ * @param parameters - The base redelegation parameters.
+ * @returns The resolved account, decoded chain and parent (leaf) delegation.
+ */
+function resolveRedelegationInputs<
+  TChain extends Chain | undefined,
+  TAccount extends Account | undefined,
+>(
+  client: SigningClient<TChain, TAccount>,
+  parameters: BaseRedelegatePermissionContextParameters,
+): {
+  account: Account;
+  delegations: Delegation[];
+  parentDelegation: Delegation;
+} {
+  const { account: accountParam = client.account, permissionContext } =
+    parameters;
+
+  if (!accountParam) {
+    throw new BaseError('Account not found. Please provide an account.');
+  }
+
+  const account = parseAccount(accountParam);
+  const delegations = decodeDelegations(permissionContext);
+  const parentDelegation = delegations[0];
+
+  if (!parentDelegation) {
+    throw new BaseError(
+      'Permission context must contain at least one delegation',
+    );
+  }
+
+  return { account, delegations, parentDelegation };
+}
+
+/**
+ * Creates a redelegation to a specific delegate from an existing permission
+ * context and returns both the signed delegation and the updated permission
+ * context.
+ *
+ * This action handles the complete redelegation workflow:
+ * 1. Extracts the leaf delegation from the permission context
+ * 2. Creates a new delegation inheriting from it
+ * 3. Signs the new delegation
+ * 4. Prepends it to the delegation chain
+ * 5. Returns the encoded permission context
+ *
+ * Use {@link redelegatePermissionContextOpen} to create an open redelegation
+ * (delegate set to `ANY_BENEFICIARY`).
+ *
+ * @param client - Wallet client with signing capability.
+ * @param parameters - Redelegation parameters.
+ * @returns Object containing the signed delegation and new permission context.
+ *
+ * @example
+ * ```ts
+ * const result = await redelegatePermissionContext(walletClient, {
+ *   environment,
+ *   permissionContext: erc7715Response.context,
+ *   chainId: 11155111,
+ *   to: charlie.address,
+ *   caveats: [timestampCaveat],
+ * });
+ *
+ * await client.sendUserOperationWithDelegation({
+ *   calls: [{
+ *     to: contractAddress,
+ *     data: callData,
+ *     permissionContext: result.permissionContext,
+ *     delegationManager: environment.DelegationManager,
+ *   }],
+ * });
+ * ```
+ */
+export async function redelegatePermissionContext<
+  TChain extends Chain | undefined,
+  TAccount extends Account | undefined,
+>(
+  client: SigningClient<TChain, TAccount>,
+  parameters: RedelegatePermissionContextParameters,
+): Promise<RedelegatePermissionContextReturnType> {
+  const { environment, chainId, scope, caveats, salt, to } = parameters;
+
+  const { account, delegations, parentDelegation } = resolveRedelegationInputs(
+    client,
+    parameters,
+  );
+
+  trackSmartAccountsKitFunctionCall('redelegatePermissionContext', {
+    chainId,
+    hasScope: scope !== undefined,
+    hasCaveats: caveats !== undefined,
+  });
+
+  const unsignedDelegation = createDelegation({
+    environment,
+    from: account.address,
+    to,
+    scope,
+    caveats,
+    parentDelegation,
+    salt,
+  });
+
+  return signAndPrependRedelegation(client, {
+    account,
+    environment,
+    delegations,
+    unsignedDelegation,
+    chainId,
+  });
+}
+
+/**
+ * Creates an open redelegation (delegate set to `ANY_BENEFICIARY`) from an
+ * existing permission context and returns both the signed delegation and the
+ * updated permission context.
+ *
+ * Use {@link redelegatePermissionContext} when you want to delegate to a
+ * specific address.
+ *
+ * @param client - Wallet client with signing capability.
+ * @param parameters - Open redelegation parameters.
+ * @returns Object containing the signed delegation and new permission context.
+ *
+ * @example
+ * ```ts
+ * const result = await redelegatePermissionContextOpen(walletClient, {
+ *   environment,
+ *   permissionContext: erc7715Response.context,
+ *   chainId: 11155111,
+ *   caveats: [limitedCallsCaveat],
+ * });
+ * ```
+ */
+export async function redelegatePermissionContextOpen<
+  TChain extends Chain | undefined,
+  TAccount extends Account | undefined,
+>(
+  client: SigningClient<TChain, TAccount>,
+  parameters: RedelegatePermissionContextOpenParameters,
+): Promise<RedelegatePermissionContextReturnType> {
+  const { environment, chainId, scope, caveats, salt } = parameters;
+
+  const { account, delegations, parentDelegation } = resolveRedelegationInputs(
+    client,
+    parameters,
+  );
+
+  trackSmartAccountsKitFunctionCall('redelegatePermissionContextOpen', {
+    chainId,
+    hasScope: scope !== undefined,
+    hasCaveats: caveats !== undefined,
+  });
+
+  const unsignedDelegation = createOpenDelegation({
+    environment,
+    from: account.address,
+    scope,
+    caveats,
+    parentDelegation,
+    salt,
+  });
+
+  return signAndPrependRedelegation(client, {
+    account,
+    environment,
+    delegations,
+    unsignedDelegation,
+    chainId,
+  });
+}
+
+/**
+ * Resolves the chain id, falling back to the client's configured chain.
+ *
+ * @param client - The client to read the chain id from.
+ * @param client.chain - The client's configured chain.
+ * @param chainId - The explicit chain id, if provided.
+ * @returns The resolved chain id.
+ */
+function resolveChainId(
+  client: { chain?: { id: number } | undefined },
+  chainId: number | undefined,
+): number {
+  if (chainId !== undefined) {
+    return chainId;
+  }
+  if (!client.chain?.id) {
+    throw new BaseError(
+      'Chain ID is required. Either provide it in parameters or configure the client with a chain.',
+    );
+  }
+  return client.chain.id;
+}
+
+/**
  * Creates redelegation actions that can be used to extend a wallet client.
  *
- * @returns A function that can be used with wallet client extend method.
+ * Adds two actions:
+ * - `redelegatePermissionContext` for redelegating to a specific delegate.
+ * - `redelegatePermissionContextOpen` for creating an open redelegation.
+ *
+ * @returns A function that can be used with the wallet client `extend` method.
+ *
  * @example
  * ```ts
  * const walletClient = createWalletClient({
  *   chain: sepolia,
- *   transport: http()
+ *   transport: http(),
  * }).extend(redelegatePermissionContextActions());
  *
- * // Now you can call it directly on the client
- * const result = await walletClient.redelegatePermissionContext({
+ * // Specific redelegation
+ * const specific = await walletClient.redelegatePermissionContext({
  *   environment,
  *   permissionContext: erc7715Response.context,
  *   to: charlie.address,
+ * });
+ *
+ * // Open redelegation
+ * const open = await walletClient.redelegatePermissionContextOpen({
+ *   environment,
+ *   permissionContext: erc7715Response.context,
  * });
  * ```
  */
@@ -209,9 +350,7 @@ export function redelegatePermissionContextActions() {
     TChain extends Chain | undefined,
     TAccount extends Account | undefined,
   >(
-    client: Client<Transport, TChain, TAccount> & {
-      signTypedData: WalletClient['signTypedData'];
-    },
+    client: SigningClient<TChain, TAccount>,
   ) => ({
     redelegatePermissionContext: async (
       parameters: Omit<RedelegatePermissionContextParameters, 'chainId'> & {
@@ -219,17 +358,17 @@ export function redelegatePermissionContextActions() {
       },
     ) =>
       redelegatePermissionContext(client, {
-        chainId:
-          parameters.chainId ??
-          (() => {
-            if (!client.chain?.id) {
-              throw new BaseError(
-                'Chain ID is required. Either provide it in parameters or configure the client with a chain.',
-              );
-            }
-            return client.chain.id;
-          })(),
         ...parameters,
+        chainId: resolveChainId(client, parameters.chainId),
+      }),
+    redelegatePermissionContextOpen: async (
+      parameters: Omit<RedelegatePermissionContextOpenParameters, 'chainId'> & {
+        chainId?: number;
+      },
+    ) =>
+      redelegatePermissionContextOpen(client, {
+        ...parameters,
+        chainId: resolveChainId(client, parameters.chainId),
       }),
   });
 }

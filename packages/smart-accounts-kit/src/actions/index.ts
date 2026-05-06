@@ -53,8 +53,10 @@ export {
 // Redelegation actions
 export {
   redelegatePermissionContext,
+  redelegatePermissionContextOpen,
   redelegatePermissionContextActions,
   type RedelegatePermissionContextParameters,
+  type RedelegatePermissionContextOpenParameters,
   type RedelegatePermissionContextReturnType,
 } from './redelegatePermissionContext';
 

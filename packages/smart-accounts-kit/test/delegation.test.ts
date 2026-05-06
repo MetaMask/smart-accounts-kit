@@ -352,6 +352,160 @@ describe('createDelegation', () => {
       signature: '0x',
     });
   });
+
+  describe('parentPermissionContext support', () => {
+    it('should create a delegation using parentPermissionContext with Delegation array', () => {
+      const parentDelegation = createDelegation({
+        environment: smartAccountEnvironment,
+        scope: erc20Scope,
+        to: mockDelegate,
+        from: mockDelegator,
+      });
+
+      const permissionContext = [parentDelegation];
+
+      const result = createDelegation({
+        environment: smartAccountEnvironment,
+        to: randomAddress(),
+        from: mockDelegate,
+        parentPermissionContext: permissionContext,
+        caveats: [mockCaveat],
+      });
+
+      expect(result.authority).to.equal(resolveAuthority(parentDelegation));
+      expect(result.caveats).to.deep.equal([mockCaveat]);
+    });
+
+    it('should create a delegation using parentPermissionContext with encoded Hex', () => {
+      const parentDelegation = createDelegation({
+        environment: smartAccountEnvironment,
+        scope: erc20Scope,
+        to: mockDelegate,
+        from: mockDelegator,
+      });
+
+      const encodedContext = encodeDelegations([parentDelegation]);
+
+      const result = createDelegation({
+        environment: smartAccountEnvironment,
+        to: randomAddress(),
+        from: mockDelegate,
+        parentPermissionContext: encodedContext,
+        caveats: [mockCaveat],
+      });
+
+      expect(result.authority).to.equal(resolveAuthority(parentDelegation));
+      expect(result.caveats).to.deep.equal([mockCaveat]);
+    });
+
+    it('should inherit scope from parent when no scope is provided', () => {
+      const parentDelegation = createDelegation({
+        environment: smartAccountEnvironment,
+        scope: erc20Scope,
+        to: mockDelegate,
+        from: mockDelegator,
+      });
+
+      const permissionContext = [parentDelegation];
+
+      const result = createDelegation({
+        environment: smartAccountEnvironment,
+        to: randomAddress(),
+        from: mockDelegate,
+        parentPermissionContext: permissionContext,
+        // No scope provided - inherits from parent
+      });
+
+      expect(result.authority).to.equal(resolveAuthority(parentDelegation));
+      // When no scope is provided, caveats should be empty (scope is inherited through the chain)
+      expect(result.caveats).to.deep.equal([]);
+    });
+
+    it('should allow scope override even with parent', () => {
+      const parentDelegation = createDelegation({
+        environment: smartAccountEnvironment,
+        scope: erc20Scope,
+        to: mockDelegate,
+        from: mockDelegator,
+      });
+
+      const permissionContext = [parentDelegation];
+
+      const differentErc20Scope = {
+        type: ScopeType.Erc20TransferAmount as const,
+        tokenAddress: '0xdffe000000000000000000000000000000000000' as const,
+        maxAmount: 5000n,
+      };
+
+      const result = createDelegation({
+        environment: smartAccountEnvironment,
+        to: randomAddress(),
+        from: mockDelegate,
+        parentPermissionContext: permissionContext,
+        scope: differentErc20Scope,
+      });
+
+      expect(result.authority).to.equal(resolveAuthority(parentDelegation));
+      // Should have new scope's caveats
+      expect(result.caveats.length).to.be.greaterThan(0);
+    });
+
+    it('should throw error if permission context is empty', () => {
+      const emptyContext: Delegation[] = [];
+
+      expect(() =>
+        createDelegation({
+          environment: smartAccountEnvironment,
+          to: randomAddress(),
+          from: mockDelegate,
+          parentPermissionContext: emptyContext,
+        }),
+      ).to.throw('Permission context must contain at least one delegation');
+    });
+
+    it('should throw error if encoded permission context is empty', () => {
+      const emptyContext = encodeDelegations([]);
+
+      expect(() =>
+        createDelegation({
+          environment: smartAccountEnvironment,
+          to: randomAddress(),
+          from: mockDelegate,
+          parentPermissionContext: emptyContext,
+        }),
+      ).to.throw('Permission context must contain at least one delegation');
+    });
+
+    it('should extract leaf delegation from multi-delegation chain', () => {
+      const rootDelegation = createDelegation({
+        environment: smartAccountEnvironment,
+        scope: erc20Scope,
+        to: mockDelegate,
+        from: mockDelegator,
+      });
+
+      const childDelegation = createDelegation({
+        environment: smartAccountEnvironment,
+        to: randomAddress(),
+        from: mockDelegate,
+        parentDelegation: rootDelegation,
+        scope: erc20Scope,
+      });
+
+      // Chain ordered leaf to root
+      const permissionContext = [childDelegation, rootDelegation];
+
+      const result = createDelegation({
+        environment: smartAccountEnvironment,
+        to: randomAddress(),
+        from: randomAddress(),
+        parentPermissionContext: permissionContext,
+      });
+
+      // Should use childDelegation (leaf) as parent
+      expect(result.authority).to.equal(resolveAuthority(childDelegation));
+    });
+  });
 });
 
 describe('createOpenDelegation', () => {
@@ -496,6 +650,32 @@ describe('createOpenDelegation', () => {
       caveats: [...erc20ScopeCaveats],
       salt: '0x00',
       signature: '0x',
+    });
+  });
+
+  describe('parentPermissionContext support', () => {
+    it('should create an open delegation using parentPermissionContext', () => {
+      const parentDelegation = createDelegation({
+        environment: smartAccountEnvironment,
+        scope: erc20Scope,
+        to: mockDelegate,
+        from: mockDelegator,
+      });
+
+      const permissionContext = [parentDelegation];
+
+      const result = createOpenDelegation({
+        environment: smartAccountEnvironment,
+        from: mockDelegate,
+        parentPermissionContext: permissionContext,
+        caveats: [mockCaveat],
+      });
+
+      expect(result.authority).to.equal(resolveAuthority(parentDelegation));
+      expect(result.delegate).to.equal(
+        '0x0000000000000000000000000000000000000a11', // ANY_BENEFICIARY
+      );
+      expect(result.caveats).to.deep.equal([mockCaveat]);
     });
   });
 });
@@ -811,170 +991,5 @@ describe('signDelegation', () => {
     expect(signature).to.match(/^0x[a-fA-F0-9]+$/u);
     // ECDSA signature should be 65 bytes (130 hex chars) + 0x prefix = 132 total chars
     expect(signature).to.have.length(132);
-  });
-});
-
-describe('parentPermissionContext support', () => {
-  it('should create a delegation using parentPermissionContext with Delegation array', () => {
-    const parentDelegation = createDelegation({
-      environment: smartAccountEnvironment,
-      scope: erc20Scope,
-      to: mockDelegate,
-      from: mockDelegator,
-    });
-
-    const permissionContext = [parentDelegation];
-
-    const result = createDelegation({
-      environment: smartAccountEnvironment,
-      to: randomAddress(),
-      from: mockDelegate,
-      parentPermissionContext: permissionContext,
-      caveats: [mockCaveat],
-    });
-
-    expect(result.authority).to.equal(resolveAuthority(parentDelegation));
-    expect(result.caveats).to.deep.equal([mockCaveat]);
-  });
-
-  it('should create a delegation using parentPermissionContext with encoded Hex', () => {
-    const parentDelegation = createDelegation({
-      environment: smartAccountEnvironment,
-      scope: erc20Scope,
-      to: mockDelegate,
-      from: mockDelegator,
-    });
-
-    const encodedContext = encodeDelegations([parentDelegation]);
-
-    const result = createDelegation({
-      environment: smartAccountEnvironment,
-      to: randomAddress(),
-      from: mockDelegate,
-      parentPermissionContext: encodedContext,
-      caveats: [mockCaveat],
-    });
-
-    expect(result.authority).to.equal(resolveAuthority(parentDelegation));
-    expect(result.caveats).to.deep.equal([mockCaveat]);
-  });
-
-  it('should create an open delegation using parentPermissionContext', () => {
-    const parentDelegation = createDelegation({
-      environment: smartAccountEnvironment,
-      scope: erc20Scope,
-      to: mockDelegate,
-      from: mockDelegator,
-    });
-
-    const permissionContext = [parentDelegation];
-
-    const result = createOpenDelegation({
-      environment: smartAccountEnvironment,
-      from: mockDelegate,
-      parentPermissionContext: permissionContext,
-      caveats: [mockCaveat],
-    });
-
-    expect(result.authority).to.equal(resolveAuthority(parentDelegation));
-    expect(result.delegate).to.equal(
-      '0x0000000000000000000000000000000000000a11', // ANY_BENEFICIARY
-    );
-    expect(result.caveats).to.deep.equal([mockCaveat]);
-  });
-
-  it('should inherit scope from parent when no scope is provided', () => {
-    const parentDelegation = createDelegation({
-      environment: smartAccountEnvironment,
-      scope: erc20Scope,
-      to: mockDelegate,
-      from: mockDelegator,
-    });
-
-    const permissionContext = [parentDelegation];
-
-    const result = createDelegation({
-      environment: smartAccountEnvironment,
-      to: randomAddress(),
-      from: mockDelegate,
-      parentPermissionContext: permissionContext,
-      // No scope provided - inherits from parent
-    });
-
-    expect(result.authority).to.equal(resolveAuthority(parentDelegation));
-    // When no scope is provided, caveats should be empty (scope is inherited through the chain)
-    expect(result.caveats).to.deep.equal([]);
-  });
-
-  it('should allow scope override even with parent', () => {
-    const parentDelegation = createDelegation({
-      environment: smartAccountEnvironment,
-      scope: erc20Scope,
-      to: mockDelegate,
-      from: mockDelegator,
-    });
-
-    const permissionContext = [parentDelegation];
-
-    const differentErc20Scope = {
-      type: ScopeType.Erc20TransferAmount as const,
-      tokenAddress: '0xdffe000000000000000000000000000000000000' as const,
-      maxAmount: 5000n,
-    };
-
-    const result = createDelegation({
-      environment: smartAccountEnvironment,
-      to: randomAddress(),
-      from: mockDelegate,
-      parentPermissionContext: permissionContext,
-      scope: differentErc20Scope,
-    });
-
-    expect(result.authority).to.equal(resolveAuthority(parentDelegation));
-    // Should have new scope's caveats
-    expect(result.caveats.length).to.be.greaterThan(0);
-  });
-
-  it('should throw error if permission context is empty', () => {
-    const emptyContext: Delegation[] = [];
-
-    expect(() =>
-      createDelegation({
-        environment: smartAccountEnvironment,
-        to: randomAddress(),
-        from: mockDelegate,
-        parentPermissionContext: emptyContext,
-      }),
-    ).to.throw('Permission context must contain at least one delegation');
-  });
-
-  it('should extract leaf delegation from multi-delegation chain', () => {
-    const rootDelegation = createDelegation({
-      environment: smartAccountEnvironment,
-      scope: erc20Scope,
-      to: mockDelegate,
-      from: mockDelegator,
-    });
-
-    const childDelegation = createDelegation({
-      environment: smartAccountEnvironment,
-      to: randomAddress(),
-      from: mockDelegate,
-      parentDelegation: rootDelegation,
-      scope: erc20Scope,
-    });
-
-    // Chain ordered leaf to root
-    const permissionContext = [childDelegation, rootDelegation];
-
-    const result = createDelegation({
-      environment: smartAccountEnvironment,
-      to: randomAddress(),
-      from: randomAddress(),
-      parentPermissionContext: permissionContext,
-    });
-
-    // Should use childDelegation (leaf) as parent
-    expect(result.authority).to.equal(resolveAuthority(childDelegation));
   });
 });

@@ -98,6 +98,12 @@ async function signAndPrependRedelegation(
     delegation: unsignedDelegation,
     delegationManager: environment.DelegationManager,
     chainId,
+    // Redelegations always inherit from a parent delegation (enforced by
+    // `resolveRedelegationInputs`), so the parent's caveats provide the
+    // restriction even when the redelegation itself adds no extra caveats.
+    // This mirrors `resolveCaveats`, which also allows empty caveats in this
+    // case.
+    allowInsecureUnrestrictedDelegation: true,
   });
 
   const signedDelegation: Delegation = {

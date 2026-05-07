@@ -125,6 +125,29 @@ describe('redelegatePermissionContext', () => {
     expect(result.delegation.caveats).to.deep.include(timestampCaveat);
   });
 
+  it('should sign successfully when inheriting from parent without scope or caveats', async () => {
+    const permissionContext = buildRootPermissionContext();
+    const newDelegate: Address = '0x2000000000000000000000000000000000000002';
+
+    const result = await redelegatePermissionContext(client, {
+      environment: mockEnvironment,
+      permissionContext,
+      chainId: mockChainId,
+      to: newDelegate,
+      // No scope and no caveats - should inherit entirely from parent
+      // and still produce a valid signature.
+    });
+
+    expect(result.delegation.delegate).to.equal(newDelegate);
+    expect(result.delegation.delegator).to.equal(account.address);
+    expect(result.delegation.caveats).to.deep.equal([]);
+    expect(result.delegation.signature).to.match(/^0x[a-fA-F0-9]+$/u);
+    expect(result.permissionContext).to.match(/^0x[a-fA-F0-9]+$/u);
+    expect(result.permissionContext.length).to.be.greaterThan(
+      permissionContext.length,
+    );
+  });
+
   it('should allow scope override even with parent', async () => {
     const permissionContext = buildRootPermissionContext();
     const newDelegate: Address = '0x2000000000000000000000000000000000000002';
@@ -254,6 +277,25 @@ describe('redelegatePermissionContextOpen', () => {
     });
 
     expect(result.delegation.caveats).to.deep.include(timestampCaveat);
+  });
+
+  it('should sign successfully when inheriting from parent without scope or caveats', async () => {
+    const permissionContext = buildRootPermissionContext();
+
+    const result = await redelegatePermissionContextOpen(client, {
+      environment: mockEnvironment,
+      permissionContext,
+      chainId: mockChainId,
+      // No scope and no caveats - should inherit entirely from parent
+      // and still produce a valid signature.
+    });
+
+    expect(result.delegation.delegate).to.equal(
+      '0x0000000000000000000000000000000000000a11', // ANY_BENEFICIARY
+    );
+    expect(result.delegation.delegator).to.equal(account.address);
+    expect(result.delegation.caveats).to.deep.equal([]);
+    expect(result.delegation.signature).to.match(/^0x[a-fA-F0-9]+$/u);
   });
 
   it('should allow scope override on an open redelegation', async () => {

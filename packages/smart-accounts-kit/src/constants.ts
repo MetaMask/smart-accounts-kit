@@ -62,6 +62,7 @@ export enum ScopeType {
 export enum CaveatType {
   AllowedMethods = 'allowedMethods',
   AllowedTargets = 'allowedTargets',
+  ApprovalRevocation = 'approvalRevocation',
   Deployed = 'deployed',
   AllowedCalldata = 'allowedCalldata',
   Erc20BalanceChange = 'erc20BalanceChange',

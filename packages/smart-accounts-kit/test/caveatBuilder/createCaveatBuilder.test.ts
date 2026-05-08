@@ -1,4 +1,7 @@
-import { BalanceChangeType } from '@metamask/delegation-core';
+import {
+  BalanceChangeType,
+  createApprovalRevocationTerms,
+} from '@metamask/delegation-core';
 import { concat, encodePacked, isAddress, pad, toHex } from 'viem';
 import type { Address } from 'viem/accounts';
 import { expect, describe, it } from 'vitest';
@@ -13,6 +16,7 @@ describe('createCaveatBuilder()', () => {
     caveatEnforcers: {
       AllowedMethodsEnforcer: randomBytes(20),
       AllowedTargetsEnforcer: randomBytes(20),
+      ApprovalRevocationEnforcer: randomBytes(20),
       DeployedEnforcer: randomBytes(20),
       AllowedCalldataEnforcer: randomBytes(20),
       ERC20BalanceChangeEnforcer: randomBytes(20),
@@ -91,6 +95,37 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.AllowedTargetsEnforcer,
           terms: targets[0] + targets[1]?.slice(2),
+          args: '0x00',
+        },
+      ]);
+
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it("should add an 'approvalRevocation' caveat", () => {
+      const builder = createCaveatBuilder(environment);
+      const revocationConfig = {
+        erc20Approve: true,
+        erc721Approve: false,
+        erc721SetApprovalForAll: true,
+        permit2ApproveZero: false,
+        permit2Lockdown: true,
+        permit2InvalidateNonces: false,
+      };
+
+      const caveats = builder
+        .addCaveat('approvalRevocation', revocationConfig)
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.ApprovalRevocationEnforcer,
+          terms: createApprovalRevocationTerms(revocationConfig),
           args: '0x00',
         },
       ]);
@@ -527,6 +562,36 @@ describe('createCaveatBuilder()', () => {
         {
           enforcer: environment.caveatEnforcers.AllowedTargetsEnforcer,
           terms: targets[0] + targets[1]?.slice(2),
+          args: '0x00',
+        },
+      ]);
+
+      const caveat = caveats[0];
+      if (!caveat) {
+        throw new Error('caveat is not set');
+      }
+      expect(isAddress(caveat.enforcer)).to.equal(true);
+    });
+
+    it('should add approvalRevocation caveat using CaveatType enum', () => {
+      const builder = createCaveatBuilder(environment);
+      const revocationConfig = {
+        erc20Approve: true,
+        erc721Approve: false,
+        erc721SetApprovalForAll: true,
+        permit2ApproveZero: false,
+        permit2Lockdown: true,
+        permit2InvalidateNonces: false,
+      };
+
+      const caveats = builder
+        .addCaveat(CaveatType.ApprovalRevocation, revocationConfig)
+        .build();
+
+      expect(caveats).to.deep.equal([
+        {
+          enforcer: environment.caveatEnforcers.ApprovalRevocationEnforcer,
+          terms: createApprovalRevocationTerms(revocationConfig),
           args: '0x00',
         },
       ]);

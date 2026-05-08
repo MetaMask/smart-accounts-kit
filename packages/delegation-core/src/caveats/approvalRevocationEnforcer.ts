@@ -77,7 +77,7 @@ export type ApprovalRevocationTerms = {
  * Maps {@link ApprovalRevocationTerms} to the single-byte bitmask on the wire.
  *
  * @param terms - Selected Revocation primitives.
- * @returns Integer mask in `0x01`..`0x07`.
+ * @returns Integer mask in specifying the allowed revocation primitives.
  * @throws Error if no flags are set.
  */
 function termsToMask(terms: ApprovalRevocationTerms): number {

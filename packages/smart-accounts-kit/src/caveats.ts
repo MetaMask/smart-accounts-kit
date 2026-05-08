@@ -3,6 +3,7 @@ import {
   decodeERC20StreamingTerms,
   decodeERC20TransferAmountTerms,
   decodeERC20BalanceChangeTerms,
+  decodeApprovalRevocationTerms,
   decodeAllowedMethodsTerms,
   decodeAllowedTargetsTerms,
   decodeArgsEqualityCheckTerms,
@@ -108,6 +109,11 @@ export const decodeCaveat = ({
       return { type: 'allowedCalldata', ...decodeAllowedCalldataTerms(terms) };
     case caveatEnforcers.AllowedMethodsEnforcer?.toLowerCase():
       return { type: 'allowedMethods', ...decodeAllowedMethodsTerms(terms) };
+    case caveatEnforcers.ApprovalRevocationEnforcer?.toLowerCase():
+      return {
+        type: 'approvalRevocation',
+        ...decodeApprovalRevocationTerms(terms),
+      };
     case caveatEnforcers.AllowedTargetsEnforcer?.toLowerCase():
       return { type: 'allowedTargets', ...decodeAllowedTargetsTerms(terms) };
     case caveatEnforcers.ArgsEqualityCheckEnforcer?.toLowerCase():

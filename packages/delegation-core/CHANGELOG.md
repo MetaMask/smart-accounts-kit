@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `MultiTokenPeriod`, `Erc20TokenPeriodTransfer`, and `NativeTokenPeriodTransfer` encoders now accept `periodDuration` parameter as `bigint. ([#227](https://github.com/MetaMask/smart-accounts-kit/pull/227))
+
 ## [2.0.0]
 
 ### Added

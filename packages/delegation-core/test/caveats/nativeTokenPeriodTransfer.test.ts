@@ -47,6 +47,21 @@ describe('NativeTokenPeriodTransfer', () => {
       );
     });
 
+    it('creates valid terms when periodDuration is bigint', () => {
+      const periodAmount = 1n;
+      const periodDuration = 1n;
+      const startDate = 1;
+      const result = createNativeTokenPeriodTransferTerms({
+        periodAmount,
+        periodDuration,
+        startDate,
+      });
+
+      expect(result).toStrictEqual(
+        '0x000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001',
+      );
+    });
+
     it('creates valid terms for large values', () => {
       const periodAmount = 100000000000000000000n; // 100 ETH in wei
       const periodDuration = 86400; // 1 day in seconds
@@ -341,6 +356,23 @@ describe('NativeTokenPeriodTransfer', () => {
           createNativeTokenPeriodTransferTerms(original),
         ),
       ).toStrictEqual(original);
+    });
+
+    it('decodes bigint periodDuration input as number', () => {
+      const original = {
+        periodAmount: 1n,
+        periodDuration: 1n,
+        startDate: 1,
+      };
+      expect(
+        decodeNativeTokenPeriodTransferTerms(
+          createNativeTokenPeriodTransferTerms(original),
+        ),
+      ).toStrictEqual({
+        periodAmount: 1n,
+        periodDuration: 1,
+        startDate: 1,
+      });
     });
 
     it('decodes maximum uint256 and max safe integers', () => {

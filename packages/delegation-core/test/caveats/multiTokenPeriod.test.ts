@@ -29,6 +29,26 @@ describe('MultiTokenPeriod', () => {
       );
     });
 
+    it('accepts bigint periodDuration', () => {
+      const result = createMultiTokenPeriodTerms({
+        tokenConfigs: [
+          {
+            token,
+            periodAmount: 100n,
+            periodDuration: 60n,
+            startDate: 10,
+          },
+        ],
+      });
+
+      expect(result).toStrictEqual(
+        '0x0000000000000000000000000000000000000011' +
+          '0000000000000000000000000000000000000000000000000000000000000064' +
+          '000000000000000000000000000000000000000000000000000000000000003c' +
+          '000000000000000000000000000000000000000000000000000000000000000a',
+      );
+    });
+
     it('throws for empty token configs', () => {
       expect(() => createMultiTokenPeriodTerms({ tokenConfigs: [] })).toThrow(
         'MultiTokenPeriodBuilder: tokenConfigs array cannot be empty',

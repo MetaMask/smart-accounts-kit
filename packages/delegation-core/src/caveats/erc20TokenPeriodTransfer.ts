@@ -30,13 +30,14 @@ import type { Hex } from '../types';
  */
 export type ERC20TokenPeriodTransferTerms<
   TBytesLike extends BytesLike = BytesLike,
+  TDuration extends number | bigint = number,
 > = {
   /** The address of the ERC20 token. */
   tokenAddress: TBytesLike;
   /** The maximum amount that can be transferred within each period. */
   periodAmount: bigint;
   /** The duration of each period in seconds. */
-  periodDuration: number;
+  periodDuration: TDuration;
   /** Unix timestamp when the first period begins. */
   startDate: number;
 };
@@ -52,11 +53,11 @@ export type ERC20TokenPeriodTransferTerms<
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createERC20TokenPeriodTransferTerms(
-  terms: ERC20TokenPeriodTransferTerms,
+  terms: ERC20TokenPeriodTransferTerms<BytesLike, number | bigint>,
   encodingOptions?: EncodingOptions<'hex'>,
 ): Hex;
 export function createERC20TokenPeriodTransferTerms(
-  terms: ERC20TokenPeriodTransferTerms,
+  terms: ERC20TokenPeriodTransferTerms<BytesLike, number | bigint>,
   encodingOptions: EncodingOptions<'bytes'>,
 ): Uint8Array;
 /**
@@ -69,7 +70,7 @@ export function createERC20TokenPeriodTransferTerms(
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createERC20TokenPeriodTransferTerms(
-  terms: ERC20TokenPeriodTransferTerms,
+  terms: ERC20TokenPeriodTransferTerms<BytesLike, number | bigint>,
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
 ): Hex | Uint8Array {
   const { tokenAddress, periodAmount, periodDuration, startDate } = terms;

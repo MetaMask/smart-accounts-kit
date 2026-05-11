@@ -14,11 +14,11 @@ import { trackSmartAccountsKitFunctionCall } from '../analytics';
 import type { Caveats } from '../caveatBuilder';
 import type { ScopeConfig } from '../caveatBuilder/scope';
 import {
+  ANY_BENEFICIARY,
   createDelegation,
   createOpenDelegation,
   decodeDelegations,
   encodeDelegations,
-  ROOT_AUTHORITY,
 } from '../delegation';
 import type {
   Delegation,
@@ -160,7 +160,7 @@ function resolveRedelegationArgs<
   }
 
   const isParentOpenDelegation =
-    parentDelegation.authority.toLowerCase() === ROOT_AUTHORITY.toLowerCase();
+    parentDelegation.delegate.toLowerCase() === ANY_BENEFICIARY.toLowerCase();
 
   const from = isParentOpenDelegation
     ? account.address

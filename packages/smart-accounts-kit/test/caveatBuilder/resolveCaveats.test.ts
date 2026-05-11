@@ -48,7 +48,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: caveatBuilder,
-        hasInheritance: false,
+        isScopeOptional: false,
       });
 
       // 4 caveats: 2 from the scope, 2 from the builder
@@ -66,7 +66,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: caveatBuilder,
-        hasInheritance: false,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -85,7 +85,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: caveatBuilder as any,
-        hasInheritance: false,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -101,7 +101,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats,
-        hasInheritance: false,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -129,7 +129,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: caveatConfigs,
-        hasInheritance: false,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -140,7 +140,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: [],
-        hasInheritance: false,
+        isScopeOptional: false,
       });
       expect(result.length).to.be.greaterThan(scopeOnlyResult.length);
     });
@@ -164,7 +164,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: mixedCaveats,
-        hasInheritance: false,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -180,7 +180,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: [],
-        hasInheritance: false,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -205,7 +205,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc721Scope,
         caveats: [caveatConfig],
-        hasInheritance: false,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -217,14 +217,14 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: [mockCaveat1],
-        hasInheritance: false,
+        isScopeOptional: false,
       });
 
       const resultWithoutCaveats = resolveCaveats({
         environment,
         scope: erc20Scope,
         caveats: [],
-        hasInheritance: false,
+        isScopeOptional: false,
       });
 
       expect(resultWithCaveats.length).to.be.greaterThan(
@@ -247,37 +247,37 @@ describe('resolveCaveats', () => {
           environment,
           scope: erc20Scope,
           caveats: [invalidType as any],
-          hasInheritance: false,
+          isScopeOptional: false,
         });
       }).to.throw('Invalid caveat');
     });
   });
 
-  describe('hasInheritance', () => {
+  describe('isScopeOptional', () => {
     it('should throw if scope is not provided and the delegation has no inheritance', () => {
       expect(() =>
         resolveCaveats({
           environment,
           caveats: [mockCaveat1],
-          hasInheritance: false,
+          isScopeOptional: false,
         }),
-      ).to.throw('Scope is required when the delegation has no inheritance');
+      ).to.throw('Scope is required');
     });
 
-    it('should throw if neither scope nor caveats are provided and the delegation has no inheritance', () => {
+    it('should throw if neither scope nor caveats are provided and scope is optional', () => {
       expect(() =>
         resolveCaveats({
           environment,
-          hasInheritance: false,
+          isScopeOptional: false,
         }),
-      ).to.throw('Scope is required when the delegation has no inheritance');
+      ).to.throw('Scope is required');
     });
 
-    it('should resolve caveats without a scope when the delegation has inheritance', () => {
+    it('should resolve caveats without a scope when scope is optional', () => {
       const result = resolveCaveats({
         environment,
         caveats: [mockCaveat1, mockCaveat2],
-        hasInheritance: true,
+        isScopeOptional: true,
       });
 
       // No scope caveats are added when the scope is inherited from the parent
@@ -286,21 +286,21 @@ describe('resolveCaveats', () => {
       expect(result).to.deep.include(mockCaveat2);
     });
 
-    it('should return an empty array when no scope, no caveats and the delegation has inheritance', () => {
+    it('should return an empty array when no scope, no caveats and scope is optional', () => {
       const result = resolveCaveats({
         environment,
-        hasInheritance: true,
+        isScopeOptional: true,
       });
 
       expect(result).to.deep.equal([]);
     });
 
-    it('should still apply scope caveats when both scope and inheritance are provided', () => {
+    it('should still apply scope caveats when both scope and scope is optional', () => {
       const result = resolveCaveats({
         environment,
         scope: erc20Scope,
         caveats: [mockCaveat1],
-        hasInheritance: true,
+        isScopeOptional: true,
       });
 
       // Scope caveats are still produced when an explicit scope is provided

@@ -225,6 +225,20 @@ describe('createDelegation', () => {
     });
   });
 
+  it('throws if parent delegation is root authority with differing case', () => {
+    const mixedCaseRootAuthority: Hex = `0x${ROOT_AUTHORITY.slice(2).toUpperCase()}`;
+
+    expect(() =>
+      createDelegation({
+        environment: smartAccountEnvironment,
+        scope: erc20Scope,
+        to: mockDelegate,
+        from: mockDelegator,
+        parentDelegation: mixedCaseRootAuthority,
+      }),
+    ).toThrow(`Invalid parent delegation - cannot be ${ROOT_AUTHORITY}`);
+  });
+
   it('should create a delegation with caveats', () => {
     const caveats: Caveat[] = [
       {
@@ -360,7 +374,22 @@ describe('createDelegation', () => {
         to: mockDelegate,
         from: mockDelegator,
       } as any);
-    }).toThrow('Scope is required when the delegation has no inheritance');
+    }).toThrow(
+      'Invalid arguments - must specify either parentDelegation, parentPermissionContext, or scope',
+    );
+  });
+
+  it('throws if scope is explicitly undefined and no inheritance is provided', () => {
+    expect(() => {
+      createDelegation({
+        environment: smartAccountEnvironment,
+        to: mockDelegate,
+        from: mockDelegator,
+        scope: undefined,
+      } as any);
+    }).toThrow(
+      'Invalid arguments - must specify either parentDelegation, parentPermissionContext, or scope',
+    );
   });
 
   describe('parentPermissionContext support', () => {
@@ -558,6 +587,19 @@ describe('createOpenDelegation', () => {
     });
   });
 
+  it('throws if parent delegation is root authority with differing case', () => {
+    const mixedCaseRootAuthority: Hex = `0x${ROOT_AUTHORITY.slice(2).toUpperCase()}`;
+
+    expect(() =>
+      createOpenDelegation({
+        environment: smartAccountEnvironment,
+        scope: erc20Scope,
+        from: mockDelegator,
+        parentDelegation: mixedCaseRootAuthority,
+      }),
+    ).toThrow(`Invalid parent delegation - cannot be ${ROOT_AUTHORITY}`);
+  });
+
   it('should create an open delegation with caveats', () => {
     const caveats: Caveat[] = [
       {
@@ -669,7 +711,21 @@ describe('createOpenDelegation', () => {
         environment: smartAccountEnvironment,
         from: mockDelegator,
       } as any);
-    }).toThrow('Scope is required when the delegation has no inheritance');
+    }).toThrow(
+      'Invalid arguments - must specify either parentDelegation, parentPermissionContext, or scope',
+    );
+  });
+
+  it('throws if scope is explicitly undefined and no inheritance is provided', () => {
+    expect(() => {
+      createOpenDelegation({
+        environment: smartAccountEnvironment,
+        from: mockDelegator,
+        scope: undefined,
+      } as any);
+    }).toThrow(
+      'Invalid arguments - must specify either parentDelegation, parentPermissionContext, or scope',
+    );
   });
 
   describe('parentPermissionContext support', () => {

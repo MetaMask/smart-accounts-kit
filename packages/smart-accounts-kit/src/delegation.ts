@@ -275,18 +275,33 @@ const extractLeafDelegation = (
  * @param options - The options for resolving the parent delegation.
  * @param options.parentDelegation - The parent delegation or its hash.
  * @param options.parentPermissionContext - The permission context containing the parent delegation.
+ * @param options.scope - The scope to be used for the delegation.
  * @returns The resolved parent delegation, or undefined if neither is provided.
  * @internal
  */
 const resolveParentDelegation = ({
   parentDelegation,
   parentPermissionContext,
+  scope,
 }: Pick<
   BaseCreateDelegationOptions,
-  'parentDelegation' | 'parentPermissionContext'
+  'parentDelegation' | 'parentPermissionContext' | 'scope'
 >): Delegation | Hex | undefined => {
   if (parentPermissionContext) {
     return extractLeafDelegation(parentPermissionContext);
+  }
+
+  if (
+    typeof parentDelegation === 'string' &&
+    parentDelegation.toLowerCase() === ROOT_AUTHORITY.toLowerCase()
+  ) {
+    throw new Error(`Invalid parent delegation - cannot be ${ROOT_AUTHORITY}`);
+  }
+
+  if (!parentDelegation && !scope) {
+    throw new Error(
+      'Invalid arguments - must specify either parentDelegation, parentPermissionContext, or scope',
+    );
   }
 
   return parentDelegation;
@@ -345,17 +360,17 @@ export const createDelegation = (
 ): Delegation => {
   const parentDelegation = resolveParentDelegation(options);
 
+  const hasInheritance = parentDelegation !== undefined;
+
   const caveats = resolveCaveats({
     environment: options.environment,
     scope: options.scope,
     caveats: options.caveats,
-    hasInheritance: Boolean(parentDelegation),
+    isScopeOptional: hasInheritance,
   });
 
   trackSmartAccountsKitFunctionCall('createDelegation', {
-    hasParentDelegation:
-      options.parentDelegation !== undefined ||
-      options.parentPermissionContext !== undefined,
+    hasInheritance,
     scope: options.scope?.type ?? null,
     caveatNames: getCaveatNames({
       caveats,
@@ -384,17 +399,17 @@ export const createOpenDelegation = (
 ): Delegation => {
   const parentDelegation = resolveParentDelegation(options);
 
+  const hasInheritance = parentDelegation !== undefined;
+
   const caveats = resolveCaveats({
     environment: options.environment,
     scope: options.scope,
     caveats: options.caveats,
-    hasInheritance: Boolean(parentDelegation),
+    isScopeOptional: hasInheritance,
   });
 
   trackSmartAccountsKitFunctionCall('createOpenDelegation', {
-    hasParentDelegation:
-      options.parentDelegation !== undefined ||
-      options.parentPermissionContext !== undefined,
+    hasInheritance,
     scope: options.scope?.type ?? null,
     caveatNames: getCaveatNames({
       caveats,

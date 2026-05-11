@@ -34,8 +34,8 @@ type BaseRedelegatePermissionContextParameters = {
   environment: SmartAccountsEnvironment;
   /** The permission context to redelegate from (i.e., from ERC-7715 response) */
   permissionContext: PermissionContext;
-  /** The chain ID for the signature */
-  chainId: number;
+  /** The chain ID for the signature (falls back to `client.chain.id`) */
+  chainId?: number;
   /** Optional scope - if not provided, inherits from parent */
   scope?: ScopeConfig;
   /** Additional caveats to apply to the redelegation */
@@ -181,7 +181,8 @@ function resolveRedelegationArgs<
  * 4. Prepends it to the delegation chain
  * 5. Returns the encoded permission context
  *
- * Use {@link redelegatePermissionContextOpen} to create an open redelegation
+ * Use {@link redelegatePermissionContextOpenAction} to create an open
+ * redelegation
  * (delegate set to `ANY_BENEFICIARY`).
  *
  * @param client - Wallet client with signing capability.
@@ -190,7 +191,7 @@ function resolveRedelegationArgs<
  *
  * @example
  * ```ts
- * const result = await redelegatePermissionContext(walletClient, {
+ * const result = await redelegatePermissionContextAction(walletClient, {
  *   environment,
  *   permissionContext: erc7715Response.context,
  *   chainId: 11155111,
@@ -208,14 +209,15 @@ function resolveRedelegationArgs<
  * });
  * ```
  */
-export async function redelegatePermissionContext<
+export async function redelegatePermissionContextAction<
   TChain extends Chain | undefined,
   TAccount extends Account | undefined,
 >(
   client: SigningClient<TChain, TAccount>,
   parameters: RedelegatePermissionContextParameters,
 ): Promise<RedelegatePermissionContextReturnType> {
-  const { environment, chainId, scope, caveats, salt, to } = parameters;
+  const { environment, scope, caveats, salt, to } = parameters;
+  const chainId = resolveChainId(client, parameters.chainId);
 
   const { account, delegations, parentDelegation, from } =
     resolveRedelegationArgs(client, parameters);
@@ -250,7 +252,7 @@ export async function redelegatePermissionContext<
  * existing permission context and returns both the signed delegation and the
  * updated permission context.
  *
- * Use {@link redelegatePermissionContext} when you want to delegate to a
+ * Use {@link redelegatePermissionContextAction} when you want to delegate to a
  * specific address.
  *
  * @param client - Wallet client with signing capability.
@@ -259,7 +261,7 @@ export async function redelegatePermissionContext<
  *
  * @example
  * ```ts
- * const result = await redelegatePermissionContextOpen(walletClient, {
+ * const result = await redelegatePermissionContextOpenAction(walletClient, {
  *   environment,
  *   permissionContext: erc7715Response.context,
  *   chainId: 11155111,
@@ -267,14 +269,15 @@ export async function redelegatePermissionContext<
  * });
  * ```
  */
-export async function redelegatePermissionContextOpen<
+export async function redelegatePermissionContextOpenAction<
   TChain extends Chain | undefined,
   TAccount extends Account | undefined,
 >(
   client: SigningClient<TChain, TAccount>,
   parameters: RedelegatePermissionContextOpenParameters,
 ): Promise<RedelegatePermissionContextReturnType> {
-  const { environment, chainId, scope, caveats, salt } = parameters;
+  const { environment, scope, caveats, salt } = parameters;
+  const chainId = resolveChainId(client, parameters.chainId);
 
   const { account, delegations, parentDelegation, from } =
     resolveRedelegationArgs(client, parameters);
@@ -324,62 +327,4 @@ function resolveChainId(
     );
   }
   return client.chain.id;
-}
-
-/**
- * Creates redelegation actions that can be used to extend a wallet client.
- *
- * Adds two actions:
- * - `redelegatePermissionContext` for redelegating to a specific delegate.
- * - `redelegatePermissionContextOpen` for creating an open redelegation.
- *
- * @returns A function that can be used with the wallet client `extend` method.
- *
- * @example
- * ```ts
- * const walletClient = createWalletClient({
- *   chain: sepolia,
- *   transport: http(),
- * }).extend(redelegatePermissionContextActions());
- *
- * // Specific redelegation
- * const specific = await walletClient.redelegatePermissionContext({
- *   environment,
- *   permissionContext: erc7715Response.context,
- *   to: charlie.address,
- * });
- *
- * // Open redelegation
- * const open = await walletClient.redelegatePermissionContextOpen({
- *   environment,
- *   permissionContext: erc7715Response.context,
- * });
- * ```
- */
-export function redelegatePermissionContextActions() {
-  return <
-    TChain extends Chain | undefined,
-    TAccount extends Account | undefined,
-  >(
-    client: SigningClient<TChain, TAccount>,
-  ) => ({
-    redelegatePermissionContext: async (
-      parameters: Omit<RedelegatePermissionContextParameters, 'chainId'> & {
-        chainId?: number;
-      },
-    ) =>
-      redelegatePermissionContext(client, {
-        ...parameters,
-        chainId: resolveChainId(client, parameters.chainId),
-      }),
-    redelegatePermissionContextOpen: async (
-      parameters: Omit<RedelegatePermissionContextOpenParameters, 'chainId'> & {
-        chainId?: number;
-      },
-    ) =>
-      redelegatePermissionContextOpen(client, {
-        ...parameters,
-        chainId: resolveChainId(client, parameters.chainId),
-      }),
-  });
 }

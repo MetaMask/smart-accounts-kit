@@ -3,10 +3,10 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
 import { describe, it, expect, beforeEach } from 'vitest';
 
+import { erc7710WalletActions } from '../../src/actions';
 import {
-  redelegatePermissionContext,
-  redelegatePermissionContextOpen,
-  redelegatePermissionContextActions,
+  redelegatePermissionContextAction,
+  redelegatePermissionContextOpenAction,
 } from '../../src/actions/redelegatePermissionContext';
 import { ScopeType } from '../../src/constants';
 import {
@@ -127,7 +127,7 @@ const buildPermissionContextWithRootAuthorityLeafDelegate = (
   return encodeDelegations([rootAuthorityLeafDelegation]);
 };
 
-describe('redelegatePermissionContext', () => {
+describe('redelegatePermissionContextAction', () => {
   let client: ReturnType<typeof createWalletClient>;
 
   beforeEach(() => {
@@ -142,7 +142,7 @@ describe('redelegatePermissionContext', () => {
     const permissionContext = buildRootPermissionContext();
     const newDelegate: Address = '0x2000000000000000000000000000000000000002';
 
-    const result = await redelegatePermissionContext(client, {
+    const result = await redelegatePermissionContextAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -167,7 +167,7 @@ describe('redelegatePermissionContext', () => {
     const permissionContext = buildRootPermissionContext();
     const newDelegate: Address = '0x2000000000000000000000000000000000000002';
 
-    const result = await redelegatePermissionContext(client, {
+    const result = await redelegatePermissionContextAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -182,7 +182,7 @@ describe('redelegatePermissionContext', () => {
     const permissionContext = buildRootPermissionContext();
     const newDelegate: Address = '0x2000000000000000000000000000000000000002';
 
-    const result = await redelegatePermissionContext(client, {
+    const result = await redelegatePermissionContextAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -199,7 +199,7 @@ describe('redelegatePermissionContext', () => {
     const permissionContext = buildRootPermissionContext();
     const newDelegate: Address = '0x2000000000000000000000000000000000000002';
 
-    const result = await redelegatePermissionContext(client, {
+    const result = await redelegatePermissionContextAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -227,7 +227,7 @@ describe('redelegatePermissionContext', () => {
       buildPermissionContextWithParentDelegate(parentDelegate);
     const newDelegate: Address = '0x2000000000000000000000000000000000000002';
 
-    const result = await redelegatePermissionContext(client, {
+    const result = await redelegatePermissionContextAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -242,7 +242,7 @@ describe('redelegatePermissionContext', () => {
     const permissionContext = buildPermissionContextWithOpenLeafDelegation();
     const newDelegate: Address = '0x2000000000000000000000000000000000000002';
 
-    const result = await redelegatePermissionContext(client, {
+    const result = await redelegatePermissionContextAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -260,7 +260,7 @@ describe('redelegatePermissionContext', () => {
       buildPermissionContextWithRootAuthorityLeafDelegate(leafDelegate);
     const newDelegate: Address = '0x2000000000000000000000000000000000000002';
 
-    const result = await redelegatePermissionContext(client, {
+    const result = await redelegatePermissionContextAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -275,7 +275,7 @@ describe('redelegatePermissionContext', () => {
     const permissionContext = buildRootPermissionContext();
     const newDelegate: Address = '0x2000000000000000000000000000000000000002';
 
-    const result = await redelegatePermissionContext(client, {
+    const result = await redelegatePermissionContextAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -295,7 +295,7 @@ describe('redelegatePermissionContext', () => {
     const emptyContext = encodeDelegations([]);
 
     await expect(
-      redelegatePermissionContext(client, {
+      redelegatePermissionContextAction(client, {
         environment: mockEnvironment,
         permissionContext: emptyContext,
         chainId: mockChainId,
@@ -315,13 +315,44 @@ describe('redelegatePermissionContext', () => {
     const permissionContext = buildRootPermissionContext();
 
     await expect(
-      redelegatePermissionContext(clientWithoutAccount, {
+      redelegatePermissionContextAction(clientWithoutAccount, {
         environment: mockEnvironment,
         permissionContext,
         chainId: mockChainId,
         to: '0x2000000000000000000000000000000000000002',
       }),
     ).rejects.toThrow('Account not found');
+  });
+
+  it('should infer chainId from client when not provided', async () => {
+    const permissionContext = buildRootPermissionContext();
+    const newDelegate: Address = '0x2000000000000000000000000000000000000002';
+
+    const result = await redelegatePermissionContextAction(client, {
+      environment: mockEnvironment,
+      permissionContext,
+      to: newDelegate,
+      caveats: [timestampCaveat],
+    });
+
+    expect(result.delegation.delegate).to.equal(newDelegate);
+    expect(result.delegation.signature).to.match(/^0x[a-fA-F0-9]+$/u);
+  });
+
+  it('should throw error if chain is not configured and chainId is not provided', async () => {
+    const clientWithoutChain = createWalletClient({
+      account,
+      transport: http('https://rpc.sepolia.org'),
+    });
+    const permissionContext = buildRootPermissionContext();
+
+    await expect(
+      redelegatePermissionContextAction(clientWithoutChain, {
+        environment: mockEnvironment,
+        permissionContext,
+        to: '0x2000000000000000000000000000000000000002',
+      }),
+    ).rejects.toThrow('Chain ID is required');
   });
 
   it('should work with explicit account parameter', async () => {
@@ -333,14 +364,17 @@ describe('redelegatePermissionContext', () => {
     const permissionContext = buildRootPermissionContext();
     const newDelegate: Address = '0x2000000000000000000000000000000000000002';
 
-    const result = await redelegatePermissionContext(clientWithoutAccount, {
-      account,
-      environment: mockEnvironment,
-      permissionContext,
-      chainId: mockChainId,
-      to: newDelegate,
-      caveats: [timestampCaveat],
-    });
+    const result = await redelegatePermissionContextAction(
+      clientWithoutAccount,
+      {
+        account,
+        environment: mockEnvironment,
+        permissionContext,
+        chainId: mockChainId,
+        to: newDelegate,
+        caveats: [timestampCaveat],
+      },
+    );
 
     expect(result.delegation.delegate).to.equal(newDelegate);
     expect(result.delegation.delegator.toLowerCase()).to.equal(
@@ -349,7 +383,7 @@ describe('redelegatePermissionContext', () => {
   });
 });
 
-describe('redelegatePermissionContextOpen', () => {
+describe('redelegatePermissionContextOpenAction', () => {
   let client: ReturnType<typeof createWalletClient>;
 
   beforeEach(() => {
@@ -363,7 +397,7 @@ describe('redelegatePermissionContextOpen', () => {
   it('should create an open redelegation (delegate = ANY_BENEFICIARY)', async () => {
     const permissionContext = buildRootPermissionContext({ maxAmount: 500n });
 
-    const result = await redelegatePermissionContextOpen(client, {
+    const result = await redelegatePermissionContextOpenAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -382,7 +416,7 @@ describe('redelegatePermissionContextOpen', () => {
   it('should add additional caveats to the open redelegation', async () => {
     const permissionContext = buildRootPermissionContext();
 
-    const result = await redelegatePermissionContextOpen(client, {
+    const result = await redelegatePermissionContextOpenAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -395,7 +429,7 @@ describe('redelegatePermissionContextOpen', () => {
   it('should inherit scope from parent when no scope is provided', async () => {
     const permissionContext = buildRootPermissionContext();
 
-    const result = await redelegatePermissionContextOpen(client, {
+    const result = await redelegatePermissionContextOpenAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -409,7 +443,7 @@ describe('redelegatePermissionContextOpen', () => {
   it('should sign successfully when inheriting from parent without scope or caveats', async () => {
     const permissionContext = buildRootPermissionContext();
 
-    const result = await redelegatePermissionContextOpen(client, {
+    const result = await redelegatePermissionContextOpenAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -433,7 +467,7 @@ describe('redelegatePermissionContextOpen', () => {
     const permissionContext =
       buildPermissionContextWithParentDelegate(parentDelegate);
 
-    const result = await redelegatePermissionContextOpen(client, {
+    const result = await redelegatePermissionContextOpenAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -446,7 +480,7 @@ describe('redelegatePermissionContextOpen', () => {
   it('should use the account address as from when the leaf delegation is open', async () => {
     const permissionContext = buildPermissionContextWithOpenLeafDelegation();
 
-    const result = await redelegatePermissionContextOpen(client, {
+    const result = await redelegatePermissionContextOpenAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -462,7 +496,7 @@ describe('redelegatePermissionContextOpen', () => {
     const permissionContext =
       buildPermissionContextWithRootAuthorityLeafDelegate(leafDelegate);
 
-    const result = await redelegatePermissionContextOpen(client, {
+    const result = await redelegatePermissionContextOpenAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -475,7 +509,7 @@ describe('redelegatePermissionContextOpen', () => {
   it('should allow scope override on an open redelegation', async () => {
     const permissionContext = buildRootPermissionContext();
 
-    const result = await redelegatePermissionContextOpen(client, {
+    const result = await redelegatePermissionContextOpenAction(client, {
       environment: mockEnvironment,
       permissionContext,
       chainId: mockChainId,
@@ -492,7 +526,7 @@ describe('redelegatePermissionContextOpen', () => {
     const emptyContext = encodeDelegations([]);
 
     await expect(
-      redelegatePermissionContextOpen(client, {
+      redelegatePermissionContextOpenAction(client, {
         environment: mockEnvironment,
         permissionContext: emptyContext,
         chainId: mockChainId,
@@ -511,22 +545,52 @@ describe('redelegatePermissionContextOpen', () => {
     const permissionContext = buildRootPermissionContext();
 
     await expect(
-      redelegatePermissionContextOpen(clientWithoutAccount, {
+      redelegatePermissionContextOpenAction(clientWithoutAccount, {
         environment: mockEnvironment,
         permissionContext,
         chainId: mockChainId,
       }),
     ).rejects.toThrow('Account not found');
   });
+
+  it('should infer chainId from client when not provided', async () => {
+    const permissionContext = buildRootPermissionContext();
+
+    const result = await redelegatePermissionContextOpenAction(client, {
+      environment: mockEnvironment,
+      permissionContext,
+      caveats: [timestampCaveat],
+    });
+
+    expect(result.delegation.delegate).to.equal(
+      '0x0000000000000000000000000000000000000a11',
+    );
+    expect(result.delegation.signature).to.match(/^0x[a-fA-F0-9]+$/u);
+  });
+
+  it('should throw error if chain is not configured and chainId is not provided', async () => {
+    const clientWithoutChain = createWalletClient({
+      account,
+      transport: http('https://rpc.sepolia.org'),
+    });
+    const permissionContext = buildRootPermissionContext();
+
+    await expect(
+      redelegatePermissionContextOpenAction(clientWithoutChain, {
+        environment: mockEnvironment,
+        permissionContext,
+      }),
+    ).rejects.toThrow('Chain ID is required');
+  });
 });
 
-describe('redelegatePermissionContextActions', () => {
+describe('erc7710WalletActions (redelegation actions)', () => {
   it('should extend a wallet client with redelegatePermissionContext', async () => {
     const client = createWalletClient({
       account,
       chain: sepolia,
       transport: http('https://rpc.sepolia.org'),
-    }).extend(redelegatePermissionContextActions());
+    }).extend(erc7710WalletActions());
 
     const permissionContext = buildRootPermissionContext();
     const newDelegate: Address = '0x2000000000000000000000000000000000000002';
@@ -536,7 +600,6 @@ describe('redelegatePermissionContextActions', () => {
       permissionContext,
       to: newDelegate,
       caveats: [timestampCaveat],
-      // chainId should be inferred from client
     });
 
     expect(result.delegation.delegate).to.equal(newDelegate);
@@ -550,7 +613,7 @@ describe('redelegatePermissionContextActions', () => {
       account,
       chain: sepolia,
       transport: http('https://rpc.sepolia.org'),
-    }).extend(redelegatePermissionContextActions());
+    }).extend(erc7710WalletActions());
 
     const permissionContext = buildRootPermissionContext();
 
@@ -558,7 +621,6 @@ describe('redelegatePermissionContextActions', () => {
       environment: mockEnvironment,
       permissionContext,
       caveats: [timestampCaveat],
-      // chainId should be inferred from client
     });
 
     expect(result.delegation.delegate).to.equal(
@@ -569,11 +631,48 @@ describe('redelegatePermissionContextActions', () => {
     );
   });
 
+  it('should work when client has no configured chain if chainId is provided (specific)', async () => {
+    const clientWithoutChain = createWalletClient({
+      account,
+      transport: http('https://rpc.sepolia.org'),
+    }).extend(erc7710WalletActions());
+
+    const permissionContext = buildRootPermissionContext();
+
+    const result = await clientWithoutChain.redelegatePermissionContext({
+      environment: mockEnvironment,
+      permissionContext,
+      chainId: mockChainId,
+      to: '0x2000000000000000000000000000000000000002',
+    });
+    expect(result.delegation.delegate).to.equal(
+      '0x2000000000000000000000000000000000000002',
+    );
+  });
+
+  it('should work when client has no configured chain if chainId is provided (open)', async () => {
+    const clientWithoutChain = createWalletClient({
+      account,
+      transport: http('https://rpc.sepolia.org'),
+    }).extend(erc7710WalletActions());
+
+    const permissionContext = buildRootPermissionContext();
+
+    const result = await clientWithoutChain.redelegatePermissionContextOpen({
+      environment: mockEnvironment,
+      permissionContext,
+      chainId: mockChainId,
+    });
+    expect(result.delegation.delegate).to.equal(
+      '0x0000000000000000000000000000000000000a11',
+    );
+  });
+
   it('should throw error if chain is not configured and chainId is not provided (specific)', async () => {
     const clientWithoutChain = createWalletClient({
       account,
       transport: http('https://rpc.sepolia.org'),
-    }).extend(redelegatePermissionContextActions());
+    }).extend(erc7710WalletActions());
 
     const permissionContext = buildRootPermissionContext();
 
@@ -590,7 +689,7 @@ describe('redelegatePermissionContextActions', () => {
     const clientWithoutChain = createWalletClient({
       account,
       transport: http('https://rpc.sepolia.org'),
-    }).extend(redelegatePermissionContextActions());
+    }).extend(erc7710WalletActions());
 
     const permissionContext = buildRootPermissionContext();
 

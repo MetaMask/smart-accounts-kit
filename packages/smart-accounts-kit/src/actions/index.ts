@@ -16,6 +16,12 @@ import type {
   MetaMaskExtensionClient,
   RequestExecutionPermissionsParameters,
 } from './erc7715RequestExecutionPermissionsAction';
+import {
+  redelegatePermissionContextAction,
+  redelegatePermissionContextOpenAction,
+  type RedelegatePermissionContextOpenParameters,
+  type RedelegatePermissionContextParameters,
+} from './redelegatePermissionContext';
 
 export {
   // Individual action functions
@@ -52,9 +58,8 @@ export {
 
 // Redelegation actions
 export {
-  redelegatePermissionContext,
-  redelegatePermissionContextOpen,
-  redelegatePermissionContextActions,
+  redelegatePermissionContextAction,
+  redelegatePermissionContextOpenAction,
   type RedelegatePermissionContextParameters,
   type RedelegatePermissionContextOpenParameters,
   type RedelegatePermissionContextReturnType,
@@ -116,7 +121,7 @@ export const erc7715ProviderActions = () => (client: Client) => ({
 });
 
 /**
- * Type for a viem Client extended with ERC-7715 provider actions.
+ * Type for a viem Client extended with ERC-7710 provider actions.
  * Use this to type variables that will be assigned an extended client later.
  *
  * @example
@@ -138,6 +143,12 @@ export const erc7710WalletActions = () => (client: WalletClient) => ({
   sendTransactionWithDelegation: async (
     args: SendTransactionWithDelegationParameters,
   ) => sendTransactionWithDelegationAction(client, args),
+  redelegatePermissionContext: async (
+    parameters: RedelegatePermissionContextParameters,
+  ) => redelegatePermissionContextAction(client, parameters),
+  redelegatePermissionContextOpen: async (
+    parameters: RedelegatePermissionContextOpenParameters,
+  ) => redelegatePermissionContextOpenAction(client, parameters),
 });
 
 export const erc7710BundlerActions = () => (client: Client) => ({

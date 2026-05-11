@@ -18,6 +18,7 @@ import {
   createOpenDelegation,
   decodeDelegations,
   encodeDelegations,
+  ROOT_AUTHORITY,
 } from '../delegation';
 import type {
   Delegation,
@@ -99,7 +100,7 @@ async function signAndPrependRedelegation(
     delegationManager: environment.DelegationManager,
     chainId,
     // Redelegations always inherit from a parent delegation (enforced by
-    // `resolveRedelegationInputs`), so the parent's caveats provide the
+    // `resolveRedelegationArgs`), so the parent's caveats provide the
     // restriction even when the redelegation itself adds no extra caveats.
     // This mirrors `resolveCaveats`, which also allows empty caveats in this
     // case.
@@ -129,7 +130,7 @@ async function signAndPrependRedelegation(
  * @param parameters - The base redelegation parameters.
  * @returns The resolved account, decoded chain and parent (leaf) delegation.
  */
-function resolveRedelegationInputs<
+function resolveRedelegationArgs<
   TChain extends Chain | undefined,
   TAccount extends Account | undefined,
 >(
@@ -139,6 +140,7 @@ function resolveRedelegationInputs<
   account: Account;
   delegations: Delegation[];
   parentDelegation: Delegation;
+  from: Hex;
 } {
   const { account: accountParam = client.account, permissionContext } =
     parameters;
@@ -157,7 +159,14 @@ function resolveRedelegationInputs<
     );
   }
 
-  return { account, delegations, parentDelegation };
+  const isParentOpenDelegation =
+    parentDelegation.authority.toLowerCase() === ROOT_AUTHORITY.toLowerCase();
+
+  const from = isParentOpenDelegation
+    ? account.address
+    : parentDelegation.delegate;
+
+  return { account, delegations, parentDelegation, from };
 }
 
 /**
@@ -208,10 +217,8 @@ export async function redelegatePermissionContext<
 ): Promise<RedelegatePermissionContextReturnType> {
   const { environment, chainId, scope, caveats, salt, to } = parameters;
 
-  const { account, delegations, parentDelegation } = resolveRedelegationInputs(
-    client,
-    parameters,
-  );
+  const { account, delegations, parentDelegation, from } =
+    resolveRedelegationArgs(client, parameters);
 
   trackSmartAccountsKitFunctionCall('redelegatePermissionContext', {
     chainId,
@@ -221,7 +228,7 @@ export async function redelegatePermissionContext<
 
   const unsignedDelegation = createDelegation({
     environment,
-    from: parentDelegation.delegate,
+    from,
     to,
     scope,
     caveats,
@@ -269,10 +276,8 @@ export async function redelegatePermissionContextOpen<
 ): Promise<RedelegatePermissionContextReturnType> {
   const { environment, chainId, scope, caveats, salt } = parameters;
 
-  const { account, delegations, parentDelegation } = resolveRedelegationInputs(
-    client,
-    parameters,
-  );
+  const { account, delegations, parentDelegation, from } =
+    resolveRedelegationArgs(client, parameters);
 
   trackSmartAccountsKitFunctionCall('redelegatePermissionContextOpen', {
     chainId,
@@ -282,7 +287,7 @@ export async function redelegatePermissionContextOpen<
 
   const unsignedDelegation = createOpenDelegation({
     environment,
-    from: parentDelegation.delegate,
+    from,
     scope,
     caveats,
     parentDelegation,

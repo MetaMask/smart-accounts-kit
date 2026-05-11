@@ -9,7 +9,11 @@ import {
   redelegatePermissionContextActions,
 } from '../../src/actions/redelegatePermissionContext';
 import { ScopeType } from '../../src/constants';
-import { createDelegation, encodeDelegations } from '../../src/delegation';
+import {
+  createDelegation,
+  createOpenDelegation,
+  encodeDelegations,
+} from '../../src/delegation';
 import type { SmartAccountsEnvironment } from '../../src/types';
 
 const mockPrivateKey =
@@ -74,7 +78,35 @@ const buildPermissionContextWithParentDelegate = (
     from: '0x1000000000000000000000000000000000000001',
   });
 
-  return encodeDelegations([rootDelegation]);
+  const leafDelegation = createDelegation({
+    environment: mockEnvironment,
+    scope: {
+      type: ScopeType.Erc20TransferAmount,
+      tokenAddress: '0xabc0000000000000000000000000000000000000',
+      maxAmount,
+    },
+    to: parentDelegate,
+    from: '0x2000000000000000000000000000000000000002',
+    parentDelegation: rootDelegation,
+  });
+
+  return encodeDelegations([leafDelegation, rootDelegation]);
+};
+
+const buildPermissionContextWithOpenLeafDelegation = ({
+  maxAmount = 1000n,
+}: { maxAmount?: bigint } = {}) => {
+  const openDelegation = createOpenDelegation({
+    environment: mockEnvironment,
+    scope: {
+      type: ScopeType.Erc20TransferAmount,
+      tokenAddress: '0xabc0000000000000000000000000000000000000',
+      maxAmount,
+    },
+    from: '0x1000000000000000000000000000000000000001',
+  });
+
+  return encodeDelegations([openDelegation]);
 };
 
 describe('redelegatePermissionContext', () => {
@@ -186,6 +218,22 @@ describe('redelegatePermissionContext', () => {
 
     expect(result.delegation.delegator).to.equal(parentDelegate);
     expect(result.delegation.delegator).to.not.equal(account.address);
+  });
+
+  it('should use the account address as from when the leaf delegation is open', async () => {
+    const permissionContext = buildPermissionContextWithOpenLeafDelegation();
+    const newDelegate: Address = '0x2000000000000000000000000000000000000002';
+
+    const result = await redelegatePermissionContext(client, {
+      environment: mockEnvironment,
+      permissionContext,
+      chainId: mockChainId,
+      to: newDelegate,
+    });
+
+    expect(result.delegation.delegator.toLowerCase()).to.equal(
+      account.address.toLowerCase(),
+    );
   });
 
   it('should allow scope override even with parent', async () => {
@@ -358,6 +406,20 @@ describe('redelegatePermissionContextOpen', () => {
 
     expect(result.delegation.delegator).to.equal(parentDelegate);
     expect(result.delegation.delegator).to.not.equal(account.address);
+  });
+
+  it('should use the account address as from when the leaf delegation is open', async () => {
+    const permissionContext = buildPermissionContextWithOpenLeafDelegation();
+
+    const result = await redelegatePermissionContextOpen(client, {
+      environment: mockEnvironment,
+      permissionContext,
+      chainId: mockChainId,
+    });
+
+    expect(result.delegation.delegator.toLowerCase()).to.equal(
+      account.address.toLowerCase(),
+    );
   });
 
   it('should allow scope override on an open redelegation', async () => {

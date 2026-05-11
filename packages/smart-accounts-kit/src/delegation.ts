@@ -336,14 +336,20 @@ const resolveDelegationArgs = (
   const authority = (() => {
     if (!resolvedParentDelegation) {
       if (!options.scope) {
-        throw new Error('Invalid arguments - must specify either parentDelegation, parentPermissionContext, or scope');
+        throw new Error(
+          'Invalid arguments - must specify either parentDelegation, parentPermissionContext, or scope',
+        );
       }
       return ROOT_AUTHORITY;
     }
 
     if (typeof resolvedParentDelegation === 'string') {
-      if (resolvedParentDelegation.toLowerCase() === ROOT_AUTHORITY.toLowerCase()) {
-        throw new Error(`Invalid parent delegation - cannot be ${ROOT_AUTHORITY}`);
+      if (
+        resolvedParentDelegation.toLowerCase() === ROOT_AUTHORITY.toLowerCase()
+      ) {
+        throw new Error(
+          `Invalid parent delegation - cannot be ${ROOT_AUTHORITY}`,
+        );
       }
       return resolvedParentDelegation;
     }

@@ -221,7 +221,7 @@ export async function redelegatePermissionContext<
 
   const unsignedDelegation = createDelegation({
     environment,
-    from: account.address,
+    from: parentDelegation.delegate,
     to,
     scope,
     caveats,
@@ -282,7 +282,7 @@ export async function redelegatePermissionContextOpen<
 
   const unsignedDelegation = createOpenDelegation({
     environment,
-    from: account.address,
+    from: parentDelegation.delegate,
     scope,
     caveats,
     parentDelegation,

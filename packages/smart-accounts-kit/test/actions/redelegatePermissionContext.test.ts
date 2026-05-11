@@ -59,6 +59,24 @@ const buildRootPermissionContext = ({
   return encodeDelegations([rootDelegation]);
 };
 
+const buildPermissionContextWithParentDelegate = (
+  parentDelegate: Address,
+  { maxAmount = 1000n }: { maxAmount?: bigint } = {},
+) => {
+  const rootDelegation = createDelegation({
+    environment: mockEnvironment,
+    scope: {
+      type: ScopeType.Erc20TransferAmount,
+      tokenAddress: '0xabc0000000000000000000000000000000000000',
+      maxAmount,
+    },
+    to: parentDelegate,
+    from: '0x1000000000000000000000000000000000000001',
+  });
+
+  return encodeDelegations([rootDelegation]);
+};
+
 describe('redelegatePermissionContext', () => {
   let client: ReturnType<typeof createWalletClient>;
 
@@ -83,7 +101,9 @@ describe('redelegatePermissionContext', () => {
     });
 
     expect(result.delegation.delegate).to.equal(newDelegate);
-    expect(result.delegation.delegator).to.equal(account.address);
+    expect(result.delegation.delegator.toLowerCase()).to.equal(
+      account.address.toLowerCase(),
+    );
     expect(result.delegation.signature).to.match(/^0x[a-fA-F0-9]+$/u);
     expect(result.permissionContext).to.match(/^0x[a-fA-F0-9]+$/u);
 
@@ -139,13 +159,33 @@ describe('redelegatePermissionContext', () => {
     });
 
     expect(result.delegation.delegate).to.equal(newDelegate);
-    expect(result.delegation.delegator).to.equal(account.address);
+    expect(result.delegation.delegator.toLowerCase()).to.equal(
+      account.address.toLowerCase(),
+    );
     expect(result.delegation.caveats).to.deep.equal([]);
     expect(result.delegation.signature).to.match(/^0x[a-fA-F0-9]+$/u);
     expect(result.permissionContext).to.match(/^0x[a-fA-F0-9]+$/u);
     expect(result.permissionContext.length).to.be.greaterThan(
       permissionContext.length,
     );
+  });
+
+  it("should use the parent delegation's delegate as from address", async () => {
+    const parentDelegate: Address =
+      '0x3000000000000000000000000000000000000003';
+    const permissionContext =
+      buildPermissionContextWithParentDelegate(parentDelegate);
+    const newDelegate: Address = '0x2000000000000000000000000000000000000002';
+
+    const result = await redelegatePermissionContext(client, {
+      environment: mockEnvironment,
+      permissionContext,
+      chainId: mockChainId,
+      to: newDelegate,
+    });
+
+    expect(result.delegation.delegator).to.equal(parentDelegate);
+    expect(result.delegation.delegator).to.not.equal(account.address);
   });
 
   it('should allow scope override even with parent', async () => {
@@ -220,7 +260,9 @@ describe('redelegatePermissionContext', () => {
     });
 
     expect(result.delegation.delegate).to.equal(newDelegate);
-    expect(result.delegation.delegator).to.equal(account.address);
+    expect(result.delegation.delegator.toLowerCase()).to.equal(
+      account.address.toLowerCase(),
+    );
   });
 });
 
@@ -248,7 +290,9 @@ describe('redelegatePermissionContextOpen', () => {
     expect(result.delegation.delegate).to.equal(
       '0x0000000000000000000000000000000000000a11', // ANY_BENEFICIARY
     );
-    expect(result.delegation.delegator).to.equal(account.address);
+    expect(result.delegation.delegator.toLowerCase()).to.equal(
+      account.address.toLowerCase(),
+    );
     expect(result.delegation.signature).to.match(/^0x[a-fA-F0-9]+$/u);
   });
 
@@ -293,9 +337,27 @@ describe('redelegatePermissionContextOpen', () => {
     expect(result.delegation.delegate).to.equal(
       '0x0000000000000000000000000000000000000a11', // ANY_BENEFICIARY
     );
-    expect(result.delegation.delegator).to.equal(account.address);
+    expect(result.delegation.delegator.toLowerCase()).to.equal(
+      account.address.toLowerCase(),
+    );
     expect(result.delegation.caveats).to.deep.equal([]);
     expect(result.delegation.signature).to.match(/^0x[a-fA-F0-9]+$/u);
+  });
+
+  it("should use the parent delegation's delegate as from address", async () => {
+    const parentDelegate: Address =
+      '0x3000000000000000000000000000000000000003';
+    const permissionContext =
+      buildPermissionContextWithParentDelegate(parentDelegate);
+
+    const result = await redelegatePermissionContextOpen(client, {
+      environment: mockEnvironment,
+      permissionContext,
+      chainId: mockChainId,
+    });
+
+    expect(result.delegation.delegator).to.equal(parentDelegate);
+    expect(result.delegation.delegator).to.not.equal(account.address);
   });
 
   it('should allow scope override on an open redelegation', async () => {
@@ -366,7 +428,9 @@ describe('redelegatePermissionContextActions', () => {
     });
 
     expect(result.delegation.delegate).to.equal(newDelegate);
-    expect(result.delegation.delegator).to.equal(account.address);
+    expect(result.delegation.delegator.toLowerCase()).to.equal(
+      account.address.toLowerCase(),
+    );
   });
 
   it('should extend a wallet client with redelegatePermissionContextOpen', async () => {
@@ -388,7 +452,9 @@ describe('redelegatePermissionContextActions', () => {
     expect(result.delegation.delegate).to.equal(
       '0x0000000000000000000000000000000000000a11', // ANY_BENEFICIARY
     );
-    expect(result.delegation.delegator).to.equal(account.address);
+    expect(result.delegation.delegator.toLowerCase()).to.equal(
+      account.address.toLowerCase(),
+    );
   });
 
   it('should throw error if chain is not configured and chainId is not provided (specific)', async () => {

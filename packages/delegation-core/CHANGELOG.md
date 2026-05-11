@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0]
+
 ### Changed
 
 - `MultiTokenPeriod`, `Erc20TokenPeriodTransfer`, and `NativeTokenPeriodTransfer` encoders now accept `periodDuration` parameter as `bigint. ([#227](https://github.com/MetaMask/smart-accounts-kit/pull/227))
@@ -104,7 +106,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add @metamask/delegation-core package, providing utility types, delegation hashing, and terms encoding for a limited set of caveat enforcers.
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@2.0.0...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@2.1.0...HEAD
+[2.1.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@2.0.0...@metamask/delegation-core@2.1.0
 [2.0.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@1.1.0...@metamask/delegation-core@2.0.0
 [1.1.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@1.0.0...@metamask/delegation-core@1.1.0
 [1.0.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@0.4.0...@metamask/delegation-core@1.0.0

@@ -18,6 +18,7 @@ import { type Caveats, resolveCaveats } from './caveatBuilder';
 import type { ScopeConfig } from './caveatBuilder/scope';
 import { CAVEAT_ABI_TYPE_COMPONENTS } from './caveats';
 import type {
+  Caveat,
   Delegation,
   PermissionContext,
   SmartAccountsEnvironment,
@@ -211,12 +212,26 @@ export const hashDelegation = (input: Delegation): Hex => {
 
 type BaseCreateDelegationOptions = {
   environment: SmartAccountsEnvironment;
-  scope: ScopeConfig;
   from: Hex;
   caveats?: Caveats;
-  parentDelegation?: Delegation | Hex;
   salt?: Hex;
-};
+} & (
+  | {
+      scope: ScopeConfig;
+      parentDelegation?: never;
+      parentPermissionContext?: never;
+    }
+  | {
+      scope?: ScopeConfig;
+      parentDelegation: Delegation | Hex;
+      parentPermissionContext?: never;
+    }
+  | {
+      scope?: ScopeConfig;
+      parentDelegation?: never;
+      parentPermissionContext: PermissionContext;
+    }
+);
 
 /**
  * Options for creating a specific delegation
@@ -229,6 +244,31 @@ export type CreateDelegationOptions = BaseCreateDelegationOptions & {
  * Options for creating an open delegation
  */
 export type CreateOpenDelegationOptions = BaseCreateDelegationOptions;
+
+/**
+ * Extracts the leaf delegation from a permission context.
+ * The leaf delegation is the first element in the array (chain is ordered leaf to root).
+ *
+ * @param permissionContext - The permission context containing the delegation chain.
+ * @returns The leaf delegation.
+ * @internal
+ */
+const extractLeafDelegation = (
+  permissionContext: PermissionContext,
+): Delegation => {
+  const delegations = decodeDelegations(permissionContext);
+
+  if (delegations.length === 0) {
+    throw new Error('Permission context must contain at least one delegation');
+  }
+
+  const leafDelegation = delegations[0];
+  if (!leafDelegation) {
+    throw new Error('Failed to extract leaf delegation');
+  }
+
+  return leafDelegation;
+};
 
 /**
  * Resolves the authority for a delegation based on the parent delegation.
@@ -273,6 +313,68 @@ const getCaveatNames = ({
 };
 
 /**
+ * Resolves the delegation arguments from the options.
+ *
+ * @param options - The options for creating the delegation.
+ * @returns The resolved delegation arguments.
+ */
+const resolveDelegationArgs = (
+  options: BaseCreateDelegationOptions,
+): {
+  authority: Hex;
+  caveats: Caveat[];
+  hasInheritance: boolean;
+  salt: Hex;
+} => {
+  const optionsHasParentPermissionContext =
+    'parentPermissionContext' in options && options.parentPermissionContext;
+
+  const resolvedParentDelegation = optionsHasParentPermissionContext
+    ? extractLeafDelegation(options.parentPermissionContext)
+    : options.parentDelegation;
+
+  const authority = (() => {
+    if (!resolvedParentDelegation) {
+      if (!options.scope) {
+        throw new Error(
+          'Invalid arguments - must specify either parentDelegation, parentPermissionContext, or scope',
+        );
+      }
+      return ROOT_AUTHORITY;
+    }
+
+    if (typeof resolvedParentDelegation === 'string') {
+      if (
+        resolvedParentDelegation.toLowerCase() === ROOT_AUTHORITY.toLowerCase()
+      ) {
+        throw new Error(
+          `Invalid parent delegation - cannot be ${ROOT_AUTHORITY}`,
+        );
+      }
+      return resolvedParentDelegation;
+    }
+
+    return hashDelegation(resolvedParentDelegation);
+  })();
+
+  const hasInheritance = resolvedParentDelegation !== undefined;
+
+  const caveats = resolveCaveats({
+    environment: options.environment,
+    scope: options.scope,
+    caveats: options.caveats,
+    isScopeOptional: hasInheritance,
+  });
+
+  return {
+    authority,
+    caveats,
+    hasInheritance,
+    salt: options.salt ?? '0x00',
+  };
+};
+
+/**
  * Creates a delegation with specific delegate.
  *
  * @param options - The options for creating the delegation.
@@ -281,11 +383,12 @@ const getCaveatNames = ({
 export const createDelegation = (
   options: CreateDelegationOptions,
 ): Delegation => {
-  const caveats = resolveCaveats(options);
+  const { authority, caveats, hasInheritance, salt } =
+    resolveDelegationArgs(options);
 
   trackSmartAccountsKitFunctionCall('createDelegation', {
-    hasParentDelegation: options.parentDelegation !== undefined,
-    scope: options.scope.type,
+    hasInheritance,
+    scope: options.scope?.type ?? null,
     caveatNames: getCaveatNames({
       caveats,
       environment: options.environment,
@@ -295,9 +398,9 @@ export const createDelegation = (
   return {
     delegate: options.to,
     delegator: options.from,
-    authority: resolveAuthority(options.parentDelegation),
+    authority,
     caveats,
-    salt: options.salt ?? '0x00',
+    salt,
     signature: '0x',
   };
 };
@@ -311,11 +414,12 @@ export const createDelegation = (
 export const createOpenDelegation = (
   options: CreateOpenDelegationOptions,
 ): Delegation => {
-  const caveats = resolveCaveats(options);
+  const { authority, caveats, hasInheritance, salt } =
+    resolveDelegationArgs(options);
 
   trackSmartAccountsKitFunctionCall('createOpenDelegation', {
-    hasParentDelegation: options.parentDelegation !== undefined,
-    scope: options.scope.type,
+    hasInheritance,
+    scope: options.scope?.type ?? null,
     caveatNames: getCaveatNames({
       caveats,
       environment: options.environment,
@@ -325,9 +429,9 @@ export const createOpenDelegation = (
   return {
     delegate: ANY_BENEFICIARY,
     delegator: options.from,
-    authority: resolveAuthority(options.parentDelegation),
+    authority,
     caveats,
-    salt: options.salt ?? '0x00',
+    salt,
     signature: '0x',
   };
 };

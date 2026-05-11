@@ -50,6 +50,16 @@ export {
   type SignUserOperationReturnType,
 } from './signUserOperation';
 
+// Redelegation actions
+export {
+  redelegatePermissionContext,
+  redelegatePermissionContextOpen,
+  redelegatePermissionContextActions,
+  type RedelegatePermissionContextParameters,
+  type RedelegatePermissionContextOpenParameters,
+  type RedelegatePermissionContextReturnType,
+} from './redelegatePermissionContext';
+
 export {
   erc7715RequestExecutionPermissionsAction as requestExecutionPermissions,
   type MetaMaskExtensionClient,

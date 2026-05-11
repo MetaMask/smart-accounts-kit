@@ -48,6 +48,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: caveatBuilder,
+        isScopeOptional: false,
       });
 
       // 4 caveats: 2 from the scope, 2 from the builder
@@ -65,6 +66,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: caveatBuilder,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -83,6 +85,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: caveatBuilder as any,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -98,6 +101,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -125,6 +129,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: caveatConfigs,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -135,6 +140,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: [],
+        isScopeOptional: false,
       });
       expect(result.length).to.be.greaterThan(scopeOnlyResult.length);
     });
@@ -158,6 +164,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: mixedCaveats,
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -173,6 +180,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: [],
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -197,6 +205,7 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc721Scope,
         caveats: [caveatConfig],
+        isScopeOptional: false,
       });
 
       expect(result).to.be.an('array');
@@ -208,12 +217,14 @@ describe('resolveCaveats', () => {
         environment,
         scope: erc20Scope,
         caveats: [mockCaveat1],
+        isScopeOptional: false,
       });
 
       const resultWithoutCaveats = resolveCaveats({
         environment,
         scope: erc20Scope,
         caveats: [],
+        isScopeOptional: false,
       });
 
       expect(resultWithCaveats.length).to.be.greaterThan(
@@ -236,8 +247,65 @@ describe('resolveCaveats', () => {
           environment,
           scope: erc20Scope,
           caveats: [invalidType as any],
+          isScopeOptional: false,
         });
       }).to.throw('Invalid caveat');
+    });
+  });
+
+  describe('isScopeOptional', () => {
+    it('should throw if scope is not provided and the delegation has no inheritance', () => {
+      expect(() =>
+        resolveCaveats({
+          environment,
+          caveats: [mockCaveat1],
+          isScopeOptional: false,
+        }),
+      ).to.throw('Scope is required');
+    });
+
+    it('should throw if neither scope nor caveats are provided and scope is optional', () => {
+      expect(() =>
+        resolveCaveats({
+          environment,
+          isScopeOptional: false,
+        }),
+      ).to.throw('Scope is required');
+    });
+
+    it('should resolve caveats without a scope when scope is optional', () => {
+      const result = resolveCaveats({
+        environment,
+        caveats: [mockCaveat1, mockCaveat2],
+        isScopeOptional: true,
+      });
+
+      // No scope caveats are added when the scope is inherited from the parent
+      expect(result).to.have.lengthOf(2);
+      expect(result).to.deep.include(mockCaveat1);
+      expect(result).to.deep.include(mockCaveat2);
+    });
+
+    it('should return an empty array when no scope, no caveats and scope is optional', () => {
+      const result = resolveCaveats({
+        environment,
+        isScopeOptional: true,
+      });
+
+      expect(result).to.deep.equal([]);
+    });
+
+    it('should still apply scope caveats when both scope and scope is optional', () => {
+      const result = resolveCaveats({
+        environment,
+        scope: erc20Scope,
+        caveats: [mockCaveat1],
+        isScopeOptional: true,
+      });
+
+      // Scope caveats are still produced when an explicit scope is provided
+      expect(result.length).to.be.greaterThan(1);
+      expect(result).to.deep.include(mockCaveat1);
     });
   });
 });

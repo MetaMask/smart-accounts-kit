@@ -9,13 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.5.0]
 
-### Uncategorized
-
-- Shuffle redelegation actions ([#229](https://github.com/metamask/smart-accounts-kit/pull/229))
-
 ### Added
 
-- Add utils and wallet actions for redelegating a `permissionContext`: ([#217](https://github.com/metamask/smart-accounts-kit/pull/217))
+- Add utils and wallet actions for redelegating a `permissionContext`: ([#217](https://github.com/metamask/smart-accounts-kit/pull/217), [#229](https://github.com/metamask/smart-accounts-kit/pull/229))
 
 ## [1.4.0]
 

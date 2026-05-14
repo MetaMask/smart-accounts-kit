@@ -2,6 +2,7 @@ export { bytecode as Address } from './bytecode/Address';
 export { bytecode as AllowedCalldataEnforcer } from './bytecode/AllowedCalldataEnforcer';
 export { bytecode as AllowedMethodsEnforcer } from './bytecode/AllowedMethodsEnforcer';
 export { bytecode as AllowedTargetsEnforcer } from './bytecode/AllowedTargetsEnforcer';
+export { bytecode as ApprovalRevocationEnforcer } from './bytecode/ApprovalRevocationEnforcer';
 export { bytecode as ArgsEqualityCheckEnforcer } from './bytecode/ArgsEqualityCheckEnforcer';
 export { bytecode as Base64 } from './bytecode/Base64';
 export { bytecode as Base64URL } from './bytecode/Base64URL';

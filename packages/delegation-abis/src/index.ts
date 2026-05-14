@@ -2,6 +2,7 @@ export { abi as Address } from './abis/Address';
 export { abi as AllowedCalldataEnforcer } from './abis/AllowedCalldataEnforcer';
 export { abi as AllowedMethodsEnforcer } from './abis/AllowedMethodsEnforcer';
 export { abi as AllowedTargetsEnforcer } from './abis/AllowedTargetsEnforcer';
+export { abi as ApprovalRevocationEnforcer } from './abis/ApprovalRevocationEnforcer';
 export { abi as ArgsEqualityCheckEnforcer } from './abis/ArgsEqualityCheckEnforcer';
 export { abi as Base64 } from './abis/Base64';
 export { abi as Base64URL } from './abis/Base64URL';

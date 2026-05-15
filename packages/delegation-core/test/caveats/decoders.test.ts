@@ -64,6 +64,7 @@ import {
   createSpecificActionERC20TransferBatchTerms,
   decodeSpecificActionERC20TransferBatchTerms,
 } from '../../src/caveats';
+import { BalanceChangeType } from '../../src/caveats/types';
 
 describe('Terms Decoders', () => {
   describe('decodeValueLteTerms', () => {
@@ -295,7 +296,7 @@ describe('Terms Decoders', () => {
         recipient:
           '0x1234567890123456789012345678901234567890' as `0x${string}`,
         balance: 1000000000000000000n,
-        changeType: 0,
+        changeType: BalanceChangeType.Increase,
       };
       const encoded = createNativeBalanceChangeTerms(original);
       const decoded = decodeNativeBalanceChangeTerms(encoded);
@@ -317,6 +318,20 @@ describe('Terms Decoders', () => {
       const encoded = createNativeTokenPeriodTransferTerms(original);
       const decoded = decodeNativeTokenPeriodTransferTerms(encoded);
       expect(decoded).toEqual(original);
+    });
+
+    it('decodes bigint periodDuration input as number', () => {
+      const encoded = createNativeTokenPeriodTransferTerms({
+        periodAmount: 1000000000000000000n,
+        periodDuration: 86400n,
+        startDate: 1640995200,
+      });
+      const decoded = decodeNativeTokenPeriodTransferTerms(encoded);
+      expect(decoded).toEqual({
+        periodAmount: 1000000000000000000n,
+        periodDuration: 86400,
+        startDate: 1640995200,
+      });
     });
   });
 
@@ -355,7 +370,7 @@ describe('Terms Decoders', () => {
         recipient:
           '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
         balance: 1000000000000000000n,
-        changeType: 0,
+        changeType: BalanceChangeType.Increase,
       };
       const encoded = createERC20BalanceChangeTerms(original);
       const decoded = decodeERC20BalanceChangeTerms(encoded);
@@ -382,6 +397,24 @@ describe('Terms Decoders', () => {
       const encoded = createERC20TokenPeriodTransferTerms(original);
       const decoded = decodeERC20TokenPeriodTransferTerms(encoded);
       expect(decoded).toEqual(original);
+    });
+
+    it('decodes bigint periodDuration input as number', () => {
+      const encoded = createERC20TokenPeriodTransferTerms({
+        tokenAddress:
+          '0x1234567890123456789012345678901234567890' as `0x${string}`,
+        periodAmount: 1000000000000000000n,
+        periodDuration: 86400n,
+        startDate: 1640995200,
+      });
+      const decoded = decodeERC20TokenPeriodTransferTerms(encoded);
+      expect(decoded).toEqual({
+        tokenAddress:
+          '0x1234567890123456789012345678901234567890' as `0x${string}`,
+        periodAmount: 1000000000000000000n,
+        periodDuration: 86400,
+        startDate: 1640995200,
+      });
     });
 
     it('throws when encoded terms are not exactly 116 bytes', () => {
@@ -430,7 +463,7 @@ describe('Terms Decoders', () => {
         recipient:
           '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
         amount: 5n,
-        changeType: 0,
+        changeType: BalanceChangeType.Increase,
       };
       const encoded = createERC721BalanceChangeTerms(original);
       const decoded = decodeERC721BalanceChangeTerms(encoded);
@@ -454,7 +487,7 @@ describe('Terms Decoders', () => {
           '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
         tokenId: 123n,
         balance: 1000n,
-        changeType: 0,
+        changeType: BalanceChangeType.Increase,
       };
       const encoded = createERC1155BalanceChangeTerms(original);
       const decoded = decodeERC1155BalanceChangeTerms(encoded);
@@ -523,6 +556,46 @@ describe('Terms Decoders', () => {
       const encoded = createMultiTokenPeriodTerms(original);
       const decoded = decodeMultiTokenPeriodTerms(encoded);
       expect(decoded).toEqual(original);
+    });
+
+    it('decodes bigint periodDuration input as number', () => {
+      const encoded = createMultiTokenPeriodTerms({
+        tokenConfigs: [
+          {
+            token:
+              '0x1234567890123456789012345678901234567890' as `0x${string}`,
+            periodAmount: 1000000000000000000n,
+            periodDuration: 86400n,
+            startDate: 1640995200,
+          },
+          {
+            token:
+              '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
+            periodAmount: 2000000000000000000n,
+            periodDuration: 172800n,
+            startDate: 1640995200,
+          },
+        ],
+      });
+      const decoded = decodeMultiTokenPeriodTerms(encoded);
+      expect(decoded).toEqual({
+        tokenConfigs: [
+          {
+            token:
+              '0x1234567890123456789012345678901234567890' as `0x${string}`,
+            periodAmount: 1000000000000000000n,
+            periodDuration: 86400,
+            startDate: 1640995200,
+          },
+          {
+            token:
+              '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as `0x${string}`,
+            periodAmount: 2000000000000000000n,
+            periodDuration: 172800,
+            startDate: 1640995200,
+          },
+        ],
+      });
     });
   });
 

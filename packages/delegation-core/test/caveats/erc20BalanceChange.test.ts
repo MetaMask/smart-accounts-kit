@@ -27,6 +27,22 @@ describe('ERC20BalanceChange', () => {
       );
     });
 
+    it('creates valid terms for balance increase', () => {
+      const result = createERC20BalanceChangeTerms({
+        tokenAddress,
+        recipient,
+        balance: 1n,
+        changeType: BalanceChangeType.Increase,
+      });
+
+      expect(result).toStrictEqual(
+        '0x00' +
+          '00000000000000000000000000000000000000dd' +
+          '00000000000000000000000000000000000000ee' +
+          '0000000000000000000000000000000000000000000000000000000000000001',
+      );
+    });
+
     it('throws for invalid token address', () => {
       expect(() =>
         createERC20BalanceChangeTerms({
@@ -47,6 +63,17 @@ describe('ERC20BalanceChange', () => {
           changeType: BalanceChangeType.Increase,
         }),
       ).toThrow('Invalid balance: must be a positive number');
+    });
+
+    it('throws for invalid changeType', () => {
+      expect(() =>
+        createERC20BalanceChangeTerms({
+          tokenAddress,
+          recipient,
+          balance: 1n,
+          changeType: 2 as any,
+        }),
+      ).toThrow('Invalid changeType: must be either Increase or Decrease');
     });
 
     it('returns Uint8Array when bytes encoding is specified', () => {

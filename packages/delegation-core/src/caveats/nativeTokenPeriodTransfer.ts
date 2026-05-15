@@ -26,11 +26,13 @@ import type { Hex } from '../types';
 /**
  * Terms for configuring a periodic transfer allowance of native tokens.
  */
-export type NativeTokenPeriodTransferTerms = {
+export type NativeTokenPeriodTransferTerms<
+  TDuration extends number | bigint = number,
+> = {
   /** The maximum amount that can be transferred within each period (in wei). */
   periodAmount: bigint;
   /** The duration of each period in seconds. */
-  periodDuration: number;
+  periodDuration: TDuration;
   /** Unix timestamp when the first period begins. */
   startDate: number;
 };
@@ -46,11 +48,11 @@ export type NativeTokenPeriodTransferTerms = {
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createNativeTokenPeriodTransferTerms(
-  terms: NativeTokenPeriodTransferTerms,
+  terms: NativeTokenPeriodTransferTerms<number | bigint>,
   encodingOptions?: EncodingOptions<'hex'>,
 ): Hex;
 export function createNativeTokenPeriodTransferTerms(
-  terms: NativeTokenPeriodTransferTerms,
+  terms: NativeTokenPeriodTransferTerms<number | bigint>,
   encodingOptions: EncodingOptions<'bytes'>,
 ): Uint8Array;
 /**
@@ -63,7 +65,7 @@ export function createNativeTokenPeriodTransferTerms(
  * @throws Error if any of the numeric parameters are invalid.
  */
 export function createNativeTokenPeriodTransferTerms(
-  terms: NativeTokenPeriodTransferTerms,
+  terms: NativeTokenPeriodTransferTerms<number | bigint>,
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
 ): Hex | Uint8Array {
   const { periodAmount, periodDuration, startDate } = terms;

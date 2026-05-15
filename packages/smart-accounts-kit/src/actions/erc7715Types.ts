@@ -2,6 +2,7 @@ import type {
   PermissionTypes as RpcPermissionTypes,
   PermissionRequest as RpcPermissionRequest,
   PermissionResponse as RpcPermissionResponse,
+  Rule,
 } from '@metamask/7715-permission-types';
 import type {
   Client,
@@ -12,6 +13,8 @@ import type {
   Chain,
   Address,
 } from 'viem';
+
+export type { Rule };
 
 // =============================================================================
 // Developer-facing types
@@ -83,6 +86,31 @@ export type Erc20TokenPeriodicPermission = BasePermission & {
 };
 
 /**
+ * Native token fixed allowance permission (single cumulative cap).
+ */
+export type NativeTokenAllowancePermission = BasePermission & {
+  type: 'native-token-allowance';
+  data: {
+    allowanceAmount: bigint;
+    startTime?: number;
+    justification?: string;
+  };
+};
+
+/**
+ * ERC-20 token fixed allowance permission (single cumulative cap).
+ */
+export type Erc20TokenAllowancePermission = BasePermission & {
+  type: 'erc20-token-allowance';
+  data: {
+    allowanceAmount: bigint;
+    startTime?: number;
+    tokenAddress: Address;
+    justification?: string;
+  };
+};
+
+/**
  * ERC-20 token revocation permission.
  */
 export type Erc20TokenRevocationPermission = BasePermission & {
@@ -98,8 +126,10 @@ export type Erc20TokenRevocationPermission = BasePermission & {
 export type PermissionTypes =
   | NativeTokenStreamPermission
   | NativeTokenPeriodicPermission
+  | NativeTokenAllowancePermission
   | Erc20TokenStreamPermission
   | Erc20TokenPeriodicPermission
+  | Erc20TokenAllowancePermission
   | Erc20TokenRevocationPermission;
 
 /**
@@ -111,6 +141,15 @@ export type PermissionRequestParameter = {
   to: Hex;
   from?: Address | undefined | null;
   expiry?: number | undefined | null;
+  /**
+   * When set, adds a `redeemer` execution rule: only these addresses may redeem the permission.
+   */
+  redeemer?: readonly Address[] | undefined | null;
+  /**
+   * When set, adds a `payee` execution rule: only these addresses may receive funds from the permission.
+   * Only supported on allowance-type permissions (allowance, stream, periodic).
+   */
+  payee?: readonly Address[] | undefined | null;
 };
 
 /**
@@ -143,7 +182,7 @@ export type PermissionRequest<TPermission extends PermissionTypes> = {
   from?: Hex;
   to: Hex;
   permission: TPermission;
-  rules?: Record<string, unknown>[] | null;
+  rules?: Rule[] | null;
 };
 
 /**

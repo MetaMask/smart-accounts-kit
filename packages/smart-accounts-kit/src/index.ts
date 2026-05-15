@@ -52,7 +52,7 @@ export type { Caveats } from './caveatBuilder';
 
 export { createCaveat } from './caveats';
 
-export { BalanceChangeType } from './caveatBuilder/types';
+export { BalanceChangeType } from '@metamask/delegation-core';
 
 export { aggregateSignature } from './signatures';
 

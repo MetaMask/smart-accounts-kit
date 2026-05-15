@@ -1,4 +1,5 @@
 import type { Hex } from 'viem';
+import { getAddress } from 'viem';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -7,7 +8,10 @@ import {
   permissionTypeFromRpc,
   rpcSupportedPermissionsToDeveloper,
 } from '../../src/actions/erc7715Mapping';
-import type { RpcGetSupportedExecutionPermissionsResult } from '../../src/actions/erc7715Types';
+import type {
+  RpcGetGrantedExecutionPermissionsResult,
+  RpcGetSupportedExecutionPermissionsResult,
+} from '../../src/actions/erc7715Types';
 
 describe('erc7715Mapping', () => {
   const basePermissionFields = {
@@ -121,6 +125,52 @@ describe('erc7715Mapping', () => {
       });
     });
 
+    it('converts native-token-allowance: allowanceAmount hex → bigint', () => {
+      const rpcPermission = {
+        type: 'native-token-allowance',
+        isAdjustmentAllowed: true,
+        data: {
+          allowanceAmount: '0x2386f26fc10000',
+          startTime: 1700000000,
+        },
+      } as const;
+
+      const result = permissionTypeFromRpc(rpcPermission);
+
+      expect(result).toStrictEqual({
+        type: 'native-token-allowance',
+        isAdjustmentAllowed: true,
+        data: {
+          allowanceAmount: 0x2386f26fc10000n,
+          startTime: 1700000000,
+        },
+      });
+    });
+
+    it('converts erc20-token-allowance: allowanceAmount hex → bigint', () => {
+      const rpcPermission = {
+        type: 'erc20-token-allowance',
+        isAdjustmentAllowed: false,
+        data: {
+          allowanceAmount: '0x52b7d2dcc80cd2e4000000',
+          tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcd',
+          startTime: 1700000000,
+        },
+      } as const;
+
+      const result = permissionTypeFromRpc(rpcPermission);
+
+      expect(result).toStrictEqual({
+        type: 'erc20-token-allowance',
+        isAdjustmentAllowed: false,
+        data: {
+          allowanceAmount: 0x52b7d2dcc80cd2e4000000n,
+          tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcd',
+          startTime: 1700000000,
+        },
+      });
+    });
+
     it('preserves erc20-token-revocation data (no hex amounts)', () => {
       const rpcPermission = {
         type: 'erc20-token-revocation',
@@ -178,6 +228,84 @@ describe('erc7715Mapping', () => {
           },
         },
       });
+    });
+
+    it('checksum-normalizes redeemer rule addresses', () => {
+      const rpcPermissions = [
+        {
+          ...basePermissionFields,
+          rules: [
+            {
+              type: 'redeemer',
+              data: {
+                addresses: ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
+              },
+            },
+          ],
+          permission: {
+            type: 'native-token-stream',
+            isAdjustmentAllowed: true,
+            data: {
+              amountPerSecond: '0x64',
+              startTime: 1700000000,
+            },
+          },
+        },
+      ];
+
+      const result = permissionResponsesFromRpc(
+        rpcPermissions as RpcGetGrantedExecutionPermissionsResult,
+      );
+
+      expect(result[0]?.rules).toStrictEqual([
+        {
+          type: 'redeemer',
+          data: {
+            addresses: [
+              getAddress('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'),
+            ],
+          },
+        },
+      ]);
+    });
+
+    it('checksum-normalizes payee rule addresses', () => {
+      const rpcPermissions = [
+        {
+          ...basePermissionFields,
+          rules: [
+            {
+              type: 'payee',
+              data: {
+                addresses: ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
+              },
+            },
+          ],
+          permission: {
+            type: 'native-token-stream',
+            isAdjustmentAllowed: true,
+            data: {
+              amountPerSecond: '0x64',
+              startTime: 1700000000,
+            },
+          },
+        },
+      ];
+
+      const result = permissionResponsesFromRpc(
+        rpcPermissions as RpcGetGrantedExecutionPermissionsResult,
+      );
+
+      expect(result[0]?.rules).toStrictEqual([
+        {
+          type: 'payee',
+          data: {
+            addresses: [
+              getAddress('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'),
+            ],
+          },
+        },
+      ]);
     });
   });
 
@@ -259,6 +387,197 @@ describe('erc7715Mapping', () => {
           },
         ],
       });
+    });
+
+    it('adds redeemer rule with checksummed addresses', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        redeemer: ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result.rules).toStrictEqual([
+        {
+          type: 'redeemer',
+          data: {
+            addresses: [
+              getAddress('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'),
+            ],
+          },
+        },
+      ]);
+    });
+
+    it('adds expiry then redeemer when both are set', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        expiry: 1234567890,
+        redeemer: ['0x1111111111111111111111111111111111111111'],
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result.rules).toStrictEqual([
+        {
+          type: 'expiry',
+          data: { timestamp: 1234567890 },
+        },
+        {
+          type: 'redeemer',
+          data: {
+            addresses: [
+              getAddress('0x1111111111111111111111111111111111111111'),
+            ],
+          },
+        },
+      ]);
+    });
+
+    it('throws when redeemer is empty', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        redeemer: [],
+      } as const;
+
+      expect(() => permissionRequestToRpc(permissionRequest)).toThrow(
+        'Invalid redeemers: must specify at least one redeemer address',
+      );
+    });
+
+    it('throws when redeemer contains invalid address', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        redeemer: ['0x1234'],
+      } as const;
+
+      expect(() => permissionRequestToRpc(permissionRequest)).toThrow(
+        'Invalid redeemers: must be a valid address',
+      );
+    });
+
+    it('adds payee rule with checksummed addresses', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        payee: ['0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'],
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result.rules).toStrictEqual([
+        {
+          type: 'payee',
+          data: {
+            addresses: [
+              getAddress('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'),
+            ],
+          },
+        },
+      ]);
+    });
+
+    it('adds expiry, redeemer, then payee when all are set', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        expiry: 1234567890,
+        redeemer: ['0x1111111111111111111111111111111111111111'],
+        payee: ['0x2222222222222222222222222222222222222222'],
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result.rules).toStrictEqual([
+        {
+          type: 'expiry',
+          data: { timestamp: 1234567890 },
+        },
+        {
+          type: 'redeemer',
+          data: {
+            addresses: [
+              getAddress('0x1111111111111111111111111111111111111111'),
+            ],
+          },
+        },
+        {
+          type: 'payee',
+          data: {
+            addresses: [
+              getAddress('0x2222222222222222222222222222222222222222'),
+            ],
+          },
+        },
+      ]);
+    });
+
+    it('throws when payee is empty', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        payee: [],
+      } as const;
+
+      expect(() => permissionRequestToRpc(permissionRequest)).toThrow(
+        'Invalid payees: must specify at least one payee address',
+      );
+    });
+
+    it('throws when payee contains invalid address', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-stream',
+          data: { amountPerSecond: 0x1n },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        payee: ['0x1234'],
+      } as const;
+
+      expect(() => permissionRequestToRpc(permissionRequest)).toThrow(
+        'Invalid payees: must be a valid address',
+      );
     });
 
     it('converts native-token-periodic: bigint → hex', () => {
@@ -351,6 +670,70 @@ describe('erc7715Mapping', () => {
           data: {
             periodAmount: '0x52b7d2dcc80cd2e4000000',
             periodDuration: 604800,
+            tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        rules: [],
+      });
+    });
+
+    it('converts native-token-allowance: bigint → hex', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'native-token-allowance',
+          data: {
+            allowanceAmount: 0x2386f26fc10000n,
+            startTime: 1700000000,
+          },
+          isAdjustmentAllowed: true,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result).toStrictEqual({
+        chainId: '0x1',
+        permission: {
+          type: 'native-token-allowance',
+          data: {
+            allowanceAmount: '0x2386f26fc10000',
+            startTime: 1700000000,
+          },
+          isAdjustmentAllowed: true,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        rules: [],
+      });
+    });
+
+    it('converts erc20-token-allowance: bigint → hex', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'erc20-token-allowance',
+          data: {
+            allowanceAmount: 0x52b7d2dcc80cd2e4000000n,
+            startTime: 1700000000,
+            tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+          },
+          isAdjustmentAllowed: false,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result).toStrictEqual({
+        chainId: '0x1',
+        permission: {
+          type: 'erc20-token-allowance',
+          data: {
+            allowanceAmount: '0x52b7d2dcc80cd2e4000000',
+            startTime: 1700000000,
             tokenAddress: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
           },
           isAdjustmentAllowed: false,

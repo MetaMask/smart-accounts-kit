@@ -24,6 +24,7 @@ export const DEPLOYMENTS_1_3_0 = {
   ExactExecutionBatchEnforcer: '0x1e141e455d08721Dd5BCDA1BaA6Ea5633Afd5017',
   ExactExecutionEnforcer: '0x146713078D39eCC1F5338309c28405ccf85Abfbb',
   IdEnforcer: '0xC8B5D93463c893401094cc70e66A206fb5987997',
+  LogicalOrWrapperEnforcer: '0xE1302607a3251AF54c3a6e69318d6aa07F5eB46c',
   LimitedCallsEnforcer: '0x04658B29F6b82ed55274221a06Fc97D318E25416',
   NativeBalanceChangeEnforcer: '0xbD7B277507723490Cd50b12EaaFe87C616be6880',
   ArgsEqualityCheckEnforcer: '0x44B8C6ae3C304213c3e298495e12497Ed3E56E41',

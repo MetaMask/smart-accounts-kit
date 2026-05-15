@@ -101,3 +101,9 @@ export {
   createSpecificActionERC20TransferBatchTerms,
   decodeSpecificActionERC20TransferBatchTerms,
 } from './specificActionERC20TransferBatch';
+export {
+  createLogicalOrWrapperTerms,
+  decodeLogicalOrWrapperTerms,
+  createLogicalOrWrapperArgs,
+  decodeLogicalOrWrapperArgs,
+} from './logicalOrWrapper';

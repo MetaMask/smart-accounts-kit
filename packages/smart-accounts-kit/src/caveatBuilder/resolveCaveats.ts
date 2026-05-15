@@ -1,5 +1,8 @@
 import type { CaveatBuilder } from './caveatBuilder';
-import type { CoreCaveatConfiguration } from './coreCaveatBuilder';
+import {
+  createCaveatBuilder,
+  type CoreCaveatConfiguration,
+} from './coreCaveatBuilder';
 import { createCaveatBuilderFromScope, type ScopeConfig } from './scope';
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
@@ -10,20 +13,32 @@ export type Caveats = CaveatBuilder | (Caveat | CoreCaveatConfiguration)[];
  *
  * @param config - The configuration for the caveat builder.
  * @param config.environment - The environment to be used for the caveat builder.
- * @param config.scope - The scope to be used for the caveat builder.
+ * @param config.scope - The scope to be used for the caveat builder. Optional - when not provided and redelegating, scope is inherited from the parent delegation.
  * @param config.caveats - The caveats to be resolved, which can be either a CaveatBuilder or an array of Caveat or CaveatConfiguration. Optional - if not provided, only scope caveats will be used.
+ * @param config.isScopeOptional - Whether the scope is optional.
  * @returns The resolved array of caveats.
  */
 export const resolveCaveats = ({
   environment,
   scope,
   caveats,
+  isScopeOptional,
 }: {
   environment: SmartAccountsEnvironment;
-  scope: ScopeConfig;
+  scope?: ScopeConfig;
   caveats?: Caveats;
+  isScopeOptional: boolean;
 }) => {
-  const scopeCaveatBuilder = createCaveatBuilderFromScope(environment, scope);
+  if (!scope && !isScopeOptional) {
+    throw new Error('Scope is required');
+  }
+
+  // Create base caveat builder from scope if provided, otherwise use core caveat builder
+  const scopeCaveatBuilder = scope
+    ? createCaveatBuilderFromScope(environment, scope)
+    : createCaveatBuilder(environment, {
+        allowInsecureUnrestrictedDelegation: true,
+      });
 
   if (caveats) {
     if ('build' in caveats && typeof caveats.build === 'function') {
@@ -35,7 +50,7 @@ export const resolveCaveats = ({
         try {
           if ('type' in caveat) {
             const { type, ...config } = caveat;
-            scopeCaveatBuilder.addCaveat(type, config);
+            (scopeCaveatBuilder as any).addCaveat(type, config);
           } else {
             scopeCaveatBuilder.addCaveat(caveat);
           }

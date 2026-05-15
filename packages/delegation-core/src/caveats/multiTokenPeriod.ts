@@ -31,18 +31,24 @@ import type { Hex } from '../types';
 /**
  * Configuration for a single token in MultiTokenPeriod terms.
  */
-export type TokenPeriodConfig<TBytesLike extends BytesLike = BytesLike> = {
+export type TokenPeriodConfig<
+  TBytesLike extends BytesLike = BytesLike,
+  TDuration extends number | bigint = number,
+> = {
   token: TBytesLike;
   periodAmount: bigint;
-  periodDuration: number;
+  periodDuration: TDuration;
   startDate: number;
 };
 
 /**
  * Terms for configuring a MultiTokenPeriod caveat.
  */
-export type MultiTokenPeriodTerms<TBytesLike extends BytesLike = BytesLike> = {
-  tokenConfigs: TokenPeriodConfig<TBytesLike>[];
+export type MultiTokenPeriodTerms<
+  TBytesLike extends BytesLike = BytesLike,
+  TDuration extends number | bigint = number,
+> = {
+  tokenConfigs: TokenPeriodConfig<TBytesLike, TDuration>[];
 };
 
 /**
@@ -54,11 +60,11 @@ export type MultiTokenPeriodTerms<TBytesLike extends BytesLike = BytesLike> = {
  * @throws Error if the tokenConfigs array is empty or contains invalid parameters.
  */
 export function createMultiTokenPeriodTerms(
-  terms: MultiTokenPeriodTerms,
+  terms: MultiTokenPeriodTerms<BytesLike, number | bigint>,
   encodingOptions?: EncodingOptions<'hex'>,
 ): Hex;
 export function createMultiTokenPeriodTerms(
-  terms: MultiTokenPeriodTerms,
+  terms: MultiTokenPeriodTerms<BytesLike, number | bigint>,
   encodingOptions: EncodingOptions<'bytes'>,
 ): Uint8Array;
 /**
@@ -70,7 +76,7 @@ export function createMultiTokenPeriodTerms(
  * @throws Error if the tokenConfigs array is empty or contains invalid parameters.
  */
 export function createMultiTokenPeriodTerms(
-  terms: MultiTokenPeriodTerms,
+  terms: MultiTokenPeriodTerms<BytesLike, number | bigint>,
   encodingOptions: EncodingOptions<ResultValue> = defaultOptions,
 ): Hex | Uint8Array {
   const { tokenConfigs } = terms;

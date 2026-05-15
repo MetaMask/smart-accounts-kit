@@ -49,7 +49,7 @@ describe('NativeBalanceChange', () => {
         createNativeBalanceChangeTerms({
           recipient,
           balance: 1n,
-          changeType: 2 as any,
+          changeType: 2 as BalanceChangeType,
         }),
       ).toThrow('Invalid changeType: must be either Increase or Decrease');
     });

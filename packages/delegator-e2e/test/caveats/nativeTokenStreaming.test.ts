@@ -184,9 +184,9 @@ test('Bob redeems the delegation with exact initial amount', async () => {
 test('Bob attempts to redeem the delegation with amount exceeding initial allowance', async () => {
   const initialAmount = parseEther('5');
   const maxAmount = parseEther('20');
-  const amountPerSecond = parseEther('2');
+  const amountPerSecond = parseEther('1');
   const startTime = currentTime;
-  const transferAmount = parseEther('6');
+  const transferAmount = parseEther('50');
 
   const targetAddress = randomAddress();
 

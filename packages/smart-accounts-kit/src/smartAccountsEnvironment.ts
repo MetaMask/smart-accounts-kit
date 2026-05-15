@@ -8,6 +8,7 @@ import {
   SCL_RIP7212,
   AllowedTargetsEnforcer,
   AllowedMethodsEnforcer,
+  ApprovalRevocationEnforcer,
   DeployedEnforcer,
   TimestampEnforcer,
   NonceEnforcer,
@@ -48,6 +49,7 @@ import {
   SCL_RIP7212 as SCLRIP7212Bytecode,
   AllowedTargetsEnforcer as AllowedTargetsEnforcerBytecode,
   AllowedMethodsEnforcer as AllowedMethodsEnforcerBytecode,
+  ApprovalRevocationEnforcer as ApprovalRevocationEnforcerBytecode,
   DeployedEnforcer as DeployedEnforcerBytecode,
   TimestampEnforcer as TimestampEnforcerBytecode,
   NonceEnforcer as NonceEnforcerBytecode,
@@ -159,6 +161,7 @@ export function getSmartAccountsEnvironmentV1(contracts: {
       AllowedCalldataEnforcer: contracts.AllowedCalldataEnforcer,
       AllowedMethodsEnforcer: contracts.AllowedMethodsEnforcer,
       AllowedTargetsEnforcer: contracts.AllowedTargetsEnforcer,
+      ApprovalRevocationEnforcer: contracts.ApprovalRevocationEnforcer,
       ArgsEqualityCheckEnforcer: contracts.ArgsEqualityCheckEnforcer,
       BlockNumberEnforcer: contracts.BlockNumberEnforcer,
       DeployedEnforcer: contracts.DeployedEnforcer,
@@ -260,6 +263,10 @@ export async function deploySmartAccountsEnvironment(
     AllowedMethodsEnforcer: {
       abi: AllowedMethodsEnforcer,
       bytecode: AllowedMethodsEnforcerBytecode,
+    },
+    ApprovalRevocationEnforcer: {
+      abi: ApprovalRevocationEnforcer,
+      bytecode: ApprovalRevocationEnforcerBytecode,
     },
     ArgsEqualityCheckEnforcer: {
       abi: ArgsEqualityCheckEnforcer,

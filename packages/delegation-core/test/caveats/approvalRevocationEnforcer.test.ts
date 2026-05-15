@@ -32,6 +32,9 @@ const ALL_VALID_TERM_SETS: ApprovalRevocationTerms[] = Array.from(
   },
 );
 
+const RESERVED_BITS_ERROR =
+  'Invalid ApprovalRevocation terms: reserved bits must be zero (only bits 0-5 are defined)';
+
 describe('ApprovalRevocationEnforcer', () => {
   describe('createApprovalRevocationTerms', () => {
     const BYTE_LEN = 1;
@@ -184,13 +187,13 @@ describe('ApprovalRevocationEnforcer', () => {
 
     it('throws when reserved bits are set on-chain', () => {
       expect(() => decodeApprovalRevocationTerms('0x40')).toThrow(
-        'reserved bits must be zero',
+        RESERVED_BITS_ERROR,
       );
       expect(() => decodeApprovalRevocationTerms('0x80')).toThrow(
-        'reserved bits must be zero',
+        RESERVED_BITS_ERROR,
       );
       expect(() => decodeApprovalRevocationTerms('0xff')).toThrow(
-        'reserved bits must be zero',
+        RESERVED_BITS_ERROR,
       );
     });
 

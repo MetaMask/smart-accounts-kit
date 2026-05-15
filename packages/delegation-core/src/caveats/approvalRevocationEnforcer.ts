@@ -107,16 +107,16 @@ function termsToMask(terms: ApprovalRevocationTerms): number {
 }
 
 /**
- * Parses a validated 1..7 bitmask into {@link ApprovalRevocationTerms}.
+ * Parses a validated 1..63 bitmask into {@link ApprovalRevocationTerms}.
  *
- * @param mask - Integer byte value; only bits 0-2 may be set, and at least one must be set.
+ * @param mask - Integer byte value; only bits 0-5 may be set, and at least one must be set.
  * @returns Flag object for encoding/decoding.
  * @throws Error if reserved bits are set or the mask is zero.
  */
 function maskToTerms(mask: number): ApprovalRevocationTerms {
   if (mask > ALLOWED_APPROVAL_REVOCATION_MAX_MASK) {
     throw new Error(
-      'Invalid ApprovalRevocation terms: reserved bits must be zero (only bits 0-2 are defined)',
+      'Invalid ApprovalRevocation terms: reserved bits must be zero (only bits 0-5 are defined)',
     );
   }
 

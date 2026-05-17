@@ -107,7 +107,10 @@ export const decodeCaveat = ({
 }): CoreCaveatConfiguration => {
   switch (enforcer.toLowerCase()) {
     case caveatEnforcers.AllowedCalldataEnforcer?.toLowerCase():
-      return { type: 'allowedCalldata', ...decodeAllowedCalldataTerms(terms) };
+      return {
+        type: CaveatType.AllowedCalldata,
+        ...decodeAllowedCalldataTerms(terms),
+      };
     case caveatEnforcers.AllowedMethodsEnforcer?.toLowerCase():
       return {
         type: CaveatType.AllowedMethods,

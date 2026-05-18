@@ -113,8 +113,13 @@ export type Erc20TokenAllowancePermission = BasePermission & {
 
 /**
  * ERC-20 token revocation permission.
+ *
+ * @deprecated Use {@link TokenApprovalRevocationPermission} instead.
  */
 export type Erc20TokenRevocationPermission = BasePermission & {
+  /**
+   * @deprecated Use `token-approval-revocation` instead.
+   */
   type: 'erc20-token-revocation';
   data: {
     justification?: string;

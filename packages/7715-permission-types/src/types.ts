@@ -171,8 +171,13 @@ export type Erc20TokenAllowancePermission = BasePermission & {
 
 /**
  * A permission to revoke an ERC20 token allowance.
+ *
+ * @deprecated Use {@link TokenApprovalRevocationPermission} instead.
  */
 export type Erc20TokenRevocationPermission = BasePermission & {
+  /**
+   * @deprecated Use `token-approval-revocation` instead.
+   */
   type: 'erc20-token-revocation';
   data: MetaMaskBasePermissionData;
 };

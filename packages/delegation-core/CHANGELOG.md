@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Encoding and decoding utils for `ApprovalRevocationEnforcer` enforcer args and terms ([#226](https://github.com/metamask/smart-accounts-kit/pull/226))
+
 ## [2.1.0]
 
 ### Changed

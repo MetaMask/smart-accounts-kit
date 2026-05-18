@@ -6,6 +6,7 @@ import type { SmartAccountsEnvironment } from '../src/types';
 
 const delegationCoreMocks = vi.hoisted(() => ({
   decodeAllowedCalldataTerms: vi.fn(() => ({})),
+  decodeApprovalRevocationTerms: vi.fn(() => ({})),
   decodeAllowedMethodsTerms: vi.fn(() => ({})),
   decodeAllowedTargetsTerms: vi.fn(() => ({})),
   decodeArgsEqualityCheckTerms: vi.fn(() => ({})),
@@ -53,6 +54,11 @@ const DECODE_CASES: {
     enforcerKey: 'AllowedCalldataEnforcer',
     decoder: 'decodeAllowedCalldataTerms',
     type: 'allowedCalldata',
+  },
+  {
+    enforcerKey: 'ApprovalRevocationEnforcer',
+    decoder: 'decodeApprovalRevocationTerms',
+    type: 'approvalRevocation',
   },
   {
     enforcerKey: 'AllowedMethodsEnforcer',

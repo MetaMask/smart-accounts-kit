@@ -3,6 +3,7 @@ import {
   decodeERC20StreamingTerms,
   decodeERC20TransferAmountTerms,
   decodeERC20BalanceChangeTerms,
+  decodeApprovalRevocationTerms,
   decodeAllowedMethodsTerms,
   decodeAllowedTargetsTerms,
   decodeArgsEqualityCheckTerms,
@@ -40,6 +41,7 @@ import {
 } from 'viem';
 
 import type { CoreCaveatConfiguration } from './caveatBuilder/coreCaveatBuilder';
+import { CaveatType } from './constants';
 import type { Caveat, SmartAccountsEnvironment } from './types';
 
 export const CAVEAT_ABI_TYPE_COMPONENTS = [
@@ -105,113 +107,142 @@ export const decodeCaveat = ({
 }): CoreCaveatConfiguration => {
   switch (enforcer.toLowerCase()) {
     case caveatEnforcers.AllowedCalldataEnforcer?.toLowerCase():
-      return { type: 'allowedCalldata', ...decodeAllowedCalldataTerms(terms) };
+      return {
+        type: CaveatType.AllowedCalldata,
+        ...decodeAllowedCalldataTerms(terms),
+      };
     case caveatEnforcers.AllowedMethodsEnforcer?.toLowerCase():
-      return { type: 'allowedMethods', ...decodeAllowedMethodsTerms(terms) };
+      return {
+        type: CaveatType.AllowedMethods,
+        ...decodeAllowedMethodsTerms(terms),
+      };
+    case caveatEnforcers.ApprovalRevocationEnforcer?.toLowerCase():
+      return {
+        type: CaveatType.ApprovalRevocation,
+        ...decodeApprovalRevocationTerms(terms),
+      };
     case caveatEnforcers.AllowedTargetsEnforcer?.toLowerCase():
-      return { type: 'allowedTargets', ...decodeAllowedTargetsTerms(terms) };
+      return {
+        type: CaveatType.AllowedTargets,
+        ...decodeAllowedTargetsTerms(terms),
+      };
     case caveatEnforcers.ArgsEqualityCheckEnforcer?.toLowerCase():
       return {
-        type: 'argsEqualityCheck',
+        type: CaveatType.ArgsEqualityCheck,
         ...decodeArgsEqualityCheckTerms(terms),
       };
     case caveatEnforcers.BlockNumberEnforcer?.toLowerCase():
-      return { type: 'blockNumber', ...decodeBlockNumberTerms(terms) };
+      return { type: CaveatType.BlockNumber, ...decodeBlockNumberTerms(terms) };
     case caveatEnforcers.DeployedEnforcer?.toLowerCase():
-      return { type: 'deployed', ...decodeDeployedTerms(terms) };
+      return { type: CaveatType.Deployed, ...decodeDeployedTerms(terms) };
     case caveatEnforcers.ERC20BalanceChangeEnforcer?.toLowerCase():
       return {
-        type: 'erc20BalanceChange',
+        type: CaveatType.Erc20BalanceChange,
         ...decodeERC20BalanceChangeTerms(terms),
       };
     case caveatEnforcers.ERC20TransferAmountEnforcer?.toLowerCase():
       return {
-        type: 'erc20TransferAmount',
+        type: CaveatType.Erc20TransferAmount,
         ...decodeERC20TransferAmountTerms(terms),
       };
     case caveatEnforcers.ERC20StreamingEnforcer?.toLowerCase():
-      return { type: 'erc20Streaming', ...decodeERC20StreamingTerms(terms) };
+      return {
+        type: CaveatType.Erc20Streaming,
+        ...decodeERC20StreamingTerms(terms),
+      };
     case caveatEnforcers.ERC721BalanceChangeEnforcer?.toLowerCase():
       return {
-        type: 'erc721BalanceChange',
+        type: CaveatType.Erc721BalanceChange,
         ...decodeERC721BalanceChangeTerms(terms),
       };
     case caveatEnforcers.ERC721TransferEnforcer?.toLowerCase():
-      return { type: 'erc721Transfer', ...decodeERC721TransferTerms(terms) };
+      return {
+        type: CaveatType.Erc721Transfer,
+        ...decodeERC721TransferTerms(terms),
+      };
     case caveatEnforcers.ERC1155BalanceChangeEnforcer?.toLowerCase():
       return {
-        type: 'erc1155BalanceChange',
+        type: CaveatType.Erc1155BalanceChange,
         ...decodeERC1155BalanceChangeTerms(terms),
       };
     case caveatEnforcers.IdEnforcer?.toLowerCase():
-      return { type: 'id', ...decodeIdTerms(terms) };
+      return { type: CaveatType.Id, ...decodeIdTerms(terms) };
     case caveatEnforcers.LimitedCallsEnforcer?.toLowerCase():
-      return { type: 'limitedCalls', ...decodeLimitedCallsTerms(terms) };
+      return {
+        type: CaveatType.LimitedCalls,
+        ...decodeLimitedCallsTerms(terms),
+      };
     case caveatEnforcers.NonceEnforcer?.toLowerCase():
-      return { type: 'nonce', ...decodeNonceTerms(terms) };
+      return { type: CaveatType.Nonce, ...decodeNonceTerms(terms) };
     case caveatEnforcers.TimestampEnforcer?.toLowerCase():
-      return { type: 'timestamp', ...decodeTimestampTerms(terms) };
+      return { type: CaveatType.Timestamp, ...decodeTimestampTerms(terms) };
     case caveatEnforcers.ValueLteEnforcer?.toLowerCase():
-      return { type: 'valueLte', ...decodeValueLteTerms(terms) };
+      return { type: CaveatType.ValueLte, ...decodeValueLteTerms(terms) };
     case caveatEnforcers.NativeTokenTransferAmountEnforcer?.toLowerCase():
       return {
-        type: 'nativeTokenTransferAmount',
+        type: CaveatType.NativeTokenTransferAmount,
         ...decodeNativeTokenTransferAmountTerms(terms),
       };
     case caveatEnforcers.NativeBalanceChangeEnforcer?.toLowerCase():
       return {
-        type: 'nativeBalanceChange',
+        type: CaveatType.NativeBalanceChange,
         ...decodeNativeBalanceChangeTerms(terms),
       };
     case caveatEnforcers.NativeTokenStreamingEnforcer?.toLowerCase():
       return {
-        type: 'nativeTokenStreaming',
+        type: CaveatType.NativeTokenStreaming,
         ...decodeNativeTokenStreamingTerms(terms),
       };
     case caveatEnforcers.NativeTokenPaymentEnforcer?.toLowerCase():
       return {
-        type: 'nativeTokenPayment',
+        type: CaveatType.NativeTokenPayment,
         ...decodeNativeTokenPaymentTerms(terms),
       };
     case caveatEnforcers.RedeemerEnforcer?.toLowerCase():
-      return { type: 'redeemer', ...decodeRedeemerTerms(terms) };
+      return { type: CaveatType.Redeemer, ...decodeRedeemerTerms(terms) };
     case caveatEnforcers.SpecificActionERC20TransferBatchEnforcer?.toLowerCase():
       return {
-        type: 'specificActionERC20TransferBatch',
+        type: CaveatType.SpecificActionERC20TransferBatch,
         ...decodeSpecificActionERC20TransferBatchTerms(terms),
       };
     case caveatEnforcers.ERC20PeriodTransferEnforcer?.toLowerCase():
       return {
-        type: 'erc20PeriodTransfer',
+        type: CaveatType.Erc20PeriodTransfer,
         ...decodeERC20TokenPeriodTransferTerms(terms),
       };
     case caveatEnforcers.NativeTokenPeriodTransferEnforcer?.toLowerCase():
       return {
-        type: 'nativeTokenPeriodTransfer',
+        type: CaveatType.NativeTokenPeriodTransfer,
         ...decodeNativeTokenPeriodTransferTerms(terms),
       };
     case caveatEnforcers.ExactCalldataBatchEnforcer?.toLowerCase():
       return {
-        type: 'exactCalldataBatch',
+        type: CaveatType.ExactCalldataBatch,
         ...decodeExactCalldataBatchTerms(terms),
       };
     case caveatEnforcers.ExactCalldataEnforcer?.toLowerCase():
-      return { type: 'exactCalldata', ...decodeExactCalldataTerms(terms) };
+      return {
+        type: CaveatType.ExactCalldata,
+        ...decodeExactCalldataTerms(terms),
+      };
     case caveatEnforcers.ExactExecutionEnforcer?.toLowerCase():
-      return { type: 'exactExecution', ...decodeExactExecutionTerms(terms) };
+      return {
+        type: CaveatType.ExactExecution,
+        ...decodeExactExecutionTerms(terms),
+      };
     case caveatEnforcers.ExactExecutionBatchEnforcer?.toLowerCase():
       return {
-        type: 'exactExecutionBatch',
+        type: CaveatType.ExactExecutionBatch,
         ...decodeExactExecutionBatchTerms(terms),
       };
     case caveatEnforcers.MultiTokenPeriodEnforcer?.toLowerCase():
       return {
-        type: 'multiTokenPeriod',
+        type: CaveatType.MultiTokenPeriod,
         ...decodeMultiTokenPeriodTerms(terms),
       };
     case caveatEnforcers.OwnershipTransferEnforcer?.toLowerCase():
       return {
-        type: 'ownershipTransfer',
+        type: CaveatType.OwnershipTransfer,
         ...decodeOwnershipTransferTerms(terms),
       };
     default:

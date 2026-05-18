@@ -78,6 +78,11 @@ export {
   decodeAllowedTargetsTerms,
 } from './allowedTargets';
 export {
+  createApprovalRevocationTerms,
+  decodeApprovalRevocationTerms,
+} from './approvalRevocationEnforcer';
+export type { ApprovalRevocationTerms } from './approvalRevocationEnforcer';
+export {
   createArgsEqualityCheckTerms,
   decodeArgsEqualityCheckTerms,
 } from './argsEqualityCheck';

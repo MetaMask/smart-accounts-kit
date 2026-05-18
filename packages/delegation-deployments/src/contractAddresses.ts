@@ -10,6 +10,7 @@ export const DEPLOYMENTS_1_3_0 = {
   AllowedCalldataEnforcer: '0xc2b0d624c1c4319760C96503BA27C347F3260f55',
   AllowedMethodsEnforcer: '0x2c21fD0Cb9DC8445CB3fb0DC5E7Bb0Aca01842B5',
   AllowedTargetsEnforcer: '0x7F20f61b1f09b08D970938F6fa563634d65c4EeB',
+  ApprovalRevocationEnforcer: '0xe264F1f09A19505a1ca1a86D5b01E8bFdb64324A',
   BlockNumberEnforcer: '0x5d9818dF0AE3f66e9c3D0c5029DAF99d1823ca6c',
   DeployedEnforcer: '0x24ff2AA430D53a8CD6788018E902E098083dcCd2',
   ERC20BalanceChangeEnforcer: '0xcdF6aB796408598Cea671d79506d7D48E97a5437',

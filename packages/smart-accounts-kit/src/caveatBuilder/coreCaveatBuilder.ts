@@ -6,6 +6,10 @@ import {
 import { allowedMethods, allowedMethodsBuilder } from './allowedMethodsBuilder';
 import { allowedTargets, allowedTargetsBuilder } from './allowedTargetsBuilder';
 import {
+  approvalRevocation,
+  approvalRevocationBuilder,
+} from './approvalRevocationBuilder';
+import {
   argsEqualityCheck,
   argsEqualityCheckBuilder,
 } from './argsEqualityCheckBuilder';
@@ -92,6 +96,7 @@ import type { CaveatType } from '../constants';
 type CoreCaveatMapByString = {
   allowedMethods: typeof allowedMethodsBuilder;
   allowedTargets: typeof allowedTargetsBuilder;
+  approvalRevocation: typeof approvalRevocationBuilder;
   deployed: typeof deployedBuilder;
   allowedCalldata: typeof allowedCalldataBuilder;
   erc20BalanceChange: typeof erc20BalanceChangeBuilder;
@@ -172,6 +177,7 @@ export const createCaveatBuilder = (
   const caveatBuilder = new CaveatBuilder(environment, config)
     .extend(allowedMethods, allowedMethodsBuilder)
     .extend(allowedTargets, allowedTargetsBuilder)
+    .extend(approvalRevocation, approvalRevocationBuilder)
     .extend(deployed, deployedBuilder)
     .extend(allowedCalldata, allowedCalldataBuilder)
     .extend(erc20BalanceChange, erc20BalanceChangeBuilder)

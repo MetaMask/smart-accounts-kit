@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add chain deployment for Intuition mainnet and testnet ([#206](https://github.com/MetaMask/smart-accounts-kit/pull/206))
+- Deployment address for `ApprovalRevocationEnforcer` added ([#226](https://github.com/metamask/smart-accounts-kit/pull/226))
 
 ## [1.3.0]
 

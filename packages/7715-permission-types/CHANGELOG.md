@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- New permission type `token-approval-revocation` ([#232](https://github.com/MetaMask/smart-accounts-kit/pull/232))
+
+### Deprecated
+
+- Deprecated `erc20-token-revocation` in favor of `token-approval-revocation`.
+
 ## [0.6.0]
 
 ### Added

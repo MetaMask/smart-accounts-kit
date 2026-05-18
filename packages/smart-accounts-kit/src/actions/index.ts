@@ -92,7 +92,6 @@ export {
   type Erc20TokenPeriodicPermission,
   type Erc20TokenAllowancePermission,
   type Erc20TokenRevocationPermission,
-  type TokenApprovalRevocationPermission,
   type RpcGetSupportedExecutionPermissionsResult,
   type RpcGetGrantedExecutionPermissionsResult,
   type RpcSupportedPermissionInfo,

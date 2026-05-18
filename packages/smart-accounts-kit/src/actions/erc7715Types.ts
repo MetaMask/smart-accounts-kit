@@ -4,7 +4,6 @@ import type {
   PermissionResponse as RpcPermissionResponse,
   Rule,
 } from '@metamask/7715-permission-types';
-import type { ApprovalRevocationTerms } from '@metamask/delegation-core';
 import type {
   Client,
   Account,
@@ -122,16 +121,6 @@ export type Erc20TokenRevocationPermission = BasePermission & {
 };
 
 /**
- * Token approval revocation permission.
- */
-export type TokenApprovalRevocationPermission = BasePermission & {
-  type: 'token-approval-revocation';
-  data: ApprovalRevocationTerms & {
-    justification?: string;
-  };
-};
-
-/**
  * Permission types.
  */
 export type PermissionTypes =
@@ -141,8 +130,7 @@ export type PermissionTypes =
   | Erc20TokenStreamPermission
   | Erc20TokenPeriodicPermission
   | Erc20TokenAllowancePermission
-  | Erc20TokenRevocationPermission
-  | TokenApprovalRevocationPermission;
+  | Erc20TokenRevocationPermission;
 
 /**
  * Parameters for a single permission request (input to requestExecutionPermissions).

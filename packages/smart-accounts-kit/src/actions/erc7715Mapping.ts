@@ -9,7 +9,6 @@ import type {
   PermissionRequest,
   PermissionTypes as RpcPermissionTypes,
   Rule,
-  TokenApprovalRevocationPermission as RpcTokenApprovalRevocationPermission,
 } from '@metamask/7715-permission-types';
 import { getAddress, hexToNumber, isAddress, toHex, type Hex } from 'viem';
 
@@ -28,7 +27,6 @@ import type {
   PermissionTypes as DeveloperPermissionTypes,
   RpcGetGrantedExecutionPermissionsResult,
   RpcGetSupportedExecutionPermissionsResult,
-  TokenApprovalRevocationPermission,
 } from './erc7715Types';
 
 // =============================================================================
@@ -157,11 +155,6 @@ function getPermissionRequestToRpcConverter(
       return (permission) =>
         erc20TokenRevocationPermissionToRpc(
           permission as Erc20TokenRevocationPermission,
-        );
-    case 'token-approval-revocation':
-      return (permission) =>
-        tokenApprovalRevocationPermissionToRpc(
-          permission as TokenApprovalRevocationPermission,
         );
     default:
       throw new Error(`Unsupported permission type: ${permissionType}`);
@@ -409,44 +402,6 @@ function erc20TokenRevocationPermissionToRpc(
   };
   return {
     type: 'erc20-token-revocation',
-    data,
-    isAdjustmentAllowed,
-  };
-}
-
-/**
- * Convert token approval revocation permission to RPC format.
- *
- * @param permission the token approval revocation permission
- * @returns the token approval revocation permission in RPC format
- */
-function tokenApprovalRevocationPermissionToRpc(
-  permission: TokenApprovalRevocationPermission,
-): RpcTokenApprovalRevocationPermission {
-  const {
-    data: {
-      erc20Approve,
-      erc721Approve,
-      erc721SetApprovalForAll,
-      permit2ApproveZero,
-      permit2Lockdown,
-      permit2InvalidateNonces,
-      justification,
-    },
-    isAdjustmentAllowed,
-  } = permission;
-
-  const data = {
-    erc20Approve,
-    erc721Approve,
-    erc721SetApprovalForAll,
-    permit2ApproveZero,
-    permit2Lockdown,
-    permit2InvalidateNonces,
-    ...(justification ? { justification } : {}),
-  };
-  return {
-    type: 'token-approval-revocation',
     data,
     isAdjustmentAllowed,
   };

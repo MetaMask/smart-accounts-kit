@@ -1,0 +1,13 @@
+{
+  "extends": "../../shared/config/base.tsconfig.json",
+  "exclude": ["./node_modules/**/*", "./dist/**/*"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "paths": {
+      "@metamask/smart-accounts-kit/experimental": [
+        "../smart-accounts-kit/src/experimental/index.ts"
+      ]
+    }
+  }
+}

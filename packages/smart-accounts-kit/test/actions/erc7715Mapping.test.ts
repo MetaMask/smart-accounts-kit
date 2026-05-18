@@ -190,6 +190,38 @@ describe('erc7715Mapping', () => {
         },
       });
     });
+
+    it('preserves token-approval-revocation data, including false flags', () => {
+      const rpcPermission = {
+        type: 'token-approval-revocation',
+        isAdjustmentAllowed: true,
+        data: {
+          erc20Approve: true,
+          erc721Approve: false,
+          erc721SetApprovalForAll: true,
+          permit2ApproveZero: false,
+          permit2Lockdown: true,
+          permit2InvalidateNonces: false,
+          justification: 'Revoke token approvals',
+        },
+      } as const;
+
+      const result = permissionTypeFromRpc(rpcPermission);
+
+      expect(result).toStrictEqual({
+        type: 'token-approval-revocation',
+        isAdjustmentAllowed: true,
+        data: {
+          erc20Approve: true,
+          erc721Approve: false,
+          erc721SetApprovalForAll: true,
+          permit2ApproveZero: false,
+          permit2Lockdown: true,
+          permit2InvalidateNonces: false,
+          justification: 'Revoke token approvals',
+        },
+      });
+    });
   });
 
   describe('permissionResponsesFromRpc', () => {
@@ -764,6 +796,47 @@ describe('erc7715Mapping', () => {
           type: 'erc20-token-revocation',
           data: {
             justification: 'Revoke stale allowance',
+          },
+          isAdjustmentAllowed: true,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+        rules: [],
+      });
+    });
+
+    it('converts token-approval-revocation: preserves all flags', () => {
+      const permissionRequest = {
+        chainId: 1,
+        permission: {
+          type: 'token-approval-revocation',
+          data: {
+            erc20Approve: true,
+            erc721Approve: false,
+            erc721SetApprovalForAll: true,
+            permit2ApproveZero: false,
+            permit2Lockdown: true,
+            permit2InvalidateNonces: false,
+            justification: 'Revoke token approvals',
+          },
+          isAdjustmentAllowed: true,
+        },
+        to: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+      } as const;
+
+      const result = permissionRequestToRpc(permissionRequest);
+
+      expect(result).toStrictEqual({
+        chainId: '0x1',
+        permission: {
+          type: 'token-approval-revocation',
+          data: {
+            erc20Approve: true,
+            erc721Approve: false,
+            erc721SetApprovalForAll: true,
+            permit2ApproveZero: false,
+            permit2Lockdown: true,
+            permit2InvalidateNonces: false,
+            justification: 'Revoke token approvals',
           },
           isAdjustmentAllowed: true,
         },

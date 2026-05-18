@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- ERC-7715 `token-approval-revocation` permission type
+
 ## [1.5.0]
 
 ### Added

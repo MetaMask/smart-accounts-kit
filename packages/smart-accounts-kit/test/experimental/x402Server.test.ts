@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { zeroAddress } from 'viem';
 
-import { X402Erc7710Server } from '../../src/experimental/x402Server';
+import { x402Erc7710Server } from '../../src/experimental/x402Server';
 
-describe('X402Erc7710Server', () => {
+describe('x402Erc7710Server', () => {
   const paymentRequirements = {
     scheme: 'exact',
     network: 'eip155:8453',
@@ -17,7 +17,7 @@ describe('X402Erc7710Server', () => {
   };
 
   it('adds erc7710 assetTransferMethod to payment requirements', async () => {
-    const server = new X402Erc7710Server();
+    const server = new x402Erc7710Server();
 
     const result = await server.enhancePaymentRequirements(paymentRequirements);
 
@@ -31,7 +31,7 @@ describe('X402Erc7710Server', () => {
   });
 
   it('throws when an incompatible assetTransferMethod already exists', async () => {
-    const server = new X402Erc7710Server();
+    const server = new x402Erc7710Server();
 
     await expect(
       server.enhancePaymentRequirements({
@@ -46,7 +46,7 @@ describe('X402Erc7710Server', () => {
   });
 
   it('allows overriding existing assetTransferMethod when configured', async () => {
-    const server = new X402Erc7710Server({
+    const server = new x402Erc7710Server({
       allowAssetTransferMethodOverride: true,
     });
 

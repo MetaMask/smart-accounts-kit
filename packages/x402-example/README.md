@@ -3,7 +3,7 @@
 Minimal x402 server example that publishes ERC-7710 payment requirements using:
 
 - x402 Foundation SDK (`@x402/core`, `@x402/express`, `@x402/evm`)
-- Smart Accounts Kit experimental helper (`X402Erc7710Server`)
+- Smart Accounts Kit experimental helper (`x402Erc7710Server`)
 
 ## Endpoint
 

@@ -7,7 +7,7 @@ import {
   type PaymentRequirements,
 } from '@x402/core/types';
 import { ExactEvmScheme } from '@x402/evm/exact/server';
-import { X402Erc7710Server } from '@metamask/smart-accounts-kit/experimental';
+import { x402Erc7710Server } from '@metamask/smart-accounts-kit/experimental';
 import type { Hex } from 'viem';
 
 config();
@@ -27,7 +27,7 @@ const port = Number(process.env.PORT ?? 4021);
 const acceptedToken = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as const;
 
 class ExactEvmErc7710ServerScheme extends ExactEvmScheme {
-  readonly #erc7710Server = new X402Erc7710Server();
+  readonly #erc7710Server = new x402Erc7710Server();
 
   async enhancePaymentRequirements(
     paymentRequirements: PaymentRequirements,
@@ -47,6 +47,7 @@ class ExactEvmErc7710ServerScheme extends ExactEvmScheme {
 
     const enhancedRequirements = (await this.#erc7710Server.enhancePaymentRequirements(
       baseRequirements,
+      supportedKind,
     )) as PaymentRequirements;
 
     return enhancedRequirements;

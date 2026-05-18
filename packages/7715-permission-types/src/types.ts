@@ -178,6 +178,21 @@ export type Erc20TokenRevocationPermission = BasePermission & {
 };
 
 /**
+ * A permission to revoke token approvals.
+ */
+export type TokenApprovalRevocationPermission = BasePermission & {
+  type: 'token-approval-revocation';
+  data: MetaMaskBasePermissionData & {
+    erc20Approve: boolean;
+    erc721Approve: boolean;
+    erc721SetApprovalForAll: boolean;
+    permit2ApproveZero: boolean;
+    permit2Lockdown: boolean;
+    permit2InvalidateNonces: boolean;
+  };
+};
+
+/**
  * A custom permission.
  *
  * data - is a record of the data that is associated with the permission, and the structure is defined by the ERCs.
@@ -198,7 +213,8 @@ export type PermissionTypes =
   | Erc20TokenStreamPermission
   | Erc20TokenPeriodicPermission
   | Erc20TokenAllowancePermission
-  | Erc20TokenRevocationPermission;
+  | Erc20TokenRevocationPermission
+  | TokenApprovalRevocationPermission;
 
 // //////////////////////////////////////////////////
 // Permission Requests

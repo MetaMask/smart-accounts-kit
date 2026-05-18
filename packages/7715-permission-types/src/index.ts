@@ -10,6 +10,7 @@ export type {
   Erc20TokenPeriodicPermission,
   Erc20TokenAllowancePermission,
   Erc20TokenRevocationPermission,
+  TokenApprovalRevocationPermission,
   Rule,
   PermissionRequest,
   PermissionResponse,

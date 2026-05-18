@@ -1,0 +1,60 @@
+name: Notify Slack On New Issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  notify-slack:
+    name: Send issue notification to Slack
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post new issue to Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.GATOR_BOT_SLACK_WEBHOOK_URL }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "GATOR_BOT_SLACK_WEBHOOK_URL is not set."
+            exit 1
+          fi
+
+          payload=$(jq -n \
+            --arg title "$ISSUE_TITLE" \
+            --arg url "$ISSUE_URL" \
+            --arg author "$ISSUE_AUTHOR" \
+            '{
+              "text": "New GitHub issue created",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*New GitHub issue created*"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Title:*\n\($title)"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Raised by:*\n\($author)"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Link:*\n<\($url)|View issue>"
+                    }
+                  ]
+                }
+              ]
+            }')
+
+          curl -sS -X POST -H 'Content-type: application/json' \
+            --data "$payload" \
+            "$SLACK_WEBHOOK_URL"

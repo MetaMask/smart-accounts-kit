@@ -3,7 +3,7 @@
 Minimal x402 server example that publishes ERC-7710 payment requirements using:
 
 - x402 Foundation SDK (`@x402/core`, `@x402/express`, `@x402/evm`)
-- Smart Accounts Kit experimental helper (`x402Erc7710Server`)
+- `@metamask/smart-accounts-kit-x402` helpers (`x402Erc7710Server`, `x402Erc7710Client`)
 
 ## Endpoint
 
@@ -31,7 +31,7 @@ yarn workspace @metamask/x402-example start:server
 - accepts a private key (`--private-key 0x...` or `PRIVATE_KEY`)
 - requests the protected resource
 - creates an exact ERC-7710 delegation with Smart Accounts Kit
-- builds the x402 payment payload via experimental `X402Erc7710Client`
+- builds the x402 payment payload via `x402Erc7710Client`
 - retries the request with `PAYMENT-SIGNATURE`
 
 Run:

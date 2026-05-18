@@ -47,9 +47,11 @@ module.exports = defineConfig({
       '',
     );
 
-    // filter out the e2e package, as it is likely going to be removed or reworked
+    // filter out packages that are examples or likely to be reworked
     const workspaces = Yarn.workspaces().filter(
-      (workspace) => getWorkspaceBasename(workspace) !== 'delegator-e2e',
+      (workspace) =>
+        getWorkspaceBasename(workspace) !== 'delegator-e2e' &&
+        getWorkspaceBasename(workspace) !== 'x402-example',
     );
 
     for (const workspace of workspaces) {

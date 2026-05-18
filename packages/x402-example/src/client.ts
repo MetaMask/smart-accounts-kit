@@ -9,7 +9,8 @@ import {
   signDelegation,
   type Delegation,
 } from '@metamask/smart-accounts-kit';
-import { x402Erc7710Client } from '@metamask/smart-accounts-kit/experimental';
+import { encodeDelegations } from '@metamask/smart-accounts-kit/utils';
+import { x402Erc7710Client } from '@metamask/smart-accounts-kit-x402';
 import {
   getAddress,
   type Hex,
@@ -107,7 +108,7 @@ async function main() {
 
       return {
         delegationManager: environment.DelegationManager,
-        permissionContext: [signedDelegation],
+        permissionContext: encodeDelegations([signedDelegation]),
         delegator: account.address,
       };
     },

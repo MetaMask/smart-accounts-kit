@@ -1,5 +1,5 @@
 import { getAddress } from 'viem';
-import { trackSmartAccountsKitFunctionCall } from '../analytics';
+
 import type { x402PaymentRequirements } from './x402Client';
 
 export type x402Erc7710ServerConfig = {
@@ -30,15 +30,6 @@ export class x402Erc7710Server {
     },
   ): Promise<x402PaymentRequirements> {
     const existingMethod = paymentRequirements.extra?.assetTransferMethod;
-
-    trackSmartAccountsKitFunctionCall(
-      'experimental.x402Erc7710Server.enhancePaymentRequirements',
-      {
-        network: paymentRequirements.network,
-        existingAssetTransferMethod:
-          typeof existingMethod === 'string' ? existingMethod : 'undefined',
-      },
-    );
 
     if (
       typeof existingMethod === 'string' &&

@@ -4,11 +4,8 @@ import { HTTPFacilitatorClient } from '@x402/core/server';
 import { paymentMiddleware, x402ResourceServer } from '@x402/express';
 import {
   type Network,
-  type PaymentRequirements,
 } from '@x402/core/types';
-import { ExactEvmScheme } from '@x402/evm/exact/server';
-import { x402Erc7710Server } from '@metamask/smart-accounts-kit/experimental';
-import type { Hex } from 'viem';
+import { x402ExactEvmErc7710ServerScheme } from '@metamask/smart-accounts-kit-x402';
 
 config();
 
@@ -17,42 +14,15 @@ if (!facilitatorUrl) {
   throw new Error('Missing FACILITATOR_URL environment variable');
 }
 
-const payTo = process.env.EVM_PAY_TO as Hex | undefined;
+const payTo = process.env.EVM_PAY_TO as string | undefined;
 if (!payTo) {
   throw new Error('Missing EVM_PAY_TO environment variable');
 }
 
 const network = (process.env.NETWORK ?? 'eip155:84532') as Network;
 const port = Number(process.env.PORT ?? 4021);
+const price = '1000' as const;
 const acceptedToken = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as const;
-
-class ExactEvmErc7710ServerScheme extends ExactEvmScheme {
-  readonly #erc7710Server = new x402Erc7710Server();
-
-  async enhancePaymentRequirements(
-    paymentRequirements: PaymentRequirements,
-    supportedKind: {
-      x402Version: number;
-      scheme: string;
-      network: Network;
-      extra?: Record<string, unknown>;
-    },
-    facilitatorExtensions: string[],
-  ): Promise<PaymentRequirements> {
-    const baseRequirements = await super.enhancePaymentRequirements(
-      paymentRequirements,
-      supportedKind,
-      facilitatorExtensions,
-    );
-
-    const enhancedRequirements = (await this.#erc7710Server.enhancePaymentRequirements(
-      baseRequirements,
-      supportedKind,
-    )) as PaymentRequirements;
-
-    return enhancedRequirements;
-  }
-}
 
 const facilitatorClient = new HTTPFacilitatorClient({ url: facilitatorUrl });
 const app = express();
@@ -66,7 +36,7 @@ app.use(
           network,
           payTo,
           price: {
-            amount: '1000',
+            amount: price,
             asset: acceptedToken,
           },
         },
@@ -76,7 +46,7 @@ app.use(
     },
     new x402ResourceServer(facilitatorClient).register(
       network,
-      new ExactEvmErc7710ServerScheme(),
+      new x402ExactEvmErc7710ServerScheme(),
     ),
   ),
 );

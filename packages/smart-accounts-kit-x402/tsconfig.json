@@ -3,11 +3,6 @@
   "exclude": ["./node_modules/**/*", "./dist/**/*"],
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "dist",
-    "paths": {
-      "@metamask/smart-accounts-kit-x402": [
-        "../smart-accounts-kit-x402/src/index.ts"
-      ]
-    }
+    "outDir": "dist"
   }
 }

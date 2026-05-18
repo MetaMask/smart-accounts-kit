@@ -1,9 +1,5 @@
 import { type Hex, getAddress, isHex } from 'viem';
 
-import { trackSmartAccountsKitFunctionCall } from '../analytics';
-import { encodeDelegations } from '../delegation';
-import type { PermissionContext } from '../types';
-
 export type x402PaymentRequirements = {
   scheme: string;
   network: string;
@@ -22,7 +18,7 @@ export type x402PaymentPayloadResult = {
 
 export type x402DelegationPaymentPayload = {
   delegationManager: Hex;
-  permissionContext: PermissionContext;
+  permissionContext: Hex;
   delegator: Hex;
 };
 
@@ -47,9 +43,7 @@ export type x402Erc7710ClientConfig = {
 function normalizeDelegationPayload(
   payload: x402DelegationPaymentPayload,
 ): x402DelegationPaymentPayload {
-  const permissionContext = encodeDelegations(payload.permissionContext);
-
-  if (!isHex(permissionContext) || permissionContext === '0x') {
+  if (!isHex(payload.permissionContext) || payload.permissionContext === '0x') {
     throw new Error(
       'Invalid delegation payload: permissionContext must be non-empty hex data',
     );
@@ -57,7 +51,7 @@ function normalizeDelegationPayload(
 
   return {
     delegationManager: getAddress(payload.delegationManager),
-    permissionContext,
+    permissionContext: payload.permissionContext,
     delegator: getAddress(payload.delegator),
   };
 }
@@ -86,18 +80,6 @@ export class x402Erc7710Client {
     context?: Record<string, unknown>,
   ): Promise<x402PaymentPayloadResult> {
     const assetTransferMethod = paymentRequirements.extra?.assetTransferMethod;
-
-    trackSmartAccountsKitFunctionCall(
-      'experimental.x402Erc7710Client.createPaymentPayload',
-      {
-        x402Version,
-        network: paymentRequirements.network,
-        assetTransferMethod:
-          typeof assetTransferMethod === 'string'
-            ? assetTransferMethod
-            : 'undefined',
-      },
-    );
 
     if (assetTransferMethod !== 'erc7710') {
       if (this.#fallbackClient) {

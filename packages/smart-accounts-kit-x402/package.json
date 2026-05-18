@@ -1,0 +1,71 @@
+{
+  "name": "@metamask/smart-accounts-kit-x402",
+  "version": "0.1.0",
+  "description": "x402 adapters for MetaMask smart accounts and ERC-7710",
+  "license": "(MIT-0 OR Apache-2.0)",
+  "type": "module",
+  "keywords": [
+    "MetaMask",
+    "Ethereum"
+  ],
+  "homepage": "https://github.com/metamask/smart-accounts-kit/tree/main/packages/smart-accounts-kit-x402#readme",
+  "bugs": {
+    "url": "https://github.com/metamask/smart-accounts-kit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/metamask/smart-accounts-kit.git"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**",
+    "dist/"
+  ],
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": "^18.18 || >=20"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "yarn typecheck && tsup",
+    "typecheck": "tsc --noEmit",
+    "lint": "yarn lint:eslint",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix",
+    "changelog:update": "../../scripts/update-changelog.sh @metamask/smart-accounts-kit-x402",
+    "changelog:validate": "../../scripts/validate-changelog.sh @metamask/smart-accounts-kit-x402"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "@x402/core": "^2.12.0",
+    "@x402/evm": "^2.12.0",
+    "viem": "^2.31.4"
+  },
+  "devDependencies": {
+    "@x402/core": "^2.12.0",
+    "@x402/evm": "^2.12.0",
+    "@metamask/auto-changelog": "^5.0.2",
+    "eslint": "^9.39.2",
+    "prettier": "^3.5.3",
+    "tsup": "^8.5.0",
+    "typescript": "5.5.4",
+    "viem": "2.31.4"
+  }
+}

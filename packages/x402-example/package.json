@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@metamask/smart-accounts-kit": "workspace:^",
+    "@metamask/smart-accounts-kit-x402": "workspace:^",
     "@x402/core": "^2.12.0",
     "@x402/evm": "^2.12.0",
     "@x402/express": "^2.12.0",

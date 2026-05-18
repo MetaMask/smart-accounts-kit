@@ -7,17 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- ERC-7715 `token-approval-revocation` permission type ([#226](https://github.com/MetaMask/smart-accounts-kit/pull/226))
+- `CaveatBuilder` for `ApprovalRevocationEnforcer`, deployment address added to `SmartAccountsEnvironment` ([#226](https://github.com/metamask/smart-accounts-kit/pull/226))
+
 ### Changed
 
 - Bumped @metamask/delegation-abis from `^1.0.0` to `^1.1.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234))
 - Bumped @metamask/delegation-core from `^0.1.0` to `^@.2.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234))
 - Bumped @metamask/delegation-deployments from `^1.3.0` to `^1.4.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234))
 - Bumped @metamask/7715-permission-types from `^0.6.0` to `^0.7.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234))
-
-### Added
-
-- ERC-7715 `token-approval-revocation` permission type ([#226](https://github.com/MetaMask/smart-accounts-kit/pull/226))
-- `CaveatBuilder` for `ApprovalRevocationEnforcer`, deployment address added to `SmartAccountsEnvironment` ([#226](https://github.com/metamask/smart-accounts-kit/pull/226))
 
 ### Deprecated
 

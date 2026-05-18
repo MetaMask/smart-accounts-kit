@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0]
+
 ### Added
 
 - Add chain deployment for Intuition mainnet and testnet ([#206](https://github.com/MetaMask/smart-accounts-kit/pull/206))
@@ -76,7 +78,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add deployments for Sei mainnet ([#84](https://github.com/metamask/smart-accounts-kit/pull/84))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.3.0...HEAD
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.4.0...HEAD
+[1.4.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.3.0...@metamask/delegation-deployments@1.4.0
 [1.3.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.2.0...@metamask/delegation-deployments@1.3.0
 [1.2.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.1.0...@metamask/delegation-deployments@1.2.0
 [1.1.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.0.0...@metamask/delegation-deployments@1.1.0

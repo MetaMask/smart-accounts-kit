@@ -2,6 +2,7 @@ import { config } from 'dotenv';
 import express from 'express';
 import { HTTPFacilitatorClient } from '@x402/core/server';
 import { paymentMiddleware, x402ResourceServer } from '@x402/express';
+import { ExactEvmScheme } from '@x402/evm/exact/server';
 import {
   type Network,
 } from '@x402/core/types';
@@ -31,15 +32,32 @@ app.use(
   paymentMiddleware(
     {
       'GET /random': {
-        accepts: {
-          scheme: 'exact',
-          network,
-          payTo,
-          price: {
-            amount: price,
-            asset: acceptedToken,
+        accepts: [
+          {
+            scheme: 'exact',
+            network,
+            payTo,
+            price: {
+              amount: price,
+              asset: acceptedToken,
+            },
+            extra: {
+              assetTransferMethod: 'erc7710',
+            },
           },
-        },
+          {
+            scheme: 'exact',
+            network,
+            payTo,
+            price: {
+              amount: price,
+              asset: acceptedToken,
+            },
+            extra: {
+              assetTransferMethod: 'eip3009',
+            },
+          },
+        ],
         description: 'Random integer from 1 to 10',
         mimeType: 'text/plain',
       },

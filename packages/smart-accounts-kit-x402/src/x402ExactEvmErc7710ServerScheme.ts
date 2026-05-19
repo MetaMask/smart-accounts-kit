@@ -25,6 +25,10 @@ export class x402ExactEvmErc7710ServerScheme extends ExactEvmScheme {
       facilitatorExtensions,
     );
 
+    if (baseRequirements.extra?.assetTransferMethod !== 'erc7710') {
+      return baseRequirements;
+    }
+
     const enhancedRequirements = await this.#erc7710Server.enhancePaymentRequirements(
       baseRequirements,
       supportedKind,

@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.3.0]
-
 ### Fixed
 
 - Rename `permit2ApproveZero` to `permit2Approve` in `approvalRevocationEnforcer` terms builders and decoders ([#237](https://github.com/MetaMask/smart-accounts-kit/pull/237))
@@ -118,8 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add @metamask/delegation-core package, providing utility types, delegation hashing, and terms encoding for a limited set of caveat enforcers.
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@2.3.0...HEAD
-[2.3.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@2.2.0...@metamask/delegation-core@2.3.0
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@2.2.0...HEAD
 [2.2.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@2.1.0...@metamask/delegation-core@2.2.0
 [2.1.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@2.0.0...@metamask/delegation-core@2.1.0
 [2.0.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/delegation-core@1.1.0...@metamask/delegation-core@2.0.0

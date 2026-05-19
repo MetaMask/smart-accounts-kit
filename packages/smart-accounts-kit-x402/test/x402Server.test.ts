@@ -23,7 +23,10 @@ describe('x402Erc7710Server', () => {
   it('sets assetTransferMethod to erc7710', async () => {
     const server = new x402Erc7710Server();
 
-    const result = await server.enhancePaymentRequirements(baseRequirements, {});
+    const result = await server.enhancePaymentRequirements(
+      baseRequirements,
+      {},
+    );
 
     expect(result.extra?.assetTransferMethod).toBe('erc7710');
   });
@@ -67,7 +70,9 @@ describe('x402Erc7710Server', () => {
       extra: { assetTransferMethod: 'eip3009' },
     };
 
-    await expect(server.enhancePaymentRequirements(requirements, {})).rejects.toThrow(
+    await expect(
+      server.enhancePaymentRequirements(requirements, {}),
+    ).rejects.toThrow(
       'Cannot overwrite existing assetTransferMethod "eip3009" with "erc7710"',
     );
   });

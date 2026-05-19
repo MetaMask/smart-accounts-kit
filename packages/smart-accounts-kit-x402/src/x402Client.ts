@@ -40,6 +40,12 @@ export type x402Erc7710ClientConfig = {
   fallbackClient?: x402SchemeNetworkClientLike;
 };
 
+/**
+ * Normalize and validate a delegation payload before publishing it.
+ *
+ * @param payload - Delegation payload returned by the configured provider.
+ * @returns The normalized payload with checksum addresses.
+ */
 function normalizeDelegationPayload(
   payload: x402DelegationPaymentPayload,
 ): x402DelegationPaymentPayload {

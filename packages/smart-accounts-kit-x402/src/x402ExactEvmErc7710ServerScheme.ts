@@ -29,10 +29,11 @@ export class x402ExactEvmErc7710ServerScheme extends ExactEvmScheme {
       return baseRequirements;
     }
 
-    const enhancedRequirements = await this.#erc7710Server.enhancePaymentRequirements(
-      baseRequirements,
-      supportedKind,
-    );
+    const enhancedRequirements =
+      await this.#erc7710Server.enhancePaymentRequirements(
+        baseRequirements,
+        supportedKind,
+      );
 
     return enhancedRequirements as PaymentRequirements;
   }

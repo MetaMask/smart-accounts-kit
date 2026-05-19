@@ -7,8 +7,5 @@ export {
   type x402SchemeNetworkClientLike,
   type x402Erc7710ClientConfig,
 } from './x402Client';
-export {
-  x402Erc7710Server,
-  type x402Erc7710ServerConfig,
-} from './x402Server';
+export { x402Erc7710Server, type x402Erc7710ServerConfig } from './x402Server';
 export { x402ExactEvmErc7710ServerScheme } from './x402ExactEvmErc7710ServerScheme';

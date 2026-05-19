@@ -67,9 +67,10 @@ describe('x402ExactEvmErc7710ServerScheme', () => {
         facilitatorAddresses: ['0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa'],
       },
     } as unknown as PaymentRequirements;
-    vi.spyOn(ExactEvmScheme.prototype, 'enhancePaymentRequirements').mockResolvedValue(
-      baseRequirements,
-    );
+    vi.spyOn(
+      ExactEvmScheme.prototype,
+      'enhancePaymentRequirements',
+    ).mockResolvedValue(baseRequirements);
     const erc7710Spy = vi
       .spyOn(x402Erc7710Server.prototype, 'enhancePaymentRequirements')
       .mockResolvedValue(enhancedRequirements);

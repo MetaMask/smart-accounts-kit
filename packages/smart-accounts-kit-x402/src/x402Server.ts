@@ -6,6 +6,12 @@ export type x402Erc7710ServerConfig = {
   allowAssetTransferMethodOverride?: boolean;
 };
 
+/**
+ * Validate and normalize optional facilitator address metadata.
+ *
+ * @param publishedAddresses - Optional facilitator address list from `supportedKind.extra`.
+ * @returns A normalized checksum address list, or `undefined` when no list is provided.
+ */
 function validateFacilitatorAddresses(
   publishedAddresses: unknown,
 ): string[] | undefined {

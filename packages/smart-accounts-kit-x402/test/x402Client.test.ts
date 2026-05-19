@@ -54,7 +54,9 @@ describe('x402Erc7710Client', () => {
       }),
     });
 
-    await expect(client.createPaymentPayload(2, baseRequirements)).rejects.toThrow(
+    await expect(
+      client.createPaymentPayload(2, baseRequirements),
+    ).rejects.toThrow(
       'Invalid delegation payload: permissionContext must be non-empty hex data',
     );
   });
@@ -68,7 +70,9 @@ describe('x402Erc7710Client', () => {
       }),
     });
 
-    await expect(client.createPaymentPayload(2, baseRequirements)).rejects.toThrow(
+    await expect(
+      client.createPaymentPayload(2, baseRequirements),
+    ).rejects.toThrow(
       'Invalid delegation payload: permissionContext must be non-empty hex data',
     );
   });

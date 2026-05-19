@@ -6,6 +6,52 @@ export type x402Erc7710ServerConfig = {
   allowAssetTransferMethodOverride?: boolean;
 };
 
+function validateFacilitatorAddresses(
+  publishedAddresses: unknown,
+): string[] | undefined {
+  if (publishedAddresses === undefined) {
+    return undefined;
+  }
+
+  if (!Array.isArray(publishedAddresses)) {
+    throw new Error(
+      'Invalid facilitatorAddresses specified: expected an array of addresses',
+    );
+  }
+
+  if (publishedAddresses.length === 0) {
+    throw new Error(
+      'Invalid facilitatorAddresses specified: expected at least one address',
+    );
+  }
+
+  const normalizedAddresses: string[] = [];
+  const validationErrors: string[] = [];
+
+  publishedAddresses.forEach((address, index) => {
+    if (typeof address !== 'string') {
+      validationErrors.push(`facilitatorAddresses[${index}] must be a string`);
+      return;
+    }
+
+    try {
+      normalizedAddresses.push(getAddress(address));
+    } catch {
+      validationErrors.push(
+        `facilitatorAddresses[${index}] is not a valid address: "${address}"`,
+      );
+    }
+  });
+
+  if (validationErrors.length > 0) {
+    throw new Error(
+      `Invalid facilitatorAddresses specified: ${validationErrors.join('; ')}`,
+    );
+  }
+
+  return normalizedAddresses;
+}
+
 /**
  * x402 `SchemeNetworkServer`-compatible implementation for publishing
  * `assetTransferMethod: "erc7710"` in payment requirements.
@@ -41,24 +87,15 @@ export class x402Erc7710Server {
       );
     }
 
-    const facilitatorAddress = (() => {
-      const publishedAddress = supportedKind.extra?.facilitatorAddress;
-      if (typeof publishedAddress !== 'string') {
-        return undefined;
-      }
-
-      try {
-        return getAddress(publishedAddress);
-      } catch {
-        return undefined;
-      }
-    })();
+    const facilitatorAddresses = validateFacilitatorAddresses(
+      supportedKind.extra?.facilitatorAddresses,
+    );
 
     return {
       ...paymentRequirements,
       extra: {
         ...(paymentRequirements.extra ?? {}),
-        ...(facilitatorAddress ? { facilitatorAddress } : {}),
+        ...(facilitatorAddresses ? { facilitatorAddresses } : {}),
         assetTransferMethod: 'erc7710',
       },
     };

@@ -782,6 +782,7 @@ __metadata:
     tsup: "npm:^8.5.0"
     typescript: "npm:5.5.4"
     viem: "npm:2.31.4"
+    vitest: "npm:^3.2.4"
   peerDependencies:
     "@x402/core": ^2.12.0
     "@x402/evm": ^2.12.0

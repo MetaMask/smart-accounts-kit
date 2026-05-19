@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- ERC-7715 `token-approval-revocation` permission type ([#226](https://github.com/MetaMask/smart-accounts-kit/pull/226))
-- `CaveatBuilder` for `ApprovalRevocationEnforcer`, deployment address added to `SmartAccountsEnvironment` ([#226](https://github.com/metamask/smart-accounts-kit/pull/226))
+- ERC-7715 `token-approval-revocation` permission type ([#226](https://github.com/MetaMask/smart-accounts-kit/pull/226), [#237](https://github.com/MetaMask/smart-accounts-kit/pull/237))
+- `CaveatBuilder` for `ApprovalRevocationEnforcer`, deployment address added to `SmartAccountsEnvironment` ([#226](https://github.com/metamask/smart-accounts-kit/pull/226), [#237](https://github.com/MetaMask/smart-accounts-kit/pull/237))
 
 ### Changed
 

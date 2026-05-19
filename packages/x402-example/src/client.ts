@@ -72,8 +72,8 @@ async function main() {
       const chainId = parseChainIdFromNetwork(requirements.network);
       const environment = getSmartAccountsEnvironment(chainId);
 
-      // expires in 1 minute
-      const expiry = Date.now() / 1000 + 60;
+      // expires in 1 minute (must be an integer unix timestamp)
+      const expiry = Math.floor(Date.now() / 1000) + 60;
 
       const delegation = createOpenDelegation({
         environment,

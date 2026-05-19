@@ -66,7 +66,7 @@ export type ApprovalRevocationTerms = {
   /** Allow revoking operator access via `setApprovalForAll(operator, false)` (ERC-721 / ERC-1155). */
   erc721SetApprovalForAll: boolean;
   /** Allow revoking Permit2 approvals via `approve(token, spender, 0, 0)`. */
-  permit2ApproveZero: boolean;
+  permit2Approve: boolean;
   /** Allow revoking Permit2 lockdown via `lockdown((address,address)[])`. */
   permit2Lockdown: boolean;
   /** Allow revoking Permit2 invalidateNonces via `invalidateNonces(token, spender, newNonce)`. */
@@ -91,7 +91,7 @@ function termsToMask(terms: ApprovalRevocationTerms): number {
   if (terms.erc721SetApprovalForAll) {
     mask |= BIT_SET_APPROVAL_FOR_ALL_REVOKE;
   }
-  if (terms.permit2ApproveZero) {
+  if (terms.permit2Approve) {
     mask |= BIT_PERMIT2_APPROVE_ZERO;
   }
   if (terms.permit2Lockdown) {
@@ -128,7 +128,7 @@ function maskToTerms(mask: number): ApprovalRevocationTerms {
     erc20Approve: (mask & BIT_ERC20_APPROVE_ZERO) !== 0,
     erc721Approve: (mask & BIT_ERC721_PER_TOKEN_CLEAR) !== 0,
     erc721SetApprovalForAll: (mask & BIT_SET_APPROVAL_FOR_ALL_REVOKE) !== 0,
-    permit2ApproveZero: (mask & BIT_PERMIT2_APPROVE_ZERO) !== 0,
+    permit2Approve: (mask & BIT_PERMIT2_APPROVE_ZERO) !== 0,
     permit2Lockdown: (mask & BIT_PERMIT2_LOCKDOWN) !== 0,
     permit2InvalidateNonces: (mask & BIT_PERMIT2_INVALIDATE_NONCES) !== 0,
   };

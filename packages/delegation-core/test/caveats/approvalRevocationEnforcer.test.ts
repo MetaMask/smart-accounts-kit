@@ -11,7 +11,7 @@ const ALL_FALSE = {
   erc20Approve: false,
   erc721Approve: false,
   erc721SetApprovalForAll: false,
-  permit2ApproveZero: false,
+  permit2Approve: false,
   permit2Lockdown: false,
   permit2InvalidateNonces: false,
 } satisfies ApprovalRevocationTerms;
@@ -25,7 +25,7 @@ const ALL_VALID_TERM_SETS: ApprovalRevocationTerms[] = Array.from(
       erc20Approve: (mask & 0x01) !== 0,
       erc721Approve: (mask & 0x02) !== 0,
       erc721SetApprovalForAll: (mask & 0x04) !== 0,
-      permit2ApproveZero: (mask & 0x08) !== 0,
+      permit2Approve: (mask & 0x08) !== 0,
       permit2Lockdown: (mask & 0x10) !== 0,
       permit2InvalidateNonces: (mask & 0x20) !== 0,
     };
@@ -70,7 +70,7 @@ describe('ApprovalRevocationEnforcer', () => {
       expect(
         createApprovalRevocationTerms({
           ...ALL_FALSE,
-          permit2ApproveZero: true,
+          permit2Approve: true,
         }),
       ).toBe('0x08');
     });
@@ -99,7 +99,7 @@ describe('ApprovalRevocationEnforcer', () => {
           erc20Approve: true,
           erc721Approve: true,
           erc721SetApprovalForAll: true,
-          permit2ApproveZero: true,
+          permit2Approve: true,
           permit2Lockdown: true,
           permit2InvalidateNonces: true,
         }),
@@ -119,7 +119,7 @@ describe('ApprovalRevocationEnforcer', () => {
             erc20Approve: true,
             erc721Approve: true,
             erc721SetApprovalForAll: false,
-            permit2ApproveZero: true,
+            permit2Approve: true,
             permit2Lockdown: false,
             permit2InvalidateNonces: true,
           },
@@ -138,7 +138,7 @@ describe('ApprovalRevocationEnforcer', () => {
         erc20Approve: true,
         erc721Approve: false,
         erc721SetApprovalForAll: true,
-        permit2ApproveZero: false,
+        permit2Approve: false,
         permit2Lockdown: true,
         permit2InvalidateNonces: true,
       };
@@ -160,7 +160,7 @@ describe('ApprovalRevocationEnforcer', () => {
           erc20Approve: false,
           erc721Approve: false,
           erc721SetApprovalForAll: true,
-          permit2ApproveZero: true,
+          permit2Approve: true,
           permit2Lockdown: false,
           permit2InvalidateNonces: true,
         },
@@ -170,7 +170,7 @@ describe('ApprovalRevocationEnforcer', () => {
         erc20Approve: false,
         erc721Approve: false,
         erc721SetApprovalForAll: true,
-        permit2ApproveZero: true,
+        permit2Approve: true,
         permit2Lockdown: false,
         permit2InvalidateNonces: true,
       });

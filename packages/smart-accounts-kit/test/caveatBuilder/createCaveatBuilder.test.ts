@@ -113,7 +113,7 @@ describe('createCaveatBuilder()', () => {
         erc20Approve: true,
         erc721Approve: false,
         erc721SetApprovalForAll: true,
-        permit2ApproveZero: false,
+        permit2Approve: false,
         permit2Lockdown: true,
         permit2InvalidateNonces: false,
       };
@@ -579,7 +579,7 @@ describe('createCaveatBuilder()', () => {
         erc20Approve: true,
         erc721Approve: false,
         erc721SetApprovalForAll: true,
-        permit2ApproveZero: false,
+        permit2Approve: false,
         permit2Lockdown: true,
         permit2InvalidateNonces: false,
       };

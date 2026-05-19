@@ -15,7 +15,7 @@ describe('approvalRevocationBuilder()', () => {
       erc20Approve: true,
       erc721Approve: false,
       erc721SetApprovalForAll: true,
-      permit2ApproveZero: false,
+      permit2Approve: false,
       permit2Lockdown: true,
       permit2InvalidateNonces: false,
     });
@@ -27,7 +27,7 @@ describe('approvalRevocationBuilder()', () => {
       erc20Approve: true,
       erc721Approve: false,
       erc721SetApprovalForAll: true,
-      permit2ApproveZero: false,
+      permit2Approve: false,
       permit2Lockdown: true,
       permit2InvalidateNonces: false,
     });
@@ -47,7 +47,7 @@ describe('approvalRevocationBuilder()', () => {
           erc20Approve: true,
           erc721Approve: false,
           erc721SetApprovalForAll: false,
-          permit2ApproveZero: false,
+          permit2Approve: false,
           permit2Lockdown: false,
           permit2InvalidateNonces: false,
         },

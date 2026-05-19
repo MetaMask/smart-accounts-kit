@@ -114,10 +114,9 @@ async function main() {
     },
   });
 
-  const httpClient = new x402HTTPClient(new x402Client().register(
-    'eip155:*',
-    erc7710Client
-  ));
+  const coreClient = new x402Client().register('eip155:*', erc7710Client);
+
+  const httpClient = new x402HTTPClient(coreClient);
 
   const fetchWithPayment = wrapFetchWithPayment(fetch, httpClient);
 

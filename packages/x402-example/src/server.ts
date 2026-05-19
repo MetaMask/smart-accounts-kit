@@ -2,7 +2,6 @@ import { config } from 'dotenv';
 import express from 'express';
 import { HTTPFacilitatorClient } from '@x402/core/server';
 import { paymentMiddleware, x402ResourceServer } from '@x402/express';
-import { ExactEvmScheme } from '@x402/evm/exact/server';
 import {
   type Network,
 } from '@x402/core/types';
@@ -24,6 +23,10 @@ const network = (process.env.NETWORK ?? 'eip155:84532') as Network;
 const port = Number(process.env.PORT ?? 4021);
 const price = '1000' as const;
 const acceptedToken = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as const;
+const acceptedTokenEip712Domain = {
+  name: 'USD Coin',
+  version: '2',
+} as const;
 
 const facilitatorClient = new HTTPFacilitatorClient({ url: facilitatorUrl });
 const app = express();
@@ -55,6 +58,7 @@ app.use(
             },
             extra: {
               assetTransferMethod: 'eip3009',
+              ...acceptedTokenEip712Domain,
             },
           },
         ],
@@ -76,6 +80,6 @@ app.get('/random', (_req: unknown, res: { type: (value: string) => { send: (valu
 
 app.listen(port, () => {
   console.log(
-    `x402 ERC-7710 example server listening on http://localhost:${port}/random`,
+    `x402 ERC-7710 + EIP-3009 example server listening on http://localhost:${port}/random`,
   );
 });

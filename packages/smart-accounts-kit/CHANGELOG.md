@@ -15,9 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Bumped @metamask/delegation-abis from `^1.0.0` to `^1.1.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234))
-- Bumped @metamask/delegation-core from `^0.1.0` to `^@.2.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234))
+- Bumped @metamask/delegation-core from `^2.1.0` to `^2.3.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234), [#238](https://github.com/MetaMask/smart-accounts-kit/pull/238))
 - Bumped @metamask/delegation-deployments from `^1.3.0` to `^1.4.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234))
-- Bumped @metamask/7715-permission-types from `^0.6.0` to `^0.7.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234))
+- Bumped @metamask/7715-permission-types from `^0.6.0` to `^0.8.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234), [#238](https://github.com/MetaMask/smart-accounts-kit/pull/238))
 
 ### Deprecated
 

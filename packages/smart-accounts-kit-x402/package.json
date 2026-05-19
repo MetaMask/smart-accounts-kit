@@ -59,9 +59,9 @@
     "viem": "^2.31.4"
   },
   "devDependencies": {
+    "@metamask/auto-changelog": "^5.0.2",
     "@x402/core": "^2.12.0",
     "@x402/evm": "^2.12.0",
-    "@metamask/auto-changelog": "^5.0.2",
     "eslint": "^9.39.2",
     "prettier": "^3.5.3",
     "tsup": "^8.5.0",

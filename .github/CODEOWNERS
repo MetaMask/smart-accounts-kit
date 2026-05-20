@@ -13,5 +13,5 @@
 /packages/delegation-core           @MetaMask/delegation
 /packages/delegation-deployments    @MetaMask/delegation
 /packages/smart-accounts-kit        @MetaMask/delegation
-/packages/smart-accounts-kit-x402   @MetaMask/delegation
+/packages/x402   @MetaMask/delegation
 /packages/7715-permission-types     @MetaMask/delegation

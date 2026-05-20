@@ -1,12 +1,12 @@
-# @metamask/smart-accounts-kit-x402
+# @metamask/x402
 
 x402 adapters for ERC-7710 payment requirement publishing and payload creation.
 
 ## Installation
 
 ```bash
-yarn add @metamask/smart-accounts-kit-x402
-npm install @metamask/smart-accounts-kit-x402
+yarn add @metamask/x402
+npm install @metamask/x402
 ```
 
 ## Exports

@@ -9,6 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New @metamask/smart-accounts-kit-x402 package providing plugins to @x402 packages ([#236](https://github.com/MetaMask/smart-accounts-kit/pull/236))
+- New @metamask/x402 package providing plugins to @x402 packages ([#236](https://github.com/MetaMask/smart-accounts-kit/pull/236))
 
 [Unreleased]: https://github.com/metamask/smart-accounts-kit/

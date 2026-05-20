@@ -96,12 +96,13 @@ export class x402Erc7710Client {
         );
       }
 
+      const invalidAssetTransferMethod =
+        typeof assetTransferMethod === 'string'
+          ? `"${assetTransferMethod}"`
+          : JSON.stringify(assetTransferMethod);
+
       throw new Error(
-        `x402Erc7710Client can only process assetTransferMethod "erc7710". Received: ${
-          typeof assetTransferMethod === 'string'
-            ? `"${assetTransferMethod}"`
-            : 'undefined'
-        }`,
+        `x402Erc7710Client can only process assetTransferMethod "erc7710". Received: ${invalidAssetTransferMethod}$`,
       );
     }
 

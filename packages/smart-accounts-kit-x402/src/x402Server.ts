@@ -1,4 +1,4 @@
-import { getAddress } from 'viem';
+import { type Address, getAddress } from 'viem';
 
 import type { x402PaymentRequirements } from './x402Client';
 
@@ -14,7 +14,7 @@ export type x402Erc7710ServerConfig = {
  */
 function validateFacilitatorAddresses(
   publishedAddresses: unknown,
-): string[] | undefined {
+): Address[] | undefined {
   if (publishedAddresses === undefined) {
     return undefined;
   }
@@ -31,7 +31,7 @@ function validateFacilitatorAddresses(
     );
   }
 
-  const normalizedAddresses: string[] = [];
+  const normalizedAddresses: Address[] = [];
   const validationErrors: string[] = [];
 
   publishedAddresses.forEach((address, index) => {

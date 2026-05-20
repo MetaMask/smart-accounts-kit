@@ -102,7 +102,7 @@ export class x402Erc7710Client {
           : JSON.stringify(assetTransferMethod);
 
       throw new Error(
-        `x402Erc7710Client can only process assetTransferMethod "erc7710". Received: ${invalidAssetTransferMethod}$`,
+        `x402Erc7710Client can only process assetTransferMethod "erc7710". Received: ${invalidAssetTransferMethod}`,
       );
     }
 

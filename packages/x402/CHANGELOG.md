@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Uncategorized
+## [0.1.0]
 
-- TEMP remove changelog line
-- Adds new @metamask/x402 package ([#236](https://github.com/metamask/smart-accounts-kit/pull/236))
+### Added
 
 - New @metamask/x402 package providing plugins to @x402 packages ([#236](https://github.com/MetaMask/smart-accounts-kit/pull/236))
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/x402@0.1.0...HEAD
+[0.1.0]: https://github.com/metamask/smart-accounts-kit/releases/tag/@metamask/x402@0.1.0

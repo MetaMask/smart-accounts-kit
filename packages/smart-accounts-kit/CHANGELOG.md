@@ -7,11 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Uncategorized
-
-- Revert "Update Release 31.0.0 (#238)" ([#238](https://github.com/metamask/smart-accounts-kit/pull/238))
-- Update Release 31.0.0 ([#238](https://github.com/metamask/smart-accounts-kit/pull/238))
-
 ### Added
 
 - ERC-7715 `token-approval-revocation` permission type ([#226](https://github.com/MetaMask/smart-accounts-kit/pull/226), [#237](https://github.com/MetaMask/smart-accounts-kit/pull/237))

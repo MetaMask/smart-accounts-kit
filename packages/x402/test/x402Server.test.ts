@@ -156,4 +156,18 @@ describe('x402Erc7710Server', () => {
       'Invalid facilitatorAddresses specified: facilitatorAddresses[0] must be a string; facilitatorAddresses[1] is not a valid address: "not-an-address"',
     );
   });
+
+  it('throws for invalid mixed-case facilitatorAddress checksums', async () => {
+    const server = new x402Erc7710Server();
+
+    await expect(
+      server.enhancePaymentRequirements(baseRequirements, {
+        extra: {
+          facilitatorAddresses: ['0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAB'],
+        },
+      }),
+    ).rejects.toThrow(
+      'Invalid facilitatorAddresses specified: facilitatorAddresses[0] is not a valid address: "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAB"',
+    );
+  });
 });

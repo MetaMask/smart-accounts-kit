@@ -1,4 +1,4 @@
-import { type Hex, getAddress, isHex } from 'viem';
+import { type Hex, getAddress, isHex } from './ethereum';
 
 export type x402PaymentRequirements = {
   scheme: string;

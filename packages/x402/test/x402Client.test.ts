@@ -38,9 +38,9 @@ describe('x402Erc7710Client', () => {
     expect(payload).toEqual({
       x402Version: 2,
       payload: {
-        delegationManager: '0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa',
+        delegationManager: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
         permissionContext: '0x1234',
-        delegator: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+        delegator: '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
       },
     });
   });

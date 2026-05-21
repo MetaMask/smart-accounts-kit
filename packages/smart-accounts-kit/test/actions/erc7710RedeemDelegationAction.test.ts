@@ -12,6 +12,7 @@ import {
   createPublicClient,
   createWalletClient,
   custom,
+  encodeErrorResult,
   encodeFunctionData,
 } from 'viem';
 import { createBundlerClient } from 'viem/account-abstraction';
@@ -264,6 +265,84 @@ describe('erc7710RedeemDelegationAction', () => {
           sendUserOperationWithDelegationArgs.calls[2],
         ],
       });
+    });
+
+    it('should surface human-readable revert reasons from bundler error messages', async () => {
+      const bundlerClient = createBundlerClient({
+        transport: custom({ request: mockBundlerRequest }),
+        chain,
+      });
+      const extendedBundlerClient = bundlerClient.extend(
+        erc7710BundlerActions(),
+      );
+
+      const revertData = encodeErrorResult({
+        abi: [
+          {
+            type: 'error',
+            name: 'Error',
+            inputs: [{ name: 'message', type: 'string' }],
+          },
+        ],
+        errorName: 'Error',
+        args: ['AllowedTargetsEnforcer:target-address-not-allowed'],
+      });
+
+      const bundlerError = new Error(
+        [
+          `Execution reverted with reason: UserOperation reverted during simulation with reason: ${revertData}.`,
+          `Request Arguments: callData: ${randomBytes(128)}`,
+          `Details: UserOperation reverted during simulation with reason: ${revertData}`,
+          'Version: viem@2.31.7',
+        ].join('\n'),
+      );
+      stub(bundlerClient, 'sendUserOperation').rejects(bundlerError);
+
+      const sendUserOperationWithDelegationArgs: SendUserOperationWithDelegationParameters =
+        {
+          publicClient,
+          calls: [
+            {
+              to: randomAddress(),
+              value: 0n,
+              permissionContext: [createDelegation()],
+              delegationManager: expectedDelegationManager,
+            },
+          ],
+        };
+
+      await expect(
+        extendedBundlerClient.sendUserOperationWithDelegation(
+          sendUserOperationWithDelegationArgs,
+        ),
+      ).rejects.toThrow(
+        'User Operation reverted: AllowedTargetsEnforcer:target-address-not-allowed',
+      );
+    });
+
+    it('should preserve bundler errors without decodable revert data', async () => {
+      const bundlerClient = createBundlerClient({
+        transport: custom({ request: mockBundlerRequest }),
+        chain,
+      });
+      const extendedBundlerClient = bundlerClient.extend(
+        erc7710BundlerActions(),
+      );
+
+      const bundlerError = new Error('Bundler unavailable');
+      stub(bundlerClient, 'sendUserOperation').rejects(bundlerError);
+
+      const sendUserOperationWithDelegationArgs: SendUserOperationWithDelegationParameters =
+        {
+          publicClient,
+          calls: [{ to: randomAddress(), value: 0n }],
+        };
+
+      await expect(
+        extendedBundlerClient.sendUserOperationWithDelegation(
+          sendUserOperationWithDelegationArgs,
+        ),
+      ).rejects.toBe(bundlerError);
     });
 
     it('should throw an error when SimpleFactory is provided as dependencies factory', async () => {
@@ -542,6 +621,40 @@ describe('erc7710RedeemDelegationAction', () => {
         to: args.delegationManager,
         data: redeemDelegationCallData,
       });
+    });
+
+    it('should surface human-readable revert reasons from transaction errors', async () => {
+      const extendedWalletClient = walletClient.extend(erc7710WalletActions());
+
+      const revertData = encodeErrorResult({
+        abi: [
+          {
+            type: 'error',
+            name: 'Error',
+            inputs: [{ name: 'message', type: 'string' }],
+          },
+        ],
+        errorName: 'Error',
+        args: ['Execution target reverted'],
+      });
+
+      stub(walletClient, 'sendTransaction').rejects(
+        new Error(`Transaction simulation failed. Details: ${revertData}`),
+      );
+
+      const args: SendTransactionWithDelegationParameters = {
+        account,
+        chain,
+        to: randomAddress(),
+        value: 0n,
+        data: randomBytes(128),
+        permissionContext: [createDelegation()],
+        delegationManager: expectedDelegationManager,
+      };
+
+      await expect(
+        extendedWalletClient.sendTransactionWithDelegation(args),
+      ).rejects.toThrow('Transaction reverted: Execution target reverted');
     });
 
     it('should throw an error when DelegationManager does not match expected address for the chain', async () => {

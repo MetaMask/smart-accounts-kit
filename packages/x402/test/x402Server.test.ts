@@ -119,6 +119,20 @@ describe('x402Erc7710Server', () => {
     ]);
   });
 
+  it('normalizes all-uppercase facilitatorAddresses', async () => {
+    const server = new x402Erc7710Server();
+
+    const result = await server.enhancePaymentRequirements(baseRequirements, {
+      extra: {
+        facilitatorAddresses: ['0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'],
+      },
+    });
+
+    expect(result.extra?.facilitatorAddresses).toEqual([
+      '0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa',
+    ]);
+  });
+
   it('throws when facilitatorAddresses is not an array', async () => {
     const server = new x402Erc7710Server();
 

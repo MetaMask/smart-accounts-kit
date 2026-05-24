@@ -27,7 +27,7 @@ export function getAddress(value: string): Address {
   }
 
   const lowerAddress = value.toLowerCase();
-  const upperAddress = value.toUpperCase();
+  const upperAddress = `0x${value.slice(2).toUpperCase()}`;
   const checksummedAddress = getChecksumAddress(value);
 
   if (

@@ -6,9 +6,9 @@ export {
   type DelegationStorageConfig,
 } from './delegationStorage';
 export {
-  createDelegationProvider,
-  type DelegationProvider,
-  type DelegationProviderConfig,
-  type DelegationProviderPaymentPayload,
-  type PaymentRequirements as DelegationProviderPaymentRequirements,
-} from './delegationProvider';
+  createx402DelegationProvider,
+  type x402DelegationProvider,
+  type x402DelegationProviderConfig,
+  type x402DelegationProviderPaymentPayload,
+  type PaymentRequirements as x402DelegationProviderPaymentRequirements,
+} from './x402DelegationProvider';

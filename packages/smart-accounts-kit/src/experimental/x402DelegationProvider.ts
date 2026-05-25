@@ -23,7 +23,7 @@ import { generateSalt } from '../utils/index';
  * Payment requirement details supplied by an x402 server challenge.
  *
  * These values are used to scope and construct the delegation that will be
- * returned by a {@link DelegationProvider}.
+ * returned by a {@link x402DelegationProvider}.
  */
 export type PaymentRequirements = {
   scheme: string;
@@ -41,7 +41,7 @@ export type PaymentRequirements = {
  * The payload includes the delegation manager address, the encoded permission
  * context to use for execution, and the delegator account that signed it.
  */
-export type DelegationProviderPaymentPayload = {
+export type x402DelegationProviderPaymentPayload = {
   delegationManager: `0x${string}`;
   permissionContext: `0x${string}`;
   delegator: `0x${string}`;
@@ -50,9 +50,9 @@ export type DelegationProviderPaymentPayload = {
 /**
  * Function that turns payment requirements into a signed delegation payload.
  */
-export type DelegationProvider = (
+export type x402DelegationProvider = (
   paymentRequirements: PaymentRequirements,
-) => Promise<DelegationProviderPaymentPayload>;
+) => Promise<x402DelegationProviderPaymentPayload>;
 
 type Deferred<TResult> = (requirements: PaymentRequirements) => TResult;
 
@@ -70,11 +70,11 @@ const resolveMaybeDeferred = async <TResult>(
 };
 
 /**
- * Configuration used to create a DelegationProvider.
+ * Configuration used to create a x402DelegationProvider.
  *
  * `account` is required and is used for signing the delegation.
  */
-export type DelegationProviderConfig = {
+export type x402DelegationProviderConfig = {
   account: Account;
   environment: SmartAccountsEnvironment;
   from?: Hex;
@@ -91,7 +91,7 @@ type DelegationCreationContext = {
 };
 
 const resolveDelegationCreationContext = async (
-  config: DelegationProviderConfig,
+  config: x402DelegationProviderConfig,
   requirements: PaymentRequirements,
 ): Promise<DelegationCreationContext> => {
   const caveatsConfig = await resolveMaybeDeferred(
@@ -197,12 +197,12 @@ const resolveDelegationCreationContext = async (
  * @param config - Delegation creation and signing configuration.
  * @returns A provider that maps payment requirements to a signed delegation payload.
  */
-export function createDelegationProvider(
-  config: DelegationProviderConfig,
-): DelegationProvider {
+export function createx402DelegationProvider(
+  config: x402DelegationProviderConfig,
+): x402DelegationProvider {
   return async (
     requirements: PaymentRequirements,
-  ): Promise<DelegationProviderPaymentPayload> => {
+  ): Promise<x402DelegationProviderPaymentPayload> => {
     const {
       account,
       delegationManager,

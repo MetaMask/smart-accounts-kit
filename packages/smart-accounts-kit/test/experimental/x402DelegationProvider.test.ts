@@ -2,9 +2,9 @@ import type { Account, Hex } from 'viem';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type {
-  DelegationProviderConfig,
+  x402DelegationProviderConfig,
   PaymentRequirements,
-} from '../../src/experimental/delegationProvider';
+} from '../../src/experimental/x402DelegationProvider';
 import type { SmartAccountsEnvironment } from '../../src/types';
 
 const caveatBuilderMocks = vi.hoisted(() => ({
@@ -30,8 +30,8 @@ vi.mock('../../src/delegation', () => delegationMocks);
 
 vi.mock('@metamask/delegation-core', () => delegationCoreMocks);
 
-const { createDelegationProvider } =
-  await import('../../src/experimental/delegationProvider');
+const { createx402DelegationProvider } =
+  await import('../../src/experimental/x402DelegationProvider');
 
 const mockDelegationManager =
   '0x1000000000000000000000000000000000000001' as Hex;
@@ -77,7 +77,7 @@ const createMockEnvironment = (
     ...overrides,
   }) as SmartAccountsEnvironment;
 
-describe('createDelegationProvider', () => {
+describe('createx402DelegationProvider', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -106,7 +106,7 @@ describe('createDelegationProvider', () => {
   it('creates and signs a delegation using default from/salt values', async () => {
     const account = createMockAccount();
     const environment = createMockEnvironment();
-    const provider = createDelegationProvider({
+    const provider = createx402DelegationProvider({
       account,
       environment,
       caveats: [],
@@ -168,7 +168,7 @@ describe('createDelegationProvider', () => {
       signature: '0xaa',
     };
     delegationMocks.decodeDelegations.mockReturnValue([parentDelegation]);
-    const provider = createDelegationProvider({
+    const provider = createx402DelegationProvider({
       account,
       environment,
       caveats: deferredCaveats,
@@ -219,7 +219,7 @@ describe('createDelegationProvider', () => {
       existingDelegation,
     ]);
 
-    const provider = createDelegationProvider({
+    const provider = createx402DelegationProvider({
       account,
       environment,
       from,
@@ -252,7 +252,7 @@ describe('createDelegationProvider', () => {
 
   it('throws when facilitator addresses are missing', async () => {
     const account = createMockAccount();
-    const provider = createDelegationProvider({
+    const provider = createx402DelegationProvider({
       account,
       environment: createMockEnvironment(),
     });
@@ -267,7 +267,7 @@ describe('createDelegationProvider', () => {
 
   it('throws when redeemer enforcer is missing from environment', async () => {
     const account = createMockAccount();
-    const provider = createDelegationProvider({
+    const provider = createx402DelegationProvider({
       account,
       environment: createMockEnvironment({
         caveatEnforcers: {
@@ -284,7 +284,7 @@ describe('createDelegationProvider', () => {
   it('throws when parent permission context does not decode into a delegation', async () => {
     const account = createMockAccount();
     delegationMocks.decodeDelegations.mockReturnValue([]);
-    const provider = createDelegationProvider({
+    const provider = createx402DelegationProvider({
       account,
       environment: createMockEnvironment(),
       parentPermissionContext: '0xee' as Hex,
@@ -299,10 +299,10 @@ describe('createDelegationProvider', () => {
     const account = createMockAccount({
       signTypedData: undefined,
     });
-    const provider = createDelegationProvider({
+    const provider = createx402DelegationProvider({
       account,
       environment: createMockEnvironment(),
-    } as DelegationProviderConfig);
+    } as x402DelegationProviderConfig);
 
     await expect(provider(mockRequirements)).rejects.toThrow(
       'Account does not support signTypedData',

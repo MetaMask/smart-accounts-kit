@@ -1,6 +1,6 @@
 import * as delegationAbis from '@metamask/delegation-abis';
-import { isHex } from 'viem';
-import type { Abi, AbiItem, Hex } from 'viem';
+import { BaseError, ContractFunctionRevertedError, isHex } from 'viem';
+import type { Abi, AbiItem, DecodeErrorResultReturnType, Hex } from 'viem';
 import { decodeErrorResult, formatAbiItemWithArgs } from 'viem/utils';
 
 const knownRevertAbis = Object.values(delegationAbis) as readonly Abi[];
@@ -32,6 +32,12 @@ export type DecodedRevertReason = {
 export function decodeRevertReason(
   error: unknown,
 ): DecodedRevertReason | undefined {
+  const decodedViemError = decodeViemContractRevert(error);
+
+  if (decodedViemError) {
+    return decodedViemError;
+  }
+
   for (const rawData of getRevertDataCandidates(error)) {
     const decoded = decodeRevertData(rawData);
 
@@ -41,6 +47,39 @@ export function decodeRevertReason(
   }
 
   return undefined;
+}
+
+/**
+ * Extracts revert information that viem has already identified in its error
+ * chain before falling back to provider-specific string/object shapes.
+ *
+ * @param error - The original error thrown by viem.
+ * @returns A decoded revert reason, if viem exposed enough revert data.
+ */
+function decodeViemContractRevert(
+  error: unknown,
+): DecodedRevertReason | undefined {
+  if (!(error instanceof BaseError)) {
+    return undefined;
+  }
+
+  const revertError = error.walk(
+    (cause) => cause instanceof ContractFunctionRevertedError,
+  );
+
+  if (!(revertError instanceof ContractFunctionRevertedError)) {
+    return undefined;
+  }
+
+  if (!revertError.raw) {
+    return undefined;
+  }
+
+  if (revertError.data) {
+    return formatDecodeErrorResult(revertError.data, revertError.raw);
+  }
+
+  return decodeRevertData(revertError.raw);
 }
 
 /**
@@ -82,6 +121,26 @@ export function decodeRevertData(
   }
 
   return undefined;
+}
+
+/**
+ * Formats viem's decoded error result into the helper's return shape.
+ *
+ * @param decodedData - The decoded error result from viem.
+ * @param rawData - The ABI-encoded revert data.
+ * @returns Human-readable revert text.
+ */
+function formatDecodeErrorResult(
+  decodedData: DecodeErrorResultReturnType,
+  rawData: Hex,
+): DecodedRevertReason {
+  const { abiItem, args, errorName } = decodedData;
+
+  return {
+    errorName,
+    message: formatDecodedError(errorName, args, abiItem),
+    rawData,
+  };
 }
 
 /**

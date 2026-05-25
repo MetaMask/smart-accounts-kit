@@ -1,4 +1,6 @@
-import { type Address, getAddress } from './ethereum';
+import type { Hex } from '@metamask/utils';
+
+import { getAddress } from './ethereum';
 import type { x402PaymentRequirements } from './x402Client';
 
 export type x402Erc7710ServerConfig = {
@@ -13,7 +15,7 @@ export type x402Erc7710ServerConfig = {
  */
 function validateFacilitatorAddresses(
   publishedAddresses: unknown,
-): Address[] | undefined {
+): Hex[] | undefined {
   if (publishedAddresses === undefined) {
     return undefined;
   }
@@ -30,7 +32,7 @@ function validateFacilitatorAddresses(
     );
   }
 
-  const normalizedAddresses: Address[] = [];
+  const normalizedAddresses: Hex[] = [];
   const validationErrors: string[] = [];
 
   publishedAddresses.forEach((address, index) => {

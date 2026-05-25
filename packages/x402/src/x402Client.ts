@@ -1,4 +1,6 @@
-import { type Hex, getAddress, isHex } from './ethereum';
+import { isStrictHexString, type Hex } from '@metamask/utils';
+
+import { getAddress } from './ethereum';
 
 export type x402PaymentRequirements = {
   scheme: string;
@@ -49,7 +51,7 @@ export type x402Erc7710ClientConfig = {
 function normalizeDelegationPayload(
   payload: x402DelegationPaymentPayload,
 ): x402DelegationPaymentPayload {
-  if (!isHex(payload.permissionContext) || payload.permissionContext === '0x') {
+  if (!isStrictHexString(payload.permissionContext)) {
     throw new Error(
       'Invalid delegation payload: permissionContext must be non-empty hex data',
     );

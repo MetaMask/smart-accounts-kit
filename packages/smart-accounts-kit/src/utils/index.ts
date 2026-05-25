@@ -1,6 +1,12 @@
 export { decodeCaveat } from '../caveats';
 
 export {
+  decodeRevertData,
+  decodeRevertReason,
+  type DecodedRevertReason,
+} from '../decodeRevertReason';
+
+export {
   encodeDelegations,
   decodeDelegations,
   encodeDelegation,

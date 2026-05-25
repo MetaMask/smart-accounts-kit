@@ -26,7 +26,6 @@ import {
 } from '../executions';
 import { getSmartAccountsEnvironment } from '../smartAccountsEnvironment';
 import type { Call, PermissionContext } from '../types';
-import { surfaceRevertReason } from './revertReason';
 
 export type DelegatedCall = Call &
   OneOf<
@@ -107,17 +106,11 @@ export async function sendTransactionWithDelegationAction<
     ...rest
   } = args;
 
-  let hash: Hex;
-
-  try {
-    hash = await client.sendTransaction({
-      ...rest,
-      to: args.delegationManager,
-      data: calldata,
-    } as unknown as SendTransactionParameters);
-  } catch (error) {
-    throw surfaceRevertReason(error, 'Transaction');
-  }
+  const hash = await client.sendTransaction({
+    ...rest,
+    to: args.delegationManager,
+    data: calldata,
+  } as unknown as SendTransactionParameters);
 
   return hash;
 }
@@ -252,11 +245,7 @@ export async function sendUserOperationWithDelegationAction<
     };
   });
 
-  try {
-    return await client.sendUserOperation(
-      parameters as unknown as SendUserOperationParameters,
-    );
-  } catch (error) {
-    throw surfaceRevertReason(error, 'User Operation');
-  }
+  return client.sendUserOperation(
+    parameters as unknown as SendUserOperationParameters,
+  );
 }

@@ -17,55 +17,19 @@ const panicReasons: Record<string, string> = {
   '81': 'Attempted to call a zero-initialized variable of internal function type.',
 };
 
-type DecodedRevertReason = {
+export type DecodedRevertReason = {
   errorName: string;
   message: string;
   rawData: Hex;
 };
 
-class RevertReasonError extends Error {
-  decodedErrorName: string;
-
-  rawData: Hex;
-
-  constructor(
-    action: string,
-    decodedReason: DecodedRevertReason,
-    cause: Error,
-  ) {
-    super(`${action} reverted: ${decodedReason.message}`, { cause });
-    this.name = 'RevertReasonError';
-    this.decodedErrorName = decodedReason.errorName;
-    this.rawData = decodedReason.rawData;
-  }
-}
-
-/**
- * Re-wraps errors with decoded revert data while keeping the message concise.
- *
- * @param error - The original error thrown by viem or an RPC provider.
- * @param action - The action name to include in the generated error.
- * @returns The original error when no human-readable revert reason is found.
- */
-export function surfaceRevertReason(error: unknown, action: string): unknown {
-  const decodedReason = getDecodedRevertReason(error);
-
-  if (!decodedReason) {
-    return error;
-  }
-
-  const cause = error instanceof Error ? error : new Error(String(error));
-
-  return new RevertReasonError(action, decodedReason, cause);
-}
-
 /**
  * Decodes the first recognized revert data candidate in an error chain.
  *
- * @param error - The error object to inspect.
+ * @param error - The original error thrown by viem or an RPC provider.
  * @returns A decoded revert reason, if one can be recognized.
  */
-function getDecodedRevertReason(
+export function decodeRevertReason(
   error: unknown,
 ): DecodedRevertReason | undefined {
   for (const rawData of getRevertDataCandidates(error)) {
@@ -85,7 +49,9 @@ function getDecodedRevertReason(
  * @param rawData - ABI-encoded revert data.
  * @returns A decoded revert reason, if the data matches a known error.
  */
-function decodeRevertData(rawData: Hex): DecodedRevertReason | undefined {
+export function decodeRevertData(
+  rawData: Hex,
+): DecodedRevertReason | undefined {
   const abis = [[] as const, ...knownRevertAbis];
 
   for (const abi of abis) {
@@ -103,6 +69,16 @@ function decodeRevertData(rawData: Hex): DecodedRevertReason | undefined {
     } catch {
       // Try the next ABI until one can decode the revert data.
     }
+  }
+
+  const decodedString = decodeRawString(rawData);
+
+  if (decodedString) {
+    return {
+      errorName: 'Error',
+      message: decodedString,
+      rawData,
+    };
   }
 
   return undefined;
@@ -140,6 +116,34 @@ function formatDecodedError(
   });
 
   return `${errorName}${formattedArgs}`;
+}
+
+/**
+ * Decodes revert payloads surfaced by some clients as raw UTF-8 bytes.
+ *
+ * @param rawData - Hex-encoded revert string bytes.
+ * @returns The decoded string when it looks like readable text.
+ */
+function decodeRawString(rawData: Hex): string | undefined {
+  const bytes = rawData.slice(2);
+
+  if (bytes.length === 0 || bytes.length % 2 !== 0) {
+    return undefined;
+  }
+
+  let value = '';
+
+  for (let index = 0; index < bytes.length; index += 2) {
+    const charCode = Number.parseInt(bytes.slice(index, index + 2), 16);
+
+    if (Number.isNaN(charCode) || charCode < 0x20 || charCode > 0x7e) {
+      return undefined;
+    }
+
+    value += String.fromCharCode(charCode);
+  }
+
+  return value;
 }
 
 /**
@@ -217,11 +221,14 @@ function getRevertDataCandidates(error: unknown): Hex[] {
     addHexCandidates(record.raw);
     addHexCandidates(record.data);
     addHexCandidates(record.details);
+    addHexCandidates(record.reason);
     addHexCandidates(record.shortMessage);
     addHexCandidates(record.message);
 
     visit(record.data, depth + 1);
+    visit(record.details, depth + 1);
     visit(record.error, depth + 1);
+    visit(record.metaMessages, depth + 1);
     visit(record.originalError, depth + 1);
     visit(record.cause, depth + 1);
   };

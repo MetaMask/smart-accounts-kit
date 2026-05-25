@@ -3,6 +3,10 @@ import type { Address, Client } from 'viem';
 import { encodeFunctionData } from 'viem';
 import { simulateContract, writeContract } from 'viem/actions';
 
+import {
+  decodeRevertReason,
+  type DecodedRevertReason,
+} from '../../../decodeRevertReason';
 import { encodeDelegations } from '../../../delegation';
 import { encodeExecutionCalldatas } from '../../../executions';
 import type { ExecutionMode, ExecutionStruct } from '../../../executions';
@@ -24,6 +28,10 @@ export type ExecuteRedeemDelegationsParameters = {
   client: InitializedClient;
   delegationManagerAddress: Address;
 } & EncodeRedeemDelegationsParameters;
+
+export type DecodeRedeemDelegationsErrorReturnType =
+  | DecodedRevertReason
+  | undefined;
 
 export const simulate = async ({
   client,
@@ -77,3 +85,13 @@ export const encode = ({
     ],
   });
 };
+
+/**
+ * Decodes revert data from errors thrown by `simulate` or `execute`.
+ *
+ * @param error - The original error thrown by viem or an RPC provider.
+ * @returns A decoded revert reason, if one can be recognized.
+ */
+export const decodeError = (
+  error: unknown,
+): DecodeRedeemDelegationsErrorReturnType => decodeRevertReason(error);

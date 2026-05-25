@@ -18,6 +18,7 @@ import {
 } from '@metamask/smart-accounts-kit/contracts';
 import {
   gasPrice,
+  transport,
   sponsoredBundlerClient,
   deploySmartAccount,
   deployCounter,
@@ -26,12 +27,17 @@ import {
   fundAddress,
 } from './utils/helpers';
 import { expectUserOperationToSucceed } from './utils/assertions';
-import { encodeFunctionData, parseEther } from 'viem';
-import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { createWalletClient, encodeFunctionData, parseEther } from 'viem';
+import {
+  generatePrivateKey,
+  privateKeyToAccount,
+  type PrivateKeyAccount,
+} from 'viem/accounts';
 import CounterMetadata from './utils/counter/metadata.json';
 
 let aliceSmartAccount: MetaMaskSmartAccount<Implementation.Hybrid>;
 let bobSmartAccount: MetaMaskSmartAccount<Implementation.Hybrid>;
+let bob: PrivateKeyAccount;
 let aliceCounter: CounterContract;
 
 /**
@@ -51,7 +57,7 @@ let aliceCounter: CounterContract;
 
 beforeEach(async () => {
   const alice = privateKeyToAccount(generatePrivateKey());
-  const bob = privateKeyToAccount(generatePrivateKey());
+  bob = privateKeyToAccount(generatePrivateKey());
 
   aliceSmartAccount = await toMetaMaskSmartAccount({
     client: publicClient,
@@ -242,6 +248,74 @@ test('delegation management lifecycle: create, disable, enable, and check status
 
   const finalCount = await aliceCounter.read.count();
   expect(finalCount).toEqual(2n);
+});
+
+test('can decode raw simulate and execute redeemDelegations errors', async () => {
+  await fundAddress(bob.address);
+
+  const bobWalletClient = createWalletClient({
+    account: bob,
+    transport,
+    chain: publicClient.chain,
+  });
+
+  const delegation = createDelegation({
+    to: bob.address,
+    from: aliceSmartAccount.address,
+    environment: aliceSmartAccount.environment,
+    scope: {
+      type: 'functionCall',
+      targets: [aliceCounter.address],
+      selectors: ['increment()'],
+    },
+  });
+
+  const signedDelegation = {
+    ...delegation,
+    signature: await aliceSmartAccount.signDelegation({ delegation }),
+  };
+
+  const execution = createExecution({
+    target: aliceCounter.address,
+    callData: encodeFunctionData({
+      abi: CounterMetadata.abi,
+      functionName: 'setCount',
+      args: [1n],
+    }),
+  });
+
+  const redeemParams = {
+    client: bobWalletClient,
+    delegationManagerAddress: aliceSmartAccount.environment.DelegationManager,
+    delegations: [[signedDelegation]],
+    modes: [ExecutionMode.SingleDefault],
+    executions: [[execution]],
+  };
+  const expectedError = 'AllowedMethodsEnforcer:method-not-allowed';
+
+  const simulateError = await DelegationManager.simulate
+    .redeemDelegations(redeemParams)
+    .then(
+      () => undefined,
+      (error: unknown) => error,
+    );
+
+  expect(simulateError).toBeDefined();
+  expect(
+    DelegationManager.decode.redeemDelegationsError(simulateError)?.message,
+  ).toBe(expectedError);
+
+  const executeError = await DelegationManager.execute
+    .redeemDelegations(redeemParams)
+    .then(
+      () => undefined,
+      (error: unknown) => error,
+    );
+
+  expect(executeError).toBeDefined();
+  expect(
+    DelegationManager.decode.redeemDelegationsError(executeError)?.message,
+  ).toBe(expectedError);
 });
 
 test('only delegator can disable their own delegation', async () => {

@@ -26,6 +26,7 @@ import type {
   SendUserOperationWithDelegationParameters,
 } from '../../src/actions/erc7710RedeemDelegationAction';
 import { Implementation } from '../../src/constants';
+import { decodeRevertReason } from '../../src/decodeRevertReason';
 import { encodeDelegations } from '../../src/delegation';
 import {
   createExecution,
@@ -267,7 +268,7 @@ describe('erc7710RedeemDelegationAction', () => {
       });
     });
 
-    it('should surface human-readable revert reasons from bundler error messages', async () => {
+    it('should preserve raw bundler errors and allow callers to decode revert reasons', async () => {
       const bundlerClient = createBundlerClient({
         transport: custom({ request: mockBundlerRequest }),
         chain,
@@ -315,9 +316,13 @@ describe('erc7710RedeemDelegationAction', () => {
         extendedBundlerClient.sendUserOperationWithDelegation(
           sendUserOperationWithDelegationArgs,
         ),
-      ).rejects.toThrow(
-        'User Operation reverted: AllowedTargetsEnforcer:target-address-not-allowed',
-      );
+      ).rejects.toBe(bundlerError);
+
+      expect(decodeRevertReason(bundlerError)).toStrictEqual({
+        errorName: 'Error',
+        message: 'AllowedTargetsEnforcer:target-address-not-allowed',
+        rawData: revertData,
+      });
     });
 
     it('should preserve bundler errors without decodable revert data', async () => {
@@ -343,6 +348,8 @@ describe('erc7710RedeemDelegationAction', () => {
           sendUserOperationWithDelegationArgs,
         ),
       ).rejects.toBe(bundlerError);
+
+      expect(decodeRevertReason(bundlerError)).toBeUndefined();
     });
 
     it('should throw an error when SimpleFactory is provided as dependencies factory', async () => {
@@ -623,7 +630,7 @@ describe('erc7710RedeemDelegationAction', () => {
       });
     });
 
-    it('should surface human-readable revert reasons from transaction errors', async () => {
+    it('should preserve raw transaction errors and allow callers to decode revert reasons', async () => {
       const extendedWalletClient = walletClient.extend(erc7710WalletActions());
 
       const revertData = encodeErrorResult({
@@ -638,9 +645,10 @@ describe('erc7710RedeemDelegationAction', () => {
         args: ['Execution target reverted'],
       });
 
-      stub(walletClient, 'sendTransaction').rejects(
-        new Error(`Transaction simulation failed. Details: ${revertData}`),
+      const transactionError = new Error(
+        `Transaction simulation failed. Details: ${revertData}`,
       );
+      stub(walletClient, 'sendTransaction').rejects(transactionError);
 
       const args: SendTransactionWithDelegationParameters = {
         account,
@@ -654,7 +662,13 @@ describe('erc7710RedeemDelegationAction', () => {
 
       await expect(
         extendedWalletClient.sendTransactionWithDelegation(args),
-      ).rejects.toThrow('Transaction reverted: Execution target reverted');
+      ).rejects.toBe(transactionError);
+
+      expect(decodeRevertReason(transactionError)).toStrictEqual({
+        errorName: 'Error',
+        message: 'Execution target reverted',
+        rawData: revertData,
+      });
     });
 
     it('should throw an error when DelegationManager does not match expected address for the chain', async () => {

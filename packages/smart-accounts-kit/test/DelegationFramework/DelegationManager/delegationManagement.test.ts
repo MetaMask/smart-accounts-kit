@@ -1,5 +1,7 @@
+import { encodeErrorResult } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { describe, expect, it } from 'vitest';
+import * as viemActions from 'viem/actions';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ScopeType } from '../../../src/constants';
 import { createDelegation, encodeDelegations } from '../../../src/delegation';
@@ -7,7 +9,16 @@ import * as DelegationManager from '../../../src/DelegationFramework/DelegationM
 import { ExecutionMode, createExecution } from '../../../src/executions';
 import type { SmartAccountsEnvironment } from '../../../src/types';
 
+vi.mock('viem/actions', () => ({
+  simulateContract: vi.fn(),
+  writeContract: vi.fn(),
+}));
+
 describe('DelegationManager - Delegation Management', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   // we use a static environment so that we can assert static encoded data
   const environment: SmartAccountsEnvironment = {
     DelegationManager: '0xd5f99192AAb19b340b0dd722575b92Da2ca7A41c',
@@ -86,6 +97,9 @@ describe('DelegationManager - Delegation Management', () => {
       expect(DelegationManager.encode.disableDelegation).toBeDefined();
       expect(DelegationManager.encode.enableDelegation).toBeDefined();
       expect(DelegationManager.encode.redeemDelegations).toBeDefined();
+
+      // Decode functions
+      expect(DelegationManager.decode.redeemDelegationsError).toBeDefined();
     });
   });
 
@@ -188,6 +202,112 @@ describe('DelegationManager - Delegation Management', () => {
       });
 
       expect(encodedData).toStrictEqual(expectedEncodedData);
+    });
+
+    it('should preserve raw simulate errors and decode them with the helper', async () => {
+      const delegation = createDelegation({
+        to: bob.address,
+        from: alice.address,
+        environment,
+        scope: {
+          type: ScopeType.FunctionCall,
+          targets: [alice.address],
+          selectors: ['0x00000000'],
+        },
+      });
+
+      const execution = createExecution({
+        target: alice.address,
+      });
+
+      const revertData = encodeErrorResult({
+        abi: [
+          {
+            type: 'error',
+            name: 'Error',
+            inputs: [{ name: 'message', type: 'string' }],
+          },
+        ],
+        errorName: 'Error',
+        args: ['AllowedTargetsEnforcer:target-address-not-allowed'],
+      });
+      const simulateError = new Error(
+        `Execution reverted with data: ${revertData}`,
+      );
+
+      vi.mocked(viemActions.simulateContract).mockRejectedValue(simulateError);
+
+      await expect(
+        DelegationManager.simulate.redeemDelegations({
+          client: {} as any,
+          delegationManagerAddress: environment.DelegationManager,
+          delegations: [[delegation]],
+          modes: [ExecutionMode.SingleDefault],
+          executions: [[execution]],
+        }),
+      ).rejects.toBe(simulateError);
+
+      expect(
+        DelegationManager.decode.redeemDelegationsError(simulateError),
+      ).toStrictEqual({
+        errorName: 'Error',
+        message: 'AllowedTargetsEnforcer:target-address-not-allowed',
+        rawData: revertData,
+      });
+    });
+
+    it('should preserve raw execute errors and decode them with the helper', async () => {
+      const delegation = createDelegation({
+        to: bob.address,
+        from: alice.address,
+        environment,
+        scope: {
+          type: ScopeType.FunctionCall,
+          targets: [alice.address],
+          selectors: ['0x00000000'],
+        },
+      });
+
+      const execution = createExecution({
+        target: alice.address,
+      });
+      const mockRequest = { to: environment.DelegationManager, data: '0x123' };
+
+      const revertData = encodeErrorResult({
+        abi: [
+          {
+            type: 'error',
+            name: 'Error',
+            inputs: [{ name: 'message', type: 'string' }],
+          },
+        ],
+        errorName: 'Error',
+        args: ['AllowedMethodsEnforcer:method-not-allowed'],
+      });
+      const executeError = new Error(`Transaction failed. raw: ${revertData}`);
+
+      vi.mocked(viemActions.simulateContract).mockResolvedValue({
+        request: mockRequest,
+      } as any);
+      vi.mocked(viemActions.writeContract).mockRejectedValue(executeError);
+
+      await expect(
+        DelegationManager.execute.redeemDelegations({
+          client: {} as any,
+          delegationManagerAddress: environment.DelegationManager,
+          delegations: [[delegation]],
+          modes: [ExecutionMode.SingleDefault],
+          executions: [[execution]],
+        }),
+      ).rejects.toBe(executeError);
+
+      expect(
+        DelegationManager.decode.redeemDelegationsError(executeError),
+      ).toStrictEqual({
+        errorName: 'Error',
+        message: 'AllowedMethodsEnforcer:method-not-allowed',
+        rawData: revertData,
+      });
     });
   });
 });

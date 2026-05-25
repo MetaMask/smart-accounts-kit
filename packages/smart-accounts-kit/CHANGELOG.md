@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ERC-7715 `token-approval-revocation` permission type ([#226](https://github.com/MetaMask/smart-accounts-kit/pull/226), [#237](https://github.com/MetaMask/smart-accounts-kit/pull/237))
 - `CaveatBuilder` for `ApprovalRevocationEnforcer`, deployment address added to `SmartAccountsEnvironment` ([#226](https://github.com/metamask/smart-accounts-kit/pull/226), [#237](https://github.com/MetaMask/smart-accounts-kit/pull/237))
+- Helper for decoding revert reasons from delegated execution errors while preserving the original error output ([#245](https://github.com/MetaMask/smart-accounts-kit/pull/245))
 
 ### Changed
 
@@ -22,10 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 - Deprecated `erc20-token-revocation` in favor of `token-approval-revocation` ([#226](https://github.com/MetaMask/smart-accounts-kit/pull/226))
-
-### Fixed
-
-- Surface decoded, human-readable revert reasons from delegated transaction and user operation failures when revert data is available ([#245](https://github.com/MetaMask/smart-accounts-kit/pull/245))
 
 ## [1.5.0]
 

@@ -17,7 +17,7 @@ import type {
   PermissionContext,
   SmartAccountsEnvironment,
 } from '../types';
-import { generateSalt } from '../utils/index';
+import { generateSalt } from '../utils/';
 
 /**
  * Payment requirement details supplied by an x402 server challenge.

@@ -9,7 +9,8 @@ import {
 import { Implementation } from '../src/constants';
 import { deploySmartAccountsEnvironment } from '../src/smartAccountsEnvironment';
 import type { ToMetaMaskSmartAccountParameters } from '../src/types';
-export { generateSalt } from '../src/utils/index';
+
+export { generateSalt } from '../src/utils/';
 
 export const OWNER_ACCOUNT: Account = privateKeyToAccount(generatePrivateKey());
 export const DEPLOYED_ADDRESS = privateKeyToAddress(generatePrivateKey());

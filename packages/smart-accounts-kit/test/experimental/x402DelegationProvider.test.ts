@@ -20,6 +20,11 @@ const delegationMocks = vi.hoisted(() => ({
 
 const delegationCoreMocks = vi.hoisted(() => ({
   createRedeemerTerms: vi.fn(),
+  decodeRedeemerTerms: vi.fn(),
+}));
+
+const utilsMocks = vi.hoisted(() => ({
+  generateSalt: vi.fn(),
 }));
 
 vi.mock('../../src/caveatBuilder', () => ({
@@ -29,6 +34,7 @@ vi.mock('../../src/caveatBuilder', () => ({
 vi.mock('../../src/delegation', () => delegationMocks);
 
 vi.mock('@metamask/delegation-core', () => delegationCoreMocks);
+vi.mock('../../src/utils/', () => utilsMocks);
 
 const { createx402DelegationProvider } =
   await import('../../src/experimental/x402DelegationProvider');
@@ -41,6 +47,8 @@ const mockDelegator = '0x3000000000000000000000000000000000000003' as Hex;
 const mockSignature = '0xabc123' as Hex;
 const mockTypedData = { domain: {}, message: {} };
 const mockPermissionContext = '0xfeed' as Hex;
+const mockGeneratedSalt =
+  '0x1111111111111111111111111111111111111111111111111111111111111111' as Hex;
 const mockAuthority =
   '0x0000000000000000000000000000000000000000000000000000000000000000' as Hex;
 
@@ -89,6 +97,25 @@ describe('createx402DelegationProvider', () => {
       },
     ]);
     delegationCoreMocks.createRedeemerTerms.mockReturnValue('0x22');
+    delegationCoreMocks.decodeRedeemerTerms.mockImplementation((terms: Hex) => {
+      if (terms === '0x01') {
+        return {
+          redeemers: ['0x6000000000000000000000000000000000000006'],
+        };
+      }
+
+      if (terms === '0x02') {
+        return {
+          redeemers: [
+            '0x6000000000000000000000000000000000000006',
+            '0x9000000000000000000000000000000000000009',
+          ],
+        };
+      }
+
+      return { redeemers: [] };
+    });
+    utilsMocks.generateSalt.mockReturnValue(mockGeneratedSalt);
     delegationMocks.createOpenDelegation.mockReturnValue({
       delegate: '0xa00000000000000000000000000000000000000a',
       delegator: mockDelegator,
@@ -126,7 +153,7 @@ describe('createx402DelegationProvider', () => {
     const createCallArg =
       delegationMocks.createOpenDelegation.mock.calls[0]?.[0];
     expect(createCallArg.from).toBe(account.address);
-    expect(createCallArg.salt).toMatch(/^0x[0-9a-f]{64}$/u);
+    expect(createCallArg.salt).toBe(mockGeneratedSalt);
     expect(createCallArg.scope).toStrictEqual({
       type: 'erc20TransferAmount',
       tokenAddress: mockRequirements.asset,
@@ -250,6 +277,136 @@ describe('createx402DelegationProvider', () => {
     ]);
   });
 
+  describe('redeemer caveat resolution', () => {
+    it('throws when facilitators are missing and no redeemer caveat exists', async () => {
+      const account = createMockAccount();
+      const provider = createx402DelegationProvider({
+        account,
+        environment: createMockEnvironment(),
+      });
+
+      await expect(
+        provider({
+          ...mockRequirements,
+          extra: undefined,
+        }),
+      ).rejects.toThrow('Redeemer must be constrained');
+    });
+
+    it('allows missing facilitators when parent chain has a redeemer caveat', async () => {
+      const account = createMockAccount();
+      delegationMocks.decodeDelegations.mockReturnValue([
+        {
+          delegate: '0xde100000000000000000000000000000000000e1',
+          delegator: '0xde200000000000000000000000000000000000e2',
+          authority: mockAuthority,
+          caveats: [
+            {
+              enforcer: mockRedeemerEnforcer,
+              terms: '0x01',
+              args: '0x',
+            },
+          ],
+          salt: '0x99',
+          signature: '0xaa',
+        },
+      ]);
+      const provider = createx402DelegationProvider({
+        account,
+        environment: createMockEnvironment(),
+        parentPermissionContext: '0xee' as Hex,
+      });
+
+      await expect(
+        provider({
+          ...mockRequirements,
+          extra: undefined,
+        }),
+      ).resolves.toStrictEqual({
+        delegationManager: mockDelegationManager,
+        permissionContext: mockPermissionContext,
+        delegator: mockDelegator,
+      });
+      expect(delegationCoreMocks.createRedeemerTerms).not.toHaveBeenCalled();
+    });
+
+    it('does not add a redeemer caveat when existing redeemers are subset of facilitators', async () => {
+      const account = createMockAccount();
+      delegationMocks.decodeDelegations.mockReturnValue([
+        {
+          delegate: '0xde100000000000000000000000000000000000e1',
+          delegator: '0xde200000000000000000000000000000000000e2',
+          authority: mockAuthority,
+          caveats: [
+            {
+              enforcer: mockRedeemerEnforcer,
+              terms: '0x01',
+              args: '0x',
+            },
+          ],
+          salt: '0x99',
+          signature: '0xaa',
+        },
+      ]);
+      const provider = createx402DelegationProvider({
+        account,
+        environment: createMockEnvironment(),
+        parentPermissionContext: '0xee' as Hex,
+      });
+
+      await provider(mockRequirements);
+
+      const createCallArg =
+        delegationMocks.createOpenDelegation.mock.calls[0]?.[0];
+      expect(createCallArg.caveats).toStrictEqual([
+        {
+          enforcer: '0x9000000000000000000000000000000000000009',
+          terms: '0x11',
+          args: '0x',
+        },
+      ]);
+      expect(delegationCoreMocks.createRedeemerTerms).not.toHaveBeenCalled();
+    });
+
+    it('adds a redeemer caveat when existing redeemers are not subset of facilitators', async () => {
+      const account = createMockAccount();
+      delegationMocks.decodeDelegations.mockReturnValue([
+        {
+          delegate: '0xde100000000000000000000000000000000000e1',
+          delegator: '0xde200000000000000000000000000000000000e2',
+          authority: mockAuthority,
+          caveats: [
+            {
+              enforcer: mockRedeemerEnforcer,
+              terms: '0x02',
+              args: '0x',
+            },
+          ],
+          salt: '0x99',
+          signature: '0xaa',
+        },
+      ]);
+      const provider = createx402DelegationProvider({
+        account,
+        environment: createMockEnvironment(),
+        parentPermissionContext: '0xee' as Hex,
+      });
+
+      await provider(mockRequirements);
+
+      expect(delegationCoreMocks.createRedeemerTerms).toHaveBeenCalledWith({
+        redeemers: mockRequirements.extra?.facilitatorAddresses,
+      });
+      const createCallArg =
+        delegationMocks.createOpenDelegation.mock.calls[0]?.[0];
+      expect(createCallArg.caveats).toContainEqual({
+        enforcer: mockRedeemerEnforcer,
+        terms: '0x22',
+        args: '0x',
+      });
+    });
+  });
+
   it('throws when facilitator addresses are missing', async () => {
     const account = createMockAccount();
     const provider = createx402DelegationProvider({
@@ -262,7 +419,7 @@ describe('createx402DelegationProvider', () => {
         ...mockRequirements,
         extra: undefined,
       }),
-    ).rejects.toThrow('Facilitator addresses are required');
+    ).rejects.toThrow('Redeemer must be constrained');
   });
 
   it('throws when redeemer enforcer is missing from environment', async () => {

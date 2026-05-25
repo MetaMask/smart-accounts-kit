@@ -1,4 +1,7 @@
-import { createRedeemerTerms } from '@metamask/delegation-core';
+import {
+  createRedeemerTerms,
+  decodeRedeemerTerms,
+} from '@metamask/delegation-core';
 import type { Account, Address, Hex } from 'viem';
 
 import type { Caveats } from '../caveatBuilder';
@@ -90,6 +93,87 @@ type DelegationCreationContext = {
   createDelegationConfig: Parameters<typeof createOpenDelegation>[0];
 };
 
+type ResolveX402DelegationCaveatsParams = {
+  environment: SmartAccountsEnvironment;
+  caveatsConfig: Caveats | undefined;
+  existingDelegations: Delegation[];
+  facilitatorAddresses: Hex[] | undefined;
+};
+
+const resolveX402DelegationCaveats = ({
+  environment,
+  caveatsConfig,
+  existingDelegations,
+  facilitatorAddresses,
+}: ResolveX402DelegationCaveatsParams): Caveat[] => {
+  const {
+    caveatEnforcers: { RedeemerEnforcer: redeemerEnforcer },
+  } = environment;
+
+  if (!redeemerEnforcer) {
+    throw new Error('RedeemerEnforcer not found in environment');
+  }
+
+  const redeemerAddressLowerCase = redeemerEnforcer.toLowerCase();
+
+  const caveats = resolveCaveats({
+    environment,
+    caveats: caveatsConfig,
+    // we need to resolve the caveats so that we can add more, the scope is added in the createDelegation call
+    isScopeOptional: true,
+  });
+
+  const existingRedeemerCaveats = [
+    ...caveats,
+    ...existingDelegations.flatMap((enforcer) => enforcer.caveats),
+  ].filter(
+    ({ enforcer }) => enforcer.toLowerCase() === redeemerAddressLowerCase,
+  );
+
+  const hasRedeemerCaveatInChainOrSpecifiedCaveats =
+    existingRedeemerCaveats.length > 0;
+
+  if (!facilitatorAddresses || facilitatorAddresses.length === 0) {
+    // if no facilitators are specified, we must at least have some constraints on allowed redeemer
+    if (!hasRedeemerCaveatInChainOrSpecifiedCaveats) {
+      throw new Error(
+        'Redeemer must be constrained, either in the specified `caveats`, `parentPermissionContext`, or the `PaymentRequirements` as `extra.facilitatorAddresses`.',
+      );
+    }
+
+    return caveats;
+  }
+
+  const facilitatorAddressesLowerCase = facilitatorAddresses.map((address) =>
+    address.toLowerCase(),
+  );
+
+  // if any of the existing redeemer caveats only specify facilitator addresses, we don't need to add a new caveat
+  const hasSufficientlyConstrainedRedeemerCaveat = existingRedeemerCaveats.some(
+    (caveat) => {
+      const allowedRedeemerAddresses = decodeRedeemerTerms(
+        caveat.terms,
+      ).redeemers.map((redeemer) => redeemer.toLowerCase());
+
+      return allowedRedeemerAddresses.every((allowedRedeemerAddress) =>
+        facilitatorAddressesLowerCase.includes(allowedRedeemerAddress),
+      );
+    },
+  );
+
+  if (hasSufficientlyConstrainedRedeemerCaveat) {
+    return caveats;
+  }
+
+  const redeemerCaveat: Caveat = {
+    enforcer: redeemerEnforcer,
+    terms: createRedeemerTerms({ redeemers: facilitatorAddresses }),
+    args: '0x',
+  };
+
+  return [...caveats, redeemerCaveat];
+};
+
 const resolveDelegationCreationContext = async (
   config: x402DelegationProviderConfig,
   requirements: PaymentRequirements,
@@ -117,41 +201,22 @@ const resolveDelegationCreationContext = async (
     | Hex[]
     | undefined;
 
-  if (!facilitatorAddresses || facilitatorAddresses.length === 0) {
-    throw new Error('Facilitator addresses are required');
-  }
+  const existingDelegations = parentPermissionContext
+    ? decodeDelegations(parentPermissionContext)
+    : [];
 
-  const {
-    DelegationManager: delegationManager,
-    caveatEnforcers: { RedeemerEnforcer },
-  } = config.environment;
-
-  if (!RedeemerEnforcer) {
-    throw new Error('RedeemerEnforcer not found in environment');
-  }
-
-  const redeemerCaveat: Caveat = {
-    enforcer: RedeemerEnforcer,
-    terms: createRedeemerTerms({ redeemers: facilitatorAddresses }),
-    args: '0x',
-  };
-
-  const caveats = [
-    ...resolveCaveats({
-      environment: config.environment,
-      caveats: caveatsConfig,
-      // we need to resolve the caveats so that we can add more, the scope is added in the createDelegation call
-      isScopeOptional: true,
-    }),
-    redeemerCaveat,
-  ];
+  const { DelegationManager: delegationManager } = config.environment;
+  const caveats = resolveX402DelegationCaveats({
+    environment: config.environment,
+    caveatsConfig,
+    existingDelegations,
+    facilitatorAddresses,
+  });
 
   let createDelegationConfig: Parameters<typeof createOpenDelegation>[0];
-  let existingDelegations: Delegation[];
 
   if (parentPermissionContext) {
-    const decodedPermissionContext = decodeDelegations(parentPermissionContext);
-    const parentDelegation = decodedPermissionContext[0];
+    const parentDelegation = existingDelegations[0];
 
     if (!parentDelegation) {
       throw new Error('Parent permission context is not a valid delegation');
@@ -165,8 +230,6 @@ const resolveDelegationCreationContext = async (
       scope,
       parentDelegation,
     };
-
-    existingDelegations = decodedPermissionContext;
   } else {
     createDelegationConfig = {
       environment: config.environment,
@@ -175,8 +238,6 @@ const resolveDelegationCreationContext = async (
       salt,
       scope,
     };
-
-    existingDelegations = [];
   }
 
   return {

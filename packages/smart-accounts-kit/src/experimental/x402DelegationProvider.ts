@@ -1,26 +1,14 @@
-import {
-  createRedeemerTerms,
-  decodeRedeemerTerms,
-} from '@metamask/delegation-core';
-import type { Account, Address, Hex } from 'viem';
+import { parseCaipChainId } from '@metamask/utils';
+import type { Account, Hex } from 'viem';
 
 import type { Caveats } from '../caveatBuilder';
-import { resolveCaveats } from '../caveatBuilder';
-import type { ScopeConfig } from '../caveatBuilder/scope';
-import { ScopeType } from '../constants';
 import {
   createOpenDelegation,
-  decodeDelegations,
   encodeDelegations,
   prepareSignDelegationTypedData,
 } from '../delegation';
-import type {
-  Caveat,
-  Delegation,
-  PermissionContext,
-  SmartAccountsEnvironment,
-} from '../types';
-import { generateSalt } from '../utils/';
+import type { PermissionContext, SmartAccountsEnvironment } from '../types';
+import { resolveDelegationCreationContext } from './x402DelegationProviderUtils';
 
 /**
  * Payment requirement details supplied by an x402 server challenge.
@@ -45,9 +33,9 @@ export type PaymentRequirements = {
  * context to use for execution, and the delegator account that signed it.
  */
 export type x402DelegationProviderPaymentPayload = {
-  delegationManager: `0x${string}`;
-  permissionContext: `0x${string}`;
-  delegator: `0x${string}`;
+  delegationManager: Hex;
+  permissionContext: Hex;
+  delegator: Hex;
 };
 
 /**
@@ -57,20 +45,14 @@ export type x402DelegationProvider = (
   paymentRequirements: PaymentRequirements,
 ) => Promise<x402DelegationProviderPaymentPayload>;
 
-type Deferred<TResult> = (requirements: PaymentRequirements) => TResult;
-
-type MaybeDeferred<TResult> = TResult | Deferred<TResult>;
-
-const resolveMaybeDeferred = async <TResult>(
-  maybeDeferred: MaybeDeferred<TResult>,
-  requirements: PaymentRequirements,
-): Promise<TResult> => {
-  if (typeof maybeDeferred === 'function') {
-    return (maybeDeferred as Deferred<TResult>)(requirements);
-  }
-
-  return maybeDeferred;
-};
+/**
+ * Value that can be provided eagerly or derived lazily from payment requirements.
+ *
+ * @template TResult - Resolved value type.
+ */
+export type MaybeDeferred<TResult> =
+  | TResult
+  | ((requirements: PaymentRequirements) => TResult);
 
 /**
  * Configuration used to create a x402DelegationProvider.
@@ -84,170 +66,6 @@ export type x402DelegationProviderConfig = {
   salt?: Hex;
   caveats?: MaybeDeferred<Caveats>;
   parentPermissionContext?: MaybeDeferred<PermissionContext>;
-};
-
-type DelegationCreationContext = {
-  account: Account;
-  delegationManager: Address;
-  existingDelegations: Delegation[];
-  createDelegationConfig: Parameters<typeof createOpenDelegation>[0];
-};
-
-type Resolvex402DelegationCaveatsParams = {
-  environment: SmartAccountsEnvironment;
-  caveatsConfig: Caveats | undefined;
-  existingDelegations: Delegation[];
-  facilitatorAddresses: Hex[] | undefined;
-};
-
-const normalizeAddress = (address: Hex): string => address.toLowerCase();
-
-const isSubset = (subset: string[], superset: string[]): boolean =>
-  subset.every((item) => superset.includes(item));
-
-const resolvex402DelegationCaveats = ({
-  environment,
-  caveatsConfig,
-  existingDelegations,
-  facilitatorAddresses,
-}: Resolvex402DelegationCaveatsParams): Caveat[] => {
-  const {
-    caveatEnforcers: { RedeemerEnforcer: redeemerEnforcer },
-  } = environment;
-
-  if (!redeemerEnforcer) {
-    throw new Error('RedeemerEnforcer not found in environment');
-  }
-
-  const redeemerAddressNormalized = normalizeAddress(redeemerEnforcer);
-
-  const caveats = resolveCaveats({
-    environment,
-    caveats: caveatsConfig,
-    // Resolve caveats first so we can append a redeemer caveat when needed.
-    // Scope is still attached later during delegation creation.
-    isScopeOptional: true,
-  });
-
-  const redeemerCaveats = [
-    ...caveats,
-    ...existingDelegations.flatMap((delegation) => delegation.caveats),
-  ].filter(
-    ({ enforcer }) => normalizeAddress(enforcer) === redeemerAddressNormalized,
-  );
-
-  const hasExistingRedeemerConstraint = redeemerCaveats.length > 0;
-
-  if (!facilitatorAddresses || facilitatorAddresses.length === 0) {
-    // Without facilitators, a redeemer constraint must already exist.
-    if (!hasExistingRedeemerConstraint) {
-      throw new Error(
-        'Redeemer must be constrained, either in the specified `caveats`, `parentPermissionContext`, or the `PaymentRequirements` as `extra.facilitatorAddresses`.',
-      );
-    }
-
-    return caveats;
-  }
-
-  const facilitatorAddressesLowerCase =
-    facilitatorAddresses.map(normalizeAddress);
-
-  // If an existing redeemer caveat is already within facilitator bounds, no new caveat is needed.
-  const hasSufficientlyConstrainedRedeemerCaveat = redeemerCaveats.some(
-    (caveat) => {
-      const allowedRedeemerAddresses = decodeRedeemerTerms(
-        caveat.terms,
-      ).redeemers.map(normalizeAddress);
-
-      return isSubset(allowedRedeemerAddresses, facilitatorAddressesLowerCase);
-    },
-  );
-
-  if (hasSufficientlyConstrainedRedeemerCaveat) {
-    return caveats;
-  }
-
-  const redeemerCaveat: Caveat = {
-    enforcer: redeemerEnforcer,
-    terms: createRedeemerTerms({ redeemers: facilitatorAddresses }),
-    args: '0x',
-  };
-
-  return [...caveats, redeemerCaveat];
-};
-
-const resolveDelegationCreationContext = async (
-  config: x402DelegationProviderConfig,
-  requirements: PaymentRequirements,
-): Promise<DelegationCreationContext> => {
-  const caveatsConfig = await resolveMaybeDeferred(
-    config.caveats,
-    requirements,
-  );
-  const parentPermissionContext = await resolveMaybeDeferred(
-    config.parentPermissionContext,
-    requirements,
-  );
-
-  const { account } = config;
-  const from = config.from ?? account.address;
-  const salt = config.salt ?? generateSalt();
-
-  const scope = {
-    type: ScopeType.Erc20TransferAmount,
-    tokenAddress: requirements.asset as Hex,
-    maxAmount: BigInt(requirements.amount),
-  } as ScopeConfig;
-
-  const facilitatorAddresses = requirements.extra?.facilitatorAddresses as
-    | Hex[]
-    | undefined;
-
-  const existingDelegations = parentPermissionContext
-    ? decodeDelegations(parentPermissionContext)
-    : [];
-
-  const { DelegationManager: delegationManager } = config.environment;
-  const caveats = resolvex402DelegationCaveats({
-    environment: config.environment,
-    caveatsConfig,
-    existingDelegations,
-    facilitatorAddresses,
-  });
-
-  let createDelegationConfig: Parameters<typeof createOpenDelegation>[0];
-
-  if (parentPermissionContext) {
-    const parentDelegation = existingDelegations[0];
-
-    if (!parentDelegation) {
-      throw new Error('Parent permission context is not a valid delegation');
-    }
-
-    createDelegationConfig = {
-      environment: config.environment,
-      from,
-      caveats,
-      salt,
-      scope,
-      parentDelegation,
-    };
-  } else {
-    createDelegationConfig = {
-      environment: config.environment,
-      from,
-      caveats,
-      salt,
-      scope,
-    };
-  }
-
-  return {
-    account,
-    delegationManager,
-    existingDelegations,
-    createDelegationConfig,
-  };
 };
 
 /**
@@ -275,8 +93,15 @@ export function createx402DelegationProvider(
 
     const delegation = createOpenDelegation(createDelegationConfig);
 
-    // todo: extract chainId from the network parameter
-    const chainId = requirements.network as unknown as number;
+    const { namespace, reference } = parseCaipChainId(
+      requirements.network as `${string}:${string}`,
+    );
+
+    if (namespace !== 'eip155') {
+      throw new Error('Unsupported chain namespace');
+    }
+
+    const chainId = parseInt(reference, 10);
 
     const typedData = prepareSignDelegationTypedData({
       delegationManager,

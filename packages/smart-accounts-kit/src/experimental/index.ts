@@ -10,5 +10,6 @@ export {
   type x402DelegationProvider,
   type x402DelegationProviderConfig,
   type x402DelegationProviderPaymentPayload,
-  type PaymentRequirements as x402DelegationProviderPaymentRequirements,
+  type PaymentRequirements,
+  type MaybeDeferred,
 } from './x402DelegationProvider';

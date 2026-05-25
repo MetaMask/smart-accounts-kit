@@ -1,5 +1,4 @@
 import { type Address, getAddress } from 'viem';
-
 import type { x402PaymentRequirements } from './x402Client';
 
 export type x402Erc7710ServerConfig = {

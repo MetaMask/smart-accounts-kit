@@ -19,6 +19,7 @@ const delegationMocks = vi.hoisted(() => ({
 }));
 
 const delegationCoreMocks = vi.hoisted(() => ({
+  createAllowedCalldataTerms: vi.fn(),
   createRedeemerTerms: vi.fn(),
   decodeRedeemerTerms: vi.fn(),
 }));
@@ -43,10 +44,12 @@ const mockDelegationManager =
   '0x1000000000000000000000000000000000000001' as Hex;
 const mockRedeemerEnforcer =
   '0x2000000000000000000000000000000000000002' as Hex;
+const mockPayeeEnforcer = '0x2000000000000000000000000000000000000004' as Hex;
 const mockDelegator = '0x3000000000000000000000000000000000000003' as Hex;
 const mockSignature = '0xabc123' as Hex;
 const mockTypedData = { domain: {}, message: {} };
 const mockPermissionContext = '0xfeed' as Hex;
+const mockAllowedCalldataTerms = '0x3333' as Hex;
 const mockGeneratedSalt =
   '0x1111111111111111111111111111111111111111111111111111111111111111' as Hex;
 const mockAuthority =
@@ -54,7 +57,7 @@ const mockAuthority =
 
 const mockRequirements: PaymentRequirements = {
   scheme: 'exact',
-  network: '1',
+  network: 'eip155:1',
   asset: '0x4000000000000000000000000000000000000004',
   amount: '500',
   payTo: '0x5000000000000000000000000000000000000005',
@@ -81,6 +84,7 @@ const createMockEnvironment = (
     DelegationManager: mockDelegationManager,
     caveatEnforcers: {
       RedeemerEnforcer: mockRedeemerEnforcer,
+      AllowedCalldataEnforcer: mockPayeeEnforcer,
     },
     ...overrides,
   }) as SmartAccountsEnvironment;
@@ -96,6 +100,9 @@ describe('createx402DelegationProvider', () => {
         args: '0x',
       },
     ]);
+    delegationCoreMocks.createAllowedCalldataTerms.mockReturnValue(
+      mockAllowedCalldataTerms,
+    );
     delegationCoreMocks.createRedeemerTerms.mockReturnValue('0x22');
     delegationCoreMocks.decodeRedeemerTerms.mockImplementation((terms: Hex) => {
       if (terms === '0x01') {
@@ -163,7 +170,7 @@ describe('createx402DelegationProvider', () => {
     expect(delegationMocks.prepareSignDelegationTypedData).toHaveBeenCalledWith(
       {
         delegationManager: mockDelegationManager,
-        chainId: mockRequirements.network,
+        chainId: 1,
         delegation: delegationMocks.createOpenDelegation.mock.results[0]?.value,
       },
     );
@@ -179,6 +186,44 @@ describe('createx402DelegationProvider', () => {
       permissionContext: mockPermissionContext,
       delegator: mockDelegator,
     });
+  });
+
+  it('parses chainId from an eip155 CAIP network identifier', async () => {
+    const account = createMockAccount();
+    const environment = createMockEnvironment();
+    const provider = createx402DelegationProvider({
+      account,
+      environment,
+      caveats: [],
+    });
+
+    await provider({
+      ...mockRequirements,
+      network: 'eip155:8453',
+    });
+
+    expect(delegationMocks.prepareSignDelegationTypedData).toHaveBeenCalledWith(
+      expect.objectContaining({
+        chainId: 8453,
+      }),
+    );
+  });
+
+  it('throws when network namespace is not eip155', async () => {
+    const account = createMockAccount();
+    const environment = createMockEnvironment();
+    const provider = createx402DelegationProvider({
+      account,
+      environment,
+      caveats: [],
+    });
+
+    await expect(
+      provider({
+        ...mockRequirements,
+        network: 'cosmos:cosmoshub-4',
+      }),
+    ).rejects.toThrow('Unsupported chain namespace');
   });
 
   it('uses deferred caveats and deferred parent permission context', async () => {
@@ -275,167 +320,6 @@ describe('createx402DelegationProvider', () => {
       parentDelegation,
       existingDelegation,
     ]);
-  });
-
-  describe('redeemer caveat resolution', () => {
-    it('throws when facilitators are missing and no redeemer caveat exists', async () => {
-      const account = createMockAccount();
-      const provider = createx402DelegationProvider({
-        account,
-        environment: createMockEnvironment(),
-      });
-
-      await expect(
-        provider({
-          ...mockRequirements,
-          extra: undefined,
-        }),
-      ).rejects.toThrow('Redeemer must be constrained');
-    });
-
-    it('allows missing facilitators when parent chain has a redeemer caveat', async () => {
-      const account = createMockAccount();
-      delegationMocks.decodeDelegations.mockReturnValue([
-        {
-          delegate: '0xde100000000000000000000000000000000000e1',
-          delegator: '0xde200000000000000000000000000000000000e2',
-          authority: mockAuthority,
-          caveats: [
-            {
-              enforcer: mockRedeemerEnforcer,
-              terms: '0x01',
-              args: '0x',
-            },
-          ],
-          salt: '0x99',
-          signature: '0xaa',
-        },
-      ]);
-      const provider = createx402DelegationProvider({
-        account,
-        environment: createMockEnvironment(),
-        parentPermissionContext: '0xee' as Hex,
-      });
-
-      await expect(
-        provider({
-          ...mockRequirements,
-          extra: undefined,
-        }),
-      ).resolves.toStrictEqual({
-        delegationManager: mockDelegationManager,
-        permissionContext: mockPermissionContext,
-        delegator: mockDelegator,
-      });
-      expect(delegationCoreMocks.createRedeemerTerms).not.toHaveBeenCalled();
-    });
-
-    it('does not add a redeemer caveat when existing redeemers are subset of facilitators', async () => {
-      const account = createMockAccount();
-      delegationMocks.decodeDelegations.mockReturnValue([
-        {
-          delegate: '0xde100000000000000000000000000000000000e1',
-          delegator: '0xde200000000000000000000000000000000000e2',
-          authority: mockAuthority,
-          caveats: [
-            {
-              enforcer: mockRedeemerEnforcer,
-              terms: '0x01',
-              args: '0x',
-            },
-          ],
-          salt: '0x99',
-          signature: '0xaa',
-        },
-      ]);
-      const provider = createx402DelegationProvider({
-        account,
-        environment: createMockEnvironment(),
-        parentPermissionContext: '0xee' as Hex,
-      });
-
-      await provider(mockRequirements);
-
-      const createCallArg =
-        delegationMocks.createOpenDelegation.mock.calls[0]?.[0];
-      expect(createCallArg.caveats).toStrictEqual([
-        {
-          enforcer: '0x9000000000000000000000000000000000000009',
-          terms: '0x11',
-          args: '0x',
-        },
-      ]);
-      expect(delegationCoreMocks.createRedeemerTerms).not.toHaveBeenCalled();
-    });
-
-    it('adds a redeemer caveat when existing redeemers are not subset of facilitators', async () => {
-      const account = createMockAccount();
-      delegationMocks.decodeDelegations.mockReturnValue([
-        {
-          delegate: '0xde100000000000000000000000000000000000e1',
-          delegator: '0xde200000000000000000000000000000000000e2',
-          authority: mockAuthority,
-          caveats: [
-            {
-              enforcer: mockRedeemerEnforcer,
-              terms: '0x02',
-              args: '0x',
-            },
-          ],
-          salt: '0x99',
-          signature: '0xaa',
-        },
-      ]);
-      const provider = createx402DelegationProvider({
-        account,
-        environment: createMockEnvironment(),
-        parentPermissionContext: '0xee' as Hex,
-      });
-
-      await provider(mockRequirements);
-
-      expect(delegationCoreMocks.createRedeemerTerms).toHaveBeenCalledWith({
-        redeemers: mockRequirements.extra?.facilitatorAddresses,
-      });
-      const createCallArg =
-        delegationMocks.createOpenDelegation.mock.calls[0]?.[0];
-      expect(createCallArg.caveats).toContainEqual({
-        enforcer: mockRedeemerEnforcer,
-        terms: '0x22',
-        args: '0x',
-      });
-    });
-  });
-
-  it('throws when facilitator addresses are missing', async () => {
-    const account = createMockAccount();
-    const provider = createx402DelegationProvider({
-      account,
-      environment: createMockEnvironment(),
-    });
-
-    await expect(
-      provider({
-        ...mockRequirements,
-        extra: undefined,
-      }),
-    ).rejects.toThrow('Redeemer must be constrained');
-  });
-
-  it('throws when redeemer enforcer is missing from environment', async () => {
-    const account = createMockAccount();
-    const provider = createx402DelegationProvider({
-      account,
-      environment: createMockEnvironment({
-        caveatEnforcers: {
-          RedeemerEnforcer: undefined as unknown as Hex,
-        },
-      }),
-    });
-
-    await expect(provider(mockRequirements)).rejects.toThrow(
-      'RedeemerEnforcer not found in environment',
-    );
   });
 
   it('throws when parent permission context does not decode into a delegation', async () => {

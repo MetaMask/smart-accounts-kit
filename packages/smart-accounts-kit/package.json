@@ -128,6 +128,7 @@
     "@metamask/delegation-abis": "^1.1.0",
     "@metamask/delegation-core": "^2.2.1",
     "@metamask/delegation-deployments": "^1.4.0",
+    "@metamask/utils": "^11.4.0",
     "openapi-fetch": "^0.13.5",
     "ox": "0.8.1"
   },

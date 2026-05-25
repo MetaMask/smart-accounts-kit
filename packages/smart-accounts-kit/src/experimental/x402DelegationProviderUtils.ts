@@ -3,7 +3,7 @@ import {
   createRedeemerTerms,
   decodeRedeemerTerms,
 } from '@metamask/delegation-core';
-import type { Account, Address, Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 
 import type { Caveats } from '../caveatBuilder';
 import { resolveCaveats } from '../caveatBuilder';
@@ -16,8 +16,16 @@ import type {
   PermissionContext,
   SmartAccountsEnvironment,
 } from '../types';
+import type {
+  MaybeDeferred,
+  PaymentRequirements,
+  x402DelegationProviderConfig,
+} from './x402DelegationProviderTypes';
 import { generateSalt } from '../utils/';
 
+/**
+ * Inputs for redeemer constraint enforcement.
+ */
 type EnsureRedeemerSufficientlyConstrainedParams = {
   redeemerEnforcer: Hex;
   caveats: Caveat[];
@@ -25,6 +33,9 @@ type EnsureRedeemerSufficientlyConstrainedParams = {
   facilitatorAddresses: Hex[] | undefined;
 };
 
+/**
+ * Inputs for payee constraint enforcement.
+ */
 type EnsurePayeeSufficientlyConstrainedParams = {
   allowedCalldataEnforcer: Hex;
   caveats: Caveat[];
@@ -32,46 +43,19 @@ type EnsurePayeeSufficientlyConstrainedParams = {
   payee: Hex;
 };
 
-type Deferred<TResult, TRequirements> = (
-  requirements: TRequirements,
-) => TResult;
-
-type MaybeDeferred<TResult, TRequirements> =
-  | TResult
-  | Deferred<TResult, TRequirements>;
-
-type ResolveDelegationCreationContextRequirements = {
-  scheme: string;
-  network: string;
-  asset: string;
-  amount: string;
-  payTo: string;
-  maxTimeoutSeconds: number;
-  extra?: Record<string, unknown>;
-};
-
-type ResolveDelegationCreationContextConfig = {
-  account: Account;
-  environment: SmartAccountsEnvironment;
-  from?: Hex;
-  salt?: Hex;
-  caveats?: MaybeDeferred<
-    Caveats | undefined,
-    ResolveDelegationCreationContextRequirements
-  >;
-  parentPermissionContext?: MaybeDeferred<
-    PermissionContext | undefined,
-    ResolveDelegationCreationContextRequirements
-  >;
-};
-
+/**
+ * Resolved context required to build and sign an x402 delegation.
+ */
 export type DelegationCreationContext = {
-  account: Account;
+  account: x402DelegationProviderConfig['account'];
   delegationManager: Address;
   existingDelegations: Delegation[];
   createDelegationConfig: Parameters<typeof createOpenDelegation>[0];
 };
 
+/**
+ * Inputs for resolving delegation caveats with x402-specific constraints.
+ */
 export type Resolvex402DelegationCaveatsParams = {
   environment: SmartAccountsEnvironment;
   caveatsConfig: Caveats | undefined;
@@ -80,25 +64,58 @@ export type Resolvex402DelegationCaveatsParams = {
   payee: Hex;
 };
 
-const resolveMaybeDeferred = async <TResult, TRequirements>(
-  maybeDeferred: MaybeDeferred<TResult, TRequirements> | undefined,
-  requirements: TRequirements,
+/**
+ * Resolves eager or deferred values against payment requirements.
+ *
+ * @param maybeDeferred - Value or async resolver function.
+ * @param requirements - Payment requirements passed to deferred resolvers.
+ * @returns The resolved value, or undefined when no value is provided.
+ */
+const resolveMaybeDeferred = async <TResult>(
+  maybeDeferred: MaybeDeferred<TResult> | undefined,
+  requirements: PaymentRequirements,
 ): Promise<TResult | undefined> => {
   if (typeof maybeDeferred === 'function') {
-    return (maybeDeferred as Deferred<TResult, TRequirements>)(requirements);
+    const deferred = maybeDeferred as (
+      deferredRequirements: PaymentRequirements,
+    ) => Promise<TResult>;
+    return await deferred(requirements);
   }
 
   return maybeDeferred;
 };
 
-// ERC-20 transfer(to, value), `to` parameter starts at index 4
+/**
+ * ERC-20 `transfer(address to, uint256 value)` calldata index for `to`.
+ */
 const TRANSFER_PAYEE_INDEX = 4;
 
+/**
+ * Normalizes an address-like hex string for case-insensitive comparisons.
+ *
+ * @param address - Address value to normalize.
+ * @returns Lowercased hex string.
+ */
 const normalizeAddress = (address: Hex): string => address.toLowerCase();
 
+/**
+ * Checks whether every item in `subset` appears in `superset`.
+ *
+ * @param subset - Candidate subset values.
+ * @param superset - Candidate superset values.
+ * @returns True when `subset` is fully contained in `superset`.
+ */
 const isSubset = (subset: string[], superset: string[]): boolean =>
   subset.every((item) => superset.includes(item));
 
+/**
+ * Returns whether any caveat in local or inherited delegations matches a predicate.
+ *
+ * @param caveats - Current caveat list.
+ * @param delegations - Existing delegations whose caveats should also be searched.
+ * @param match - Predicate used to match caveats.
+ * @returns True when at least one caveat satisfies `match`.
+ */
 const hasMatchingCaveats = (
   caveats: Caveat[],
   delegations: Delegation[],
@@ -298,17 +315,15 @@ export const resolvex402DelegationCaveats = ({
  * @returns The resolved context used to create and sign a delegation.
  */
 export const resolveDelegationCreationContext = async (
-  config: ResolveDelegationCreationContextConfig,
-  requirements: ResolveDelegationCreationContextRequirements,
+  config: x402DelegationProviderConfig,
+  requirements: PaymentRequirements,
 ): Promise<DelegationCreationContext> => {
-  const caveatsConfig = await resolveMaybeDeferred(
+  const caveatsConfig: Caveats | undefined = await resolveMaybeDeferred(
     config.caveats,
     requirements,
   );
-  const parentPermissionContext = await resolveMaybeDeferred(
-    config.parentPermissionContext,
-    requirements,
-  );
+  const parentPermissionContext: PermissionContext | undefined =
+    await resolveMaybeDeferred(config.parentPermissionContext, requirements);
 
   const { account } = config;
   const from = config.from ?? account.address;

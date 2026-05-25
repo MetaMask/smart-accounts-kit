@@ -3,7 +3,7 @@ import {
   createRedeemerTerms,
 } from '@metamask/delegation-core';
 import type { Hex, Account } from 'viem';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   ensurePayeeSufficientlyConstrained,
@@ -17,15 +17,15 @@ import type {
   SmartAccountsEnvironment,
 } from '../../src/types';
 
-const redeemerEnforcer = '0x1000000000000000000000000000000000000001' as Hex;
+const redeemerEnforcer = '0x1000000000000000000000000000000000000001' as const;
 const allowedCalldataEnforcer =
-  '0x2000000000000000000000000000000000000002' as Hex;
-const facilitatorA = '0x3000000000000000000000000000000000000003' as Hex;
-const facilitatorB = '0x4000000000000000000000000000000000000004' as Hex;
-const facilitatorC = '0x5000000000000000000000000000000000000005' as Hex;
-const payee = '0x6000000000000000000000000000000000000006' as Hex;
-const otherPayee = '0x7000000000000000000000000000000000000007' as Hex;
-const rootAuthority = `0x${'00'.repeat(32)}`;
+  '0x2000000000000000000000000000000000000002' as const;
+const facilitatorA = '0x3000000000000000000000000000000000000003' as const;
+const facilitatorB = '0x4000000000000000000000000000000000000004' as const;
+const facilitatorC = '0x5000000000000000000000000000000000000005' as const;
+const payee = '0x6000000000000000000000000000000000000006' as const;
+const otherPayee = '0x7000000000000000000000000000000000000007' as const;
+const rootAuthority = `0x${'00'.repeat(32)}` as const;
 const baseEnvironment = {
   DelegationManager: '0xa00000000000000000000000000000000000000a',
   EntryPoint: '0xa10000000000000000000000000000000000000a',
@@ -35,7 +35,7 @@ const baseEnvironment = {
     RedeemerEnforcer: redeemerEnforcer,
     AllowedCalldataEnforcer: allowedCalldataEnforcer,
   },
-} as unknown as SmartAccountsEnvironment;
+} as SmartAccountsEnvironment;
 const mockAccount = {
   address: '0x8000000000000000000000000000000000000008',
 } as unknown as Account;
@@ -261,6 +261,99 @@ describe('x402DelegationProviderUtils', () => {
   });
 
   describe('resolveDelegationCreationContext', () => {
+    it('uses deferred caveats and deferred parent permission context', async () => {
+      const parentDelegation = makeDelegation([]);
+      const deferredCaveats = vi.fn(async () => []);
+      const deferredParentPermissionContext = vi.fn(
+        async () => [parentDelegation] as Delegation[],
+      );
+
+      const result = await resolveDelegationCreationContext(
+        {
+          account: mockAccount,
+          environment: baseEnvironment,
+          caveats: deferredCaveats,
+          parentPermissionContext: deferredParentPermissionContext,
+          salt: `0x${'33'.repeat(32)}`,
+        },
+        {
+          scheme: 'exact',
+          network: 'eip155:1',
+          asset: facilitatorA,
+          amount: '1',
+          payTo: payee,
+          maxTimeoutSeconds: 120,
+          extra: { facilitatorAddresses: [facilitatorA] },
+        },
+      );
+
+      expect(deferredCaveats).toHaveBeenCalledOnce();
+      expect(deferredParentPermissionContext).toHaveBeenCalledOnce();
+      expect(result.createDelegationConfig).toEqual(
+        expect.objectContaining({
+          parentDelegation,
+        }),
+      );
+    });
+
+    it('uses explicit from/salt and parent delegation when provided', async () => {
+      const parentDelegation = makeDelegation([]);
+      const from = '0xb00000000000000000000000000000000000000b' as const;
+      const salt = `0x${'44'.repeat(32)}` as const;
+
+      const result = await resolveDelegationCreationContext(
+        {
+          account: mockAccount,
+          environment: baseEnvironment,
+          from,
+          salt,
+          caveats: [],
+          parentPermissionContext: [parentDelegation],
+        },
+        {
+          scheme: 'exact',
+          network: 'eip155:1',
+          asset: facilitatorA,
+          amount: '1',
+          payTo: payee,
+          maxTimeoutSeconds: 120,
+          extra: { facilitatorAddresses: [facilitatorA] },
+        },
+      );
+
+      expect(result.createDelegationConfig).toEqual(
+        expect.objectContaining({
+          from,
+          salt,
+          parentDelegation,
+        }),
+      );
+      expect(result.existingDelegations).toStrictEqual([parentDelegation]);
+    });
+
+    it('throws when parent permission context does not decode into a delegation', async () => {
+      await expect(
+        resolveDelegationCreationContext(
+          {
+            account: mockAccount,
+            environment: baseEnvironment,
+            caveats: [],
+            parentPermissionContext: [],
+            salt: `0x${'33'.repeat(32)}`,
+          },
+          {
+            scheme: 'exact',
+            network: 'eip155:1',
+            asset: facilitatorA,
+            amount: '1',
+            payTo: payee,
+            maxTimeoutSeconds: 120,
+            extra: { facilitatorAddresses: [facilitatorA] },
+          },
+        ),
+      ).rejects.toThrow('Parent permission context is not a valid delegation');
+    });
+
     it('throws when facilitators are missing and no redeemer caveat exists', async () => {
       await expect(
         resolveDelegationCreationContext(

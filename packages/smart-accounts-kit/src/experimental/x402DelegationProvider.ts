@@ -1,72 +1,25 @@
 import { parseCaipChainId } from '@metamask/utils';
-import type { Account, Hex } from 'viem';
 
-import type { Caveats } from '../caveatBuilder';
 import {
   createOpenDelegation,
   encodeDelegations,
   prepareSignDelegationTypedData,
 } from '../delegation';
-import type { PermissionContext, SmartAccountsEnvironment } from '../types';
+import type {
+  PaymentRequirements,
+  x402DelegationProvider,
+  x402DelegationProviderConfig,
+  x402DelegationProviderPaymentPayload,
+} from './x402DelegationProviderTypes';
 import { resolveDelegationCreationContext } from './x402DelegationProviderUtils';
 
-/**
- * Payment requirement details supplied by an x402 server challenge.
- *
- * These values are used to scope and construct the delegation that will be
- * returned by a {@link x402DelegationProvider}.
- */
-export type PaymentRequirements = {
-  scheme: string;
-  network: string;
-  asset: string;
-  amount: string;
-  payTo: string;
-  maxTimeoutSeconds: number;
-  extra?: Record<string, unknown>;
-};
-
-/**
- * Encoded delegation response consumed by x402 payment flows.
- *
- * The payload includes the delegation manager address, the encoded permission
- * context to use for execution, and the delegator account that signed it.
- */
-export type x402DelegationProviderPaymentPayload = {
-  delegationManager: Hex;
-  permissionContext: Hex;
-  delegator: Hex;
-};
-
-/**
- * Function that turns payment requirements into a signed delegation payload.
- */
-export type x402DelegationProvider = (
-  paymentRequirements: PaymentRequirements,
-) => Promise<x402DelegationProviderPaymentPayload>;
-
-/**
- * Value that can be provided eagerly or derived lazily from payment requirements.
- *
- * @template TResult - Resolved value type.
- */
-export type MaybeDeferred<TResult> =
-  | TResult
-  | ((requirements: PaymentRequirements) => TResult);
-
-/**
- * Configuration used to create a x402DelegationProvider.
- *
- * `account` is required and is used for signing the delegation.
- */
-export type x402DelegationProviderConfig = {
-  account: Account;
-  environment: SmartAccountsEnvironment;
-  from?: Hex;
-  salt?: Hex;
-  caveats?: MaybeDeferred<Caveats>;
-  parentPermissionContext?: MaybeDeferred<PermissionContext>;
-};
+export type {
+  MaybeDeferred,
+  PaymentRequirements,
+  x402DelegationProvider,
+  x402DelegationProviderConfig,
+  x402DelegationProviderPaymentPayload,
+} from './x402DelegationProviderTypes';
 
 /**
  * Creates a delegation provider function for x402 payment requirements.

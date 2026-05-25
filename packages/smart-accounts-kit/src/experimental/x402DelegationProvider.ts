@@ -93,19 +93,24 @@ type DelegationCreationContext = {
   createDelegationConfig: Parameters<typeof createOpenDelegation>[0];
 };
 
-type ResolveX402DelegationCaveatsParams = {
+type Resolvex402DelegationCaveatsParams = {
   environment: SmartAccountsEnvironment;
   caveatsConfig: Caveats | undefined;
   existingDelegations: Delegation[];
   facilitatorAddresses: Hex[] | undefined;
 };
 
-const resolveX402DelegationCaveats = ({
+const normalizeAddress = (address: Hex): string => address.toLowerCase();
+
+const isSubset = (subset: string[], superset: string[]): boolean =>
+  subset.every((item) => superset.includes(item));
+
+const resolvex402DelegationCaveats = ({
   environment,
   caveatsConfig,
   existingDelegations,
   facilitatorAddresses,
-}: ResolveX402DelegationCaveatsParams): Caveat[] => {
+}: Resolvex402DelegationCaveatsParams): Caveat[] => {
   const {
     caveatEnforcers: { RedeemerEnforcer: redeemerEnforcer },
   } = environment;
@@ -114,28 +119,28 @@ const resolveX402DelegationCaveats = ({
     throw new Error('RedeemerEnforcer not found in environment');
   }
 
-  const redeemerAddressLowerCase = redeemerEnforcer.toLowerCase();
+  const redeemerAddressNormalized = normalizeAddress(redeemerEnforcer);
 
   const caveats = resolveCaveats({
     environment,
     caveats: caveatsConfig,
-    // we need to resolve the caveats so that we can add more, the scope is added in the createDelegation call
+    // Resolve caveats first so we can append a redeemer caveat when needed.
+    // Scope is still attached later during delegation creation.
     isScopeOptional: true,
   });
 
-  const existingRedeemerCaveats = [
+  const redeemerCaveats = [
     ...caveats,
-    ...existingDelegations.flatMap((enforcer) => enforcer.caveats),
+    ...existingDelegations.flatMap((delegation) => delegation.caveats),
   ].filter(
-    ({ enforcer }) => enforcer.toLowerCase() === redeemerAddressLowerCase,
+    ({ enforcer }) => normalizeAddress(enforcer) === redeemerAddressNormalized,
   );
 
-  const hasRedeemerCaveatInChainOrSpecifiedCaveats =
-    existingRedeemerCaveats.length > 0;
+  const hasExistingRedeemerConstraint = redeemerCaveats.length > 0;
 
   if (!facilitatorAddresses || facilitatorAddresses.length === 0) {
-    // if no facilitators are specified, we must at least have some constraints on allowed redeemer
-    if (!hasRedeemerCaveatInChainOrSpecifiedCaveats) {
+    // Without facilitators, a redeemer constraint must already exist.
+    if (!hasExistingRedeemerConstraint) {
       throw new Error(
         'Redeemer must be constrained, either in the specified `caveats`, `parentPermissionContext`, or the `PaymentRequirements` as `extra.facilitatorAddresses`.',
       );
@@ -144,20 +149,17 @@ const resolveX402DelegationCaveats = ({
     return caveats;
   }
 
-  const facilitatorAddressesLowerCase = facilitatorAddresses.map((address) =>
-    address.toLowerCase(),
-  );
+  const facilitatorAddressesLowerCase =
+    facilitatorAddresses.map(normalizeAddress);
 
-  // if any of the existing redeemer caveats only specify facilitator addresses, we don't need to add a new caveat
-  const hasSufficientlyConstrainedRedeemerCaveat = existingRedeemerCaveats.some(
+  // If an existing redeemer caveat is already within facilitator bounds, no new caveat is needed.
+  const hasSufficientlyConstrainedRedeemerCaveat = redeemerCaveats.some(
     (caveat) => {
       const allowedRedeemerAddresses = decodeRedeemerTerms(
         caveat.terms,
-      ).redeemers.map((redeemer) => redeemer.toLowerCase());
+      ).redeemers.map(normalizeAddress);
 
-      return allowedRedeemerAddresses.every((allowedRedeemerAddress) =>
-        facilitatorAddressesLowerCase.includes(allowedRedeemerAddress),
-      );
+      return isSubset(allowedRedeemerAddresses, facilitatorAddressesLowerCase);
     },
   );
 
@@ -206,7 +208,7 @@ const resolveDelegationCreationContext = async (
     : [];
 
   const { DelegationManager: delegationManager } = config.environment;
-  const caveats = resolveX402DelegationCaveats({
+  const caveats = resolvex402DelegationCaveats({
     environment: config.environment,
     caveatsConfig,
     existingDelegations,

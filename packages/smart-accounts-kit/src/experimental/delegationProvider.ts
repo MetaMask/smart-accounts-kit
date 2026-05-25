@@ -1,5 +1,5 @@
 import { createRedeemerTerms } from '@metamask/delegation-core';
-import { bytesToHex, type Account, type Address, type Hex } from 'viem';
+import type { Account, Address, Hex } from 'viem';
 
 import type { Caveats } from '../caveatBuilder';
 import { resolveCaveats } from '../caveatBuilder';
@@ -17,6 +17,7 @@ import type {
   PermissionContext,
   SmartAccountsEnvironment,
 } from '../types';
+import { generateSalt } from '../utils/index';
 
 /**
  * Payment requirement details supplied by an x402 server challenge.
@@ -82,15 +83,6 @@ export type DelegationProviderConfig = {
   parentPermissionContext?: MaybeDeferred<PermissionContext>;
 };
 
-const createSalt = (): Hex => {
-  if (typeof globalThis.crypto?.getRandomValues !== 'function') {
-    throw new Error('Secure randomness is unavailable in this runtime');
-  }
-
-  const randomValues = globalThis.crypto.getRandomValues(new Uint8Array(32));
-  return bytesToHex(randomValues);
-};
-
 type DelegationCreationContext = {
   account: Account;
   delegationManager: Address;
@@ -113,7 +105,7 @@ const resolveDelegationCreationContext = async (
 
   const { account } = config;
   const from = config.from ?? account.address;
-  const salt = config.salt ?? createSalt();
+  const salt = config.salt ?? generateSalt();
 
   const scope = {
     type: ScopeType.Erc20TransferAmount,

@@ -1,3 +1,5 @@
+import { toHex } from 'viem';
+
 export { decodeCaveat } from '../caveats';
 
 export {
@@ -44,3 +46,17 @@ export {
 export type { CoreCaveatBuilder, CaveatBuilderConfig } from '../caveatBuilder';
 
 export { createCaveatBuilder, CaveatBuilder } from '../caveatBuilder';
+
+/**
+ * Generates a cryptographically secure random salt.
+ *
+ * @returns A 32-byte hex salt.
+ */
+export function generateSalt() {
+  if (typeof globalThis.crypto?.getRandomValues !== 'function') {
+    throw new Error('Secure randomness is unavailable in this runtime');
+  }
+
+  const randomValues = globalThis.crypto.getRandomValues(new Uint8Array(32));
+  return toHex(randomValues);
+}

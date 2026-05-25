@@ -75,3 +75,4 @@ export function toHexOrThrow(
 
   return toHex(value);
 }
+

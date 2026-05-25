@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Use `@metamask/utils` for x402 address checksum validation instead of `viem`. ([#246](https://github.com/MetaMask/smart-accounts-kit/pull/246))
 - Bumped @metamask/delegation-abis from `^1.0.0` to `^1.1.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234))
 - Bumped @metamask/delegation-core from `^2.1.0` to `^2.2.1` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234), [#240](https://github.com/MetaMask/smart-accounts-kit/pull/240))
 - Bumped @metamask/delegation-deployments from `^1.3.0` to `^1.4.0` ([#234](https://github.com/MetaMask/smart-accounts-kit/pull/234))

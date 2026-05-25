@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Use `@metamask/utils` for Ethereum address checksum validation and drop `viem` as a package dependency. ([#246](https://github.com/MetaMask/smart-accounts-kit/pull/246))
+
 ## [0.1.0]
 
 ### Added

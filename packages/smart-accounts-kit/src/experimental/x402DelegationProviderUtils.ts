@@ -136,16 +136,6 @@ const TRANSFER_PAYEE_INDEX = 4;
 const normalizeAddress = (address: Hex): string => address.toLowerCase();
 
 /**
- * Checks whether every item in `subset` appears in `superset`.
- *
- * @param subset - Candidate subset values.
- * @param superset - Candidate superset values.
- * @returns True when `subset` is fully contained in `superset`.
- */
-const isSubset = (subset: string[], superset: string[]): boolean =>
-  subset.every((item) => superset.includes(item));
-
-/**
  * Returns whether any caveat in local or inherited delegations matches a predicate.
  *
  * @param caveats - Current caveat list.
@@ -157,17 +147,30 @@ const hasMatchingCaveats = (
   caveats: Caveat[],
   delegations: Delegation[],
   match: (caveat: Caveat) => boolean,
-): boolean =>
-  [...caveats, ...delegations.flatMap((delegation) => delegation.caveats)].some(
-    match,
-  );
+): boolean => {
+  for (const caveat of caveats) {
+    if (match(caveat)) {
+      return true;
+    }
+  }
+
+  for (const delegation of delegations) {
+    for (const caveat of delegation.caveats) {
+      if (match(caveat)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
 
 /**
  * Ensures caveats include an expiry timestamp constraint when requested.
  *
  * If an existing timestamp caveat already enforces a tighter (earlier) or equal
  * `validBefore` threshold than requested, caveats are returned unchanged.
- * Otherwise a new timestamp caveat is appended with `validAfter = 0`.
+ * Otherwise a new timestamp caveat is appended with `afterThreshold = 0`.
  *
  * @param options0 - Expiry constraint evaluation inputs.
  * @param options0.timestampEnforcer - Address of the TimestampEnforcer caveat contract.
@@ -260,6 +263,7 @@ export const ensureRedeemerSufficientlyConstrained = ({
 
   const facilitatorAddressesNormalized =
     facilitatorAddresses.map(normalizeAddress);
+  const facilitatorAddressesSet = new Set(facilitatorAddressesNormalized);
 
   const hasSupersedingRedeemerCaveat = hasMatchingCaveats(
     caveats,
@@ -273,8 +277,10 @@ export const ensureRedeemerSufficientlyConstrained = ({
         caveat.terms,
       ).redeemers.map(normalizeAddress);
 
-      // if this redeemer caveat only allows (some of) thefacilitator addresses, it is sufficiently constrained
-      return isSubset(allowedRedeemerAddresses, facilitatorAddressesNormalized);
+      // If this redeemer caveat only allows facilitator addresses, it is sufficiently constrained.
+      return allowedRedeemerAddresses.every((item) =>
+        facilitatorAddressesSet.has(item),
+      );
     },
   );
 
@@ -379,6 +385,10 @@ export const resolvex402DelegationCaveats = ({
     throw new Error('AllowedCalldataEnforcer not found in environment');
   }
 
+  if (!timestampEnforcer) {
+    throw new Error('TimestampEnforcer not found in environment');
+  }
+
   const initialCaveats = resolveCaveats({
     environment,
     caveats: caveatsConfig,
@@ -405,10 +415,6 @@ export const resolvex402DelegationCaveats = ({
     return caveatsWithPayee;
   }
 
-  if (!timestampEnforcer) {
-    throw new Error('TimestampEnforcer not found in environment');
-  }
-
   return ensureExpirySufficientlyConstrained({
     timestampEnforcer,
     caveats: caveatsWithPayee,
@@ -429,9 +435,15 @@ export const resolveDelegationCreationContext = async (
   requirements: PaymentRequirements,
 ): Promise<DelegationCreationContext> => {
   const account = await resolveMaybeDeferred(config.account, requirements);
+
+  const specifiedEnvironment = await resolveMaybeDeferred(
+    config.environment,
+    requirements,
+  );
   const environment =
-    (await resolveMaybeDeferred(config.environment, requirements)) ??
+    specifiedEnvironment ??
     getSmartAccountsEnvironment(parseEip155ChainId(requirements.network));
+
   const caveatsConfig: Caveats | undefined = await resolveMaybeDeferred(
     config.caveats,
     requirements,

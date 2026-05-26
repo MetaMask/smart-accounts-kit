@@ -45,6 +45,8 @@ const mockDelegationManager =
 const mockRedeemerEnforcer =
   '0x2000000000000000000000000000000000000002' as Hex;
 const mockPayeeEnforcer = '0x2000000000000000000000000000000000000004' as Hex;
+const mockTimestampEnforcer =
+  '0x2000000000000000000000000000000000000005' as Hex;
 const mockDelegator = '0x3000000000000000000000000000000000000003' as Hex;
 const mockSignature = '0xabc123' as Hex;
 const mockTypedData = { domain: {}, message: {} };
@@ -79,15 +81,20 @@ const createMockAccount = (overrides: Partial<Account> = {}): Account =>
 
 const createMockEnvironment = (
   overrides: Partial<SmartAccountsEnvironment> = {},
-): SmartAccountsEnvironment =>
-  ({
+): SmartAccountsEnvironment => {
+  const overrideCaveatEnforcers = overrides.caveatEnforcers ?? {};
+
+  return {
     DelegationManager: mockDelegationManager,
     caveatEnforcers: {
       RedeemerEnforcer: mockRedeemerEnforcer,
       AllowedCalldataEnforcer: mockPayeeEnforcer,
+      TimestampEnforcer: mockTimestampEnforcer,
+      ...overrideCaveatEnforcers,
     },
     ...overrides,
-  }) as SmartAccountsEnvironment;
+  } as SmartAccountsEnvironment;
+};
 
 describe('createx402DelegationProvider', () => {
   beforeEach(() => {

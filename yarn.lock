@@ -606,22 +606,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/auto-changelog@npm:^4.0.0":
-  version: 4.1.0
-  resolution: "@metamask/auto-changelog@npm:4.1.0"
-  dependencies:
-    diff: "npm:^5.0.0"
-    execa: "npm:^5.1.1"
-    semver: "npm:^7.3.5"
-    yargs: "npm:^17.0.1"
-  peerDependencies:
-    prettier: ">=3.0.0"
-  bin:
-    auto-changelog: dist/cli.js
-  checksum: 10/fe31a9eb364939c83bc5098482b761ca93593081680c4cba17b221150b4d32636cb25fd708e3692c198feddc95d8bcf524e19fa93567fb5aa30b03ea93249250
-  languageName: node
-  linkType: hard
-
 "@metamask/auto-changelog@npm:^6.1.1":
   version: 6.1.1
   resolution: "@metamask/auto-changelog@npm:6.1.1"
@@ -646,11 +630,11 @@ __metadata:
   linkType: hard
 
 "@metamask/create-release-branch@npm:^4.1.1":
-  version: 4.1.4
-  resolution: "@metamask/create-release-branch@npm:4.1.4"
+  version: 4.2.1
+  resolution: "@metamask/create-release-branch@npm:4.2.1"
   dependencies:
     "@metamask/action-utils": "npm:^1.0.0"
-    "@metamask/auto-changelog": "npm:^4.0.0"
+    "@metamask/auto-changelog": "npm:^6.1.1"
     "@metamask/utils": "npm:^9.0.0"
     debug: "npm:^4.3.4"
     execa: "npm:^8.0.1"
@@ -663,10 +647,16 @@ __metadata:
     yaml: "npm:^2.2.2"
     yargs: "npm:^17.7.1"
   peerDependencies:
+    oxfmt: ^0.45.0
     prettier: ">=3.0.0"
+  peerDependenciesMeta:
+    oxfmt:
+      optional: true
+    prettier:
+      optional: true
   bin:
     create-release-branch: bin/create-release-branch.js
-  checksum: 10/91282f9f20f576332bd88771988e58739e1dc7088068c74d54c5a3910bdab2e74c1f75b2205bdfa59a114dd18329d1080e04aada344b671348017c021edc82bc
+  checksum: 10/76b3f904e6cceeb7f42d2120b6b816fb14a190678ab79a8a6a9033e7a872a083254bc36b153c9e773b9d821ed30f0d302b18adc0f83795cc5dfcec2bb166ada6
   languageName: node
   linkType: hard
 

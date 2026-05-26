@@ -37,7 +37,7 @@ vi.mock('../../src/delegation', () => delegationMocks);
 vi.mock('@metamask/delegation-core', () => delegationCoreMocks);
 vi.mock('../../src/utils/', () => utilsMocks);
 
-const { createx402DelegationProvider } =
+const { createx402DelegationProvider, parseEip155ChainId } =
   await import('../../src/experimental/x402DelegationProvider');
 
 const mockDelegationManager =
@@ -237,6 +237,18 @@ describe('createx402DelegationProvider', () => {
 
     await expect(provider(mockRequirements)).rejects.toThrow(
       'Account does not support signTypedData',
+    );
+  });
+});
+
+describe('parseEip155ChainId', () => {
+  it('parses a valid eip155 CAIP network', () => {
+    expect(parseEip155ChainId('eip155:8453')).toBe(8453);
+  });
+
+  it('throws for non-eip155 namespaces', () => {
+    expect(() => parseEip155ChainId('cosmos:cosmoshub-4')).toThrow(
+      'Unsupported chain namespace',
     );
   });
 });

@@ -261,6 +261,51 @@ describe('x402DelegationProviderUtils', () => {
   });
 
   describe('resolveDelegationCreationContext', () => {
+    it('resolves deferred account, environment, from, and salt', async () => {
+      const deferredAccount = vi.fn(async () => mockAccount);
+      const deferredEnvironment = vi.fn(async () => baseEnvironment);
+      const deferredFrom = vi.fn(
+        async () => '0xba000000000000000000000000000000000000ba' as const,
+      );
+      const deferredSalt = vi.fn(
+        async () =>
+          `0x${'55'.repeat(32)}` as `0x${string}`,
+      );
+
+      const result = await resolveDelegationCreationContext(
+        {
+          account: deferredAccount,
+          environment: deferredEnvironment,
+          from: deferredFrom,
+          salt: deferredSalt,
+          caveats: [],
+        },
+        {
+          scheme: 'exact',
+          network: 'eip155:1',
+          asset: facilitatorA,
+          amount: '1',
+          payTo: payee,
+          maxTimeoutSeconds: 120,
+          extra: { facilitatorAddresses: [facilitatorA] },
+        },
+      );
+
+      expect(deferredAccount).toHaveBeenCalledOnce();
+      expect(deferredEnvironment).toHaveBeenCalledOnce();
+      expect(deferredFrom).toHaveBeenCalledOnce();
+      expect(deferredSalt).toHaveBeenCalledOnce();
+      expect(result.account).toBe(mockAccount);
+      expect(result.delegationManager).toBe(baseEnvironment.DelegationManager);
+      expect(result.createDelegationConfig).toEqual(
+        expect.objectContaining({
+          from: '0xba000000000000000000000000000000000000ba',
+          salt: `0x${'55'.repeat(32)}`,
+          environment: baseEnvironment,
+        }),
+      );
+    });
+
     it('uses deferred caveats and deferred parent permission context', async () => {
       const parentDelegation = makeDelegation([]);
       const deferredCaveats = vi.fn(async () => []);

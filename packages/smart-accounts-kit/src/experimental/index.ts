@@ -7,6 +7,7 @@ export {
 } from './delegationStorage';
 export {
   createx402DelegationProvider,
+  parseEip155ChainId,
   type x402DelegationProvider,
   type x402DelegationProviderConfig,
   type x402DelegationProviderPaymentPayload,

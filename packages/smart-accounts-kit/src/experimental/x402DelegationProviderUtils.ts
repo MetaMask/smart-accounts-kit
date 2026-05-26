@@ -3,7 +3,7 @@ import {
   createRedeemerTerms,
   decodeRedeemerTerms,
 } from '@metamask/delegation-core';
-import type { Address, Hex } from 'viem';
+import type { Account, Address, Hex } from 'viem';
 
 import type { Caveats } from '../caveatBuilder';
 import { resolveCaveats } from '../caveatBuilder';
@@ -47,7 +47,7 @@ type EnsurePayeeSufficientlyConstrainedParams = {
  * Resolved context required to build and sign an x402 delegation.
  */
 export type DelegationCreationContext = {
-  account: x402DelegationProviderConfig['account'];
+  account: Account;
   delegationManager: Address;
   existingDelegations: Delegation[];
   createDelegationConfig: Parameters<typeof createOpenDelegation>[0];
@@ -71,10 +71,18 @@ export type Resolvex402DelegationCaveatsParams = {
  * @param requirements - Payment requirements passed to deferred resolvers.
  * @returns The resolved value, or undefined when no value is provided.
  */
-const resolveMaybeDeferred = async <TResult>(
+async function resolveMaybeDeferred<TResult>(
+  maybeDeferred: MaybeDeferred<TResult>,
+  requirements: PaymentRequirements,
+): Promise<TResult>;
+async function resolveMaybeDeferred<TResult>(
   maybeDeferred: MaybeDeferred<TResult> | undefined,
   requirements: PaymentRequirements,
-): Promise<TResult | undefined> => {
+): Promise<TResult | undefined>;
+async function resolveMaybeDeferred<TResult>(
+  maybeDeferred: MaybeDeferred<TResult> | undefined,
+  requirements: PaymentRequirements,
+): Promise<TResult | undefined> {
   if (typeof maybeDeferred === 'function') {
     const deferred = maybeDeferred as (
       deferredRequirements: PaymentRequirements,
@@ -83,7 +91,7 @@ const resolveMaybeDeferred = async <TResult>(
   }
 
   return maybeDeferred;
-};
+}
 
 /**
  * ERC-20 `transfer(address to, uint256 value)` calldata index for `to`.
@@ -318,6 +326,8 @@ export const resolveDelegationCreationContext = async (
   config: x402DelegationProviderConfig,
   requirements: PaymentRequirements,
 ): Promise<DelegationCreationContext> => {
+  const account = await resolveMaybeDeferred(config.account, requirements);
+  const environment = await resolveMaybeDeferred(config.environment, requirements);
   const caveatsConfig: Caveats | undefined = await resolveMaybeDeferred(
     config.caveats,
     requirements,
@@ -325,9 +335,10 @@ export const resolveDelegationCreationContext = async (
   const parentPermissionContext: PermissionContext | undefined =
     await resolveMaybeDeferred(config.parentPermissionContext, requirements);
 
-  const { account } = config;
-  const from = config.from ?? account.address;
-  const salt = config.salt ?? generateSalt();
+  const from =
+    (await resolveMaybeDeferred(config.from, requirements)) ?? account.address;
+  const salt =
+    (await resolveMaybeDeferred(config.salt, requirements)) ?? generateSalt();
 
   const scope = {
     type: ScopeType.Erc20TransferAmount,
@@ -343,9 +354,9 @@ export const resolveDelegationCreationContext = async (
     ? decodeDelegations(parentPermissionContext)
     : [];
 
-  const { DelegationManager: delegationManager } = config.environment;
+  const { DelegationManager: delegationManager } = environment;
   const caveats = resolvex402DelegationCaveats({
-    environment: config.environment,
+    environment,
     caveatsConfig,
     existingDelegations,
     facilitatorAddresses,
@@ -362,7 +373,7 @@ export const resolveDelegationCreationContext = async (
     }
 
     createDelegationConfig = {
-      environment: config.environment,
+      environment,
       from,
       caveats,
       salt,
@@ -371,7 +382,7 @@ export const resolveDelegationCreationContext = async (
     };
   } else {
     createDelegationConfig = {
-      environment: config.environment,
+      environment,
       from,
       caveats,
       salt,

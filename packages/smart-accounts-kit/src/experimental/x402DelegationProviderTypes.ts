@@ -53,10 +53,10 @@ export type x402DelegationProvider = (
  * `account` is required and is used for signing the delegation.
  */
 export type x402DelegationProviderConfig = {
-  account: Account;
-  environment: SmartAccountsEnvironment;
-  from?: Hex;
-  salt?: Hex;
+  account: MaybeDeferred<Account>;
+  environment: MaybeDeferred<SmartAccountsEnvironment>;
+  from?: MaybeDeferred<Hex>;
+  salt?: MaybeDeferred<Hex>;
   caveats?: MaybeDeferred<Caveats>;
   parentPermissionContext?: MaybeDeferred<PermissionContext>;
 };

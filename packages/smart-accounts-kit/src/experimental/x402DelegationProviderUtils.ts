@@ -6,7 +6,7 @@ import {
   decodeTimestampTerms,
 } from '@metamask/delegation-core';
 import { parseCaipChainId } from '@metamask/utils';
-import type { Account, Address, Hex } from 'viem';
+import { pad, type Account, type Address, type Hex } from 'viem';
 
 import type { Caveats } from '../caveatBuilder';
 import { resolveCaveats } from '../caveatBuilder';
@@ -122,7 +122,13 @@ export function parseEip155ChainId(
     throw new Error('Unsupported chain namespace');
   }
 
-  return parseInt(reference, 10);
+  const parsedChainId = Number(reference);
+
+  if (isNaN(parsedChainId)) {
+    throw new Error('Invalid chain id');
+  }
+
+  return parsedChainId;
 }
 
 /**
@@ -189,6 +195,9 @@ export const ensureExpirySufficientlyConstrained = ({
   existingDelegations,
   expirySeconds,
 }: EnsureExpirySufficientlyConstrainedParams): Caveat[] => {
+  if (expirySeconds < 0) {
+    throw new Error('Expiry seconds must be a positive number');
+  }
   const beforeThreshold = Math.floor(Date.now() / 1000) + expirySeconds;
   const timestampEnforcerNormalized = normalizeAddress(timestampEnforcer);
 
@@ -328,21 +337,21 @@ export const ensurePayeeSufficientlyConstrained = ({
 }: EnsurePayeeSufficientlyConstrainedParams): Caveat[] => {
   const allowedCalldataTerms = createAllowedCalldataTerms({
     startIndex: TRANSFER_PAYEE_INDEX,
-    value: payee,
+    value: pad(payee, { size: 32 }),
   });
 
   const allowedCalldataEnforcerNormalized = normalizeAddress(
     allowedCalldataEnforcer,
   );
 
-  const normalizedAllowedCalldataTerms = normalizeAddress(allowedCalldataTerms);
+  const lowercaseCalldataTerms = allowedCalldataTerms.toLowerCase();
 
   const hasSupersedingAllowedCalldataConstraint = hasMatchingCaveats(
     caveats,
     existingDelegations,
     ({ enforcer, terms }) =>
       normalizeAddress(enforcer) === allowedCalldataEnforcerNormalized &&
-      normalizeAddress(terms) === normalizedAllowedCalldataTerms,
+      terms.toLowerCase() === lowercaseCalldataTerms,
   );
 
   if (hasSupersedingAllowedCalldataConstraint) {

@@ -5,12 +5,13 @@ import {
   decodeRedeemerTerms,
   decodeTimestampTerms,
 } from '@metamask/delegation-core';
-import type { Hex, Account } from 'viem';
+import { pad, type Account, type Hex } from 'viem';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
   ensurePayeeSufficientlyConstrained,
   ensureRedeemerSufficientlyConstrained,
+  parseEip155ChainId,
   resolvex402DelegationCaveats,
   resolveDelegationCreationContext,
 } from '../../src/experimental/x402DelegationProviderUtils';
@@ -56,6 +57,25 @@ const makeDelegation = (caveats: Caveat[]): Delegation => ({
 });
 
 describe('x402DelegationProviderUtils', () => {
+  describe('parseEip155ChainId', () => {
+    it('parses an eip155 CAIP network into a numeric chain id', () => {
+      expect(parseEip155ChainId('eip155:1')).toBe(1);
+      expect(parseEip155ChainId('eip155:8453')).toBe(8453);
+    });
+
+    it('throws when network namespace is not eip155', () => {
+      expect(() => parseEip155ChainId('solana:mainnet')).toThrow(
+        'Unsupported chain namespace',
+      );
+    });
+
+    it('throws when eip155 reference is not a valid number', () => {
+      expect(() => parseEip155ChainId('eip155:not-a-number')).toThrow(
+        'Invalid chain id',
+      );
+    });
+  });
+
   describe('ensureRedeemerSufficientlyConstrained', () => {
     it('returns caveats unchanged when redeemer addresses are missing and redeemers are optional', () => {
       const initialCaveats: Caveat[] = [];
@@ -164,7 +184,7 @@ describe('x402DelegationProviderUtils', () => {
     it('returns caveats unchanged when current caveats already constrain payee', () => {
       const matchingTerms = createAllowedCalldataTerms({
         startIndex: 4,
-        value: payee,
+        value: pad(payee, { size: 32 }),
       });
       const initialCaveats: Caveat[] = [
         {
@@ -202,7 +222,7 @@ describe('x402DelegationProviderUtils', () => {
               enforcer: allowedCalldataEnforcer,
               terms: createAllowedCalldataTerms({
                 startIndex: 4,
-                value: payee,
+                value: pad(payee, { size: 32 }),
               }),
               args: '0x',
             },
@@ -226,7 +246,7 @@ describe('x402DelegationProviderUtils', () => {
               enforcer: allowedCalldataEnforcer,
               terms: createAllowedCalldataTerms({
                 startIndex: 4,
-                value: otherPayee,
+                value: pad(otherPayee, { size: 32 }),
               }),
               args: '0x',
             },
@@ -239,7 +259,7 @@ describe('x402DelegationProviderUtils', () => {
         enforcer: allowedCalldataEnforcer,
         terms: createAllowedCalldataTerms({
           startIndex: 4,
-          value: payee,
+          value: pad(payee, { size: 32 }),
         }),
         args: '0x',
       });
@@ -411,6 +431,21 @@ describe('x402DelegationProviderUtils', () => {
           redeemerAddresses: undefined,
         }),
       ).toThrow('TimestampEnforcer not found in environment');
+    });
+
+    it('throws when expirySeconds is negative', () => {
+      expect(() =>
+        resolvex402DelegationCaveats({
+          environment: baseEnvironment,
+          caveatsConfig: [],
+          existingDelegations: [],
+          facilitatorAddresses: [facilitatorA],
+          payee,
+          expirySeconds: -1,
+          requireRedeemers: false,
+          redeemerAddresses: undefined,
+        }),
+      ).toThrow('Expiry seconds must be a positive number');
     });
 
     it('enforces redeemer caveats from the union of facilitator and configured redeemer addresses', () => {
@@ -817,6 +852,32 @@ describe('x402DelegationProviderUtils', () => {
       });
 
       vi.useRealTimers();
+    });
+
+    it('throws when deferred expirySeconds resolves to a negative value', async () => {
+      const deferredExpirySeconds = vi.fn(async () => -1);
+
+      await expect(
+        resolveDelegationCreationContext(
+          {
+            account: mockAccount,
+            environment: baseEnvironment,
+            caveats: [],
+            salt: `0x${'66'.repeat(32)}`,
+            expirySeconds: deferredExpirySeconds,
+          },
+          {
+            scheme: 'exact',
+            network: 'eip155:1',
+            asset: facilitatorA,
+            amount: '1',
+            payTo: payee,
+            maxTimeoutSeconds: 120,
+            extra: { facilitatorAddresses: [facilitatorA] },
+          },
+        ),
+      ).rejects.toThrow('Expiry seconds must be a positive number');
+      expect(deferredExpirySeconds).toHaveBeenCalledOnce();
     });
   });
 });

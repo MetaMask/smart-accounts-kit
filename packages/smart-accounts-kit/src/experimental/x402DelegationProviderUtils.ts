@@ -34,7 +34,8 @@ type EnsureRedeemerSufficientlyConstrainedParams = {
   redeemerEnforcer: Hex;
   caveats: Caveat[];
   existingDelegations: Delegation[];
-  facilitatorAddresses: Hex[] | undefined;
+  redeemerAddresses: Hex[];
+  requireRedeemers: boolean;
 };
 
 /**
@@ -77,6 +78,8 @@ export type Resolvex402DelegationCaveatsParams = {
   facilitatorAddresses: Hex[] | undefined;
   payee: Hex;
   expirySeconds?: number;
+  requireRedeemers: boolean;
+  redeemerAddresses: Address[] | undefined;
 };
 
 /**
@@ -133,7 +136,8 @@ const TRANSFER_PAYEE_INDEX = 4;
  * @param address - Address value to normalize.
  * @returns Lowercased hex string.
  */
-const normalizeAddress = (address: Hex): string => address.toLowerCase();
+const normalizeAddress = (address: Address): Address =>
+  address.toLowerCase() as Address;
 
 /**
  * Returns whether any caveat in local or inherited delegations matches a predicate.
@@ -232,7 +236,8 @@ export const ensureExpirySufficientlyConstrained = ({
  * @param options0.redeemerEnforcer - Address of the redeemer enforcer caveat contract.
  * @param options0.caveats - Currently resolved caveats for the delegation being created.
  * @param options0.existingDelegations - Existing parent-chain delegations to inspect for inherited constraints.
- * @param options0.facilitatorAddresses - Optional facilitator addresses from payment requirements used to bound redeemers.
+ * @param options0.redeemerAddresses - Optional addresses to which redemption should be constrained.
+ * @param options0.requireRedeemers - Whether at least one redeemer constraint must exist when no redeemer addresses are supplied.
  * @returns The original caveats when sufficiently constrained, otherwise caveats with a redeemer caveat appended.
  * @throws If no facilitator addresses are provided and no redeemer constraint exists.
  */
@@ -240,11 +245,16 @@ export const ensureRedeemerSufficientlyConstrained = ({
   redeemerEnforcer,
   caveats,
   existingDelegations,
-  facilitatorAddresses,
+  redeemerAddresses,
+  requireRedeemers,
 }: EnsureRedeemerSufficientlyConstrainedParams): Caveat[] => {
   const redeemerAddressNormalized = normalizeAddress(redeemerEnforcer);
 
-  if (!facilitatorAddresses || facilitatorAddresses.length === 0) {
+  if (redeemerAddresses.length === 0) {
+    if (!requireRedeemers) {
+      return caveats;
+    }
+
     const hasExistingRedeemerCaveat = hasMatchingCaveats(
       caveats,
       existingDelegations,
@@ -261,9 +271,8 @@ export const ensureRedeemerSufficientlyConstrained = ({
     return caveats;
   }
 
-  const facilitatorAddressesNormalized =
-    facilitatorAddresses.map(normalizeAddress);
-  const facilitatorAddressesSet = new Set(facilitatorAddressesNormalized);
+  const redeemerAddressesNormalized = redeemerAddresses.map(normalizeAddress);
+  const redeemerAddressesSet = new Set(redeemerAddressesNormalized);
 
   const hasSupersedingRedeemerCaveat = hasMatchingCaveats(
     caveats,
@@ -279,7 +288,7 @@ export const ensureRedeemerSufficientlyConstrained = ({
 
       // If this redeemer caveat only allows facilitator addresses, it is sufficiently constrained.
       return allowedRedeemerAddresses.every((item) =>
-        facilitatorAddressesSet.has(item),
+        redeemerAddressesSet.has(item),
       );
     },
   );
@@ -290,7 +299,7 @@ export const ensureRedeemerSufficientlyConstrained = ({
 
   const redeemerCaveat: Caveat = {
     enforcer: redeemerEnforcer,
-    terms: createRedeemerTerms({ redeemers: facilitatorAddresses }),
+    terms: createRedeemerTerms({ redeemers: redeemerAddresses }),
     args: '0x',
   };
 
@@ -359,6 +368,8 @@ export const ensurePayeeSufficientlyConstrained = ({
  * @param options0.facilitatorAddresses - Optional facilitator addresses used for redeemer constraints.
  * @param options0.payee - Payee address used for allowed calldata constraints.
  * @param options0.expirySeconds - Optional relative expiry in seconds for adding timestamp constraints.
+ * @param options0.requireRedeemers - Whether redeemer constraints are mandatory when no facilitator or configured redeemer addresses are present.
+ * @param options0.redeemerAddresses - Optional redeemer addresses from provider config to merge with facilitator addresses.
  * @returns Caveats after redeemer and payee constraints are enforced.
  */
 export const resolvex402DelegationCaveats = ({
@@ -368,6 +379,8 @@ export const resolvex402DelegationCaveats = ({
   facilitatorAddresses,
   payee,
   expirySeconds,
+  requireRedeemers,
+  redeemerAddresses,
 }: Resolvex402DelegationCaveatsParams): Caveat[] => {
   const {
     caveatEnforcers: {
@@ -397,11 +410,18 @@ export const resolvex402DelegationCaveats = ({
     isScopeOptional: true,
   });
 
+  const allRedeemerAddresses = new Set(
+    [...(facilitatorAddresses ?? []), ...(redeemerAddresses ?? [])].map(
+      normalizeAddress,
+    ),
+  );
+
   const caveatsWithRedeemer = ensureRedeemerSufficientlyConstrained({
     redeemerEnforcer,
     caveats: initialCaveats,
     existingDelegations,
-    facilitatorAddresses,
+    redeemerAddresses: Array.from(allRedeemerAddresses),
+    requireRedeemers,
   });
 
   const caveatsWithPayee = ensurePayeeSufficientlyConstrained({
@@ -435,6 +455,16 @@ export const resolveDelegationCreationContext = async (
   requirements: PaymentRequirements,
 ): Promise<DelegationCreationContext> => {
   const account = await resolveMaybeDeferred(config.account, requirements);
+  const redeemersConfig = await resolveMaybeDeferred(
+    config.redeemers,
+    requirements,
+  );
+
+  const requireRedeemers = redeemersConfig?.requireRedeemers ?? false;
+  const redeemerAddresses = await resolveMaybeDeferred(
+    redeemersConfig?.addresses,
+    requirements,
+  );
 
   const specifiedEnvironment = await resolveMaybeDeferred(
     config.environment,
@@ -482,6 +512,8 @@ export const resolveDelegationCreationContext = async (
     facilitatorAddresses,
     payee: requirements.payTo as Hex,
     expirySeconds,
+    requireRedeemers,
+    redeemerAddresses,
   });
 
   let createDelegationConfig: Parameters<typeof createOpenDelegation>[0];

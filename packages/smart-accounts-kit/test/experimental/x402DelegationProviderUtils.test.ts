@@ -2,6 +2,7 @@ import {
   createAllowedCalldataTerms,
   createRedeemerTerms,
   createTimestampTerms,
+  decodeRedeemerTerms,
   decodeTimestampTerms,
 } from '@metamask/delegation-core';
 import type { Hex, Account } from 'viem';
@@ -56,18 +57,33 @@ const makeDelegation = (caveats: Caveat[]): Delegation => ({
 
 describe('x402DelegationProviderUtils', () => {
   describe('ensureRedeemerSufficientlyConstrained', () => {
-    it('throws when facilitators are missing and no redeemer caveat exists', () => {
+    it('returns caveats unchanged when redeemer addresses are missing and redeemers are optional', () => {
+      const initialCaveats: Caveat[] = [];
+
+      const result = ensureRedeemerSufficientlyConstrained({
+        redeemerEnforcer,
+        caveats: initialCaveats,
+        existingDelegations: [],
+        redeemerAddresses: [],
+        requireRedeemers: false,
+      });
+
+      expect(result).toStrictEqual(initialCaveats);
+    });
+
+    it('throws when redeemer addresses are missing and redeemers are required', () => {
       expect(() =>
         ensureRedeemerSufficientlyConstrained({
           redeemerEnforcer,
           caveats: [],
           existingDelegations: [],
-          facilitatorAddresses: undefined,
+          redeemerAddresses: [],
+          requireRedeemers: true,
         }),
       ).toThrow('Redeemer must be constrained');
     });
 
-    it('returns caveats unchanged when facilitators are missing but parent has redeemer caveat', () => {
+    it('returns caveats unchanged when redeemer addresses are missing but parent has redeemer caveat', () => {
       const initialCaveats: Caveat[] = [
         {
           enforcer: '0xa00000000000000000000000000000000000000a',
@@ -88,7 +104,8 @@ describe('x402DelegationProviderUtils', () => {
             },
           ]),
         ],
-        facilitatorAddresses: undefined,
+        redeemerAddresses: [],
+        requireRedeemers: true,
       });
 
       expect(result).toStrictEqual(initialCaveats);
@@ -107,7 +124,8 @@ describe('x402DelegationProviderUtils', () => {
         redeemerEnforcer,
         caveats: initialCaveats,
         existingDelegations: [],
-        facilitatorAddresses: [facilitatorA, facilitatorB],
+        redeemerAddresses: [facilitatorA, facilitatorB],
+        requireRedeemers: true,
       });
 
       expect(result).toStrictEqual(initialCaveats);
@@ -130,7 +148,8 @@ describe('x402DelegationProviderUtils', () => {
             },
           ]),
         ],
-        facilitatorAddresses: [facilitatorA, facilitatorB],
+        redeemerAddresses: [facilitatorA, facilitatorB],
+        requireRedeemers: true,
       });
 
       expect(result).toContainEqual({
@@ -242,6 +261,8 @@ describe('x402DelegationProviderUtils', () => {
           existingDelegations: [],
           facilitatorAddresses: [facilitatorA],
           payee,
+          requireRedeemers: false,
+          redeemerAddresses: undefined,
         }),
       ).toThrow('RedeemerEnforcer not found in environment');
     });
@@ -260,6 +281,8 @@ describe('x402DelegationProviderUtils', () => {
           existingDelegations: [],
           facilitatorAddresses: [facilitatorA],
           payee,
+          requireRedeemers: false,
+          redeemerAddresses: undefined,
         }),
       ).toThrow('AllowedCalldataEnforcer not found in environment');
     });
@@ -275,6 +298,8 @@ describe('x402DelegationProviderUtils', () => {
         facilitatorAddresses: [facilitatorA],
         payee,
         expirySeconds: 3600,
+        requireRedeemers: false,
+        redeemerAddresses: undefined,
       });
 
       const timestampCaveat = result.find(
@@ -314,6 +339,8 @@ describe('x402DelegationProviderUtils', () => {
         facilitatorAddresses: [facilitatorA],
         payee,
         expirySeconds: 3600,
+        requireRedeemers: false,
+        redeemerAddresses: undefined,
       });
 
       const timestampCaveats = result.filter(
@@ -346,6 +373,8 @@ describe('x402DelegationProviderUtils', () => {
         facilitatorAddresses: [facilitatorA],
         payee,
         expirySeconds: 3600,
+        requireRedeemers: false,
+        redeemerAddresses: undefined,
       });
 
       const timestampCaveat = result.find(
@@ -378,8 +407,37 @@ describe('x402DelegationProviderUtils', () => {
           facilitatorAddresses: [facilitatorA],
           payee,
           expirySeconds: 60,
+          requireRedeemers: false,
+          redeemerAddresses: undefined,
         }),
       ).toThrow('TimestampEnforcer not found in environment');
+    });
+
+    it('enforces redeemer caveats from the union of facilitator and configured redeemer addresses', () => {
+      const result = resolvex402DelegationCaveats({
+        environment: baseEnvironment,
+        caveatsConfig: [],
+        existingDelegations: [],
+        facilitatorAddresses: [facilitatorA],
+        payee,
+        requireRedeemers: true,
+        redeemerAddresses: [facilitatorB],
+      });
+
+      const redeemerCaveat = result.find(
+        ({ enforcer }) => enforcer === redeemerEnforcer,
+      );
+      expect(redeemerCaveat).toBeDefined();
+      if (!redeemerCaveat) {
+        throw new Error('Expected redeemer caveat to be present');
+      }
+
+      expect(decodeRedeemerTerms(redeemerCaveat.terms).redeemers).toEqual(
+        expect.arrayContaining([facilitatorA, facilitatorB]),
+      );
+      expect(decodeRedeemerTerms(redeemerCaveat.terms).redeemers).toHaveLength(
+        2,
+      );
     });
   });
 
@@ -558,7 +616,7 @@ describe('x402DelegationProviderUtils', () => {
       ).rejects.toThrow('Parent permission context is not a valid delegation');
     });
 
-    it('throws when facilitators are missing and no redeemer caveat exists', async () => {
+    it('does not throw when facilitators are missing and redeemers are optional', async () => {
       await expect(
         resolveDelegationCreationContext(
           {
@@ -576,7 +634,107 @@ describe('x402DelegationProviderUtils', () => {
             extra: undefined,
           },
         ),
+      ).resolves.toBeDefined();
+    });
+
+    it('throws when redeemers are required but no redeemer sources are provided', async () => {
+      await expect(
+        resolveDelegationCreationContext(
+          {
+            account: mockAccount,
+            environment: baseEnvironment,
+            salt: `0x${'33'.repeat(32)}`,
+            redeemers: {
+              requireRedeemers: true,
+            },
+          },
+          {
+            scheme: 'exact',
+            network: 'eip155:1',
+            asset: facilitatorA,
+            amount: '1',
+            payTo: payee,
+            maxTimeoutSeconds: 120,
+            extra: undefined,
+          },
+        ),
       ).rejects.toThrow('Redeemer must be constrained');
+    });
+
+    it('adds redeemer caveat from redeemers config addresses when facilitators are missing', async () => {
+      const result = await resolveDelegationCreationContext(
+        {
+          account: mockAccount,
+          environment: baseEnvironment,
+          salt: `0x${'33'.repeat(32)}`,
+          redeemers: {
+            requireRedeemers: true,
+            addresses: [facilitatorB],
+          },
+        },
+        {
+          scheme: 'exact',
+          network: 'eip155:1',
+          asset: facilitatorA,
+          amount: '1',
+          payTo: payee,
+          maxTimeoutSeconds: 120,
+          extra: undefined,
+        },
+      );
+
+      const caveats = result.createDelegationConfig.caveats as Caveat[];
+      const redeemerCaveat = caveats.find(
+        ({ enforcer }) => enforcer === redeemerEnforcer,
+      );
+      expect(redeemerCaveat).toBeDefined();
+      if (!redeemerCaveat) {
+        throw new Error('Expected redeemer caveat to be present');
+      }
+      expect(decodeRedeemerTerms(redeemerCaveat.terms).redeemers).toEqual([
+        facilitatorB,
+      ]);
+    });
+
+    it('resolves deferred redeemers configuration and addresses', async () => {
+      const deferredRedeemerAddresses = vi.fn(async () => [facilitatorB]);
+      const deferredRedeemersConfig = vi.fn(async () => ({
+        requireRedeemers: true,
+        addresses: deferredRedeemerAddresses,
+      }));
+
+      const result = await resolveDelegationCreationContext(
+        {
+          account: mockAccount,
+          environment: baseEnvironment,
+          salt: `0x${'33'.repeat(32)}`,
+          redeemers: deferredRedeemersConfig,
+        },
+        {
+          scheme: 'exact',
+          network: 'eip155:1',
+          asset: facilitatorA,
+          amount: '1',
+          payTo: payee,
+          maxTimeoutSeconds: 120,
+          extra: undefined,
+        },
+      );
+
+      expect(deferredRedeemersConfig).toHaveBeenCalledOnce();
+      expect(deferredRedeemerAddresses).toHaveBeenCalledOnce();
+
+      const caveats = result.createDelegationConfig.caveats as Caveat[];
+      const redeemerCaveat = caveats.find(
+        ({ enforcer }) => enforcer === redeemerEnforcer,
+      );
+      expect(redeemerCaveat).toBeDefined();
+      if (!redeemerCaveat) {
+        throw new Error('Expected redeemer caveat to be present');
+      }
+      expect(decodeRedeemerTerms(redeemerCaveat.terms).redeemers).toEqual([
+        facilitatorB,
+      ]);
     });
 
     it('resolves deferred expirySeconds and applies timestamp caveat', async () => {

@@ -1,4 +1,4 @@
-import type { Account, Hex } from 'viem';
+import type { Account, Address, Hex } from 'viem';
 
 import type { Caveats } from '../caveatBuilder';
 import type { PermissionContext, SmartAccountsEnvironment } from '../types';
@@ -48,6 +48,14 @@ export type x402DelegationProvider = (
 ) => Promise<x402DelegationProviderPaymentPayload>;
 
 /**
+ * Configuration for redeemer constraint enforcement.
+ */
+export type RedeemersConfig = {
+  requireRedeemers: boolean;
+  addresses?: MaybeDeferred<Address[]>;
+};
+
+/**
  * Configuration used to create a x402DelegationProvider.
  *
  * `account` is required and is used for signing the delegation.
@@ -60,4 +68,5 @@ export type x402DelegationProviderConfig = {
   caveats?: MaybeDeferred<Caveats>;
   parentPermissionContext?: MaybeDeferred<PermissionContext>;
   expirySeconds?: MaybeDeferred<number>;
+  redeemers?: MaybeDeferred<RedeemersConfig>;
 };

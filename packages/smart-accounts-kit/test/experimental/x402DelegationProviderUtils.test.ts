@@ -1,6 +1,8 @@
 import {
   createAllowedCalldataTerms,
   createRedeemerTerms,
+  createTimestampTerms,
+  decodeTimestampTerms,
 } from '@metamask/delegation-core';
 import type { Hex, Account } from 'viem';
 import { describe, expect, it, vi } from 'vitest';
@@ -20,6 +22,7 @@ import type {
 const redeemerEnforcer = '0x1000000000000000000000000000000000000001' as const;
 const allowedCalldataEnforcer =
   '0x2000000000000000000000000000000000000002' as const;
+const timestampEnforcer = '0x2000000000000000000000000000000000000003' as const;
 const facilitatorA = '0x3000000000000000000000000000000000000003' as const;
 const facilitatorB = '0x4000000000000000000000000000000000000004' as const;
 const facilitatorC = '0x5000000000000000000000000000000000000005' as const;
@@ -34,6 +37,7 @@ const baseEnvironment = {
   caveatEnforcers: {
     RedeemerEnforcer: redeemerEnforcer,
     AllowedCalldataEnforcer: allowedCalldataEnforcer,
+    TimestampEnforcer: timestampEnforcer,
   },
 } as SmartAccountsEnvironment;
 const mockAccount = {
@@ -258,6 +262,124 @@ describe('x402DelegationProviderUtils', () => {
         }),
       ).toThrow('AllowedCalldataEnforcer not found in environment');
     });
+
+    it('adds a timestamp caveat when expirySeconds is specified', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2024-01-01T00:00:00Z'));
+
+      const result = resolvex402DelegationCaveats({
+        environment: baseEnvironment,
+        caveatsConfig: [],
+        existingDelegations: [],
+        facilitatorAddresses: [facilitatorA],
+        payee,
+        expirySeconds: 3600,
+      });
+
+      const timestampCaveat = result.find(
+        ({ enforcer }) => enforcer === timestampEnforcer,
+      );
+      expect(timestampCaveat).toBeDefined();
+      if (!timestampCaveat) {
+        throw new Error('Expected timestamp caveat to be present');
+      }
+      expect(decodeTimestampTerms(timestampCaveat.terms)).toStrictEqual({
+        afterThreshold: 0,
+        beforeThreshold: 1704070800,
+      });
+
+      vi.useRealTimers();
+    });
+
+    it('does not add a timestamp caveat when an existing caveat is more restrictive', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2024-01-01T00:00:00Z'));
+
+      const result = resolvex402DelegationCaveats({
+        environment: baseEnvironment,
+        caveatsConfig: [],
+        existingDelegations: [
+          makeDelegation([
+            {
+              enforcer: timestampEnforcer,
+              terms: createTimestampTerms({
+                afterThreshold: 0,
+                beforeThreshold: 1704070000,
+              }),
+              args: '0x',
+            },
+          ]),
+        ],
+        facilitatorAddresses: [facilitatorA],
+        payee,
+        expirySeconds: 3600,
+      });
+
+      const timestampCaveats = result.filter(
+        ({ enforcer }) => enforcer === timestampEnforcer,
+      );
+      expect(timestampCaveats).toHaveLength(0);
+
+      vi.useRealTimers();
+    });
+
+    it('adds a timestamp caveat when existing timestamp has no upper bound', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2024-01-01T00:00:00Z'));
+
+      const result = resolvex402DelegationCaveats({
+        environment: baseEnvironment,
+        caveatsConfig: [],
+        existingDelegations: [
+          makeDelegation([
+            {
+              enforcer: timestampEnforcer,
+              terms: createTimestampTerms({
+                afterThreshold: 0,
+                beforeThreshold: 0,
+              }),
+              args: '0x',
+            },
+          ]),
+        ],
+        facilitatorAddresses: [facilitatorA],
+        payee,
+        expirySeconds: 3600,
+      });
+
+      const timestampCaveat = result.find(
+        ({ enforcer }) => enforcer === timestampEnforcer,
+      );
+      expect(timestampCaveat).toBeDefined();
+      if (!timestampCaveat) {
+        throw new Error('Expected timestamp caveat to be present');
+      }
+      expect(decodeTimestampTerms(timestampCaveat.terms)).toStrictEqual({
+        afterThreshold: 0,
+        beforeThreshold: 1704070800,
+      });
+
+      vi.useRealTimers();
+    });
+
+    it('throws when expirySeconds is specified but TimestampEnforcer is missing', () => {
+      expect(() =>
+        resolvex402DelegationCaveats({
+          environment: {
+            ...baseEnvironment,
+            caveatEnforcers: {
+              ...baseEnvironment.caveatEnforcers,
+              TimestampEnforcer: undefined as unknown as Hex,
+            },
+          },
+          caveatsConfig: [],
+          existingDelegations: [],
+          facilitatorAddresses: [facilitatorA],
+          payee,
+          expirySeconds: 60,
+        }),
+      ).toThrow('TimestampEnforcer not found in environment');
+    });
   });
 
   describe('resolveDelegationCreationContext', () => {
@@ -268,8 +390,7 @@ describe('x402DelegationProviderUtils', () => {
         async () => '0xba000000000000000000000000000000000000ba' as const,
       );
       const deferredSalt = vi.fn(
-        async () =>
-          `0x${'55'.repeat(32)}` as `0x${string}`,
+        async (): Promise<Hex> => `0x${'55'.repeat(32)}`,
       );
 
       const result = await resolveDelegationCreationContext(
@@ -418,6 +539,47 @@ describe('x402DelegationProviderUtils', () => {
           },
         ),
       ).rejects.toThrow('Redeemer must be constrained');
+    });
+
+    it('resolves deferred expirySeconds and applies timestamp caveat', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2024-01-01T00:00:00Z'));
+
+      const deferredExpirySeconds = vi.fn(async () => 120);
+      const result = await resolveDelegationCreationContext(
+        {
+          account: mockAccount,
+          environment: baseEnvironment,
+          caveats: [],
+          salt: `0x${'66'.repeat(32)}`,
+          expirySeconds: deferredExpirySeconds,
+        },
+        {
+          scheme: 'exact',
+          network: 'eip155:1',
+          asset: facilitatorA,
+          amount: '1',
+          payTo: payee,
+          maxTimeoutSeconds: 120,
+          extra: { facilitatorAddresses: [facilitatorA] },
+        },
+      );
+
+      expect(deferredExpirySeconds).toHaveBeenCalledOnce();
+      const caveats = result.createDelegationConfig.caveats as Caveat[];
+      const timestampCaveat = caveats.find(
+        ({ enforcer }) => enforcer === timestampEnforcer,
+      );
+      expect(timestampCaveat).toBeDefined();
+      if (!timestampCaveat) {
+        throw new Error('Expected timestamp caveat to be present');
+      }
+      expect(decodeTimestampTerms(timestampCaveat.terms)).toStrictEqual({
+        afterThreshold: 0,
+        beforeThreshold: 1704067320,
+      });
+
+      vi.useRealTimers();
     });
   });
 });

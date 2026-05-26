@@ -28,7 +28,9 @@ export type {
  * @returns Parsed numeric chain ID.
  * @throws If the CAIP namespace is not `eip155`.
  */
-export function parseEip155ChainId(network: PaymentRequirements['network']): number {
+export function parseEip155ChainId(
+  network: PaymentRequirements['network'],
+): number {
   const { namespace, reference } = parseCaipChainId(
     network as `${string}:${string}`,
   );

@@ -1,7 +1,9 @@
 import {
   createAllowedCalldataTerms,
   createRedeemerTerms,
+  createTimestampTerms,
   decodeRedeemerTerms,
+  decodeTimestampTerms,
 } from '@metamask/delegation-core';
 import type { Account, Address, Hex } from 'viem';
 
@@ -44,6 +46,16 @@ type EnsurePayeeSufficientlyConstrainedParams = {
 };
 
 /**
+ * Inputs for expiry constraint enforcement.
+ */
+type EnsureExpirySufficientlyConstrainedParams = {
+  timestampEnforcer: Hex;
+  caveats: Caveat[];
+  existingDelegations: Delegation[];
+  expirySeconds: number;
+};
+
+/**
  * Resolved context required to build and sign an x402 delegation.
  */
 export type DelegationCreationContext = {
@@ -62,6 +74,7 @@ export type Resolvex402DelegationCaveatsParams = {
   existingDelegations: Delegation[];
   facilitatorAddresses: Hex[] | undefined;
   payee: Hex;
+  expirySeconds?: number;
 };
 
 /**
@@ -74,15 +87,7 @@ export type Resolvex402DelegationCaveatsParams = {
 async function resolveMaybeDeferred<TResult>(
   maybeDeferred: MaybeDeferred<TResult>,
   requirements: PaymentRequirements,
-): Promise<TResult>;
-async function resolveMaybeDeferred<TResult>(
-  maybeDeferred: MaybeDeferred<TResult> | undefined,
-  requirements: PaymentRequirements,
-): Promise<TResult | undefined>;
-async function resolveMaybeDeferred<TResult>(
-  maybeDeferred: MaybeDeferred<TResult> | undefined,
-  requirements: PaymentRequirements,
-): Promise<TResult | undefined> {
+): Promise<TResult> {
   if (typeof maybeDeferred === 'function') {
     const deferred = maybeDeferred as (
       deferredRequirements: PaymentRequirements,
@@ -134,6 +139,63 @@ const hasMatchingCaveats = (
   );
 
 /**
+ * Ensures caveats include an expiry timestamp constraint when requested.
+ *
+ * If an existing timestamp caveat already enforces a tighter (earlier) or equal
+ * `validBefore` threshold than requested, caveats are returned unchanged.
+ * Otherwise a new timestamp caveat is appended with `validAfter = 0`.
+ *
+ * @param options0 - Expiry constraint evaluation inputs.
+ * @param options0.timestampEnforcer - Address of the TimestampEnforcer caveat contract.
+ * @param options0.caveats - Currently resolved caveats for the delegation being created.
+ * @param options0.existingDelegations - Existing parent-chain delegations to inspect for inherited constraints.
+ * @param options0.expirySeconds - Relative expiry from "now" in seconds.
+ * @returns The original caveats when sufficiently constrained, otherwise caveats with a timestamp caveat appended.
+ */
+export const ensureExpirySufficientlyConstrained = ({
+  timestampEnforcer,
+  caveats,
+  existingDelegations,
+  expirySeconds,
+}: EnsureExpirySufficientlyConstrainedParams): Caveat[] => {
+  const beforeThreshold = Math.floor(Date.now() / 1000) + expirySeconds;
+  const timestampEnforcerNormalized = normalizeAddress(timestampEnforcer);
+
+  const hasSupersedingTimestampConstraint = hasMatchingCaveats(
+    caveats,
+    existingDelegations,
+    (caveat) => {
+      if (normalizeAddress(caveat.enforcer) !== timestampEnforcerNormalized) {
+        return false;
+      }
+
+      const { beforeThreshold: existingBeforeThreshold } = decodeTimestampTerms(
+        caveat.terms,
+      );
+      return (
+        existingBeforeThreshold !== 0 &&
+        existingBeforeThreshold <= beforeThreshold
+      );
+    },
+  );
+
+  if (hasSupersedingTimestampConstraint) {
+    return caveats;
+  }
+
+  const timestampCaveat: Caveat = {
+    enforcer: timestampEnforcer,
+    terms: createTimestampTerms({
+      afterThreshold: 0,
+      beforeThreshold,
+    }),
+    args: '0x',
+  };
+
+  return [...caveats, timestampCaveat];
+};
+
+/**
  * Ensures caveats include a sufficiently strict redeemer constraint.
  *
  * Returns the caveat list unchanged when an existing redeemer caveat is already
@@ -175,7 +237,7 @@ export const ensureRedeemerSufficientlyConstrained = ({
   const facilitatorAddressesNormalized =
     facilitatorAddresses.map(normalizeAddress);
 
-  const hasSufficientlyConstrainedRedeemerCaveat = hasMatchingCaveats(
+  const hasSupersedingRedeemerCaveat = hasMatchingCaveats(
     caveats,
     existingDelegations,
     (caveat) => {
@@ -192,7 +254,7 @@ export const ensureRedeemerSufficientlyConstrained = ({
     },
   );
 
-  if (hasSufficientlyConstrainedRedeemerCaveat) {
+  if (hasSupersedingRedeemerCaveat) {
     return caveats;
   }
 
@@ -236,7 +298,7 @@ export const ensurePayeeSufficientlyConstrained = ({
 
   const normalizedAllowedCalldataTerms = normalizeAddress(allowedCalldataTerms);
 
-  const hasMatchingAllowedCalldataConstraint = hasMatchingCaveats(
+  const hasSupersedingAllowedCalldataConstraint = hasMatchingCaveats(
     caveats,
     existingDelegations,
     ({ enforcer, terms }) =>
@@ -244,7 +306,7 @@ export const ensurePayeeSufficientlyConstrained = ({
       normalizeAddress(terms) === normalizedAllowedCalldataTerms,
   );
 
-  if (hasMatchingAllowedCalldataConstraint) {
+  if (hasSupersedingAllowedCalldataConstraint) {
     return caveats;
   }
 
@@ -266,6 +328,7 @@ export const ensurePayeeSufficientlyConstrained = ({
  * @param options0.existingDelegations - Existing parent-chain delegations.
  * @param options0.facilitatorAddresses - Optional facilitator addresses used for redeemer constraints.
  * @param options0.payee - Payee address used for allowed calldata constraints.
+ * @param options0.expirySeconds - Optional relative expiry in seconds for adding timestamp constraints.
  * @returns Caveats after redeemer and payee constraints are enforced.
  */
 export const resolvex402DelegationCaveats = ({
@@ -274,11 +337,13 @@ export const resolvex402DelegationCaveats = ({
   existingDelegations,
   facilitatorAddresses,
   payee,
+  expirySeconds,
 }: Resolvex402DelegationCaveatsParams): Caveat[] => {
   const {
     caveatEnforcers: {
       RedeemerEnforcer: redeemerEnforcer,
       AllowedCalldataEnforcer: allowedCalldataEnforcer,
+      TimestampEnforcer: timestampEnforcer,
     },
   } = environment;
 
@@ -312,7 +377,20 @@ export const resolvex402DelegationCaveats = ({
     payee,
   });
 
-  return caveatsWithPayee;
+  if (expirySeconds === undefined) {
+    return caveatsWithPayee;
+  }
+
+  if (!timestampEnforcer) {
+    throw new Error('TimestampEnforcer not found in environment');
+  }
+
+  return ensureExpirySufficientlyConstrained({
+    timestampEnforcer,
+    caveats: caveatsWithPayee,
+    existingDelegations,
+    expirySeconds,
+  });
 };
 
 /**
@@ -327,13 +405,20 @@ export const resolveDelegationCreationContext = async (
   requirements: PaymentRequirements,
 ): Promise<DelegationCreationContext> => {
   const account = await resolveMaybeDeferred(config.account, requirements);
-  const environment = await resolveMaybeDeferred(config.environment, requirements);
+  const environment = await resolveMaybeDeferred(
+    config.environment,
+    requirements,
+  );
   const caveatsConfig: Caveats | undefined = await resolveMaybeDeferred(
     config.caveats,
     requirements,
   );
   const parentPermissionContext: PermissionContext | undefined =
     await resolveMaybeDeferred(config.parentPermissionContext, requirements);
+  const expirySeconds = await resolveMaybeDeferred(
+    config.expirySeconds,
+    requirements,
+  );
 
   const from =
     (await resolveMaybeDeferred(config.from, requirements)) ?? account.address;
@@ -361,6 +446,7 @@ export const resolveDelegationCreationContext = async (
     existingDelegations,
     facilitatorAddresses,
     payee: requirements.payTo as Hex,
+    expirySeconds,
   });
 
   let createDelegationConfig: Parameters<typeof createOpenDelegation>[0];

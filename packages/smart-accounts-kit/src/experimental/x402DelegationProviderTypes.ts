@@ -59,4 +59,5 @@ export type x402DelegationProviderConfig = {
   salt?: MaybeDeferred<Hex>;
   caveats?: MaybeDeferred<Caveats>;
   parentPermissionContext?: MaybeDeferred<PermissionContext>;
+  expirySeconds?: MaybeDeferred<number>;
 };

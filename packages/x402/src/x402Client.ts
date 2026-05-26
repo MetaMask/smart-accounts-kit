@@ -1,4 +1,3 @@
-import { parseCaipChainId } from "@metamask/utils";
 import { type Hex, getAddress, isHex } from 'viem';
 
 export type x402PaymentRequirements = {

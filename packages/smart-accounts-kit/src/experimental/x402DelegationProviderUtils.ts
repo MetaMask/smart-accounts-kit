@@ -93,7 +93,8 @@ async function resolveMaybeDeferred<TResult>(
   if (typeof maybeDeferred === 'function') {
     const deferred = maybeDeferred as (
       deferredRequirements: PaymentRequirements,
-    ) => Promise<TResult>;
+    ) => Promise<TResult> | TResult;
+
     return await deferred(requirements);
   }
 

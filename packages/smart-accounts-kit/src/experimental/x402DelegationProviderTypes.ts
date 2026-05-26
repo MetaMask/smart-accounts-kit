@@ -38,7 +38,7 @@ export type x402DelegationProviderPaymentPayload = {
  */
 export type MaybeDeferred<TResult> =
   | TResult
-  | ((requirements: PaymentRequirements) => Promise<TResult>);
+  | ((requirements: PaymentRequirements) => Promise<TResult> | TResult);
 
 /**
  * Function that turns payment requirements into a signed delegation payload.

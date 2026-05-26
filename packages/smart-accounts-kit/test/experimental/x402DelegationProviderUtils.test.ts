@@ -619,5 +619,46 @@ describe('x402DelegationProviderUtils', () => {
 
       vi.useRealTimers();
     });
+
+    it('resolves synchronous deferred expirySeconds and applies timestamp caveat', async () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2024-01-01T00:00:00Z'));
+
+      const deferredExpirySeconds = vi.fn(() => 90);
+      const result = await resolveDelegationCreationContext(
+        {
+          account: mockAccount,
+          environment: baseEnvironment,
+          caveats: [],
+          salt: `0x${'66'.repeat(32)}`,
+          expirySeconds: deferredExpirySeconds,
+        },
+        {
+          scheme: 'exact',
+          network: 'eip155:1',
+          asset: facilitatorA,
+          amount: '1',
+          payTo: payee,
+          maxTimeoutSeconds: 120,
+          extra: { facilitatorAddresses: [facilitatorA] },
+        },
+      );
+
+      expect(deferredExpirySeconds).toHaveBeenCalledOnce();
+      const caveats = result.createDelegationConfig.caveats as Caveat[];
+      const timestampCaveat = caveats.find(
+        ({ enforcer }) => enforcer === timestampEnforcer,
+      );
+      expect(timestampCaveat).toBeDefined();
+      if (!timestampCaveat) {
+        throw new Error('Expected timestamp caveat to be present');
+      }
+      expect(decodeTimestampTerms(timestampCaveat.terms)).toStrictEqual({
+        afterThreshold: 0,
+        beforeThreshold: 1704067290,
+      });
+
+      vi.useRealTimers();
+    });
   });
 });

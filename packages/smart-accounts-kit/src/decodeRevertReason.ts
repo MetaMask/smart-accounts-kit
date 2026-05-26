@@ -3,7 +3,11 @@ import { BaseError, ContractFunctionRevertedError, isHex } from 'viem';
 import type { Abi, AbiItem, DecodeErrorResultReturnType, Hex } from 'viem';
 import { decodeErrorResult, formatAbiItemWithArgs } from 'viem/utils';
 
-const knownRevertAbis = Object.values(delegationAbis) as readonly Abi[];
+const knownRevertAbis = (Object.values(delegationAbis) as Abi[]).filter(
+  (abi) => abi.length > 0,
+);
+
+const MAX_ERROR_TRAVERSAL_DEPTH = 8;
 
 const panicReasons: Record<string, string> = {
   '1': 'An `assert` condition failed.',
@@ -18,9 +22,9 @@ const panicReasons: Record<string, string> = {
 };
 
 export type DecodedRevertReason = {
-  errorName: string;
-  message: string;
-  rawData: Hex;
+  readonly errorName: string;
+  readonly message: string;
+  readonly rawData: Hex;
 };
 
 /**
@@ -128,7 +132,7 @@ export function decodeRevertData(
  *
  * @param decodedData - The decoded error result from viem.
  * @param rawData - The ABI-encoded revert data.
- * @returns Human-readable revert text.
+ * @returns The structured decoded revert reason.
  */
 function formatDecodeErrorResult(
   decodedData: DecodeErrorResultReturnType,
@@ -174,13 +178,13 @@ function formatDecodedError(
     includeName: false,
   });
 
-  return `${errorName}${formattedArgs}`;
+  return `${errorName}${formattedArgs ?? ''}`;
 }
 
 /**
- * Decodes revert payloads surfaced by some clients as raw UTF-8 bytes.
+ * Decodes revert payloads surfaced by some clients as raw printable ASCII bytes.
  *
- * @param rawData - Hex-encoded revert string bytes.
+ * @param rawData - Hex-encoded bytes that may represent a printable ASCII string.
  * @returns The decoded string when it looks like readable text.
  */
 function decodeRawString(rawData: Hex): string | undefined {
@@ -233,7 +237,7 @@ function getRevertDataCandidates(error: unknown): Hex[] {
 
   const addLabeledHexCandidates = (value: string): void => {
     for (const match of value.matchAll(
-      /(?:reason|revertData|raw|data):\s*(0x[0-9a-fA-F]+)/giu,
+      /\b(?:reason|revertData|raw|data):\s*(0x[0-9a-fA-F]+)/giu,
     )) {
       const [, candidate] = match;
 
@@ -256,7 +260,12 @@ function getRevertDataCandidates(error: unknown): Hex[] {
   };
 
   const visit = (value: unknown, depth = 0): void => {
-    if (value === null || value === undefined || seen.has(value) || depth > 8) {
+    if (
+      value === null ||
+      value === undefined ||
+      seen.has(value) ||
+      depth > MAX_ERROR_TRAVERSAL_DEPTH
+    ) {
       return;
     }
 

@@ -54,7 +54,7 @@ export type x402DelegationProvider = (
  */
 export type x402DelegationProviderConfig = {
   account: MaybeDeferred<Account>;
-  environment: MaybeDeferred<SmartAccountsEnvironment>;
+  environment?: MaybeDeferred<SmartAccountsEnvironment>;
   from?: MaybeDeferred<Hex>;
   salt?: MaybeDeferred<Hex>;
   caveats?: MaybeDeferred<Caveats>;

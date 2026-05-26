@@ -5,6 +5,7 @@ import {
   decodeRedeemerTerms,
   decodeTimestampTerms,
 } from '@metamask/delegation-core';
+import { parseCaipChainId } from '@metamask/utils';
 import type { Account, Address, Hex } from 'viem';
 
 import type { Caveats } from '../caveatBuilder';
@@ -12,6 +13,7 @@ import { resolveCaveats } from '../caveatBuilder';
 import { ScopeType } from '../constants';
 import type { createOpenDelegation } from '../delegation';
 import { decodeDelegations } from '../delegation';
+import { getSmartAccountsEnvironment } from '../smartAccountsEnvironment';
 import type {
   Caveat,
   Delegation,
@@ -96,6 +98,27 @@ async function resolveMaybeDeferred<TResult>(
   }
 
   return maybeDeferred;
+}
+
+/**
+ * Parses an EIP-155 CAIP network identifier into a numeric chain ID.
+ *
+ * @param network - CAIP network identifier (for example, `eip155:1`).
+ * @returns Parsed numeric chain ID.
+ * @throws If the CAIP namespace is not `eip155`.
+ */
+export function parseEip155ChainId(
+  network: PaymentRequirements['network'],
+): number {
+  const { namespace, reference } = parseCaipChainId(
+    network as `${string}:${string}`,
+  );
+
+  if (namespace !== 'eip155') {
+    throw new Error('Unsupported chain namespace');
+  }
+
+  return parseInt(reference, 10);
 }
 
 /**
@@ -405,10 +428,9 @@ export const resolveDelegationCreationContext = async (
   requirements: PaymentRequirements,
 ): Promise<DelegationCreationContext> => {
   const account = await resolveMaybeDeferred(config.account, requirements);
-  const environment = await resolveMaybeDeferred(
-    config.environment,
-    requirements,
-  );
+  const environment =
+    (await resolveMaybeDeferred(config.environment, requirements)) ??
+    getSmartAccountsEnvironment(parseEip155ChainId(requirements.network));
   const caveatsConfig: Caveats | undefined = await resolveMaybeDeferred(
     config.caveats,
     requirements,

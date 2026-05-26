@@ -13,6 +13,7 @@ import {
   resolvex402DelegationCaveats,
   resolveDelegationCreationContext,
 } from '../../src/experimental/x402DelegationProviderUtils';
+import * as smartAccountsEnvironmentModule from '../../src/smartAccountsEnvironment';
 import type {
   Caveat,
   Delegation,
@@ -383,6 +384,43 @@ describe('x402DelegationProviderUtils', () => {
   });
 
   describe('resolveDelegationCreationContext', () => {
+    it('resolves environment from network when environment is not provided', async () => {
+      const getEnvironmentSpy = vi
+        .spyOn(smartAccountsEnvironmentModule, 'getSmartAccountsEnvironment')
+        .mockReturnValue(baseEnvironment);
+
+      try {
+        const result = await resolveDelegationCreationContext(
+          {
+            account: mockAccount,
+            caveats: [],
+            salt: `0x${'77'.repeat(32)}`,
+          },
+          {
+            scheme: 'exact',
+            network: 'eip155:1',
+            asset: facilitatorA,
+            amount: '1',
+            payTo: payee,
+            maxTimeoutSeconds: 120,
+            extra: { facilitatorAddresses: [facilitatorA] },
+          },
+        );
+
+        expect(getEnvironmentSpy).toHaveBeenCalledWith(1);
+        expect(result.delegationManager).toBe(
+          baseEnvironment.DelegationManager,
+        );
+        expect(result.createDelegationConfig).toEqual(
+          expect.objectContaining({
+            environment: baseEnvironment,
+          }),
+        );
+      } finally {
+        getEnvironmentSpy.mockRestore();
+      }
+    });
+
     it('resolves deferred account, environment, from, and salt', async () => {
       const deferredAccount = vi.fn(async () => mockAccount);
       const deferredEnvironment = vi.fn(async () => baseEnvironment);

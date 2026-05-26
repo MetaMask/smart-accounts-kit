@@ -1,5 +1,3 @@
-import { parseCaipChainId } from '@metamask/utils';
-
 import {
   createOpenDelegation,
   encodeDelegations,
@@ -11,7 +9,10 @@ import type {
   x402DelegationProviderConfig,
   x402DelegationProviderPaymentPayload,
 } from './x402DelegationProviderTypes';
-import { resolveDelegationCreationContext } from './x402DelegationProviderUtils';
+import {
+  parseEip155ChainId,
+  resolveDelegationCreationContext,
+} from './x402DelegationProviderUtils';
 
 export type {
   MaybeDeferred,
@@ -21,26 +22,7 @@ export type {
   x402DelegationProviderPaymentPayload,
 } from './x402DelegationProviderTypes';
 
-/**
- * Parses an EIP-155 CAIP network identifier into a numeric chain ID.
- *
- * @param network - CAIP network identifier (for example, `eip155:1`).
- * @returns Parsed numeric chain ID.
- * @throws If the CAIP namespace is not `eip155`.
- */
-export function parseEip155ChainId(
-  network: PaymentRequirements['network'],
-): number {
-  const { namespace, reference } = parseCaipChainId(
-    network as `${string}:${string}`,
-  );
-
-  if (namespace !== 'eip155') {
-    throw new Error('Unsupported chain namespace');
-  }
-
-  return parseInt(reference, 10);
-}
+export { parseEip155ChainId } from './x402DelegationProviderUtils';
 
 /**
  * Creates a delegation provider function for x402 payment requirements.

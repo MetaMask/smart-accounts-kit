@@ -780,6 +780,7 @@ __metadata:
     "@metamask/eslint-config": "npm:14.1.0"
     "@metamask/eslint-config-nodejs": "npm:14.0.0"
     "@metamask/eslint-config-typescript": "npm:14.0.0"
+    "@metamask/utils": "npm:^11.4.0"
     "@types/node": "npm:^20.19.0"
     "@types/sinon": "npm:^17.0.3"
     "@vitest/coverage-v8": "npm:3.2.4"

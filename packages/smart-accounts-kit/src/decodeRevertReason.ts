@@ -1,11 +1,18 @@
 import * as delegationAbis from '@metamask/delegation-abis';
 import { BaseError, ContractFunctionRevertedError, isHex } from 'viem';
-import type { Abi, AbiItem, DecodeErrorResultReturnType, Hex } from 'viem';
+import type { Abi, AbiItem, Hex } from 'viem';
 import { decodeErrorResult, formatAbiItemWithArgs } from 'viem/utils';
 
 const knownRevertAbis = (Object.values(delegationAbis) as Abi[]).filter(
   (abi) => abi.length > 0,
 );
+
+// viem decodes standard Solidity Error(string) and Panic(uint256) with an empty ABI.
+const standardSolidityErrorAbi: Abi = [] as const;
+const revertReasonAbis: readonly Abi[] = [
+  standardSolidityErrorAbi,
+  ...knownRevertAbis,
+];
 
 const MAX_ERROR_TRAVERSAL_DEPTH = 8;
 
@@ -80,7 +87,12 @@ function decodeViemContractRevert(
   }
 
   if (revertError.data) {
-    return formatDecodeErrorResult(revertError.data, revertError.raw);
+    const { abiItem, args, errorName } = revertError.data;
+    return {
+      errorName,
+      message: formatDecodedError(errorName, args, abiItem),
+      rawData: revertError.raw,
+    };
   }
 
   return decodeRevertData(revertError.raw);
@@ -95,9 +107,7 @@ function decodeViemContractRevert(
 export function decodeRevertData(
   rawData: Hex,
 ): DecodedRevertReason | undefined {
-  const abis = [[] as const, ...knownRevertAbis];
-
-  for (const abi of abis) {
+  for (const abi of revertReasonAbis) {
     try {
       const { abiItem, args, errorName } = decodeErrorResult({
         abi,
@@ -128,26 +138,6 @@ export function decodeRevertData(
 }
 
 /**
- * Formats viem's decoded error result into the helper's return shape.
- *
- * @param decodedData - The decoded error result from viem.
- * @param rawData - The ABI-encoded revert data.
- * @returns The structured decoded revert reason.
- */
-function formatDecodeErrorResult(
-  decodedData: DecodeErrorResultReturnType,
-  rawData: Hex,
-): DecodedRevertReason {
-  const { abiItem, args, errorName } = decodedData;
-
-  return {
-    errorName,
-    message: formatDecodedError(errorName, args, abiItem),
-    rawData,
-  };
-}
-
-/**
  * Formats a decoded error into compact user-facing text.
  *
  * @param errorName - The decoded Solidity error name.
@@ -160,14 +150,14 @@ function formatDecodedError(
   args: readonly unknown[] | undefined,
   abiItem: AbiItem,
 ): string {
+  const [firstArg] = args ?? [];
+
   if (errorName === 'Error') {
-    const [reason] = args ?? [];
-    return typeof reason === 'string' ? reason : errorName;
+    return typeof firstArg === 'string' ? firstArg : errorName;
   }
 
   if (errorName === 'Panic') {
-    const [code] = args ?? [];
-    const panicCode = String(code);
+    const panicCode = String(firstArg);
     return panicReasons[panicCode] ?? `Panic(${panicCode})`;
   }
 

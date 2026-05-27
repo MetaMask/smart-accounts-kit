@@ -9,12 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.6.0]
 
-### Uncategorized
-
-- chore(deps-dev): bump @metamask/auto-changelog from 5.3.2 to 6.1.1 ([#249](https://github.com/metamask/smart-accounts-kit/pull/249))
-- Revert "Update Release 31.0.0 (#238)" ([#238](https://github.com/metamask/smart-accounts-kit/pull/238))
-- Update Release 31.0.0 ([#238](https://github.com/metamask/smart-accounts-kit/pull/238))
-
 ### Added
 
 - Experimental `createx402DelegationProvider` added to @metamask/smart-accounts-kit/experimental ([#248](https://github.com/metamask/smart-accounts-kit/pull/248), [#251](https://github.com/metamask/smart-accounts-kit/pull/251))

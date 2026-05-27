@@ -509,6 +509,7 @@ describe('x402DelegationProviderUtils', () => {
             environment: baseEnvironment,
           }),
         );
+        expect(result.rootDelegator).toBe(mockAccount.address);
       } finally {
         getEnvironmentSpy.mockRestore();
       }
@@ -554,6 +555,40 @@ describe('x402DelegationProviderUtils', () => {
           from: '0xba000000000000000000000000000000000000ba',
           salt: `0x${'55'.repeat(32)}`,
           environment: baseEnvironment,
+        }),
+      );
+      expect(result.rootDelegator).toBe(
+        '0xba000000000000000000000000000000000000ba',
+      );
+    });
+
+    it('uses from as rootDelegator when parentPermissionContext is not provided', async () => {
+      const from = '0xca000000000000000000000000000000000000ca' as const;
+
+      const result = await resolveDelegationCreationContext(
+        {
+          account: mockAccount,
+          environment: baseEnvironment,
+          caveats: [],
+          from,
+          salt: `0x${'99'.repeat(32)}`,
+        },
+        {
+          scheme: 'exact',
+          network: 'eip155:1',
+          asset: facilitatorA,
+          amount: '1',
+          payTo: payee,
+          maxTimeoutSeconds: 120,
+          extra: { facilitatorAddresses: [facilitatorA] },
+        },
+      );
+
+      expect(result.existingDelegations).toStrictEqual([]);
+      expect(result.rootDelegator).toBe(from);
+      expect(result.createDelegationConfig).toEqual(
+        expect.objectContaining({
+          from,
         }),
       );
     });
@@ -652,12 +687,14 @@ describe('x402DelegationProviderUtils', () => {
     });
 
     it('does not throw when facilitators are missing and redeemers are optional', async () => {
+      const parentDelegation = makeDelegation([]);
       await expect(
         resolveDelegationCreationContext(
           {
             account: mockAccount,
             environment: baseEnvironment,
             salt: `0x${'33'.repeat(32)}`,
+            parentPermissionContext: [parentDelegation],
           },
           {
             scheme: 'exact',
@@ -697,11 +734,13 @@ describe('x402DelegationProviderUtils', () => {
     });
 
     it('adds redeemer caveat from redeemers config addresses when facilitators are missing', async () => {
+      const parentDelegation = makeDelegation([]);
       const result = await resolveDelegationCreationContext(
         {
           account: mockAccount,
           environment: baseEnvironment,
           salt: `0x${'33'.repeat(32)}`,
+          parentPermissionContext: [parentDelegation],
           redeemers: {
             requireRedeemers: true,
             addresses: [facilitatorB],
@@ -732,6 +771,7 @@ describe('x402DelegationProviderUtils', () => {
     });
 
     it('resolves deferred redeemers configuration and addresses', async () => {
+      const parentDelegation = makeDelegation([]);
       const deferredRedeemerAddresses = vi.fn(async () => [facilitatorB]);
       const deferredRedeemersConfig = vi.fn(async () => ({
         requireRedeemers: true,
@@ -743,6 +783,7 @@ describe('x402DelegationProviderUtils', () => {
           account: mockAccount,
           environment: baseEnvironment,
           salt: `0x${'33'.repeat(32)}`,
+          parentPermissionContext: [parentDelegation],
           redeemers: deferredRedeemersConfig,
         },
         {
@@ -775,6 +816,7 @@ describe('x402DelegationProviderUtils', () => {
     it('resolves deferred expirySeconds and applies timestamp caveat', async () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2024-01-01T00:00:00Z'));
+      const parentDelegation = makeDelegation([]);
 
       const deferredExpirySeconds = vi.fn(async () => 120);
       const result = await resolveDelegationCreationContext(
@@ -784,6 +826,7 @@ describe('x402DelegationProviderUtils', () => {
           caveats: [],
           salt: `0x${'66'.repeat(32)}`,
           expirySeconds: deferredExpirySeconds,
+          parentPermissionContext: [parentDelegation],
         },
         {
           scheme: 'exact',
@@ -816,6 +859,7 @@ describe('x402DelegationProviderUtils', () => {
     it('resolves synchronous deferred expirySeconds and applies timestamp caveat', async () => {
       vi.useFakeTimers();
       vi.setSystemTime(new Date('2024-01-01T00:00:00Z'));
+      const parentDelegation = makeDelegation([]);
 
       const deferredExpirySeconds = vi.fn(() => 90);
       const result = await resolveDelegationCreationContext(
@@ -825,6 +869,7 @@ describe('x402DelegationProviderUtils', () => {
           caveats: [],
           salt: `0x${'66'.repeat(32)}`,
           expirySeconds: deferredExpirySeconds,
+          parentPermissionContext: [parentDelegation],
         },
         {
           scheme: 'exact',

@@ -63,9 +63,10 @@ type EnsureExpirySufficientlyConstrainedParams = {
  */
 export type DelegationCreationContext = {
   account: Account;
+  createDelegationConfig: Parameters<typeof createOpenDelegation>[0];
   delegationManager: Address;
   existingDelegations: Delegation[];
-  createDelegationConfig: Parameters<typeof createOpenDelegation>[0];
+  rootDelegator: Address;
 };
 
 /**
@@ -552,10 +553,14 @@ export const resolveDelegationCreationContext = async (
     };
   }
 
+  const rootDelegator =
+    existingDelegations[existingDelegations.length - 1]?.delegator ?? from;
+
   return {
     account,
+    createDelegationConfig,
     delegationManager,
     existingDelegations,
-    createDelegationConfig,
+    rootDelegator,
   };
 };

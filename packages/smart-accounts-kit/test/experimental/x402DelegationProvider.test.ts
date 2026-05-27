@@ -48,9 +48,11 @@ const mockPayeeEnforcer = '0x2000000000000000000000000000000000000004' as Hex;
 const mockTimestampEnforcer =
   '0x2000000000000000000000000000000000000005' as Hex;
 const mockDelegator = '0x3000000000000000000000000000000000000003' as Hex;
+const mockRootDelegator = '0x3100000000000000000000000000000000000003' as Hex;
 const mockSignature = '0xabc123' as Hex;
 const mockTypedData = { domain: {}, message: {} };
 const mockPermissionContext = '0xfeed' as Hex;
+const mockParentPermissionContext = '0xbeef' as Hex;
 const mockAllowedCalldataTerms = '0x3333' as Hex;
 const mockGeneratedSalt =
   '0x1111111111111111111111111111111111111111111111111111111111111111' as Hex;
@@ -141,7 +143,16 @@ describe('createx402DelegationProvider', () => {
       mockTypedData,
     );
     delegationMocks.encodeDelegations.mockReturnValue(mockPermissionContext);
-    delegationMocks.decodeDelegations.mockReturnValue([]);
+    delegationMocks.decodeDelegations.mockReturnValue([
+      {
+        delegate: '0xb00000000000000000000000000000000000000b',
+        delegator: mockRootDelegator,
+        authority: mockAuthority,
+        caveats: [],
+        salt: '0x44',
+        signature: '0x55',
+      },
+    ]);
   });
 
   it('creates and signs a delegation using default from/salt values', async () => {
@@ -151,6 +162,7 @@ describe('createx402DelegationProvider', () => {
       account,
       environment,
       caveats: [],
+      parentPermissionContext: mockParentPermissionContext,
     });
 
     const result = await provider(mockRequirements);
@@ -182,16 +194,19 @@ describe('createx402DelegationProvider', () => {
       },
     );
     expect(account.signTypedData).toHaveBeenCalledWith(mockTypedData);
+    const decodedDelegations =
+      delegationMocks.decodeDelegations.mock.results[0]?.value ?? [];
     expect(delegationMocks.encodeDelegations).toHaveBeenCalledWith([
       {
         ...delegationMocks.createOpenDelegation.mock.results[0]?.value,
         signature: mockSignature,
       },
+      ...decodedDelegations,
     ]);
     expect(result).toStrictEqual({
       delegationManager: mockDelegationManager,
       permissionContext: mockPermissionContext,
-      delegator: mockDelegator,
+      delegator: mockRootDelegator,
     });
   });
 
@@ -202,6 +217,7 @@ describe('createx402DelegationProvider', () => {
       account,
       environment,
       caveats: [],
+      parentPermissionContext: mockParentPermissionContext,
     });
 
     await provider({
@@ -223,6 +239,7 @@ describe('createx402DelegationProvider', () => {
       account,
       environment,
       caveats: [],
+      parentPermissionContext: mockParentPermissionContext,
     });
 
     await expect(
@@ -240,6 +257,7 @@ describe('createx402DelegationProvider', () => {
     const provider = createx402DelegationProvider({
       account,
       environment: createMockEnvironment(),
+      parentPermissionContext: mockParentPermissionContext,
     } as x402DelegationProviderConfig);
 
     await expect(provider(mockRequirements)).rejects.toThrow(

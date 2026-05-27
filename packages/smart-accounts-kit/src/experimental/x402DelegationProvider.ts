@@ -1,3 +1,5 @@
+import type { Address } from 'viem';
+
 import {
   createOpenDelegation,
   encodeDelegations,
@@ -23,6 +25,15 @@ export type {
 } from './x402DelegationProviderTypes';
 
 export { parseEip155ChainId } from './x402DelegationProviderUtils';
+
+export const METAMASK_FACILITATOR_ADDRESSES: Address[] = [
+  '0xb01caea8c6c47bbf4f4b4c5080ca642043359c2e',
+  '0xc066ac5d385419b1a8c43a0e146fa439837a8b8c',
+  '0xb42f812a44c22cc6b861478900401ee759ebead6',
+];
+export const METAMASK_FACILITATOR_ADDRESSES_DEV: Address[] = [
+  '0xb4827A2a066CD2Ef88560EFdf063dD05C6c41cC7',
+];
 
 /**
  * Creates a delegation provider function for x402 payment requirements.

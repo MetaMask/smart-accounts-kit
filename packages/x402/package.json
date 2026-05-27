@@ -1,6 +1,6 @@
 {
   "name": "@metamask/x402",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "x402 adapters for MetaMask smart accounts and ERC-7710",
   "license": "(MIT-0 OR Apache-2.0)",
   "type": "module",

@@ -42,9 +42,10 @@ export function createx402DelegationProvider(
   ): Promise<x402DelegationProviderPaymentPayload> => {
     const {
       account,
+      createDelegationConfig,
       delegationManager,
       existingDelegations,
-      createDelegationConfig,
+      rootDelegator,
     } = await resolveDelegationCreationContext(config, requirements);
 
     const delegation = createOpenDelegation(createDelegationConfig);
@@ -76,7 +77,7 @@ export function createx402DelegationProvider(
     return {
       delegationManager,
       permissionContext,
-      delegator: delegation.delegator,
+      delegator: rootDelegator,
     };
   };
 }

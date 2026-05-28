@@ -448,15 +448,15 @@ describe('x402DelegationProviderUtils', () => {
       ).toThrow('Expiry seconds must be a positive number');
     });
 
-    it('enforces redeemer caveats from the union of facilitator and configured redeemer addresses', () => {
+    it('enforces redeemer caveats from the intersection of facilitator and configured redeemer addresses', () => {
       const result = resolvex402DelegationCaveats({
         environment: baseEnvironment,
         caveatsConfig: [],
         existingDelegations: [],
-        facilitatorAddresses: [facilitatorA],
+        facilitatorAddresses: [facilitatorA, facilitatorB],
         payee,
         requireRedeemers: true,
-        redeemerAddresses: [facilitatorB],
+        redeemerAddresses: [facilitatorB, facilitatorC],
       });
 
       const redeemerCaveat = result.find(
@@ -467,12 +467,9 @@ describe('x402DelegationProviderUtils', () => {
         throw new Error('Expected redeemer caveat to be present');
       }
 
-      expect(decodeRedeemerTerms(redeemerCaveat.terms).redeemers).toEqual(
-        expect.arrayContaining([facilitatorA, facilitatorB]),
-      );
-      expect(decodeRedeemerTerms(redeemerCaveat.terms).redeemers).toHaveLength(
-        2,
-      );
+      expect(decodeRedeemerTerms(redeemerCaveat.terms).redeemers).toEqual([
+        facilitatorB,
+      ]);
     });
   });
 

@@ -13,4 +13,6 @@ export {
   type x402DelegationProviderPaymentPayload,
   type PaymentRequirements,
   type MaybeDeferred,
+  METAMASK_FACILITATOR_ADDRESSES,
+  METAMASK_FACILITATOR_ADDRESSES_DEV,
 } from './x402DelegationProvider';

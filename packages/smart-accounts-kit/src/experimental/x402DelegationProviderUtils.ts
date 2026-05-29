@@ -251,7 +251,7 @@ export const ensureExpirySufficientlyConstrained = ({
  * @param options - Redeemer address inputs.
  * @param options.facilitatorAddresses - Optional facilitator addresses from the PaymentRequirements.
  * @param options.redeemerAddresses - Optional redeemer addresses from the RedeemersConfig.
- * @returns The allowed redeemer addresses.
+ * @returns The allowed redeemer addresses, or undefined if none are specified.
  */
 const resolveRedeemerAddresses = ({
   facilitatorAddresses,
@@ -275,9 +275,11 @@ const resolveRedeemerAddresses = ({
     redeemerAddresses.map(normalizeAddress),
   );
 
-  return normalizedFacilitatorAddresses.filter((address) =>
-    normalizedRedeemerAddressSet.has(address),
+  const redeemerAddressesIntersection = normalizedFacilitatorAddresses.filter(
+    (address) => normalizedRedeemerAddressSet.has(address),
   );
+
+  return redeemerAddressesIntersection;
 };
 
 /**
@@ -304,7 +306,13 @@ export const ensureRedeemerSufficientlyConstrained = ({
 }: EnsureRedeemerSufficientlyConstrainedParams): Caveat[] => {
   const redeemerEnforcerNormalized = normalizeAddress(redeemerEnforcer);
 
-  if (!redeemerAddresses || redeemerAddresses.length === 0) {
+  if (redeemerAddresses?.length === 0) {
+    throw new Error(
+      'No valid redeemer addresses were resolved. If both `redeemers.addresses` and `extra.facilitatorAddresses` are provided, they must overlap.',
+    );
+  }
+
+  if (!redeemerAddresses) {
     if (!requireRedeemers) {
       return caveats;
     }

@@ -77,6 +77,34 @@ describe('x402DelegationProviderUtils', () => {
   });
 
   describe('ensureRedeemerSufficientlyConstrained', () => {
+    it('throws when redeemer addresses are empty and redeemers are not required', () => {
+      expect(() =>
+        ensureRedeemerSufficientlyConstrained({
+          redeemerEnforcer,
+          caveats: [],
+          existingDelegations: [],
+          redeemerAddresses: [],
+          requireRedeemers: false,
+        }),
+      ).toThrow(
+        'No valid redeemer addresses were resolved. If both `redeemers.addresses` and `extra.facilitatorAddresses` are provided, they must overlap.',
+      );
+    });
+
+    it('throws when redeemer addresses are empty and redeemers are required', () => {
+      expect(() =>
+        ensureRedeemerSufficientlyConstrained({
+          redeemerEnforcer,
+          caveats: [],
+          existingDelegations: [],
+          redeemerAddresses: [],
+          requireRedeemers: true,
+        }),
+      ).toThrow(
+        'No valid redeemer addresses were resolved. If both `redeemers.addresses` and `extra.facilitatorAddresses` are provided, they must overlap.',
+      );
+    });
+
     it('returns caveats unchanged when redeemer addresses are missing and redeemers are optional', () => {
       const initialCaveats: Caveat[] = [];
 
@@ -84,7 +112,7 @@ describe('x402DelegationProviderUtils', () => {
         redeemerEnforcer,
         caveats: initialCaveats,
         existingDelegations: [],
-        redeemerAddresses: [],
+        redeemerAddresses: undefined,
         requireRedeemers: false,
       });
 
@@ -97,7 +125,7 @@ describe('x402DelegationProviderUtils', () => {
           redeemerEnforcer,
           caveats: [],
           existingDelegations: [],
-          redeemerAddresses: [],
+          redeemerAddresses: undefined,
           requireRedeemers: true,
         }),
       ).toThrow('Redeemer must be constrained');
@@ -124,7 +152,7 @@ describe('x402DelegationProviderUtils', () => {
             },
           ]),
         ],
-        redeemerAddresses: [],
+        redeemerAddresses: undefined,
         requireRedeemers: true,
       });
 

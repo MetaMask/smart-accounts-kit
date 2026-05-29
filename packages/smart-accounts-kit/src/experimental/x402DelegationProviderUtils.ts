@@ -308,7 +308,7 @@ export const ensureRedeemerSufficientlyConstrained = ({
 
   if (redeemerAddresses?.length === 0) {
     throw new Error(
-      'No valid redeemer addresses were resolved. If both `redeemers.addresses` and `extra.facilitatorAddresses` are provided, they must overlap.',
+      'No valid redeemer addresses were resolved. The intersection of `redeemers.addresses` and `extra.facilitatorAddresses` must be non-empty.',
     );
   }
 

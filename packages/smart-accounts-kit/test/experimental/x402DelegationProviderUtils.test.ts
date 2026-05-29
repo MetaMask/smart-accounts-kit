@@ -87,7 +87,7 @@ describe('x402DelegationProviderUtils', () => {
           requireRedeemers: false,
         }),
       ).toThrow(
-        'No valid redeemer addresses were resolved. If both `redeemers.addresses` and `extra.facilitatorAddresses` are provided, they must overlap.',
+        'No valid redeemer addresses were resolved. The intersection of `redeemers.addresses` and `extra.facilitatorAddresses` must be non-empty.',
       );
     });
 
@@ -101,7 +101,7 @@ describe('x402DelegationProviderUtils', () => {
           requireRedeemers: true,
         }),
       ).toThrow(
-        'No valid redeemer addresses were resolved. If both `redeemers.addresses` and `extra.facilitatorAddresses` are provided, they must overlap.',
+        'No valid redeemer addresses were resolved. The intersection of `redeemers.addresses` and `extra.facilitatorAddresses` must be non-empty.',
       );
     });
 

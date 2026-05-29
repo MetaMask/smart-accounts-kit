@@ -26,12 +26,12 @@ export type {
 
 export { parseEip155ChainId } from './x402DelegationProviderUtils';
 
-export const METAMASK_FACILITATOR_ADDRESSES: Address[] = [
-  '0xb01caea8c6c47bbf4f4b4c5080ca642043359c2e',
-  '0xc066ac5d385419b1a8c43a0e146fa439837a8b8c',
-  '0xb42f812a44c22cc6b861478900401ee759ebead6',
+export const METAMASK_FACILITATOR_ADDRESSES: readonly Address[] = [
+  '0xB01caEa8c6C47bbf4F4b4c5080Ca642043359C2E',
+  '0xC066ac5D385419B1A8c43A0E146fA439837a8B8c',
+  '0xB42F812A44c22cc6b861478900401ee759EbEAD6',
 ];
-export const METAMASK_FACILITATOR_ADDRESSES_DEV: Address[] = [
+export const METAMASK_FACILITATOR_ADDRESSES_DEV: readonly Address[] = [
   '0xb4827A2a066CD2Ef88560EFdf063dD05C6c41cC7',
 ];
 

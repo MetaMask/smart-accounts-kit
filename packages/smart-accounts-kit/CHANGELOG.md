@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Constants `METAMASK_FACILITATOR_ADDRESSES`, `METAMASK_FACILITATOR_ADDRESSES_DEV` added to @metamask/smart-accounts-kit/experimental ([#255](https://github.com/metamask/smart-accounts-kit/pull/255))
+
 ## [1.6.0]
 
 ### Added

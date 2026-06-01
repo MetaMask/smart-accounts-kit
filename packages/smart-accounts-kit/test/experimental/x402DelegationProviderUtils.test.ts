@@ -83,12 +83,11 @@ describe('x402DelegationProviderUtils', () => {
           redeemerEnforcer,
           caveats: [],
           existingDelegations: [],
+          facilitatorAddresses: undefined,
           redeemerAddresses: [],
           requireRedeemers: false,
         }),
-      ).toThrow(
-        'No valid redeemer addresses were resolved. The intersection of `redeemers.addresses` and `extra.facilitatorAddresses` must be non-empty.',
-      );
+      ).toThrow('No valid redeemer addresses were resolved.');
     });
 
     it('throws when redeemer addresses are empty and redeemers are required', () => {
@@ -97,12 +96,11 @@ describe('x402DelegationProviderUtils', () => {
           redeemerEnforcer,
           caveats: [],
           existingDelegations: [],
+          facilitatorAddresses: undefined,
           redeemerAddresses: [],
           requireRedeemers: true,
         }),
-      ).toThrow(
-        'No valid redeemer addresses were resolved. The intersection of `redeemers.addresses` and `extra.facilitatorAddresses` must be non-empty.',
-      );
+      ).toThrow('No valid redeemer addresses were resolved.');
     });
 
     it('returns caveats unchanged when redeemer addresses are missing and redeemers are optional', () => {
@@ -112,6 +110,7 @@ describe('x402DelegationProviderUtils', () => {
         redeemerEnforcer,
         caveats: initialCaveats,
         existingDelegations: [],
+        facilitatorAddresses: undefined,
         redeemerAddresses: undefined,
         requireRedeemers: false,
       });
@@ -125,6 +124,7 @@ describe('x402DelegationProviderUtils', () => {
           redeemerEnforcer,
           caveats: [],
           existingDelegations: [],
+          facilitatorAddresses: undefined,
           redeemerAddresses: undefined,
           requireRedeemers: true,
         }),
@@ -152,6 +152,7 @@ describe('x402DelegationProviderUtils', () => {
             },
           ]),
         ],
+        facilitatorAddresses: undefined,
         redeemerAddresses: undefined,
         requireRedeemers: true,
       });
@@ -172,6 +173,7 @@ describe('x402DelegationProviderUtils', () => {
         redeemerEnforcer,
         caveats: initialCaveats,
         existingDelegations: [],
+        facilitatorAddresses: undefined,
         redeemerAddresses: [facilitatorA, facilitatorB],
         requireRedeemers: true,
       });
@@ -196,6 +198,7 @@ describe('x402DelegationProviderUtils', () => {
             },
           ]),
         ],
+        facilitatorAddresses: undefined,
         redeemerAddresses: [facilitatorA, facilitatorB],
         requireRedeemers: true,
       });

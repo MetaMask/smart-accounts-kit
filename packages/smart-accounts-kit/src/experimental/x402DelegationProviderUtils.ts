@@ -317,9 +317,9 @@ export const ensureRedeemerSufficientlyConstrained = (
     );
   }
 
-  const redeemerEnforcer = normalizeAddress(config.redeemerEnforcer);
+  const { caveats, existingDelegations, redeemerEnforcer } = config;
 
-  const { caveats, existingDelegations } = config;
+  const redeemerEnforcerNormalized = normalizeAddress(redeemerEnforcer);
 
   if (!redeemerAddresses) {
     if (!config.requireRedeemers) {
@@ -329,7 +329,8 @@ export const ensureRedeemerSufficientlyConstrained = (
     const hasExistingRedeemerCaveat = hasMatchingCaveats(
       caveats,
       existingDelegations,
-      ({ enforcer }) => normalizeAddress(enforcer) === redeemerEnforcer,
+      ({ enforcer }) =>
+        normalizeAddress(enforcer) === redeemerEnforcerNormalized,
     );
 
     if (!hasExistingRedeemerCaveat) {
@@ -347,7 +348,7 @@ export const ensureRedeemerSufficientlyConstrained = (
     caveats,
     existingDelegations,
     (caveat) => {
-      if (normalizeAddress(caveat.enforcer) !== redeemerEnforcer) {
+      if (normalizeAddress(caveat.enforcer) !== redeemerEnforcerNormalized) {
         return false;
       }
 

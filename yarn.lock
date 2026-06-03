@@ -577,11 +577,16 @@ __metadata:
   resolution: "@metamask/7715-permission-types@workspace:packages/7715-permission-types"
   dependencies:
     "@metamask/auto-changelog": "npm:^6.1.1"
+    "@metamask/delegation-core": "npm:^2.2.1"
+    "@metamask/delegation-deployments": "npm:^1.4.0"
+    "@metamask/utils": "npm:^11.4.0"
+    "@types/node": "npm:^20.19.0"
     compare-versions: "npm:^6.1.1"
     eslint: "npm:^9.39.2"
     prettier: "npm:^3.5.3"
     tsup: "npm:^8.5.0"
     typescript: "npm:5.5.4"
+    vitest: "npm:^3.2.4"
   languageName: unknown
   linkType: soft
 

@@ -18,3 +18,43 @@ export type {
   RevokeExecutionPermissionResponseResult,
   MetaMaskBasePermissionData,
 } from './types';
+
+export type {
+  Caveat,
+  ChecksumCaveat,
+  ChecksumEnforcersByChainId,
+  DeployedContractsByName,
+  DecodedPermission,
+  MakePermissionDecoderConfig,
+  PermissionDecoder,
+  PermissionDecoderConfig,
+  PermissionDecoderSpec,
+  PermissionType,
+  RuleDecoder,
+  ValidateAndDecodeResult,
+  PayeeRule,
+  RedeemerRule,
+  ExpiryRule,
+} from './permissions';
+
+export {
+  EXECUTION_PERMISSION_EXPIRY_RULE_TYPE,
+  expiryRule,
+} from './permissions';
+export {
+  EXECUTION_PERMISSION_PAYEE_RULE_TYPE,
+  erc20PayeeRuleDecoder,
+  nativePayeeRuleDecoder,
+  EXECUTION_PERMISSION_REDEEMER_RULE_TYPE,
+  redeemerRuleDecoder,
+  makePermissionDecoder,
+  makeNativeTokenStreamDecoderConfig,
+  makeNativeTokenPeriodicDecoderConfig,
+  makeNativeTokenAllowanceDecoderConfig,
+  makeErc20TokenStreamDecoderConfig,
+  makeErc20TokenPeriodicDecoderConfig,
+  makeErc20TokenAllowanceDecoderConfig,
+  makeErc20TokenRevocationDecoderConfig,
+  makeTokenApprovalRevocationDecoderConfig,
+  createPermissionDecodersForContracts,
+} from './permissions';

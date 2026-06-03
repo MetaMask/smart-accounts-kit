@@ -43,6 +43,8 @@
   "scripts": {
     "build": "yarn typecheck && tsup",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "yarn lint:eslint",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix",
@@ -55,10 +57,17 @@
   },
   "devDependencies": {
     "@metamask/auto-changelog": "^6.1.1",
+    "@types/node": "^20.19.0",
     "compare-versions": "^6.1.1",
     "eslint": "^9.39.2",
     "prettier": "^3.5.3",
     "tsup": "^8.5.0",
-    "typescript": "5.5.4"
+    "typescript": "5.5.4",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@metamask/delegation-core": "^2.2.1",
+    "@metamask/delegation-deployments": "^1.4.0",
+    "@metamask/utils": "^11.4.0"
   }
 }

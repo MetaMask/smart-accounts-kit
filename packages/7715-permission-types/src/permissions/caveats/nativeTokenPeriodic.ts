@@ -6,7 +6,7 @@ import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
-  DecodedPermission,
+  DecodedPermissionData,
   MakePermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer, MAX_PERIOD_DURATION } from '../utils';
@@ -57,7 +57,7 @@ export function makeNativeTokenPeriodicDecoderConfig(
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: ChecksumEnforcersByChainId,
-): DecodedPermission['permission']['data'] {
+): DecodedPermissionData {
   const { nativeTokenPeriodicEnforcer, exactCalldataEnforcer } =
     contractAddresses;
 

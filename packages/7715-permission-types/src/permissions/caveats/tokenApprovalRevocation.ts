@@ -4,7 +4,7 @@ import { expiryRule } from '../rules/expiry';
 import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
-  DecodedPermission,
+  DecodedPermissionData,
   MakePermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer } from '../utils';
@@ -46,7 +46,7 @@ export function makeTokenApprovalRevocationDecoderConfig(
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: ChecksumEnforcersByChainId,
-): DecodedPermission['permission']['data'] {
+): DecodedPermissionData {
   const { approvalRevocationEnforcer } = contractAddresses;
 
   const terms = getTermsByEnforcer({

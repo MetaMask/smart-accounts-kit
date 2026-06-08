@@ -1,12 +1,6 @@
-import type { Hex, PermissionRequest, PermissionTypes, Rule } from '../types';
+import type { Caveat } from '@metamask/delegation-core';
 
-/**
- * Minimal caveat representation used by permission decoders.
- */
-export type Caveat<TEnforcer extends Hex = Hex> = {
-  enforcer: TEnforcer;
-  terms: Hex;
-};
+import type { Hex, PermissionTypes, Rule } from '../types';
 
 /**
  * Checksummed enforcer contract addresses for a chain (from getChecksumEnforcersByChainId).
@@ -27,36 +21,17 @@ export type ChecksumEnforcersByChainId = {
 };
 
 /** Caveat with checksummed enforcer address; used by rule decode functions. */
-export type ChecksumCaveat = Caveat;
+export type ChecksumCaveat = Caveat<Hex>;
 
 /**
- * A partially reconstructed permission object decoded from a permission context.
+ * Type of the `data` parameter of a decoded permission.
  */
-export type DecodedPermission = Pick<
-  PermissionRequest<PermissionTypes>,
-  'chainId' | 'from' | 'to'
-> & {
-  permission: Omit<
-    PermissionRequest<PermissionTypes>['permission'],
-    'isAdjustmentAllowed' | 'type' | 'data'
-  > & {
-    type: PermissionTypes['type'];
-    data: PermissionTypes['data'];
-    justification?: string;
-  };
-  /**
-   * @deprecated Use `rules` instead.
-   */
-  expiry: number | null;
-  origin: string;
-  /** Rules recovered from caveats (e.g. redeemer allowlist). */
-  rules?: Rule[];
-};
+export type DecodedPermissionData = PermissionTypes['data'];
 
 /**
  * Supported permission type identifiers that can be decoded from a permission context.
  */
-export type PermissionType = DecodedPermission['permission']['type'];
+export type PermissionType = PermissionTypes['type'];
 
 /**
  * A function that inspects checksummed caveats and optionally produces a Rule.
@@ -79,7 +54,7 @@ export type PermissionDecoderConfig = {
   validateAndDecodeData: (
     caveats: ChecksumCaveat[],
     contractAddresses: ChecksumEnforcersByChainId,
-  ) => DecodedPermission['permission']['data'];
+  ) => DecodedPermissionData;
 };
 
 /**
@@ -98,7 +73,7 @@ export type ValidateAndDecodeResult =
   | {
       isValid: true;
       expiry: number | null;
-      data: DecodedPermission['permission']['data'];
+      data: DecodedPermissionData;
       rules?: Rule[];
     }
   | { isValid: false; error: Error };

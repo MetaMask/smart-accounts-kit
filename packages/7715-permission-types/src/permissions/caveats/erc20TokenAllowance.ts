@@ -4,7 +4,7 @@ import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
-  DecodedPermission,
+  DecodedPermissionData,
   MakePermissionDecoderConfig,
 } from '../types';
 import {
@@ -61,7 +61,7 @@ export function makeErc20TokenAllowanceDecoderConfig(
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: ChecksumEnforcersByChainId,
-): DecodedPermission['permission']['data'] {
+): DecodedPermissionData {
   const { erc20PeriodicEnforcer, valueLteEnforcer } = contractAddresses;
 
   const valueLteTerms = getTermsByEnforcer({

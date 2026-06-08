@@ -8,45 +8,9 @@ import { makeTokenApprovalRevocationDecoderConfig } from './caveats/tokenApprova
 import type { DeployedContractsByName, PermissionDecoderConfig } from './types';
 import { getChecksumEnforcersByChainId } from './utils';
 
-export type {
-  Caveat,
-  ChecksumCaveat,
-  ChecksumEnforcersByChainId,
-  DeployedContractsByName,
-  DecodedPermission,
-  MakePermissionDecoderConfig,
-  PermissionDecoder,
-  PermissionDecoderConfig,
-  PermissionDecoderSpec,
-  PermissionType,
-  RuleDecoder,
-  ValidateAndDecodeResult,
-} from './types';
-
 export type { ExpiryRule } from './rules/expiry';
 export type { PayeeRule } from './rules/payee';
 export type { RedeemerRule } from './rules/redeemer';
-
-export {
-  EXECUTION_PERMISSION_EXPIRY_RULE_TYPE,
-  expiryRule,
-} from './rules/expiry';
-export {
-  EXECUTION_PERMISSION_PAYEE_RULE_TYPE,
-  erc20PayeeRuleDecoder,
-  nativePayeeRuleDecoder,
-} from './rules/payee';
-export {
-  EXECUTION_PERMISSION_REDEEMER_RULE_TYPE,
-  redeemerRuleDecoder,
-} from './rules/redeemer';
-export { makeNativeTokenStreamDecoderConfig } from './caveats/nativeTokenStream';
-export { makeNativeTokenPeriodicDecoderConfig } from './caveats/nativeTokenPeriodic';
-export { makeNativeTokenAllowanceDecoderConfig } from './caveats/nativeTokenAllowance';
-export { makeErc20TokenStreamDecoderConfig } from './caveats/erc20TokenStream';
-export { makeErc20TokenPeriodicDecoderConfig } from './caveats/erc20TokenPeriodic';
-export { makeErc20TokenAllowanceDecoderConfig } from './caveats/erc20TokenAllowance';
-export { makeTokenApprovalRevocationDecoderConfig } from './caveats/tokenApprovalRevocation';
 
 /**
  * Builds the canonical set of permission decoders for a chain.

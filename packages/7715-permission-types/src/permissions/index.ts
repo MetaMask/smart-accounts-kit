@@ -2,7 +2,6 @@ import { getChecksumAddress } from '@metamask/utils';
 
 import { makeErc20TokenAllowanceDecoderConfig } from './caveats/erc20TokenAllowance';
 import { makeErc20TokenPeriodicDecoderConfig } from './caveats/erc20TokenPeriodic';
-import { makeErc20TokenRevocationDecoderConfig } from './caveats/erc20TokenRevocation';
 import { makeErc20TokenStreamDecoderConfig } from './caveats/erc20TokenStream';
 import { makeNativeTokenAllowanceDecoderConfig } from './caveats/nativeTokenAllowance';
 import { makeNativeTokenPeriodicDecoderConfig } from './caveats/nativeTokenPeriodic';
@@ -56,7 +55,6 @@ export { makeNativeTokenAllowanceDecoderConfig } from './caveats/nativeTokenAllo
 export { makeErc20TokenStreamDecoderConfig } from './caveats/erc20TokenStream';
 export { makeErc20TokenPeriodicDecoderConfig } from './caveats/erc20TokenPeriodic';
 export { makeErc20TokenAllowanceDecoderConfig } from './caveats/erc20TokenAllowance';
-export { makeErc20TokenRevocationDecoderConfig } from './caveats/erc20TokenRevocation';
 export { makeTokenApprovalRevocationDecoderConfig } from './caveats/tokenApprovalRevocation';
 
 /**
@@ -77,7 +75,6 @@ export const makePermissionDecoderConfigs = (
     makeErc20TokenStreamDecoderConfig(contractAddresses),
     makeErc20TokenPeriodicDecoderConfig(contractAddresses),
     makeErc20TokenAllowanceDecoderConfig(contractAddresses),
-    makeErc20TokenRevocationDecoderConfig(contractAddresses),
     makeTokenApprovalRevocationDecoderConfig(contractAddresses),
   ];
 };

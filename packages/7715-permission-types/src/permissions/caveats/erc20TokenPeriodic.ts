@@ -1,4 +1,4 @@
-import { hexToBigInt, hexToNumber } from '@metamask/utils';
+import { decodeERC20TokenPeriodTransferTerms } from '@metamask/delegation-core';
 
 import { expiryRule } from '../rules/expiry';
 import { erc20PayeeRuleDecoder } from '../rules/payee';
@@ -10,10 +10,8 @@ import type {
   MakePermissionDecoderConfig,
 } from '../types';
 import {
-  getByteLength,
   getTermsByEnforcer,
   MAX_PERIOD_DURATION,
-  splitHex,
   ZERO_32_BYTES,
 } from '../utils';
 
@@ -79,23 +77,14 @@ function validateAndDecodeData(
     enforcer: erc20PeriodicEnforcer,
   });
 
-  const EXPECTED_TERMS_BYTELENGTH = 116; // 20 + 32 + 32 + 32
+  const {
+    tokenAddress,
+    periodAmount,
+    periodDuration,
+    startDate: startTime,
+  } = decodeERC20TokenPeriodTransferTerms(terms);
 
-  if (getByteLength(terms) !== EXPECTED_TERMS_BYTELENGTH) {
-    throw new Error('Invalid erc20-token-periodic terms: expected 116 bytes');
-  }
-
-  const [tokenAddress, periodAmount, periodDurationRaw, startTimeRaw] =
-    splitHex(terms, [20, 32, 32, 32]);
-  if (!tokenAddress || !periodAmount || !periodDurationRaw || !startTimeRaw) {
-    throw new Error('Invalid erc20-token-periodic terms');
-  }
-
-  const periodDuration = hexToNumber(periodDurationRaw);
-  const periodAmountBigInt = hexToBigInt(periodAmount);
-  const startTime = hexToNumber(startTimeRaw);
-
-  if (periodAmountBigInt === 0n) {
+  if (periodAmount === 0n) {
     throw new Error(
       'Invalid erc20-token-periodic terms: periodAmount must be a positive number',
     );

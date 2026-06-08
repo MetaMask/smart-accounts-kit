@@ -132,7 +132,7 @@ describe('native-token-stream decoder', () => {
     }
 
     expect(result.error.message).toContain(
-      'Invalid native-token-stream terms: expected 128 bytes',
+      'Invalid NativeTokenStreaming terms: must be exactly 128 bytes',
     );
   });
 
@@ -165,7 +165,7 @@ describe('native-token-stream decoder', () => {
     }
 
     expect(result.error.message).toContain(
-      'Invalid native-token-stream terms: expected 128 bytes',
+      'Invalid NativeTokenStreaming terms: must be exactly 128 bytes',
     );
   });
 

@@ -53,7 +53,7 @@ describe('token-approval-revocation decoder', () => {
     }
 
     expect(result.error.message).toContain(
-      'Invalid ApprovalRevocation terms: must be greater than 0',
+      'Invalid ApprovalRevocation terms: must be exactly 1 byte',
     );
   });
 
@@ -80,7 +80,7 @@ describe('token-approval-revocation decoder', () => {
     }
 
     expect(result.error.message).toContain(
-      'Invalid ApprovalRevocation terms: must be greater than 0',
+      'Invalid ApprovalRevocation terms: at least one revocation primitive must be enabled',
     );
   });
 
@@ -107,7 +107,7 @@ describe('token-approval-revocation decoder', () => {
     }
 
     expect(result.error.message).toContain(
-      'Invalid ApprovalRevocation terms: must be less than or equal to 63',
+      'Invalid ApprovalRevocation terms: reserved bits must be zero (only bits 0-5 are defined)',
     );
   });
 

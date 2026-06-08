@@ -1,4 +1,4 @@
-import { hexToBigInt, hexToNumber } from '@metamask/utils';
+import { decodeNativeTokenStreamingTerms } from '@metamask/delegation-core';
 
 import { expiryRule } from '../rules/expiry';
 import { nativePayeeRuleDecoder } from '../rules/payee';
@@ -9,7 +9,7 @@ import type {
   DecodedPermission,
   MakePermissionDecoderConfig,
 } from '../types';
-import { getByteLength, getTermsByEnforcer, splitHex } from '../utils';
+import { getTermsByEnforcer } from '../utils';
 
 /**
  * Builds the configuration for the native-token-stream permission decoder.
@@ -74,33 +74,16 @@ function validateAndDecodeData(
     caveats,
     enforcer: nativeTokenStreamingEnforcer,
   });
+  const { initialAmount, maxAmount, amountPerSecond, startTime } =
+    decodeNativeTokenStreamingTerms(terms);
 
-  const EXPECTED_TERMS_BYTELENGTH = 128; // 32 + 32 + 32 + 32
-
-  if (getByteLength(terms) !== EXPECTED_TERMS_BYTELENGTH) {
-    throw new Error('Invalid native-token-stream terms: expected 128 bytes');
-  }
-
-  const [initialAmount, maxAmount, amountPerSecond, startTimeRaw] = splitHex(
-    terms,
-    [32, 32, 32, 32],
-  );
-  if (!initialAmount || !maxAmount || !amountPerSecond || !startTimeRaw) {
-    throw new Error('Invalid native-token-stream terms');
-  }
-
-  const initialAmountBigInt = hexToBigInt(initialAmount);
-  const maxAmountBigInt = hexToBigInt(maxAmount);
-  const amountPerSecondBigInt = hexToBigInt(amountPerSecond);
-  const startTime = hexToNumber(startTimeRaw);
-
-  if (maxAmountBigInt <= initialAmountBigInt) {
+  if (maxAmount <= initialAmount) {
     throw new Error(
       'Invalid native-token-stream terms: maxAmount must be greater than initialAmount',
     );
   }
 
-  if (amountPerSecondBigInt === 0n) {
+  if (amountPerSecond === 0n) {
     throw new Error(
       'Invalid native-token-stream terms: amountPerSecond must be a positive number',
     );

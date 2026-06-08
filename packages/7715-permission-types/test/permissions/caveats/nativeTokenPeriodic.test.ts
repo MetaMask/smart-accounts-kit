@@ -98,7 +98,7 @@ describe('native-token-periodic decoder', () => {
     }
 
     expect(result.error.message).toContain(
-      'Invalid native-token-periodic terms: expected 96 bytes',
+      'Invalid NativeTokenPeriodTransfer terms: must be exactly 96 bytes',
     );
   });
 
@@ -130,7 +130,7 @@ describe('native-token-periodic decoder', () => {
     }
 
     expect(result.error.message).toContain(
-      'Invalid native-token-periodic terms: expected 96 bytes',
+      'Invalid NativeTokenPeriodTransfer terms: must be exactly 96 bytes',
     );
   });
 

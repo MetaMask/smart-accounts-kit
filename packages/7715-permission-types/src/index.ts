@@ -54,7 +54,6 @@ export {
   makeErc20TokenStreamDecoderConfig,
   makeErc20TokenPeriodicDecoderConfig,
   makeErc20TokenAllowanceDecoderConfig,
-  makeErc20TokenRevocationDecoderConfig,
   makeTokenApprovalRevocationDecoderConfig,
   createPermissionDecodersForContracts,
 } from './permissions';

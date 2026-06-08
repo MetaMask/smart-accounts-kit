@@ -88,7 +88,7 @@ describe('erc20-token-stream decoder', () => {
     }
 
     expect(result.error.message).toContain(
-      'Invalid erc20-token-stream terms: expected 148 bytes',
+      'Invalid ERC20Streaming terms: must be exactly 148 bytes',
     );
   });
 
@@ -278,7 +278,7 @@ describe('erc20-token-stream decoder', () => {
     }
 
     expect(result.error.message).toContain(
-      'Invalid erc20-token-stream terms: expected 148 bytes',
+      'Invalid ERC20Streaming terms: must be exactly 148 bytes',
     );
   });
 

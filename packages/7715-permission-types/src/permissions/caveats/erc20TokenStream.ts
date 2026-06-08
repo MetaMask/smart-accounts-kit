@@ -1,4 +1,4 @@
-import { hexToBigInt, hexToNumber } from '@metamask/utils';
+import { decodeERC20StreamingTerms } from '@metamask/delegation-core';
 
 import { expiryRule } from '../rules/expiry';
 import { erc20PayeeRuleDecoder } from '../rules/payee';
@@ -9,12 +9,7 @@ import type {
   DecodedPermission,
   MakePermissionDecoderConfig,
 } from '../types';
-import {
-  getByteLength,
-  getTermsByEnforcer,
-  splitHex,
-  ZERO_32_BYTES,
-} from '../utils';
+import { getTermsByEnforcer, ZERO_32_BYTES } from '../utils';
 
 /**
  * Builds the configuration for the erc20-token-stream permission decoder.
@@ -78,42 +73,16 @@ function validateAndDecodeData(
     caveats,
     enforcer: erc20StreamingEnforcer,
   });
+  const { tokenAddress, initialAmount, maxAmount, amountPerSecond, startTime } =
+    decodeERC20StreamingTerms(terms);
 
-  const EXPECTED_TERMS_BYTELENGTH = 148;
-
-  if (getByteLength(terms) !== EXPECTED_TERMS_BYTELENGTH) {
-    throw new Error('Invalid erc20-token-stream terms: expected 148 bytes');
-  }
-
-  const [
-    tokenAddress,
-    initialAmount,
-    maxAmount,
-    amountPerSecond,
-    startTimeRaw,
-  ] = splitHex(terms, [20, 32, 32, 32, 32]);
-  if (
-    !tokenAddress ||
-    !initialAmount ||
-    !maxAmount ||
-    !amountPerSecond ||
-    !startTimeRaw
-  ) {
-    throw new Error('Invalid erc20-token-stream terms');
-  }
-
-  const startTime = hexToNumber(startTimeRaw);
-  const initialAmountBigInt = hexToBigInt(initialAmount);
-  const maxAmountBigInt = hexToBigInt(maxAmount);
-  const amountPerSecondBigInt = hexToBigInt(amountPerSecond);
-
-  if (maxAmountBigInt <= initialAmountBigInt) {
+  if (maxAmount <= initialAmount) {
     throw new Error(
       'Invalid erc20-token-stream terms: maxAmount must be greater than initialAmount',
     );
   }
 
-  if (amountPerSecondBigInt === 0n) {
+  if (amountPerSecond === 0n) {
     throw new Error(
       'Invalid erc20-token-stream terms: amountPerSecond must be a positive number',
     );

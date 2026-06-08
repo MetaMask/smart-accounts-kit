@@ -9,7 +9,10 @@ import {
 } from '@metamask/delegation-deployments';
 
 import { createPermissionDecodersForContracts } from '../../../src/permissions';
-import { MAX_PERIOD_DURATION, ZERO_32_BYTES } from '../../../src/permissions/utils';
+import {
+  MAX_PERIOD_DURATION,
+  ZERO_32_BYTES,
+} from '../../../src/permissions/utils';
 
 describe('erc20-token-periodic decoder', () => {
   const chainId = CHAIN_ID.sepolia;
@@ -95,7 +98,7 @@ describe('erc20-token-periodic decoder', () => {
     }
 
     expect(result.error.message).toContain(
-      'Invalid erc20-token-periodic terms: expected 116 bytes',
+      'Invalid ERC20TokenPeriodTransfer terms: must be exactly 116 bytes',
     );
   });
 
@@ -264,7 +267,7 @@ describe('erc20-token-periodic decoder', () => {
     }
 
     expect(result.error.message).toContain(
-      'Invalid erc20-token-periodic terms: expected 116 bytes',
+      'Invalid ERC20TokenPeriodTransfer terms: must be exactly 116 bytes',
     );
   });
 

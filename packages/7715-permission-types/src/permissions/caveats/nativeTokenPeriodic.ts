@@ -1,4 +1,4 @@
-import { hexToBigInt, hexToNumber } from '@metamask/utils';
+import { decodeNativeTokenPeriodTransferTerms } from '@metamask/delegation-core';
 
 import { expiryRule } from '../rules/expiry';
 import { nativePayeeRuleDecoder } from '../rules/payee';
@@ -9,12 +9,7 @@ import type {
   DecodedPermission,
   MakePermissionDecoderConfig,
 } from '../types';
-import {
-  getByteLength,
-  getTermsByEnforcer,
-  MAX_PERIOD_DURATION,
-  splitHex,
-} from '../utils';
+import { getTermsByEnforcer, MAX_PERIOD_DURATION } from '../utils';
 
 /**
  * Builds the configuration for the native-token-periodic permission decoder.
@@ -79,26 +74,13 @@ function validateAndDecodeData(
     caveats,
     enforcer: nativeTokenPeriodicEnforcer,
   });
+  const {
+    periodAmount,
+    periodDuration,
+    startDate: startTime,
+  } = decodeNativeTokenPeriodTransferTerms(terms);
 
-  const EXPECTED_TERMS_BYTELENGTH = 96; // 32 + 32 + 32
-
-  if (getByteLength(terms) !== EXPECTED_TERMS_BYTELENGTH) {
-    throw new Error('Invalid native-token-periodic terms: expected 96 bytes');
-  }
-
-  const [periodAmount, periodDurationRaw, startTimeRaw] = splitHex(
-    terms,
-    [32, 32, 32],
-  );
-  if (!periodAmount || !periodDurationRaw || !startTimeRaw) {
-    throw new Error('Invalid native-token-periodic terms');
-  }
-
-  const periodDuration = hexToNumber(periodDurationRaw);
-  const startTime = hexToNumber(startTimeRaw);
-  const periodAmountBigInt = hexToBigInt(periodAmount);
-
-  if (periodAmountBigInt === 0n) {
+  if (periodAmount === 0n) {
     throw new Error(
       'Invalid native-token-periodic terms: periodAmount must be a positive number',
     );

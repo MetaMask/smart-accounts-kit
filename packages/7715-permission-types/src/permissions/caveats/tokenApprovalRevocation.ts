@@ -1,5 +1,4 @@
-/* eslint-disable no-bitwise */
-import { hexToNumber } from '@metamask/utils';
+import { decodeApprovalRevocationTerms } from '@metamask/delegation-core';
 
 import { expiryRule } from '../rules/expiry';
 import type {
@@ -9,23 +8,6 @@ import type {
   MakePermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer } from '../utils';
-
-enum ApprovalRevocationFlag {
-  Erc20Approve = 0x01,
-  Erc721Approve = 0x02,
-  Erc721SetApprovalForAll = 0x04,
-  Permit2Approve = 0x08,
-  Permit2Lockdown = 0x10,
-  Permit2InvalidateNonces = 0x20,
-}
-
-const MAX_APPROVAL_REVOCATION_MASK =
-  ApprovalRevocationFlag.Permit2InvalidateNonces |
-  ApprovalRevocationFlag.Permit2Lockdown |
-  ApprovalRevocationFlag.Permit2Approve |
-  ApprovalRevocationFlag.Erc721SetApprovalForAll |
-  ApprovalRevocationFlag.Erc721Approve |
-  ApprovalRevocationFlag.Erc20Approve;
 
 /**
  * Builds the configuration for the token-approval-revocation permission decoder.
@@ -72,48 +54,21 @@ function validateAndDecodeData(
     enforcer: approvalRevocationEnforcer,
   });
 
-  if (terms === '0x') {
-    throw new Error('Invalid ApprovalRevocation terms: must be greater than 0');
-  }
-
-  const mask = hexToNumber(terms);
-
-  if (mask > MAX_APPROVAL_REVOCATION_MASK) {
-    throw new Error(
-      `Invalid ApprovalRevocation terms: must be less than or equal to ${MAX_APPROVAL_REVOCATION_MASK}`,
-    );
-  }
-
-  if (mask === 0) {
-    throw new Error('Invalid ApprovalRevocation terms: must be greater than 0');
-  }
+  const {
+    erc20Approve,
+    erc721Approve,
+    erc721SetApprovalForAll,
+    permit2Approve,
+    permit2Lockdown,
+    permit2InvalidateNonces,
+  } = decodeApprovalRevocationTerms(terms);
 
   return {
-    erc20Approve: isFlagEnabled(mask, ApprovalRevocationFlag.Erc20Approve),
-    erc721Approve: isFlagEnabled(mask, ApprovalRevocationFlag.Erc721Approve),
-    erc721SetApprovalForAll: isFlagEnabled(
-      mask,
-      ApprovalRevocationFlag.Erc721SetApprovalForAll,
-    ),
-    permit2Approve: isFlagEnabled(mask, ApprovalRevocationFlag.Permit2Approve),
-    permit2Lockdown: isFlagEnabled(
-      mask,
-      ApprovalRevocationFlag.Permit2Lockdown,
-    ),
-    permit2InvalidateNonces: isFlagEnabled(
-      mask,
-      ApprovalRevocationFlag.Permit2InvalidateNonces,
-    ),
+    erc20Approve,
+    erc721Approve,
+    erc721SetApprovalForAll,
+    permit2Approve,
+    permit2Lockdown,
+    permit2InvalidateNonces,
   };
-}
-
-/**
- * Returns whether a specific bitwise flag is enabled in the mask.
- *
- * @param mask - The full bitmask value.
- * @param flag - The flag to check.
- * @returns `true` if the flag is set, otherwise `false`.
- */
-function isFlagEnabled(mask: number, flag: number): boolean {
-  return (mask & flag) === flag;
 }

@@ -1,269 +1,146 @@
-import { createTimestampTerms } from '@metamask/delegation-core';
-import type { Hex } from '@metamask/delegation-core';
 import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
+import type { Hex } from '@metamask/utils';
+import { describe, it, expect } from 'vitest';
 
-import { createPermissionDecodersForContracts } from '../../../src/permissions';
-import { ZERO_32_BYTES } from '../../../src/permissions/utils';
+import { makePermissionDecoderConfigs } from '../../../src/permissions';
+import { makeErc20TokenAllowanceDecoderConfig } from '../../../src/permissions/caveats/erc20TokenAllowance';
+import { expiryRule } from '../../../src/permissions/rules/expiry';
+import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
+import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
+import {
+  getChecksumEnforcersByChainId,
+  UINT256_MAX,
+  ZERO_32_BYTES,
+} from '../../../src/permissions/utils';
+import { toWord } from '../../test-utils';
 
-describe('erc20-token-allowance decoder', () => {
+describe('erc20-token-allowance decoder config', () => {
   const chainId = CHAIN_ID.sepolia;
   const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
-  const { TimestampEnforcer, ERC20PeriodTransferEnforcer, ValueLteEnforcer } =
-    contracts;
-  const permissionDecoders = createPermissionDecodersForContracts(contracts);
-  const decoder = permissionDecoders.find(
-    (candidate) => candidate.permissionType === 'erc20-token-allowance',
+  const {
+    timestampEnforcer,
+    erc20PeriodicEnforcer,
+    valueLteEnforcer,
+    nonceEnforcer,
+    allowedCalldataEnforcer,
+    redeemerEnforcer,
+  } = getChecksumEnforcersByChainId(contracts);
+  const decoder = makeErc20TokenAllowanceDecoderConfig(
+    getChecksumEnforcersByChainId(contracts),
   );
-  if (!decoder) {
-    throw new Error('Decoder not found');
-  }
-
-  const expiryCaveat = {
-    enforcer: TimestampEnforcer,
-    terms: createTimestampTerms({
-      afterThreshold: 0,
-      beforeThreshold: 1720000,
-    }),
-    args: '0x' as const,
-  };
-
-  const valueLteCaveat = {
-    enforcer: ValueLteEnforcer,
-    terms: ZERO_32_BYTES,
-    args: '0x' as const,
-  };
-
   const TOKEN_ADDRESS_HEX = 'aa'.repeat(20);
-  const TOKEN_ADDRESS: Hex = `0x${TOKEN_ADDRESS_HEX}`;
-  const ALLOWANCE_AMOUNT_HEX = 100n.toString(16).padStart(64, '0');
-  const PERIOD_DURATION_MAX_HEX = 'f'.repeat(64);
-  const START_DATE_HEX = (1715664).toString(16).padStart(64, '0');
-  const ALLOWANCE_TERMS =
-    `0x${TOKEN_ADDRESS_HEX}${ALLOWANCE_AMOUNT_HEX}${PERIOD_DURATION_MAX_HEX}${START_DATE_HEX}` as Hex;
+  const ALLOWANCE_AMOUNT_HEX = toWord(100n);
+  const START_TIME = 1715664;
+  const START_TIME_HEX = toWord(START_TIME);
+  const VALID_ALLOWANCE_TERMS =
+    `0x${TOKEN_ADDRESS_HEX}${ALLOWANCE_AMOUNT_HEX}${UINT256_MAX.slice(2)}${START_TIME_HEX}` as Hex;
 
-  it('rejects duplicate ERC20PeriodTransferEnforcer caveats', () => {
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: ALLOWANCE_TERMS,
-        args: '0x' as const,
-      },
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: ALLOWANCE_TERMS,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+  const makeCaveats = (
+    erc20PeriodicTerms: Hex,
+    valueLteTerms: Hex = ZERO_32_BYTES,
+  ): ChecksumCaveat[] => [
+    {
+      enforcer: erc20PeriodicEnforcer,
+      terms: erc20PeriodicTerms,
+    },
+    {
+      enforcer: valueLteEnforcer,
+      terms: valueLteTerms,
+    },
+    {
+      enforcer: nonceEnforcer,
+      terms: '0x' as const,
+    },
+  ];
 
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
+  describe('static configuration', () => {
+    it('exposes expected required enforcers', () => {
+      expect(decoder.requiredEnforcers).toStrictEqual({
+        [erc20PeriodicEnforcer]: 1,
+        [valueLteEnforcer]: 1,
+        [nonceEnforcer]: 1,
+      });
+    });
 
-    expect(result.error.message).toContain('Invalid caveats');
-  });
+    it('exposes expected optional enforcers', () => {
+      expect(decoder.optionalEnforcers).toStrictEqual([
+        timestampEnforcer,
+        redeemerEnforcer,
+        allowedCalldataEnforcer,
+      ]);
+    });
 
-  it('rejects truncated terms', () => {
-    const truncatedTerms: Hex = `0x${'00'.repeat(40)}`; // 40 bytes, need 116
-
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: truncatedTerms,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid erc20-token-allowance terms: expected 116 bytes',
-    );
-  });
-
-  it('rejects when terms have trailing bytes', () => {
-    const termsWithTrailing = `${ALLOWANCE_TERMS}deadbeef` as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: termsWithTrailing,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid erc20-token-allowance terms: expected 116 bytes',
-    );
-  });
-
-  it('rejects when ValueLteEnforcer terms are not zero', () => {
-    const nonZeroValueLte: Hex = `0x${'0'.repeat(62)}01` as Hex;
-    const caveats = [
-      expiryCaveat,
-      {
-        enforcer: ValueLteEnforcer,
-        terms: nonZeroValueLte,
-        args: '0x' as const,
-      },
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: ALLOWANCE_TERMS,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      `Invalid value-lte terms: must be ${ZERO_32_BYTES}`,
-    );
-  });
-
-  it('successfully decodes valid erc20-token-allowance caveats', () => {
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: ALLOWANCE_TERMS,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
-
-    if (!result.isValid) {
-      throw new Error('Expected valid result');
-    }
-
-    expect(result.expiry).toBe(1720000);
-    expect(result.data).toStrictEqual({
-      tokenAddress: TOKEN_ADDRESS,
-      allowanceAmount: `0x${ALLOWANCE_AMOUNT_HEX}`,
-      startTime: 1715664,
+    it('includes expected rule decoders in order', () => {
+      expect(decoder.rules).toStrictEqual([
+        expiryRule,
+        redeemerRuleDecoder,
+        erc20PayeeRuleDecoder,
+      ]);
     });
   });
 
-  it('successfully decodes when periodDuration uses uppercase UINT256_MAX', () => {
-    const uppercaseMax = 'F'.repeat(64);
-    const terms =
-      `0x${TOKEN_ADDRESS_HEX}${ALLOWANCE_AMOUNT_HEX}${uppercaseMax}${START_DATE_HEX}` as Hex;
+  describe('validateAndDecodeData', () => {
+    it('provides a validateAndDecodeData function', () => {
+      expect(typeof decoder.validateAndDecodeData).toBe('function');
+    });
 
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
+    it('is included in makePermissionDecoderConfigs', () => {
+      expect(makePermissionDecoderConfigs(contracts)).toContainEqual(decoder);
+    });
 
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
-  });
+    it('validateAndDecodeData decodes valid allowance terms', () => {
+      expect(
+        decoder.validateAndDecodeData(makeCaveats(VALID_ALLOWANCE_TERMS), {
+          ...decoder.contractAddresses,
+        }),
+      ).toStrictEqual({
+        tokenAddress: `0x${TOKEN_ADDRESS_HEX}`,
+        allowanceAmount: `0x${ALLOWANCE_AMOUNT_HEX}`,
+        startTime: START_TIME,
+      });
+    });
 
-  it('rejects when periodDuration is not UINT256_MAX', () => {
-    const nonMaxDuration = (86400).toString(16).padStart(64, '0');
-    const terms =
-      `0x${TOKEN_ADDRESS_HEX}${ALLOWANCE_AMOUNT_HEX}${nonMaxDuration}${START_DATE_HEX}` as Hex;
+    it('validateAndDecodeData rejects non-zero value-lte terms', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(VALID_ALLOWANCE_TERMS, `0x${'0'.repeat(63)}1` as Hex),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(`Invalid value-lte terms: must be ${ZERO_32_BYTES}`);
+    });
 
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+    it('validateAndDecodeData rejects invalid periodDuration', () => {
+      const nonMaxDurationHex = toWord(86400);
+      const invalidTerms =
+        `0x${TOKEN_ADDRESS_HEX}${ALLOWANCE_AMOUNT_HEX}${nonMaxDurationHex}${START_TIME_HEX}` as Hex;
 
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(invalidTerms),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid erc20-token-allowance terms: periodDuration must be UINT256_MAX',
+      );
+    });
 
-    expect(result.error.message).toContain(
-      'Invalid erc20-token-allowance terms: periodDuration must be UINT256_MAX',
-    );
-  });
+    it('validateAndDecodeData rejects zero allowanceAmount', () => {
+      const zeroAllowanceAmount = '0'.repeat(64);
+      const invalidTerms =
+        `0x${TOKEN_ADDRESS_HEX}${zeroAllowanceAmount}${UINT256_MAX.slice(2)}${START_TIME_HEX}` as Hex;
 
-  it('rejects when startTime is 0', () => {
-    const startTimeZero = '0'.repeat(64);
-    const terms =
-      `0x${TOKEN_ADDRESS_HEX}${ALLOWANCE_AMOUNT_HEX}${PERIOD_DURATION_MAX_HEX}${startTimeZero}` as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid erc20-token-allowance terms: startTime must be a positive number',
-    );
-  });
-
-  it('rejects when allowanceAmount is 0', () => {
-    const allowanceZero = '0'.repeat(64);
-    const terms =
-      `0x${TOKEN_ADDRESS_HEX}${allowanceZero}${PERIOD_DURATION_MAX_HEX}${START_DATE_HEX}` as Hex;
-
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid erc20-token-allowance terms: allowanceAmount must be a positive number',
-    );
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(invalidTerms),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid erc20-token-allowance terms: allowanceAmount must be a positive number',
+      );
+    });
   });
 });

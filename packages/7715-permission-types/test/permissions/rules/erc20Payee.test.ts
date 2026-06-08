@@ -5,6 +5,7 @@ import {
 } from '@metamask/delegation-deployments';
 import { getChecksumAddress } from '@metamask/utils';
 import type { Hex } from '@metamask/utils';
+import { describe, it, expect } from 'vitest';
 
 import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import type { ChecksumCaveat } from '../../../src/permissions/types';

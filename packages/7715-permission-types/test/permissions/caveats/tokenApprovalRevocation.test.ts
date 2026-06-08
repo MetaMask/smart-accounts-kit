@@ -1,184 +1,123 @@
-import { createTimestampTerms } from '@metamask/delegation-core';
 import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
+import type { Hex } from '@metamask/utils';
+import { describe, it, expect } from 'vitest';
 
-import { createPermissionDecodersForContracts } from '../../../src/permissions';
+import { makePermissionDecoderConfigs } from '../../../src/permissions';
+import { makeTokenApprovalRevocationDecoderConfig } from '../../../src/permissions/caveats/tokenApprovalRevocation';
+import { expiryRule } from '../../../src/permissions/rules/expiry';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
 import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
 
-describe('token-approval-revocation decoder', () => {
+describe('token-approval-revocation decoder config', () => {
   const chainId = CHAIN_ID.sepolia;
   const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
   const { timestampEnforcer, approvalRevocationEnforcer, nonceEnforcer } =
     getChecksumEnforcersByChainId(contracts);
-  const permissionDecoders = createPermissionDecodersForContracts(contracts);
-  const decoder = permissionDecoders.find(
-    (candidate) => candidate.permissionType === 'token-approval-revocation',
+  const decoder = makeTokenApprovalRevocationDecoderConfig(
+    getChecksumEnforcersByChainId(contracts),
   );
 
-  if (!decoder) {
-    throw new Error('Decoder not found');
-  }
+  const makeCaveats = (approvalRevocationTerms: Hex): ChecksumCaveat[] => [
+    {
+      enforcer: approvalRevocationEnforcer,
+      terms: approvalRevocationTerms,
+    },
+    {
+      enforcer: nonceEnforcer,
+      terms: '0x' as const,
+    },
+  ];
 
-  const expiryCaveat = {
-    enforcer: timestampEnforcer,
-    terms: createTimestampTerms({
-      afterThreshold: 0,
-      beforeThreshold: 1720000,
-    }),
-    args: '0x' as const,
-  };
-
-  it('rejects empty terms', () => {
-    const caveats = [
-      expiryCaveat,
-      {
-        enforcer: approvalRevocationEnforcer,
-        terms: '0x' as const,
-        args: '0x' as const,
-      },
-      {
-        enforcer: nonceEnforcer,
-        terms: '0x' as const,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid ApprovalRevocation terms: must be exactly 1 byte',
-    );
-  });
-
-  it('rejects 0x00 terms', () => {
-    const caveats = [
-      expiryCaveat,
-      {
-        enforcer: approvalRevocationEnforcer,
-        terms: '0x00' as const,
-        args: '0x' as const,
-      },
-      {
-        enforcer: nonceEnforcer,
-        terms: '0x' as const,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid ApprovalRevocation terms: at least one revocation primitive must be enabled',
-    );
-  });
-
-  it('rejects terms whose mask exceeds the supported max', () => {
-    const caveats = [
-      expiryCaveat,
-      {
-        enforcer: approvalRevocationEnforcer,
-        terms: '0x40' as const,
-        args: '0x' as const,
-      },
-      {
-        enforcer: nonceEnforcer,
-        terms: '0x' as const,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid ApprovalRevocation terms: reserved bits must be zero (only bits 0-5 are defined)',
-    );
-  });
-
-  it('successfully decodes valid token-approval-revocation caveats', () => {
-    const caveats = [
-      expiryCaveat,
-      {
-        enforcer: approvalRevocationEnforcer,
-        terms: '0x01' as const,
-        args: '0x' as const,
-      },
-      {
-        enforcer: nonceEnforcer,
-        terms: '0x' as const,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
-
-    if (!result.isValid) {
-      throw new Error('Expected valid result');
-    }
-
-    expect(result.expiry).toBe(1720000);
-    expect(result.data).toStrictEqual({
-      erc20Approve: true,
-      erc721Approve: false,
-      erc721SetApprovalForAll: false,
-      permit2Approve: false,
-      permit2Lockdown: false,
-      permit2InvalidateNonces: false,
+  describe('static configuration', () => {
+    it('exposes expected required enforcers', () => {
+      expect(decoder.requiredEnforcers).toStrictEqual({
+        [approvalRevocationEnforcer]: 1,
+        [nonceEnforcer]: 1,
+      });
     });
-    expect(result.rules).toStrictEqual([
-      {
-        type: 'expiry',
-        data: { timestamp: 1720000 },
-      },
-    ]);
+
+    it('exposes expected optional enforcers', () => {
+      expect(decoder.optionalEnforcers).toStrictEqual([timestampEnforcer]);
+    });
+
+    it('includes expected rule decoders in order', () => {
+      expect(decoder.rules).toStrictEqual([expiryRule]);
+    });
   });
 
-  it('decodes all supported flags from the terms bitmask', () => {
-    const caveats = [
-      expiryCaveat,
-      {
-        enforcer: approvalRevocationEnforcer,
-        terms: '0x3f' as const,
-        args: '0x' as const,
-      },
-      {
-        enforcer: nonceEnforcer,
-        terms: '0x' as const,
-        args: '0x' as const,
-      },
-    ];
+  describe('validateAndDecodeData', () => {
+    it('provides a validateAndDecodeData function', () => {
+      expect(typeof decoder.validateAndDecodeData).toBe('function');
+    });
 
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
+    it('is included in makePermissionDecoderConfigs', () => {
+      expect(makePermissionDecoderConfigs(contracts)).toContainEqual(decoder);
+    });
 
-    if (!result.isValid) {
-      throw new Error('Expected valid result');
-    }
+    it('validateAndDecodeData rejects empty terms', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats('0x'),
+          decoder.contractAddresses,
+        ),
+      ).toThrow('Invalid ApprovalRevocation terms: must be exactly 1 byte');
+    });
 
-    expect(result.data).toStrictEqual({
-      erc20Approve: true,
-      erc721Approve: true,
-      erc721SetApprovalForAll: true,
-      permit2Approve: true,
-      permit2Lockdown: true,
-      permit2InvalidateNonces: true,
+    it('validateAndDecodeData rejects 0x00 terms', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats('0x00'),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid ApprovalRevocation terms: at least one revocation primitive must be enabled',
+      );
+    });
+
+    it('validateAndDecodeData rejects terms whose mask exceeds the supported max', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats('0x40'),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid ApprovalRevocation terms: reserved bits must be zero (only bits 0-5 are defined)',
+      );
+    });
+
+    it('validateAndDecodeData decodes a single enabled flag', () => {
+      expect(
+        decoder.validateAndDecodeData(
+          makeCaveats('0x01'),
+          decoder.contractAddresses,
+        ),
+      ).toStrictEqual({
+        erc20Approve: true,
+        erc721Approve: false,
+        erc721SetApprovalForAll: false,
+        permit2Approve: false,
+        permit2Lockdown: false,
+        permit2InvalidateNonces: false,
+      });
+    });
+
+    it('validateAndDecodeData decodes all supported flags', () => {
+      expect(
+        decoder.validateAndDecodeData(
+          makeCaveats('0x3f'),
+          decoder.contractAddresses,
+        ),
+      ).toStrictEqual({
+        erc20Approve: true,
+        erc721Approve: true,
+        erc721SetApprovalForAll: true,
+        permit2Approve: true,
+        permit2Lockdown: true,
+        permit2InvalidateNonces: true,
+      });
     });
   });
 });

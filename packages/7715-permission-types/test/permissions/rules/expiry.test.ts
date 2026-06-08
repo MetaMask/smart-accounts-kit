@@ -4,6 +4,7 @@ import {
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
 import type { Hex } from '@metamask/utils';
+import { describe, it, expect } from 'vitest';
 
 import { expiryRule } from '../../../src/permissions/rules/expiry';
 import type { ChecksumCaveat } from '../../../src/permissions/types';

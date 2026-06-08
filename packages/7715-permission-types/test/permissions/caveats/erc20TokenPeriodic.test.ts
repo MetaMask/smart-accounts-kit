@@ -1,398 +1,174 @@
-import {
-  createERC20TokenPeriodTransferTerms,
-  createTimestampTerms,
-} from '@metamask/delegation-core';
-import type { Hex } from '@metamask/delegation-core';
+import { createERC20TokenPeriodTransferTerms } from '@metamask/delegation-core';
 import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
+import type { Hex } from '@metamask/utils';
+import { describe, it, expect } from 'vitest';
 
-import { createPermissionDecodersForContracts } from '../../../src/permissions';
+import { makePermissionDecoderConfigs } from '../../../src/permissions';
+import { makeErc20TokenPeriodicDecoderConfig } from '../../../src/permissions/caveats/erc20TokenPeriodic';
+import { expiryRule } from '../../../src/permissions/rules/expiry';
+import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
+import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
 import {
+  getChecksumEnforcersByChainId,
   MAX_PERIOD_DURATION,
   ZERO_32_BYTES,
 } from '../../../src/permissions/utils';
 
-describe('erc20-token-periodic decoder', () => {
+describe('erc20-token-periodic decoder config', () => {
   const chainId = CHAIN_ID.sepolia;
   const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
-  const { TimestampEnforcer, ERC20PeriodTransferEnforcer, ValueLteEnforcer } =
-    contracts;
-  const permissionDecoders = createPermissionDecodersForContracts(contracts);
-  const decoder = permissionDecoders.find(
-    (candidate) => candidate.permissionType === 'erc20-token-periodic',
+  const {
+    timestampEnforcer,
+    erc20PeriodicEnforcer,
+    valueLteEnforcer,
+    nonceEnforcer,
+    allowedCalldataEnforcer,
+    redeemerEnforcer,
+  } = getChecksumEnforcersByChainId(contracts);
+  const decoder = makeErc20TokenPeriodicDecoderConfig(
+    getChecksumEnforcersByChainId(contracts),
   );
-  if (!decoder) {
-    throw new Error('Decoder not found');
-  }
 
-  const expiryCaveat = {
-    enforcer: TimestampEnforcer,
-    terms: createTimestampTerms({
-      afterThreshold: 0,
-      beforeThreshold: 1720000,
-    }),
-    args: '0x' as const,
-  };
+  const TOKEN_ADDRESS = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' as Hex;
+  const START_TIME = 1715664;
 
-  const valueLteCaveat = {
-    enforcer: ValueLteEnforcer,
-    terms: ZERO_32_BYTES,
-    args: '0x' as const,
-  };
+  const makeTerms = ({
+    tokenAddress = TOKEN_ADDRESS,
+    periodAmount = 100n,
+    periodDuration = 86400,
+    startDate = START_TIME,
+  }: {
+    tokenAddress?: Hex;
+    periodAmount?: bigint;
+    periodDuration?: number;
+    startDate?: number;
+  } = {}): Hex =>
+    createERC20TokenPeriodTransferTerms(
+      { tokenAddress, periodAmount, periodDuration, startDate },
+      { out: 'hex' },
+    );
 
-  it('rejects duplicate ERC20PeriodTransferEnforcer caveats', () => {
-    const tokenAddress = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' as Hex;
-    const terms = createERC20TokenPeriodTransferTerms(
-      {
-        tokenAddress,
+  const makeCaveats = (
+    terms: Hex,
+    valueLteTerms: Hex = ZERO_32_BYTES,
+  ): ChecksumCaveat[] => [
+    {
+      enforcer: erc20PeriodicEnforcer,
+      terms,
+    },
+    {
+      enforcer: valueLteEnforcer,
+      terms: valueLteTerms,
+    },
+    {
+      enforcer: nonceEnforcer,
+      terms: '0x' as const,
+    },
+  ];
+
+  describe('static configuration', () => {
+    it('exposes expected required enforcers', () => {
+      expect(decoder.requiredEnforcers).toStrictEqual({
+        [erc20PeriodicEnforcer]: 1,
+        [valueLteEnforcer]: 1,
+        [nonceEnforcer]: 1,
+      });
+    });
+
+    it('exposes expected optional enforcers', () => {
+      expect(decoder.optionalEnforcers).toStrictEqual([
+        timestampEnforcer,
+        redeemerEnforcer,
+        allowedCalldataEnforcer,
+      ]);
+    });
+
+    it('includes expected rule decoders in order', () => {
+      expect(decoder.rules).toStrictEqual([
+        expiryRule,
+        redeemerRuleDecoder,
+        erc20PayeeRuleDecoder,
+      ]);
+    });
+  });
+
+  describe('validateAndDecodeData', () => {
+    it('provides a validateAndDecodeData function', () => {
+      expect(typeof decoder.validateAndDecodeData).toBe('function');
+    });
+
+    it('is included in makePermissionDecoderConfigs', () => {
+      expect(makePermissionDecoderConfigs(contracts)).toContainEqual(decoder);
+    });
+
+    it('validateAndDecodeData decodes valid periodic terms', () => {
+      expect(
+        decoder.validateAndDecodeData(
+          makeCaveats(makeTerms()),
+          decoder.contractAddresses,
+        ),
+      ).toStrictEqual({
+        tokenAddress: TOKEN_ADDRESS,
         periodAmount: 100n,
         periodDuration: 86400,
-        startDate: 1715664,
-      },
-      { out: 'hex' },
-    );
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+        startTime: START_TIME,
+      });
+    });
 
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain('Invalid caveats');
-  });
-
-  it('rejects truncated terms', () => {
-    const truncatedTerms: Hex = `0x${'a'.repeat(100)}`; // 50 bytes, need 116
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: truncatedTerms,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid ERC20TokenPeriodTransfer terms: must be exactly 116 bytes',
-    );
-  });
-
-  it('rejects when ValueLteEnforcer terms are not zero (native token value must be zero)', () => {
-    const nonZeroValueLteTerms =
-      '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex;
-    const tokenAddress = '0xcccccccccccccccccccccccccccccccccccccccc' as Hex;
-    const caveats = [
-      expiryCaveat,
-      {
-        enforcer: ValueLteEnforcer,
-        terms: nonZeroValueLteTerms,
-        args: '0x' as const,
-      },
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: createERC20TokenPeriodTransferTerms(
-          {
-            tokenAddress,
-            periodAmount: 200n,
-            periodDuration: 86400,
-            startDate: 1715664,
-          },
-          { out: 'hex' },
+    it('validateAndDecodeData rejects non-zero value-lte terms', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(makeTerms(), `0x${'0'.repeat(63)}1` as Hex),
+          decoder.contractAddresses,
         ),
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+      ).toThrow(`Invalid value-lte terms: must be ${ZERO_32_BYTES}`);
+    });
 
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain('Invalid value-lte terms');
-    expect(result.error.message).toContain('must be');
-  });
-
-  it('successfully decodes valid erc20-token-periodic caveats', () => {
-    const tokenAddress = '0xcccccccccccccccccccccccccccccccccccccccc' as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: createERC20TokenPeriodTransferTerms(
-          {
-            tokenAddress,
-            periodAmount: 200n,
-            periodDuration: 86400,
-            startDate: 1715664,
-          },
-          { out: 'hex' },
+    it('validateAndDecodeData rejects when periodDuration is zero', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(makeTerms({ periodDuration: 0 })),
+          decoder.contractAddresses,
         ),
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
+      ).toThrow('Invalid periodDuration: must be a positive number');
+    });
 
-    // this is here as a type guard
-    if (!result.isValid) {
-      throw new Error('Expected valid result');
-    }
-
-    expect(result.expiry).toBe(1720000);
-    expect(result.data.tokenAddress).toBe(tokenAddress);
-    expect(result.data.periodAmount).toBeDefined();
-    expect(result.data.periodDuration).toBe(86400);
-    expect(result.data.startTime).toBe(1715664);
-  });
-
-  it('decodes mixed-case token address', () => {
-    const mixedCaseAddress = contracts.ERC20PeriodTransferEnforcer;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: createERC20TokenPeriodTransferTerms(
-          {
-            tokenAddress: mixedCaseAddress,
-            periodAmount: 200n,
-            periodDuration: 86400,
-            startDate: 1715664,
-          },
-          { out: 'hex' },
+    it('validateAndDecodeData rejects when periodAmount is zero', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(makeTerms({ periodAmount: 0n })),
+          decoder.contractAddresses,
         ),
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
+      ).toThrow('Invalid periodAmount: must be a positive number');
+    });
 
-    // this is here as a type guard
-    if (!result.isValid) {
-      throw new Error('Expected valid result');
-    }
+    it('validateAndDecodeData rejects when periodDuration exceeds MAX_PERIOD_DURATION', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(makeTerms({ periodDuration: MAX_PERIOD_DURATION + 1 })),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid erc20-token-periodic terms: periodDuration must be less than or equal to MAX_PERIOD_DURATION',
+      );
+    });
 
-    expect(result.expiry).toBe(1720000);
-    expect(result.data.tokenAddress.toLowerCase()).toBe(
-      mixedCaseAddress.toLowerCase(),
-    );
-  });
-
-  it('rejects when periodDuration is 0', () => {
-    const tokenAddress = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' as Hex;
-    const periodAmountHex = 100n.toString(16).padStart(64, '0');
-    const periodDurationZero = '0'.repeat(64);
-    const startDateHex = (1715664).toString(16).padStart(64, '0');
-    const terms =
-      `0x${tokenAddress.slice(2)}${periodAmountHex}${periodDurationZero}${startDateHex}` as Hex;
-
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid erc20-token-periodic terms: periodDuration must be a positive number',
-    );
-  });
-
-  it('rejects when terms have trailing bytes', () => {
-    const tokenAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' as Hex;
-    const validTerms = createERC20TokenPeriodTransferTerms(
-      {
-        tokenAddress,
+    it('validateAndDecodeData accepts periodDuration equal to MAX_PERIOD_DURATION', () => {
+      expect(
+        decoder.validateAndDecodeData(
+          makeCaveats(makeTerms({ periodDuration: MAX_PERIOD_DURATION })),
+          decoder.contractAddresses,
+        ),
+      ).toStrictEqual({
+        tokenAddress: TOKEN_ADDRESS,
         periodAmount: 100n,
-        periodDuration: 86400,
-        startDate: 1715664,
-      },
-      { out: 'hex' },
-    );
-    const termsWithTrailing = `${validTerms}deadbeef` as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: termsWithTrailing,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid ERC20TokenPeriodTransfer terms: must be exactly 116 bytes',
-    );
-  });
-
-  it('rejects when startTime is 0', () => {
-    const tokenAddress = '0xdddddddddddddddddddddddddddddddddddddddd' as Hex;
-    const periodAmountHex = 100n.toString(16).padStart(64, '0');
-    const periodDurationHex = (86400).toString(16).padStart(64, '0');
-    const startTimeZero = '0'.repeat(64);
-    const terms =
-      `0x${tokenAddress.slice(2)}${periodAmountHex}${periodDurationHex}${startTimeZero}` as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid erc20-token-periodic terms: startTime must be a positive number',
-    );
-  });
-
-  it('rejects when periodAmount is 0', () => {
-    const tokenAddress = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' as Hex;
-    const periodAmountZero = '0'.repeat(64);
-    const periodDurationHex = (86400).toString(16).padStart(64, '0');
-    const startDateHex = (1715664).toString(16).padStart(64, '0');
-    const terms =
-      `0x${tokenAddress.slice(2)}${periodAmountZero}${periodDurationHex}${startDateHex}` as Hex;
-
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid erc20-token-periodic terms: periodAmount must be a positive number',
-    );
-  });
-
-  it('rejects when periodDuration exceeds MAX_PERIOD_DURATION', () => {
-    const tokenAddress = '0xffffffffffffffffffffffffffffffffffffffff' as Hex;
-    const terms = createERC20TokenPeriodTransferTerms(
-      {
-        tokenAddress,
-        periodAmount: 100n,
-        periodDuration: MAX_PERIOD_DURATION + 1,
-        startDate: 1715664,
-      },
-      { out: 'hex' },
-    );
-
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid erc20-token-periodic terms: periodDuration must be less than or equal to MAX_PERIOD_DURATION',
-    );
-  });
-
-  it('accepts when periodDuration equals MAX_PERIOD_DURATION', () => {
-    const tokenAddress = '0xcccccccccccccccccccccccccccccccccccccccc' as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20PeriodTransferEnforcer,
-        terms: createERC20TokenPeriodTransferTerms(
-          {
-            tokenAddress,
-            periodAmount: 200n,
-            periodDuration: MAX_PERIOD_DURATION,
-            startDate: 1715664,
-          },
-          { out: 'hex' },
-        ),
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
-
-    // this is here as a type guard
-    if (!result.isValid) {
-      throw new Error('Expected valid result');
-    }
-
-    expect(result.data.periodDuration).toBe(MAX_PERIOD_DURATION);
+        periodDuration: MAX_PERIOD_DURATION,
+        startTime: START_TIME,
+      });
+    });
   });
 });

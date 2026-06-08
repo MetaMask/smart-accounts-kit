@@ -1,477 +1,165 @@
-import {
-  createNativeTokenStreamingTerms,
-  createTimestampTerms,
-} from '@metamask/delegation-core';
-import type { Hex } from '@metamask/delegation-core';
+import { createNativeTokenStreamingTerms } from '@metamask/delegation-core';
 import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
+import type { Hex } from '@metamask/utils';
+import { describe, it, expect } from 'vitest';
 
-import { createPermissionDecodersForContracts } from '../../../src/permissions';
+import { makePermissionDecoderConfigs } from '../../../src/permissions';
+import { makeNativeTokenStreamDecoderConfig } from '../../../src/permissions/caveats/nativeTokenStream';
+import { expiryRule } from '../../../src/permissions/rules/expiry';
+import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
+import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
+import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
+import { toWord } from '../../test-utils';
 
-describe('native-token-stream decoder', () => {
+describe('native-token-stream decoder config', () => {
   const chainId = CHAIN_ID.sepolia;
   const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
   const {
-    TimestampEnforcer,
-    NativeTokenStreamingEnforcer,
-    ExactCalldataEnforcer,
-  } = contracts;
-  const permissionDecoders = createPermissionDecodersForContracts(contracts);
-  const decoder = permissionDecoders.find(
-    (candidate) => candidate.permissionType === 'native-token-stream',
+    timestampEnforcer,
+    nativeTokenStreamingEnforcer,
+    exactCalldataEnforcer,
+    nonceEnforcer,
+    allowedTargetsEnforcer,
+    redeemerEnforcer,
+  } = getChecksumEnforcersByChainId(contracts);
+  const decoder = makeNativeTokenStreamDecoderConfig(
+    getChecksumEnforcersByChainId(contracts),
   );
-  if (!decoder) {
-    throw new Error('Decoder not found');
-  }
-
-  const expiryCaveat = {
-    enforcer: TimestampEnforcer,
-    terms: createTimestampTerms({
-      afterThreshold: 0,
-      beforeThreshold: 1720000,
-    }),
-    args: '0x' as const,
+  const START_TIME = 1715664;
+  const VALID_TERMS = createNativeTokenStreamingTerms(
+    {
+      initialAmount: 10n,
+      maxAmount: 100n,
+      amountPerSecond: 5n,
+      startTime: START_TIME,
+    },
+    { out: 'hex' },
+  );
+  const makeTerms = ({
+    initialAmount = 10n,
+    maxAmount = 100n,
+    amountPerSecond = 5n,
+    startTime = START_TIME,
+  }: {
+    initialAmount?: bigint;
+    maxAmount?: bigint;
+    amountPerSecond?: bigint;
+    startTime?: number;
+  }): Hex => {
+    return `0x${toWord(initialAmount)}${toWord(maxAmount)}${toWord(amountPerSecond)}${toWord(startTime)}` as Hex;
   };
 
-  const exactCalldataCaveat = {
-    enforcer: ExactCalldataEnforcer,
-    terms: '0x' as Hex,
-    args: '0x' as const,
-  };
+  const makeCaveats = (
+    nativeTokenStreamingTerms: Hex,
+    exactCalldataTerms: Hex = '0x',
+  ): ChecksumCaveat[] => [
+    {
+      enforcer: nativeTokenStreamingEnforcer,
+      terms: nativeTokenStreamingTerms,
+    },
+    {
+      enforcer: exactCalldataEnforcer,
+      terms: exactCalldataTerms,
+    },
+    {
+      enforcer: nonceEnforcer,
+      terms: '0x' as const,
+    },
+  ];
 
-  it('rejects duplicate caveats for same enforcer (e.g. two TimestampEnforcer)', () => {
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: TimestampEnforcer,
-        terms: createTimestampTerms({
-          afterThreshold: 0,
-          beforeThreshold: 9999,
-        }),
-        args: '0x' as const,
-      },
-      {
-        enforcer: NativeTokenStreamingEnforcer,
-        terms: createNativeTokenStreamingTerms(
-          {
-            initialAmount: 1n,
-            maxAmount: 2n,
-            amountPerSecond: 1n,
-            startTime: 1715664,
-          },
-          { out: 'hex' },
+  describe('static configuration', () => {
+    it('exposes expected required enforcers', () => {
+      expect(decoder.requiredEnforcers).toStrictEqual({
+        [nativeTokenStreamingEnforcer]: 1,
+        [exactCalldataEnforcer]: 1,
+        [nonceEnforcer]: 1,
+      });
+    });
+
+    it('exposes expected optional enforcers', () => {
+      expect(decoder.optionalEnforcers).toStrictEqual([
+        timestampEnforcer,
+        redeemerEnforcer,
+        allowedTargetsEnforcer,
+      ]);
+    });
+
+    it('includes expected rule decoders in order', () => {
+      expect(decoder.rules).toStrictEqual([
+        expiryRule,
+        redeemerRuleDecoder,
+        nativePayeeRuleDecoder,
+      ]);
+    });
+  });
+
+  describe('validateAndDecodeData', () => {
+    it('provides a validateAndDecodeData function', () => {
+      expect(typeof decoder.validateAndDecodeData).toBe('function');
+    });
+
+    it('is included in makePermissionDecoderConfigs', () => {
+      expect(makePermissionDecoderConfigs(contracts)).toContainEqual(decoder);
+    });
+
+    it('validateAndDecodeData decodes valid stream terms', () => {
+      expect(
+        decoder.validateAndDecodeData(
+          makeCaveats(VALID_TERMS),
+          decoder.contractAddresses,
         ),
-        args: '0x' as const,
-      },
-    ];
+      ).toStrictEqual({
+        initialAmount: 10n,
+        maxAmount: 100n,
+        amountPerSecond: 5n,
+        startTime: START_TIME,
+      });
+    });
 
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain('Invalid caveats');
-  });
-
-  it('rejects TimestampEnforcer terms with non-hex characters', () => {
-    const invalidTerms =
-      '0x00000000000000000000000000000000zz000000000000000000000000001a3b80' as Hex;
-    const caveats = [
-      exactCalldataCaveat,
-      { enforcer: TimestampEnforcer, terms: invalidTerms, args: '0x' as const },
-      {
-        enforcer: NativeTokenStreamingEnforcer,
-        terms: createNativeTokenStreamingTerms(
-          {
-            initialAmount: 1n,
-            maxAmount: 2n,
-            amountPerSecond: 1n,
-            startTime: 1715664,
-          },
-          { out: 'hex' },
+    it('validateAndDecodeData rejects exact-calldata terms that are not 0x', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(VALID_TERMS, '0x00'),
+          decoder.contractAddresses,
         ),
-        args: '0x' as const,
-      },
-    ];
+      ).toThrow('Invalid exact-calldata terms: must be 0x');
+    });
 
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error).toBeDefined();
-  });
-
-  it('rejects native-token-stream terms shorter than expected', () => {
-    const truncatedTerms: Hex = `0x${'00'.repeat(50)}`;
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: NativeTokenStreamingEnforcer,
-        terms: truncatedTerms,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid NativeTokenStreaming terms: must be exactly 128 bytes',
-    );
-  });
-
-  it('rejects when terms have trailing bytes', () => {
-    const validTerms = createNativeTokenStreamingTerms(
-      {
-        initialAmount: 1n,
-        maxAmount: 2n,
-        amountPerSecond: 1n,
-        startTime: 1715664,
-      },
-      { out: 'hex' },
-    );
-    const termsWithTrailing = `${validTerms}deadbeef` as Hex;
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: NativeTokenStreamingEnforcer,
-        terms: termsWithTrailing,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid NativeTokenStreaming terms: must be exactly 128 bytes',
-    );
-  });
-
-  it('rejects when ExactCalldataEnforcer terms are not 0x', () => {
-    const caveats = [
-      expiryCaveat,
-      {
-        enforcer: ExactCalldataEnforcer,
-        terms: '0x00' as Hex,
-        args: '0x' as const,
-      },
-      {
-        enforcer: NativeTokenStreamingEnforcer,
-        terms: createNativeTokenStreamingTerms(
-          {
-            initialAmount: 10n,
-            maxAmount: 100n,
-            amountPerSecond: 5n,
-            startTime: 1715664,
-          },
-          { out: 'hex' },
+    it('validateAndDecodeData rejects when maxAmount equals initialAmount', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(makeTerms({ initialAmount: 100n, maxAmount: 100n })),
+          decoder.contractAddresses,
         ),
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+      ).toThrow(
+        'Invalid native-token-stream terms: maxAmount must be greater than initialAmount',
+      );
+    });
 
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid exact-calldata terms: must be 0x',
-    );
-  });
-
-  it('successfully decodes valid native-token-stream caveats', () => {
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: NativeTokenStreamingEnforcer,
-        terms: createNativeTokenStreamingTerms(
-          {
-            initialAmount: 10n,
-            maxAmount: 100n,
-            amountPerSecond: 5n,
-            startTime: 1715664,
-          },
-          { out: 'hex' },
+    it('validateAndDecodeData rejects when amountPerSecond is zero', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(makeTerms({ amountPerSecond: 0n })),
+          decoder.contractAddresses,
         ),
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
+      ).toThrow(
+        'Invalid native-token-stream terms: amountPerSecond must be a positive number',
+      );
+    });
 
-    // this is here as a type guard
-    if (!result.isValid) {
-      throw new Error('Expected valid result');
-    }
-
-    expect(result.expiry).toBe(1720000);
-    expect(result.data.initialAmount).toBeDefined();
-    expect(result.data.maxAmount).toBeDefined();
-    expect(result.data.amountPerSecond).toBeDefined();
-    expect(result.data.startTime).toBe(1715664);
-  });
-
-  it('rejects TimestampEnforcer terms with wrong length (66 required)', () => {
-    const badLengthTerms: Hex = `0x${'0'.repeat(65)}`;
-    const caveats = [
-      exactCalldataCaveat,
-      {
-        enforcer: TimestampEnforcer,
-        terms: badLengthTerms,
-        args: '0x' as const,
-      },
-      {
-        enforcer: NativeTokenStreamingEnforcer,
-        terms: createNativeTokenStreamingTerms(
-          {
-            initialAmount: 1n,
-            maxAmount: 2n,
-            amountPerSecond: 1n,
-            startTime: 1715664,
-          },
-          { out: 'hex' },
+    it('validateAndDecodeData rejects when startTime is zero', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(makeTerms({ startTime: 0 })),
+          decoder.contractAddresses,
         ),
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid TimestampEnforcer terms length',
-    );
-  });
-
-  it('rejects expiry timestampBeforeThreshold zero', () => {
-    const caveats = [
-      exactCalldataCaveat,
-      {
-        enforcer: TimestampEnforcer,
-        terms: createTimestampTerms({
-          afterThreshold: 0,
-          beforeThreshold: 0,
-        }),
-        args: '0x' as const,
-      },
-      {
-        enforcer: NativeTokenStreamingEnforcer,
-        terms: createNativeTokenStreamingTerms(
-          {
-            initialAmount: 1n,
-            maxAmount: 2n,
-            amountPerSecond: 1n,
-            startTime: 1715664,
-          },
-          { out: 'hex' },
-        ),
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid expiry: timestampBeforeThreshold must be greater than 0',
-    );
-  });
-
-  it('rejects expiry timestampAfterThreshold non-zero', () => {
-    const caveats = [
-      exactCalldataCaveat,
-      {
-        enforcer: TimestampEnforcer,
-        terms: createTimestampTerms({
-          afterThreshold: 1,
-          beforeThreshold: 1720000,
-        }),
-        args: '0x' as const,
-      },
-      {
-        enforcer: NativeTokenStreamingEnforcer,
-        terms: createNativeTokenStreamingTerms(
-          {
-            initialAmount: 1n,
-            maxAmount: 2n,
-            amountPerSecond: 1n,
-            startTime: 1715664,
-          },
-          { out: 'hex' },
-        ),
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid expiry: timestampAfterThreshold must be 0',
-    );
-  });
-
-  it('rejects when initialAmount exceeds maxAmount', () => {
-    const initialAmountHex = 100n.toString(16).padStart(64, '0');
-    const maxAmountHex = 50n.toString(16).padStart(64, '0');
-    const amountPerSecondHex = 1n.toString(16).padStart(64, '0');
-    const startTimeHex = (1715664).toString(16).padStart(64, '0');
-    const terms =
-      `0x${initialAmountHex}${maxAmountHex}${amountPerSecondHex}${startTimeHex}` as Hex;
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      { enforcer: NativeTokenStreamingEnforcer, terms, args: '0x' as const },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid native-token-stream terms: maxAmount must be greater than initialAmount',
-    );
-  });
-
-  it('rejects when maxAmount equals initialAmount', () => {
-    const initialAmountAndMaxAmount = 100n.toString(16).padStart(64, '0');
-    const amountPerSecondHex = 1n.toString(16).padStart(64, '0');
-    const startTimeHex = (1715664).toString(16).padStart(64, '0');
-    const terms =
-      `0x${initialAmountAndMaxAmount}${initialAmountAndMaxAmount}${amountPerSecondHex}${startTimeHex}` as Hex;
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      { enforcer: NativeTokenStreamingEnforcer, terms, args: '0x' as const },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid native-token-stream terms: maxAmount must be greater than initialAmount',
-    );
-  });
-
-  it('rejects native-token-stream with all-zero amounts (validates amounts are positive)', () => {
-    const ZERO_32 = '0'.repeat(64);
-    const startTimeHex = '1a2b50'.padStart(64, '0');
-    const terms = `0x${ZERO_32}${ZERO_32}${ZERO_32}${startTimeHex}` as Hex;
-
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      { enforcer: NativeTokenStreamingEnforcer, terms, args: '0x' as const },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid native-token-stream terms: maxAmount must be greater than initialAmount',
-    );
-  });
-
-  it('rejects native-token-stream when amountPerSecond is zero', () => {
-    const initialAmountHex = 1n.toString(16).padStart(64, '0');
-    const maxAmountHex = 2n.toString(16).padStart(64, '0');
-    const amountPerSecondZero = '0'.repeat(64);
-    const startTimeHex = (1715664).toString(16).padStart(64, '0');
-    const terms =
-      `0x${initialAmountHex}${maxAmountHex}${amountPerSecondZero}${startTimeHex}` as Hex;
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      { enforcer: NativeTokenStreamingEnforcer, terms, args: '0x' as const },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid native-token-stream terms: amountPerSecond must be a positive number',
-    );
-  });
-
-  it('rejects native-token-stream with startTime 0 (validates startTime is positive)', () => {
-    const oneHex = 1n.toString(16).padStart(64, '0');
-    const twoHex = 2n.toString(16).padStart(64, '0');
-    const startTimeZero = '0'.repeat(64);
-    const terms = `0x${oneHex}${twoHex}${oneHex}${startTimeZero}` as Hex;
-
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      { enforcer: NativeTokenStreamingEnforcer, terms, args: '0x' as const },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid native-token-stream terms: startTime must be a positive number',
-    );
+      ).toThrow(
+        'Invalid native-token-stream terms: startTime must be a positive number',
+      );
+    });
   });
 });

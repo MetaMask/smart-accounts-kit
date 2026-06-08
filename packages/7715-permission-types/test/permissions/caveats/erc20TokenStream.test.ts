@@ -1,336 +1,189 @@
-import {
-  createERC20StreamingTerms,
-  createTimestampTerms,
-} from '@metamask/delegation-core';
-import type { Hex } from '@metamask/delegation-core';
+import { createERC20StreamingTerms } from '@metamask/delegation-core';
 import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
+import type { Hex } from '@metamask/utils';
+import { describe, it, expect } from 'vitest';
 
-import { createPermissionDecodersForContracts } from '../../../src/permissions';
-import { ZERO_32_BYTES } from '../../../src/permissions/utils';
+import { makePermissionDecoderConfigs } from '../../../src/permissions';
+import { makeErc20TokenStreamDecoderConfig } from '../../../src/permissions/caveats/erc20TokenStream';
+import { expiryRule } from '../../../src/permissions/rules/expiry';
+import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
+import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
+import {
+  getChecksumEnforcersByChainId,
+  ZERO_32_BYTES,
+} from '../../../src/permissions/utils';
+import { toWord } from '../../test-utils';
 
-describe('erc20-token-stream decoder', () => {
+describe('erc20-token-stream decoder config', () => {
   const chainId = CHAIN_ID.sepolia;
   const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
-  const { TimestampEnforcer, ERC20StreamingEnforcer, ValueLteEnforcer } =
-    contracts;
-  const permissionDecoders = createPermissionDecodersForContracts(contracts);
-  const decoder = permissionDecoders.find(
-    (candidate) => candidate.permissionType === 'erc20-token-stream',
+  const {
+    timestampEnforcer,
+    erc20StreamingEnforcer,
+    valueLteEnforcer,
+    nonceEnforcer,
+    allowedCalldataEnforcer,
+    redeemerEnforcer,
+  } = getChecksumEnforcersByChainId(contracts);
+  const decoder = makeErc20TokenStreamDecoderConfig(
+    getChecksumEnforcersByChainId(contracts),
   );
-  if (!decoder) {
-    throw new Error('Decoder not found');
-  }
+  const TOKEN_ADDRESS = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' as Hex;
+  const START_TIME = 1715664;
+  const VALID_TERMS = createERC20StreamingTerms(
+    {
+      tokenAddress: TOKEN_ADDRESS,
+      initialAmount: 10n,
+      maxAmount: 100n,
+      amountPerSecond: 5n,
+      startTime: START_TIME,
+    },
+    { out: 'hex' },
+  );
+  const makeRawTerms = ({
+    tokenAddress = TOKEN_ADDRESS,
+    initialAmount = 10n,
+    maxAmount = 100n,
+    amountPerSecond = 5n,
+    startTime = START_TIME,
+  }: {
+    tokenAddress?: Hex;
+    initialAmount?: bigint;
+    maxAmount?: bigint;
+    amountPerSecond?: bigint;
+    startTime?: number;
+  }): Hex =>
+    `0x${tokenAddress.slice(2)}${toWord(initialAmount)}${toWord(maxAmount)}${toWord(
+      amountPerSecond,
+    )}${toWord(startTime)}` as Hex;
 
-  const expiryCaveat = {
-    enforcer: TimestampEnforcer,
-    terms: createTimestampTerms({
-      afterThreshold: 0,
-      beforeThreshold: 1720000,
-    }),
-    args: '0x' as const,
-  };
+  const makeCaveats = (
+    erc20StreamingTerms: Hex,
+    valueLteTerms: Hex = ZERO_32_BYTES,
+  ): ChecksumCaveat[] => [
+    {
+      enforcer: erc20StreamingEnforcer,
+      terms: erc20StreamingTerms,
+    },
+    {
+      enforcer: valueLteEnforcer,
+      terms: valueLteTerms,
+    },
+    {
+      enforcer: nonceEnforcer,
+      terms: '0x' as const,
+    },
+  ];
 
-  const valueLteCaveat = {
-    enforcer: ValueLteEnforcer,
-    terms: ZERO_32_BYTES,
-    args: '0x' as const,
-  };
+  describe('static configuration', () => {
+    it('exposes expected required enforcers', () => {
+      expect(decoder.requiredEnforcers).toStrictEqual({
+        [erc20StreamingEnforcer]: 1,
+        [valueLteEnforcer]: 1,
+        [nonceEnforcer]: 1,
+      });
+    });
 
-  it('rejects duplicate ERC20StreamingEnforcer caveats', () => {
-    const tokenAddress = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' as Hex;
-    const terms = createERC20StreamingTerms(
-      {
-        tokenAddress,
-        initialAmount: 1n,
-        maxAmount: 2n,
-        amountPerSecond: 1n,
-        startTime: 1715664,
-      },
-      { out: 'hex' },
-    );
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      { enforcer: ERC20StreamingEnforcer, terms, args: '0x' as const },
-      { enforcer: ERC20StreamingEnforcer, terms, args: '0x' as const },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+    it('exposes expected optional enforcers', () => {
+      expect(decoder.optionalEnforcers).toStrictEqual([
+        timestampEnforcer,
+        redeemerEnforcer,
+        allowedCalldataEnforcer,
+      ]);
+    });
 
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain('Invalid caveats');
+    it('includes expected rule decoders in order', () => {
+      expect(decoder.rules).toStrictEqual([
+        expiryRule,
+        redeemerRuleDecoder,
+        erc20PayeeRuleDecoder,
+      ]);
+    });
   });
 
-  it('rejects truncated terms', () => {
-    const truncatedTerms: Hex = `0x${'a'.repeat(100)}`;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20StreamingEnforcer,
-        terms: truncatedTerms,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+  describe('validateAndDecodeData', () => {
+    it('provides a validateAndDecodeData function', () => {
+      expect(typeof decoder.validateAndDecodeData).toBe('function');
+    });
 
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
+    it('is included in makePermissionDecoderConfigs', () => {
+      expect(makePermissionDecoderConfigs(contracts)).toContainEqual(decoder);
+    });
 
-    expect(result.error.message).toContain(
-      'Invalid ERC20Streaming terms: must be exactly 148 bytes',
-    );
-  });
-
-  it('rejects when ValueLteEnforcer terms are not zero (native token value must be zero)', () => {
-    const nonZeroValueLteTerms =
-      '0x0000000000000000000000000000000000000000000000000000000000000001' as Hex;
-    const tokenAddress = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' as Hex;
-    const caveats = [
-      expiryCaveat,
-      {
-        enforcer: ValueLteEnforcer,
-        terms: nonZeroValueLteTerms,
-        args: '0x' as const,
-      },
-      {
-        enforcer: ERC20StreamingEnforcer,
-        terms: createERC20StreamingTerms(
-          {
-            tokenAddress,
-            initialAmount: 1n,
-            maxAmount: 2n,
-            amountPerSecond: 1n,
-            startTime: 1715664,
-          },
-          { out: 'hex' },
+    it('validateAndDecodeData decodes valid stream terms', () => {
+      expect(
+        decoder.validateAndDecodeData(
+          makeCaveats(VALID_TERMS),
+          decoder.contractAddresses,
         ),
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain('Invalid value-lte terms');
-    expect(result.error.message).toContain('must be');
-  });
-
-  it('decodes mixed-case token address', () => {
-    const mixedCaseAddress = contracts.ERC20StreamingEnforcer;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20StreamingEnforcer,
-        terms: createERC20StreamingTerms(
-          {
-            tokenAddress: mixedCaseAddress,
-            initialAmount: 1n,
-            maxAmount: 2n,
-            amountPerSecond: 1n,
-            startTime: 1715664,
-          },
-          { out: 'hex' },
-        ),
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
-
-    // this is here as a type guard
-    if (!result.isValid) {
-      throw new Error('Expected valid result');
-    }
-
-    expect(result.expiry).toBe(1720000);
-    expect(result.data?.tokenAddress.toLowerCase()).toBe(
-      mixedCaseAddress.toLowerCase(),
-    );
-  });
-
-  it('decodes zero token address', () => {
-    const zeroAddress = '0x0000000000000000000000000000000000000000' as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20StreamingEnforcer,
-        terms: createERC20StreamingTerms(
-          {
-            tokenAddress: zeroAddress,
-            initialAmount: 1n,
-            maxAmount: 2n,
-            amountPerSecond: 1n,
-            startTime: 1715664,
-          },
-          { out: 'hex' },
-        ),
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
-
-    // this is here as a type guard
-    if (!result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.expiry).toBe(1720000);
-    expect(result.data?.tokenAddress).toBe(zeroAddress);
-  });
-
-  it('rejects when initialAmount exceeds maxAmount', () => {
-    const tokenAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' as Hex;
-    const initialAmountHex = 1000n.toString(16).padStart(64, '0');
-    const maxAmountHex = 100n.toString(16).padStart(64, '0');
-    const amountPerSecondHex = 1n.toString(16).padStart(64, '0');
-    const startTimeHex = (1715664).toString(16).padStart(64, '0');
-    const terms =
-      `0x${tokenAddress.slice(2)}${initialAmountHex}${maxAmountHex}${amountPerSecondHex}${startTimeHex}` as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      { enforcer: ERC20StreamingEnforcer, terms, args: '0x' as const },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'maxAmount must be greater than initialAmount',
-    );
-  });
-
-  it('rejects when maxAmount equals initialAmount', () => {
-    const tokenAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' as Hex;
-    const initialAmountAndMaxAmount = 100n.toString(16).padStart(64, '0');
-    const amountPerSecondHex = 1n.toString(16).padStart(64, '0');
-    const startTimeHex = (1715664).toString(16).padStart(64, '0');
-    const terms =
-      `0x${tokenAddress.slice(2)}${initialAmountAndMaxAmount}${initialAmountAndMaxAmount}${amountPerSecondHex}${startTimeHex}` as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      { enforcer: ERC20StreamingEnforcer, terms, args: '0x' as const },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'maxAmount must be greater than initialAmount',
-    );
-  });
-
-  it('rejects when terms have trailing bytes', () => {
-    const tokenAddress = '0xcccccccccccccccccccccccccccccccccccccccc' as Hex;
-    const validTerms = createERC20StreamingTerms(
-      {
-        tokenAddress,
-        initialAmount: 42n,
+      ).toStrictEqual({
+        tokenAddress: TOKEN_ADDRESS,
+        initialAmount: 10n,
         maxAmount: 100n,
-        amountPerSecond: 1n,
-        startTime: 1715664,
-      },
-      { out: 'hex' },
-    );
-    const termsWithTrailing = `${validTerms}deadbeef` as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      {
-        enforcer: ERC20StreamingEnforcer,
-        terms: termsWithTrailing,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+        amountPerSecond: 5n,
+        startTime: START_TIME,
+      });
+    });
 
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
+    it('validateAndDecodeData rejects non-zero value-lte terms', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(VALID_TERMS, `0x${'0'.repeat(63)}1` as Hex),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(`Invalid value-lte terms: must be ${ZERO_32_BYTES}`);
+    });
 
-    expect(result.error.message).toContain(
-      'Invalid ERC20Streaming terms: must be exactly 148 bytes',
-    );
-  });
+    it('validateAndDecodeData rejects when maxAmount equals initialAmount', () => {
+      const invalidTerms = createERC20StreamingTerms(
+        {
+          tokenAddress: TOKEN_ADDRESS,
+          initialAmount: 100n,
+          maxAmount: 100n,
+          amountPerSecond: 5n,
+          startTime: START_TIME,
+        },
+        { out: 'hex' },
+      );
 
-  it('rejects when amountPerSecond is 0', () => {
-    const tokenAddress = '0xdddddddddddddddddddddddddddddddddddddddd' as Hex;
-    const initialAmountHex = 1n.toString(16).padStart(64, '0');
-    const maxAmountHex = 2n.toString(16).padStart(64, '0');
-    const amountPerSecondZero = '0'.repeat(64);
-    const startTimeHex = (1715664).toString(16).padStart(64, '0');
-    const terms =
-      `0x${tokenAddress.slice(2)}${initialAmountHex}${maxAmountHex}${amountPerSecondZero}${startTimeHex}` as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      { enforcer: ERC20StreamingEnforcer, terms, args: '0x' as const },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(invalidTerms),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid erc20-token-stream terms: maxAmount must be greater than initialAmount',
+      );
+    });
 
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
+    it('validateAndDecodeData rejects when amountPerSecond is zero', () => {
+      const invalidTerms = makeRawTerms({ amountPerSecond: 0n });
 
-    expect(result.error.message).toContain(
-      'Invalid erc20-token-stream terms: amountPerSecond must be a positive number',
-    );
-  });
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(invalidTerms),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid erc20-token-stream terms: amountPerSecond must be a positive number',
+      );
+    });
 
-  it('rejects when startTime is 0', () => {
-    const tokenAddress = '0xdddddddddddddddddddddddddddddddddddddddd' as Hex;
-    const initialAmountHex = 1n.toString(16).padStart(64, '0');
-    const maxAmountHex = 2n.toString(16).padStart(64, '0');
-    const amountPerSecondHex = 1n.toString(16).padStart(64, '0');
-    const startTimeZero = '0'.repeat(64);
-    const terms =
-      `0x${tokenAddress.slice(2)}${initialAmountHex}${maxAmountHex}${amountPerSecondHex}${startTimeZero}` as Hex;
-    const caveats = [
-      expiryCaveat,
-      valueLteCaveat,
-      { enforcer: ERC20StreamingEnforcer, terms, args: '0x' as const },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+    it('validateAndDecodeData rejects when startTime is zero', () => {
+      const invalidTerms = makeRawTerms({ startTime: 0 });
 
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid erc20-token-stream terms: startTime must be a positive number',
-    );
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(invalidTerms),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid erc20-token-stream terms: startTime must be a positive number',
+      );
+    });
   });
 });

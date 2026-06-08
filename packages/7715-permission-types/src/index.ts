@@ -47,7 +47,6 @@ export {
   nativePayeeRuleDecoder,
   EXECUTION_PERMISSION_REDEEMER_RULE_TYPE,
   redeemerRuleDecoder,
-  makePermissionDecoder,
   makeNativeTokenStreamDecoderConfig,
   makeNativeTokenPeriodicDecoderConfig,
   makeNativeTokenAllowanceDecoderConfig,
@@ -55,5 +54,4 @@ export {
   makeErc20TokenPeriodicDecoderConfig,
   makeErc20TokenAllowanceDecoderConfig,
   makeTokenApprovalRevocationDecoderConfig,
-  createPermissionDecodersForContracts,
 } from './permissions';

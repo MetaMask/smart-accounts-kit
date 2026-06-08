@@ -1,268 +1,145 @@
-import { createTimestampTerms } from '@metamask/delegation-core';
-import type { Hex } from '@metamask/delegation-core';
 import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
+import type { Hex } from '@metamask/utils';
+import { describe, it, expect } from 'vitest';
 
-import { createPermissionDecodersForContracts } from '../../../src/permissions';
+import { makePermissionDecoderConfigs } from '../../../src/permissions';
+import { makeNativeTokenAllowanceDecoderConfig } from '../../../src/permissions/caveats/nativeTokenAllowance';
+import { expiryRule } from '../../../src/permissions/rules/expiry';
+import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
+import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
+import {
+  getChecksumEnforcersByChainId,
+  UINT256_MAX,
+} from '../../../src/permissions/utils';
+import { toWord } from '../../test-utils';
 
-describe('native-token-allowance decoder', () => {
+describe('native-token-allowance decoder config', () => {
   const chainId = CHAIN_ID.sepolia;
   const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
   const {
-    TimestampEnforcer,
-    NativeTokenPeriodTransferEnforcer,
-    ExactCalldataEnforcer,
-  } = contracts;
-  const permissionDecoders = createPermissionDecodersForContracts(contracts);
-  const decoder = permissionDecoders.find(
-    (candidate) => candidate.permissionType === 'native-token-allowance',
+    timestampEnforcer,
+    nativeTokenPeriodicEnforcer,
+    exactCalldataEnforcer,
+    nonceEnforcer,
+    allowedTargetsEnforcer,
+    redeemerEnforcer,
+  } = getChecksumEnforcersByChainId(contracts);
+  const decoder = makeNativeTokenAllowanceDecoderConfig(
+    getChecksumEnforcersByChainId(contracts),
   );
-  if (!decoder) {
-    throw new Error('Decoder not found');
-  }
 
-  const expiryCaveat = {
-    enforcer: TimestampEnforcer,
-    terms: createTimestampTerms({
-      afterThreshold: 0,
-      beforeThreshold: 1720000,
-    }),
-    args: '0x' as const,
-  };
+  const ALLOWANCE_AMOUNT_HEX = toWord(100n);
+  const START_TIME = 1715664;
+  const START_TIME_HEX = toWord(START_TIME);
+  const VALID_ALLOWANCE_TERMS =
+    `0x${ALLOWANCE_AMOUNT_HEX}${UINT256_MAX.slice(2)}${START_TIME_HEX}` as Hex;
 
-  const exactCalldataCaveat = {
-    enforcer: ExactCalldataEnforcer,
-    terms: '0x' as Hex,
-    args: '0x' as const,
-  };
+  const makeCaveats = (
+    nativeTokenPeriodicTerms: Hex,
+    exactCalldataTerms: Hex = '0x',
+  ): ChecksumCaveat[] => [
+    {
+      enforcer: nativeTokenPeriodicEnforcer,
+      terms: nativeTokenPeriodicTerms,
+    },
+    {
+      enforcer: exactCalldataEnforcer,
+      terms: exactCalldataTerms,
+    },
+    {
+      enforcer: nonceEnforcer,
+      terms: '0x' as const,
+    },
+  ];
 
-  const PERIOD_AMOUNT_HEX = 100n.toString(16).padStart(64, '0');
-  const PERIOD_DURATION_MAX_HEX = 'f'.repeat(64);
-  const START_DATE_HEX = (1715664).toString(16).padStart(64, '0');
-  const ALLOWANCE_TERMS =
-    `0x${PERIOD_AMOUNT_HEX}${PERIOD_DURATION_MAX_HEX}${START_DATE_HEX}` as Hex;
+  describe('static configuration', () => {
+    it('exposes expected required enforcers', () => {
+      expect(decoder.requiredEnforcers).toStrictEqual({
+        [nativeTokenPeriodicEnforcer]: 1,
+        [exactCalldataEnforcer]: 1,
+        [nonceEnforcer]: 1,
+      });
+    });
 
-  it('rejects duplicate NativeTokenPeriodTransferEnforcer caveats', () => {
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: NativeTokenPeriodTransferEnforcer,
-        terms: ALLOWANCE_TERMS,
-        args: '0x' as const,
-      },
-      {
-        enforcer: NativeTokenPeriodTransferEnforcer,
-        terms: ALLOWANCE_TERMS,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+    it('exposes expected optional enforcers', () => {
+      expect(decoder.optionalEnforcers).toStrictEqual([
+        timestampEnforcer,
+        redeemerEnforcer,
+        allowedTargetsEnforcer,
+      ]);
+    });
 
-    // this is here as a type guard
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain('Invalid caveats');
-  });
-
-  it('rejects truncated terms', () => {
-    const truncatedTerms: Hex = `0x${'00'.repeat(40)}`; // 40 bytes, need 96
-
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: NativeTokenPeriodTransferEnforcer,
-        terms: truncatedTerms,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid native-token-allowance terms: expected 96 bytes',
-    );
-  });
-
-  it('rejects when terms have trailing bytes', () => {
-    const termsWithTrailing = `${ALLOWANCE_TERMS}deadbeef` as Hex;
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: NativeTokenPeriodTransferEnforcer,
-        terms: termsWithTrailing,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid native-token-allowance terms: expected 96 bytes',
-    );
-  });
-
-  it('rejects when ExactCalldataEnforcer terms are not 0x', () => {
-    const caveats = [
-      expiryCaveat,
-      {
-        enforcer: ExactCalldataEnforcer,
-        terms: '0x00' as Hex,
-        args: '0x' as const,
-      },
-      {
-        enforcer: NativeTokenPeriodTransferEnforcer,
-        terms: ALLOWANCE_TERMS,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid exact-calldata terms: must be 0x',
-    );
-  });
-
-  it('successfully decodes valid native-token-allowance caveats', () => {
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: NativeTokenPeriodTransferEnforcer,
-        terms: ALLOWANCE_TERMS,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
-
-    if (!result.isValid) {
-      throw new Error('Expected valid result');
-    }
-
-    expect(result.expiry).toBe(1720000);
-    expect(result.data).toStrictEqual({
-      allowanceAmount: `0x${PERIOD_AMOUNT_HEX}`,
-      startTime: 1715664,
+    it('includes expected rule decoders in order', () => {
+      expect(decoder.rules).toStrictEqual([
+        expiryRule,
+        redeemerRuleDecoder,
+        nativePayeeRuleDecoder,
+      ]);
     });
   });
 
-  it('successfully decodes when periodDuration uses uppercase UINT256_MAX', () => {
-    const uppercaseMax = 'F'.repeat(64);
-    const terms =
-      `0x${PERIOD_AMOUNT_HEX}${uppercaseMax}${START_DATE_HEX}` as Hex;
+  describe('validateAndDecodeData', () => {
+    it('provides a validateAndDecodeData function', () => {
+      expect(typeof decoder.validateAndDecodeData).toBe('function');
+    });
 
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: NativeTokenPeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
+    it('is included in makePermissionDecoderConfigs', () => {
+      expect(makePermissionDecoderConfigs(contracts)).toContainEqual(decoder);
+    });
 
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(true);
-  });
+    it('validateAndDecodeData decodes valid allowance terms', () => {
+      expect(
+        decoder.validateAndDecodeData(
+          makeCaveats(VALID_ALLOWANCE_TERMS),
+          decoder.contractAddresses,
+        ),
+      ).toStrictEqual({
+        allowanceAmount: `0x${ALLOWANCE_AMOUNT_HEX}`,
+        startTime: START_TIME,
+      });
+    });
 
-  it('rejects when periodDuration is not UINT256_MAX', () => {
-    const nonMaxDuration = (86400).toString(16).padStart(64, '0');
-    const terms =
-      `0x${PERIOD_AMOUNT_HEX}${nonMaxDuration}${START_DATE_HEX}` as Hex;
+    it('validateAndDecodeData rejects exact-calldata terms that are not 0x', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(VALID_ALLOWANCE_TERMS, '0x00'),
+          decoder.contractAddresses,
+        ),
+      ).toThrow('Invalid exact-calldata terms: must be 0x');
+    });
 
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: NativeTokenPeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
+    it('validateAndDecodeData rejects invalid periodDuration', () => {
+      const nonMaxDurationHex = toWord(86400);
+      const invalidTerms =
+        `0x${ALLOWANCE_AMOUNT_HEX}${nonMaxDurationHex}${START_TIME_HEX}` as Hex;
 
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(invalidTerms),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid native-token-allowance terms: periodDuration must be UINT256_MAX',
+      );
+    });
 
-    expect(result.error.message).toContain(
-      'Invalid native-token-allowance terms: periodDuration must be UINT256_MAX',
-    );
-  });
+    it('validateAndDecodeData rejects zero allowanceAmount', () => {
+      const zeroAllowanceAmount = '0'.repeat(64);
+      const invalidTerms =
+        `0x${zeroAllowanceAmount}${UINT256_MAX.slice(2)}${START_TIME_HEX}` as Hex;
 
-  it('rejects when startTime is 0', () => {
-    const startTimeZero = '0'.repeat(64);
-    const terms =
-      `0x${PERIOD_AMOUNT_HEX}${PERIOD_DURATION_MAX_HEX}${startTimeZero}` as Hex;
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: NativeTokenPeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid native-token-allowance terms: startTime must be a positive number',
-    );
-  });
-
-  it('rejects when allowanceAmount is 0', () => {
-    const allowanceZero = '0'.repeat(64);
-    const terms =
-      `0x${allowanceZero}${PERIOD_DURATION_MAX_HEX}${START_DATE_HEX}` as Hex;
-
-    const caveats = [
-      expiryCaveat,
-      exactCalldataCaveat,
-      {
-        enforcer: NativeTokenPeriodTransferEnforcer,
-        terms,
-        args: '0x' as const,
-      },
-    ];
-
-    const result = decoder.validateAndDecodePermission(caveats);
-    expect(result.isValid).toBe(false);
-
-    if (result.isValid) {
-      throw new Error('Expected invalid result');
-    }
-
-    expect(result.error.message).toContain(
-      'Invalid native-token-allowance terms: allowanceAmount must be a positive number',
-    );
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(invalidTerms),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid native-token-allowance terms: allowanceAmount must be a positive number',
+      );
+    });
   });
 });

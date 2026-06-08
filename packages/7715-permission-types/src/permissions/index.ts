@@ -1,5 +1,3 @@
-import { getChecksumAddress } from '@metamask/utils';
-
 import { makeErc20TokenAllowanceDecoderConfig } from './caveats/erc20TokenAllowance';
 import { makeErc20TokenPeriodicDecoderConfig } from './caveats/erc20TokenPeriodic';
 import { makeErc20TokenStreamDecoderConfig } from './caveats/erc20TokenStream';
@@ -7,14 +5,7 @@ import { makeNativeTokenAllowanceDecoderConfig } from './caveats/nativeTokenAllo
 import { makeNativeTokenPeriodicDecoderConfig } from './caveats/nativeTokenPeriodic';
 import { makeNativeTokenStreamDecoderConfig } from './caveats/nativeTokenStream';
 import { makeTokenApprovalRevocationDecoderConfig } from './caveats/tokenApprovalRevocation';
-import type {
-  Caveat,
-  DeployedContractsByName,
-  PermissionDecoder,
-  PermissionDecoderConfig,
-  ValidateAndDecodeResult,
-} from './types';
-import type { Hex } from '../types';
+import type { DeployedContractsByName, PermissionDecoderConfig } from './types';
 import { getChecksumEnforcersByChainId } from './utils';
 
 export type {
@@ -77,104 +68,4 @@ export const makePermissionDecoderConfigs = (
     makeErc20TokenAllowanceDecoderConfig(contractAddresses),
     makeTokenApprovalRevocationDecoderConfig(contractAddresses),
   ];
-};
-
-/**
- * Creates a runtime decoder from one permission decoder configuration.
- *
- * @param config - Permission decoder configuration.
- * @returns Permission decoder.
- */
-export const makePermissionDecoder = (
-  config: PermissionDecoderConfig,
-): PermissionDecoder => {
-  const requiredEnforcers = new Map<Hex, number>(
-    Object.entries(config.requiredEnforcers) as [Hex, number][],
-  );
-  const optionalEnforcers = new Set(config.optionalEnforcers);
-
-  const caveatAddressesMatch = (caveatAddresses: Hex[]): boolean => {
-    const counts = new Map<Hex, number>();
-
-    for (const address of caveatAddresses) {
-      counts.set(address, (counts.get(address) ?? 0) + 1);
-    }
-    for (const [address, count] of counts) {
-      const maxAllowedCount =
-        requiredEnforcers.get(address) ??
-        (optionalEnforcers.has(address) ? 1 : 0);
-      if (maxAllowedCount === 0 || count > maxAllowedCount) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const validateAndDecodePermission = (
-    caveats: Caveat[],
-  ): ValidateAndDecodeResult => {
-    try {
-      const normalizedCaveats = caveats.map((caveat) => ({
-        ...caveat,
-        enforcer: getChecksumAddress(caveat.enforcer),
-      }));
-
-      const caveatAddresses = normalizedCaveats.map(
-        (caveat) => caveat.enforcer,
-      );
-
-      if (!caveatAddressesMatch(caveatAddresses)) {
-        throw new Error('Invalid caveats');
-      }
-
-      const data = config.validateAndDecodeData(
-        normalizedCaveats,
-        config.contractAddresses,
-      );
-      const rules = config.rules
-        .map((decodeRule) =>
-          decodeRule({
-            contractAddresses: config.contractAddresses,
-            caveats: normalizedCaveats,
-            requiredEnforcers,
-          }),
-        )
-        .filter((rule) => rule !== null);
-      const expiryRule = rules.find((rule) => rule.type === 'expiry');
-
-      return {
-        isValid: true,
-        expiry:
-          expiryRule?.type === 'expiry' ? expiryRule.data.timestamp : null,
-        data,
-        rules: rules.length > 0 ? rules : undefined,
-      };
-    } catch (error) {
-      return {
-        isValid: false,
-        error: error instanceof Error ? error : new Error('Invalid caveats'),
-      };
-    }
-  };
-
-  return {
-    permissionType: config.permissionType,
-    requiredEnforcers,
-    optionalEnforcers,
-    caveatAddressesMatch,
-    validateAndDecodePermission,
-  };
-};
-
-/**
- * Creates permission decoders for all supported permission types.
- *
- * @param contracts - Deployed delegation framework contracts for one chain.
- * @returns Runtime permission decoders.
- */
-export const createPermissionDecodersForContracts = (
-  contracts: DeployedContractsByName,
-): PermissionDecoder[] => {
-  return makePermissionDecoderConfigs(contracts).map(makePermissionDecoder);
 };

@@ -1,14 +1,14 @@
 /* eslint-disable no-bitwise */
 import { hexToNumber } from '@metamask/utils';
 
-import { expiryRule } from './expiryRule';
+import { expiryRule } from '../rules/expiry';
 import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermission,
   MakePermissionDecoderConfig,
-} from './types';
-import { getTermsByEnforcer } from './utils';
+} from '../types';
+import { getTermsByEnforcer } from '../utils';
 
 enum ApprovalRevocationFlag {
   Erc20Approve = 0x01,

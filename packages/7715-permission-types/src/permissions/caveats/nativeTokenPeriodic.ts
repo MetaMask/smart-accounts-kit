@@ -1,29 +1,28 @@
-import { hexToNumber } from '@metamask/utils';
+import { hexToBigInt, hexToNumber } from '@metamask/utils';
 
-import { expiryRule } from './expiryRule';
-import { nativePayeeRuleDecoder } from './nativePayeeRuleDecoder';
-import { redeemerRuleDecoder } from './redeemerRuleDecoder';
+import { expiryRule } from '../rules/expiry';
+import { nativePayeeRuleDecoder } from '../rules/payee';
+import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermission,
   MakePermissionDecoderConfig,
-} from './types';
+} from '../types';
 import {
   getByteLength,
   getTermsByEnforcer,
+  MAX_PERIOD_DURATION,
   splitHex,
-  UINT256_MAX,
-  ZERO_32_BYTES,
-} from './utils';
+} from '../utils';
 
 /**
- * Builds the configuration for the native-token-allowance permission decoder.
+ * Builds the configuration for the native-token-periodic permission decoder.
  *
  * @param contractAddresses - Checksummed enforcer addresses for the chain.
- * @returns The native-token-allowance permission decoder configuration.
+ * @returns The native-token-periodic permission decoder configuration.
  */
-export function makeNativeTokenAllowanceDecoderConfig(
+export function makeNativeTokenPeriodicDecoderConfig(
   contractAddresses: ChecksumEnforcersByChainId,
 ): MakePermissionDecoderConfig {
   const {
@@ -36,7 +35,7 @@ export function makeNativeTokenAllowanceDecoderConfig(
   } = contractAddresses;
 
   return {
-    permissionType: 'native-token-allowance',
+    permissionType: 'native-token-periodic',
     contractAddresses,
     optionalEnforcers: [
       timestampEnforcer, // expiry rule
@@ -54,11 +53,11 @@ export function makeNativeTokenAllowanceDecoderConfig(
 }
 
 /**
- * Decodes native-token-allowance permission data from caveats; throws on invalid.
+ * Decodes native-token-periodic permission data from caveats; throws on invalid.
  *
  * @param caveats - Caveats from the permission context (checksummed).
  * @param contractAddresses - Checksummed enforcer addresses for the chain.
- * @returns Decoded allowance terms.
+ * @returns Decoded periodic terms.
  */
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
@@ -84,36 +83,44 @@ function validateAndDecodeData(
   const EXPECTED_TERMS_BYTELENGTH = 96; // 32 + 32 + 32
 
   if (getByteLength(terms) !== EXPECTED_TERMS_BYTELENGTH) {
-    throw new Error('Invalid native-token-allowance terms: expected 96 bytes');
+    throw new Error('Invalid native-token-periodic terms: expected 96 bytes');
   }
 
-  const [allowanceAmount, periodDurationRaw, startTimeRaw] = splitHex(
+  const [periodAmount, periodDurationRaw, startTimeRaw] = splitHex(
     terms,
     [32, 32, 32],
   );
-  if (!allowanceAmount || !periodDurationRaw || !startTimeRaw) {
-    throw new Error('Invalid native-token-allowance terms');
+  if (!periodAmount || !periodDurationRaw || !startTimeRaw) {
+    throw new Error('Invalid native-token-periodic terms');
   }
 
-  if (periodDurationRaw.toLowerCase() !== UINT256_MAX) {
+  const periodDuration = hexToNumber(periodDurationRaw);
+  const startTime = hexToNumber(startTimeRaw);
+  const periodAmountBigInt = hexToBigInt(periodAmount);
+
+  if (periodAmountBigInt === 0n) {
     throw new Error(
-      'Invalid native-token-allowance terms: periodDuration must be UINT256_MAX',
+      'Invalid native-token-periodic terms: periodAmount must be a positive number',
     );
   }
 
-  const startTime = hexToNumber(startTimeRaw);
+  if (periodDuration === 0) {
+    throw new Error(
+      'Invalid native-token-periodic terms: periodDuration must be a positive number',
+    );
+  }
+
+  if (periodDuration > MAX_PERIOD_DURATION) {
+    throw new Error(
+      'Invalid native-token-periodic terms: periodDuration must be less than or equal to MAX_PERIOD_DURATION',
+    );
+  }
 
   if (startTime === 0) {
     throw new Error(
-      'Invalid native-token-allowance terms: startTime must be a positive number',
+      'Invalid native-token-periodic terms: startTime must be a positive number',
     );
   }
 
-  if (allowanceAmount === ZERO_32_BYTES) {
-    throw new Error(
-      'Invalid native-token-allowance terms: allowanceAmount must be a positive number',
-    );
-  }
-
-  return { allowanceAmount, startTime };
+  return { periodAmount, periodDuration, startTime };
 }

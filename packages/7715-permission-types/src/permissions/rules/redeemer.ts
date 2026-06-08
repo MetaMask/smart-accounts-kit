@@ -1,10 +1,22 @@
 import { decodeRedeemerTerms } from '@metamask/delegation-core';
 import { getChecksumAddress } from '@metamask/utils';
 
-import type { RuleDecoder } from './types';
-import { getTermsByEnforcer } from './utils';
+import type { Hex } from '../../types';
+import type { RuleDecoder } from '../types';
+import { getTermsByEnforcer } from '../utils';
 
 export const EXECUTION_PERMISSION_REDEEMER_RULE_TYPE = 'redeemer' as const;
+
+/**
+ * Execution permission rule restricting which addresses may redeem the delegation
+ * (on-chain RedeemerEnforcer caveat).
+ */
+export type RedeemerRule = {
+  type: 'redeemer';
+  data: {
+    addresses: Hex[];
+  };
+};
 
 /**
  * Rule decoder that extracts a redeemer allowlist from a RedeemerEnforcer caveat.

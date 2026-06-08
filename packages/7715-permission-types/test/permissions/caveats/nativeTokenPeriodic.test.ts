@@ -8,8 +8,8 @@ import {
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
 
-import { createPermissionDecodersForContracts } from '../src/permissions';
-import { MAX_PERIOD_DURATION } from '../src/permissions/utils';
+import { createPermissionDecodersForContracts } from '../../../src/permissions';
+import { MAX_PERIOD_DURATION } from '../../../src/permissions/utils';
 
 describe('native-token-periodic decoder', () => {
   const chainId = CHAIN_ID.sepolia;

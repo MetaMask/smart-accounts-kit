@@ -8,8 +8,8 @@ import {
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
 
-import { createPermissionDecodersForContracts } from '../src/permissions';
-import { ZERO_32_BYTES } from '../src/permissions/utils';
+import { createPermissionDecodersForContracts } from '../../../src/permissions';
+import { ZERO_32_BYTES } from '../../../src/permissions/utils';
 
 describe('erc20-token-stream decoder', () => {
   const chainId = CHAIN_ID.sepolia;

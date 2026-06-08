@@ -4,8 +4,8 @@ import {
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
 
-import { createPermissionDecodersForContracts } from '../src/permissions';
-import { getChecksumEnforcersByChainId } from '../src/permissions/utils';
+import { createPermissionDecodersForContracts } from '../../../src/permissions';
+import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
 
 describe('token-approval-revocation decoder', () => {
   const chainId = CHAIN_ID.sepolia;

@@ -1,15 +1,15 @@
 import { hexToBigInt, hexToNumber } from '@metamask/utils';
 
-import { expiryRule } from './expiryRule';
-import { nativePayeeRuleDecoder } from './nativePayeeRuleDecoder';
-import { redeemerRuleDecoder } from './redeemerRuleDecoder';
+import { expiryRule } from '../rules/expiry';
+import { nativePayeeRuleDecoder } from '../rules/payee';
+import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermission,
   MakePermissionDecoderConfig,
-} from './types';
-import { getByteLength, getTermsByEnforcer, splitHex } from './utils';
+} from '../types';
+import { getByteLength, getTermsByEnforcer, splitHex } from '../utils';
 
 /**
  * Builds the configuration for the native-token-stream permission decoder.

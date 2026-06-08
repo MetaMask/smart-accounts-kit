@@ -1,5 +1,7 @@
-import type { RuleDecoder } from './types';
-import { extractExpiryFromCaveatTerms, getTermsByEnforcer } from './utils';
+import { decodeTimestampTerms } from '@metamask/delegation-core';
+
+import type { RuleDecoder } from '../types';
+import { getTermsByEnforcer } from '../utils';
 
 export const EXECUTION_PERMISSION_EXPIRY_RULE_TYPE = 'expiry' as const;
 
@@ -35,8 +37,26 @@ export const expiryRule: RuleDecoder = ({ contractAddresses, caveats }) => {
     return null;
   }
 
+  if (expiryTerms.length !== 66) {
+    throw new Error('Invalid TimestampEnforcer terms length');
+  }
+
+  const decodedTerms = decodeTimestampTerms(expiryTerms);
+  const timestampBeforeThreshold = Number(decodedTerms.beforeThreshold);
+  const timestampAfterThreshold = Number(decodedTerms.afterThreshold);
+
+  if (timestampBeforeThreshold <= 0) {
+    throw new Error(
+      'Invalid expiry: timestampBeforeThreshold must be greater than 0',
+    );
+  }
+
+  if (timestampAfterThreshold !== 0) {
+    throw new Error('Invalid expiry: timestampAfterThreshold must be 0');
+  }
+
   return {
     type: EXECUTION_PERMISSION_EXPIRY_RULE_TYPE,
-    data: { timestamp: extractExpiryFromCaveatTerms(expiryTerms) },
+    data: { timestamp: timestampBeforeThreshold },
   };
 };

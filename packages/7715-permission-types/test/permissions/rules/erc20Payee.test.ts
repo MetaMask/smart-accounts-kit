@@ -6,9 +6,9 @@ import {
 import { getChecksumAddress } from '@metamask/utils';
 import type { Hex } from '@metamask/utils';
 
-import { erc20PayeeRuleDecoder } from '../src/permissions/erc20PayeeRuleDecoder';
-import type { ChecksumCaveat } from '../src/permissions/types';
-import { getChecksumEnforcersByChainId } from '../src/permissions/utils';
+import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
+import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
 
 describe('erc20PayeeRuleDecoder', () => {
   const contracts = DELEGATOR_CONTRACTS['1.3.0'][CHAIN_ID.sepolia];

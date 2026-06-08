@@ -1,17 +1,17 @@
-import { expiryRule } from './expiryRule';
-import { redeemerRuleDecoder } from './redeemerRuleDecoder';
+import { expiryRule } from '../rules/expiry';
+import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermission,
   MakePermissionDecoderConfig,
-} from './types';
+} from '../types';
 import {
   ERC20_APPROVE_SELECTOR_TERMS,
   ERC20_APPROVE_ZERO_AMOUNT_TERMS,
   getTermsByEnforcer,
   ZERO_32_BYTES,
-} from './utils';
+} from '../utils';
 
 /**
  * Builds the configuration for the erc20-token-revocation permission decoder.

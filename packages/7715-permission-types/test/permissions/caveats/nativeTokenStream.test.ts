@@ -8,7 +8,7 @@ import {
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
 
-import { createPermissionDecodersForContracts } from '../src/permissions';
+import { createPermissionDecodersForContracts } from '../../../src/permissions';
 
 describe('native-token-stream decoder', () => {
   const chainId = CHAIN_ID.sepolia;

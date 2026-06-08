@@ -1,27 +1,29 @@
-import { erc20PayeeRuleDecoder } from './erc20PayeeRuleDecoder';
-import { expiryRule } from './expiryRule';
-import { redeemerRuleDecoder } from './redeemerRuleDecoder';
+import { hexToBigInt, hexToNumber } from '@metamask/utils';
+
+import { expiryRule } from '../rules/expiry';
+import { erc20PayeeRuleDecoder } from '../rules/payee';
+import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermission,
   MakePermissionDecoderConfig,
-} from './types';
+} from '../types';
 import {
   getByteLength,
   getTermsByEnforcer,
+  MAX_PERIOD_DURATION,
   splitHex,
-  UINT256_MAX,
   ZERO_32_BYTES,
-} from './utils';
+} from '../utils';
 
 /**
- * Builds the configuration for the erc20-token-allowance permission decoder.
+ * Builds the configuration for the erc20-token-periodic permission decoder.
  *
  * @param contractAddresses - Checksummed enforcer addresses for the chain.
- * @returns The erc20-token-allowance permission decoder configuration.
+ * @returns The erc20-token-periodic permission decoder configuration.
  */
-export function makeErc20TokenAllowanceDecoderConfig(
+export function makeErc20TokenPeriodicDecoderConfig(
   contractAddresses: ChecksumEnforcersByChainId,
 ): MakePermissionDecoderConfig {
   const {
@@ -34,7 +36,7 @@ export function makeErc20TokenAllowanceDecoderConfig(
   } = contractAddresses;
 
   return {
-    permissionType: 'erc20-token-allowance',
+    permissionType: 'erc20-token-periodic',
     contractAddresses,
     optionalEnforcers: [
       timestampEnforcer, // expiry rule
@@ -52,11 +54,11 @@ export function makeErc20TokenAllowanceDecoderConfig(
 }
 
 /**
- * Decodes erc20-token-allowance permission data from caveats; throws on invalid.
+ * Decodes erc20-token-periodic permission data from caveats; throws on invalid.
  *
  * @param caveats - Caveats from the permission context (checksummed).
  * @param contractAddresses - Checksummed enforcer addresses for the chain.
- * @returns Decoded allowance terms.
+ * @returns Decoded periodic terms.
  */
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
@@ -80,39 +82,42 @@ function validateAndDecodeData(
   const EXPECTED_TERMS_BYTELENGTH = 116; // 20 + 32 + 32 + 32
 
   if (getByteLength(terms) !== EXPECTED_TERMS_BYTELENGTH) {
-    throw new Error('Invalid erc20-token-allowance terms: expected 116 bytes');
+    throw new Error('Invalid erc20-token-periodic terms: expected 116 bytes');
   }
 
-  const [tokenAddress, allowanceAmount, periodDurationRaw, startTimeRaw] =
+  const [tokenAddress, periodAmount, periodDurationRaw, startTimeRaw] =
     splitHex(terms, [20, 32, 32, 32]);
-  if (
-    !tokenAddress ||
-    !allowanceAmount ||
-    !periodDurationRaw ||
-    !startTimeRaw
-  ) {
-    throw new Error('Invalid erc20-token-allowance terms');
+  if (!tokenAddress || !periodAmount || !periodDurationRaw || !startTimeRaw) {
+    throw new Error('Invalid erc20-token-periodic terms');
   }
 
-  if (periodDurationRaw.toLowerCase() !== UINT256_MAX) {
+  const periodDuration = hexToNumber(periodDurationRaw);
+  const periodAmountBigInt = hexToBigInt(periodAmount);
+  const startTime = hexToNumber(startTimeRaw);
+
+  if (periodAmountBigInt === 0n) {
     throw new Error(
-      'Invalid erc20-token-allowance terms: periodDuration must be UINT256_MAX',
+      'Invalid erc20-token-periodic terms: periodAmount must be a positive number',
     );
   }
 
-  const startTime = Number.parseInt(startTimeRaw, 16);
+  if (periodDuration === 0) {
+    throw new Error(
+      'Invalid erc20-token-periodic terms: periodDuration must be a positive number',
+    );
+  }
+
+  if (periodDuration > MAX_PERIOD_DURATION) {
+    throw new Error(
+      'Invalid erc20-token-periodic terms: periodDuration must be less than or equal to MAX_PERIOD_DURATION',
+    );
+  }
 
   if (startTime === 0) {
     throw new Error(
-      'Invalid erc20-token-allowance terms: startTime must be a positive number',
+      'Invalid erc20-token-periodic terms: startTime must be a positive number',
     );
   }
 
-  if (allowanceAmount === ZERO_32_BYTES) {
-    throw new Error(
-      'Invalid erc20-token-allowance terms: allowanceAmount must be a positive number',
-    );
-  }
-
-  return { tokenAddress, allowanceAmount, startTime };
+  return { tokenAddress, periodAmount, periodDuration, startTime };
 }

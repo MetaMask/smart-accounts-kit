@@ -1,20 +1,20 @@
 import { hexToBigInt, hexToNumber } from '@metamask/utils';
 
-import { erc20PayeeRuleDecoder } from './erc20PayeeRuleDecoder';
-import { expiryRule } from './expiryRule';
-import { redeemerRuleDecoder } from './redeemerRuleDecoder';
+import { expiryRule } from '../rules/expiry';
+import { erc20PayeeRuleDecoder } from '../rules/payee';
+import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermission,
   MakePermissionDecoderConfig,
-} from './types';
+} from '../types';
 import {
   getByteLength,
   getTermsByEnforcer,
   splitHex,
   ZERO_32_BYTES,
-} from './utils';
+} from '../utils';
 
 /**
  * Builds the configuration for the erc20-token-stream permission decoder.

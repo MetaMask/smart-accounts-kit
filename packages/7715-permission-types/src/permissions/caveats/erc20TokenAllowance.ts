@@ -1,3 +1,5 @@
+import { hexToNumber } from '@metamask/utils';
+
 import type { Erc20TokenAllowancePermission } from '../../types';
 import { expiryRule } from '../rules/expiry';
 import { erc20PayeeRuleDecoder } from '../rules/payee';
@@ -101,7 +103,7 @@ function validateAndDecodeData(
     );
   }
 
-  const startTime = Number.parseInt(startTimeRaw, 16);
+  const startTime = hexToNumber(startTimeRaw);
 
   if (startTime === 0) {
     throw new Error(

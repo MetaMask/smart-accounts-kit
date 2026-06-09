@@ -1,5 +1,6 @@
 import { hexToNumber } from '@metamask/utils';
 
+import type { NativeTokenAllowancePermission } from '../../types';
 import { expiryRule } from '../rules/expiry';
 import { nativePayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
@@ -63,7 +64,7 @@ export function makeNativeTokenAllowanceDecoderConfig(
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: ChecksumEnforcersByChainId,
-): DecodedPermissionData {
+): DecodedPermissionData<NativeTokenAllowancePermission> {
   const { nativeTokenPeriodicEnforcer, exactCalldataEnforcer } =
     contractAddresses;
 

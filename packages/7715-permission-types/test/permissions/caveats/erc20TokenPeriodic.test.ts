@@ -3,7 +3,7 @@ import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
-import type { Hex } from '@metamask/utils';
+import { bigIntToHex, type Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
@@ -113,7 +113,7 @@ describe('erc20-token-periodic decoder config', () => {
         ),
       ).toStrictEqual({
         tokenAddress: TOKEN_ADDRESS,
-        periodAmount: 100n,
+        periodAmount: bigIntToHex(100n),
         periodDuration: 86400,
         startTime: START_TIME,
       });
@@ -165,7 +165,7 @@ describe('erc20-token-periodic decoder config', () => {
         ),
       ).toStrictEqual({
         tokenAddress: TOKEN_ADDRESS,
-        periodAmount: 100n,
+        periodAmount: bigIntToHex(100n),
         periodDuration: MAX_PERIOD_DURATION,
         startTime: START_TIME,
       });

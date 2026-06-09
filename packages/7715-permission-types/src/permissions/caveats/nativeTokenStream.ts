@@ -1,5 +1,7 @@
 import { decodeNativeTokenStreamingTerms } from '@metamask/delegation-core';
+import { bigIntToHex } from '@metamask/utils';
 
+import type { NativeTokenStreamPermission } from '../../types';
 import { expiryRule } from '../rules/expiry';
 import { nativePayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
@@ -57,7 +59,7 @@ export function makeNativeTokenStreamDecoderConfig(
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: ChecksumEnforcersByChainId,
-): DecodedPermissionData {
+): DecodedPermissionData<NativeTokenStreamPermission> {
   const { nativeTokenStreamingEnforcer, exactCalldataEnforcer } =
     contractAddresses;
 
@@ -95,5 +97,10 @@ function validateAndDecodeData(
     );
   }
 
-  return { initialAmount, maxAmount, amountPerSecond, startTime };
+  return {
+    initialAmount: bigIntToHex(initialAmount),
+    maxAmount: bigIntToHex(maxAmount),
+    amountPerSecond: bigIntToHex(amountPerSecond),
+    startTime,
+  };
 }

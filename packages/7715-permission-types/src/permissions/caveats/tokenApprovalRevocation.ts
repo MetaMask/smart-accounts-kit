@@ -1,5 +1,6 @@
 import { decodeApprovalRevocationTerms } from '@metamask/delegation-core';
 
+import type { TokenApprovalRevocationPermission } from '../../types';
 import { expiryRule } from '../rules/expiry';
 import type {
   ChecksumCaveat,
@@ -46,7 +47,7 @@ export function makeTokenApprovalRevocationDecoderConfig(
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: ChecksumEnforcersByChainId,
-): DecodedPermissionData {
+): DecodedPermissionData<TokenApprovalRevocationPermission> {
   const { approvalRevocationEnforcer } = contractAddresses;
 
   const terms = getTermsByEnforcer({

@@ -1,5 +1,7 @@
 import { decodeNativeTokenPeriodTransferTerms } from '@metamask/delegation-core';
+import { bigIntToHex } from '@metamask/utils';
 
+import type { NativeTokenPeriodicPermission } from '../../types';
 import { expiryRule } from '../rules/expiry';
 import { nativePayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
@@ -57,7 +59,7 @@ export function makeNativeTokenPeriodicDecoderConfig(
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: ChecksumEnforcersByChainId,
-): DecodedPermissionData {
+): DecodedPermissionData<NativeTokenPeriodicPermission> {
   const { nativeTokenPeriodicEnforcer, exactCalldataEnforcer } =
     contractAddresses;
 
@@ -104,5 +106,9 @@ function validateAndDecodeData(
     );
   }
 
-  return { periodAmount, periodDuration, startTime };
+  return {
+    periodAmount: bigIntToHex(periodAmount),
+    periodDuration,
+    startTime,
+  };
 }

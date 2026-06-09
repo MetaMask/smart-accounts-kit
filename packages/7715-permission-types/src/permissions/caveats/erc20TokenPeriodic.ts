@@ -1,5 +1,7 @@
 import { decodeERC20TokenPeriodTransferTerms } from '@metamask/delegation-core';
+import { bigIntToHex } from '@metamask/utils';
 
+import type { Erc20TokenPeriodicPermission } from '../../types';
 import { expiryRule } from '../rules/expiry';
 import { erc20PayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
@@ -61,7 +63,7 @@ export function makeErc20TokenPeriodicDecoderConfig(
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: ChecksumEnforcersByChainId,
-): DecodedPermissionData {
+): DecodedPermissionData<Erc20TokenPeriodicPermission> {
   const { erc20PeriodicEnforcer, valueLteEnforcer } = contractAddresses;
 
   const valueLteTerms = getTermsByEnforcer({
@@ -108,5 +110,10 @@ function validateAndDecodeData(
     );
   }
 
-  return { tokenAddress, periodAmount, periodDuration, startTime };
+  return {
+    tokenAddress,
+    periodAmount: bigIntToHex(periodAmount),
+    periodDuration,
+    startTime,
+  };
 }

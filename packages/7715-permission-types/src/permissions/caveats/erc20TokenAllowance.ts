@@ -1,3 +1,4 @@
+import type { Erc20TokenAllowancePermission } from '../../types';
 import { expiryRule } from '../rules/expiry';
 import { erc20PayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
@@ -61,7 +62,7 @@ export function makeErc20TokenAllowanceDecoderConfig(
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: ChecksumEnforcersByChainId,
-): DecodedPermissionData {
+): DecodedPermissionData<Erc20TokenAllowancePermission> {
   const { erc20PeriodicEnforcer, valueLteEnforcer } = contractAddresses;
 
   const valueLteTerms = getTermsByEnforcer({

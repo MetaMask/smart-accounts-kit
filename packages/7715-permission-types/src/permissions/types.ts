@@ -26,7 +26,9 @@ export type ChecksumCaveat = Caveat<Hex>;
 /**
  * Type of the `data` parameter of a decoded permission.
  */
-export type DecodedPermissionData = PermissionTypes['data'];
+export type DecodedPermissionData<
+  TPermissionType extends PermissionTypes = PermissionTypes,
+> = TPermissionType['data'];
 
 /**
  * Supported permission type identifiers that can be decoded from a permission context.

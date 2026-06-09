@@ -3,7 +3,7 @@ import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
 } from '@metamask/delegation-deployments';
-import type { Hex } from '@metamask/utils';
+import { bigIntToHex, type Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
@@ -113,9 +113,9 @@ describe('native-token-stream decoder config', () => {
           decoder.contractAddresses,
         ),
       ).toStrictEqual({
-        initialAmount: 10n,
-        maxAmount: 100n,
-        amountPerSecond: 5n,
+        initialAmount: bigIntToHex(10n),
+        maxAmount: bigIntToHex(100n),
+        amountPerSecond: bigIntToHex(5n),
         startTime: START_TIME,
       });
     });

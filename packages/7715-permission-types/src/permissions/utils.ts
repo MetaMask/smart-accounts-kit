@@ -50,43 +50,69 @@ const ENFORCER_CONTRACT_NAMES = {
  * @param options0.throwIfNotFound - Whether to throw if no match is found.
  * @returns The matched terms, or `null` when disabled and no caveat is found.
  */
-export function getTermsByEnforcer<TThrowIfNotFound extends boolean = true>({
+export function getTermsByEnforcer({
   caveats,
   enforcer,
   throwIfNotFound,
 }: {
   caveats: ChecksumCaveat[];
   enforcer: Hex;
-  throwIfNotFound?: TThrowIfNotFound;
-}): TThrowIfNotFound extends true ? Hex : Hex | null {
-  const matchingCaveats = caveats.filter(
-    (caveat) => caveat.enforcer === enforcer,
-  );
+  throwIfNotFound?: true;
+}): Hex;
+export function getTermsByEnforcer({
+  caveats,
+  enforcer,
+  throwIfNotFound,
+}: {
+  caveats: ChecksumCaveat[];
+  enforcer: Hex;
+  throwIfNotFound: false;
+}): Hex | null;
+/**
+ * Implementation signature for getTermsByEnforcer overloads.
+ *
+ * @param options0 - Terms lookup arguments.
+ * @param options0.caveats - Caveats to search.
+ * @param options0.enforcer - Enforcer address to match.
+ * @param options0.throwIfNotFound - Whether to throw if no match is found.
+ * @returns The matched terms, or `null` when disabled and no caveat is found.
+ */
+export function getTermsByEnforcer({
+  caveats,
+  enforcer,
+  throwIfNotFound = true,
+}: {
+  caveats: ChecksumCaveat[];
+  enforcer: Hex;
+  throwIfNotFound?: boolean;
+}): Hex | null {
+  let matchingCaveat: ChecksumCaveat | undefined;
 
-  if (matchingCaveats.length === 0) {
-    if (throwIfNotFound ?? true) {
+  for (const caveat of caveats) {
+    if (caveat.enforcer !== enforcer) {
+      continue;
+    }
+
+    if (matchingCaveat) {
+      throw new Error(
+        `Invalid caveats: multiple caveats found matching enforcer ${enforcer}`,
+      );
+    }
+
+    matchingCaveat = caveat;
+  }
+
+  if (!matchingCaveat) {
+    if (throwIfNotFound) {
       throw new Error(
         `Invalid caveats: no caveat found matching enforcer ${enforcer}`,
       );
     }
-    return null as TThrowIfNotFound extends true ? Hex : Hex | null;
+
+    return null;
   }
 
-  if (matchingCaveats.length > 1) {
-    throw new Error(
-      `Invalid caveats: multiple caveats found matching enforcer ${enforcer}`,
-    );
-  }
-
-  const [caveat] = matchingCaveats;
-
-  if (!caveat) {
-    throw new Error(
-      `Invalid caveats: no caveat found matching enforcer ${enforcer}`,
-    );
-  }
-
-  return caveat.terms;
+  return matchingCaveat.terms;
 }
 
 /**

@@ -32,21 +32,24 @@ export const redeemerRuleDecoder: RuleDecoder = ({
 }) => {
   const { redeemerEnforcer } = contractAddresses;
 
-  const redeemerTerms = getTermsByEnforcer({
+  const terms = getTermsByEnforcer({
     caveats,
     enforcer: redeemerEnforcer,
     throwIfNotFound: false,
   });
 
-  if (!redeemerTerms) {
+  if (!terms) {
     return null;
   }
+
+  const { redeemers } = decodeRedeemerTerms(terms);
+
+  const addresses = redeemers.map(getChecksumAddress);
 
   return {
     type: EXECUTION_PERMISSION_REDEEMER_RULE_TYPE,
     data: {
-      addresses:
-        decodeRedeemerTerms(redeemerTerms).redeemers.map(getChecksumAddress),
+      addresses,
     },
   };
 };

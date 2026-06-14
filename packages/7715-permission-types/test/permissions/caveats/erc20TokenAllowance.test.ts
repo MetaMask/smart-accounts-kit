@@ -7,7 +7,7 @@ import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
 import { makeErc20TokenAllowanceDecoderConfig } from '../../../src/permissions/caveats/erc20TokenAllowance';
-import { expiryRule } from '../../../src/permissions/rules/expiry';
+import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
@@ -46,14 +46,17 @@ describe('erc20-token-allowance decoder config', () => {
     {
       enforcer: erc20PeriodicEnforcer,
       terms: erc20PeriodicTerms,
+      args: '0x',
     },
     {
       enforcer: valueLteEnforcer,
       terms: valueLteTerms,
+      args: '0x',
     },
     {
       enforcer: nonceEnforcer,
-      terms: '0x' as const,
+      terms: '0x',
+      args: '0x',
     },
   ];
 
@@ -76,7 +79,7 @@ describe('erc20-token-allowance decoder config', () => {
 
     it('includes expected rule decoders in order', () => {
       expect(decoder.rules).toStrictEqual([
-        expiryRule,
+        expiryRuleDecoder,
         redeemerRuleDecoder,
         erc20PayeeRuleDecoder,
       ]);

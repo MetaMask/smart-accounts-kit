@@ -7,7 +7,7 @@ import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
 import { makeNativeTokenStreamDecoderConfig } from '../../../src/permissions/caveats/nativeTokenStream';
-import { expiryRule } from '../../../src/permissions/rules/expiry';
+import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
@@ -50,14 +50,17 @@ describe('native-token-stream decoder config', () => {
     {
       enforcer: nativeTokenStreamingEnforcer,
       terms: nativeTokenStreamingTerms,
+      args: '0x',
     },
     {
       enforcer: exactCalldataEnforcer,
       terms: exactCalldataTerms,
+      args: '0x',
     },
     {
       enforcer: nonceEnforcer,
-      terms: '0x' as const,
+      terms: '0x',
+      args: '0x',
     },
   ];
 
@@ -80,7 +83,7 @@ describe('native-token-stream decoder config', () => {
 
     it('includes expected rule decoders in order', () => {
       expect(decoder.rules).toStrictEqual([
-        expiryRule,
+        expiryRuleDecoder,
         redeemerRuleDecoder,
         nativePayeeRuleDecoder,
       ]);

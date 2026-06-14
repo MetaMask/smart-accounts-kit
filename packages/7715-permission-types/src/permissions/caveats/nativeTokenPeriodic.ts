@@ -2,7 +2,7 @@ import { decodeNativeTokenPeriodTransferTerms } from '@metamask/delegation-core'
 import { bigIntToHex } from '@metamask/utils';
 
 import type { NativeTokenPeriodicPermission } from '../../types';
-import { expiryRule } from '../rules/expiry';
+import { expiryRuleDecoder } from '../rules/expiry';
 import { nativePayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
@@ -44,7 +44,7 @@ export function makeNativeTokenPeriodicDecoderConfig(
       [exactCalldataEnforcer]: 1,
       [nonceEnforcer]: 1,
     },
-    rules: [expiryRule, redeemerRuleDecoder, nativePayeeRuleDecoder],
+    rules: [expiryRuleDecoder, redeemerRuleDecoder, nativePayeeRuleDecoder],
     validateAndDecodeData,
   };
 }

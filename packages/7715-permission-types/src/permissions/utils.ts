@@ -65,18 +65,25 @@ export function getTermsByEnforcer<TThrowIfNotFound extends boolean = true>({
 
   if (matchingCaveats.length === 0) {
     if (throwIfNotFound ?? true) {
-      throw new Error('Invalid caveats');
+      throw new Error(
+        `Invalid caveats: no caveat found matching enforcer ${enforcer}`,
+      );
     }
     return null as TThrowIfNotFound extends true ? Hex : Hex | null;
   }
 
   if (matchingCaveats.length > 1) {
-    throw new Error('Invalid caveats');
+    throw new Error(
+      `Invalid caveats: multiple caveats found matching enforcer ${enforcer}`,
+    );
   }
 
   const [caveat] = matchingCaveats;
+
   if (!caveat) {
-    throw new Error('Invalid caveats');
+    throw new Error(
+      `Invalid caveats: no caveat found matching enforcer ${enforcer}`,
+    );
   }
 
   return caveat.terms;

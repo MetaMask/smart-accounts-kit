@@ -6,7 +6,7 @@ import {
 import type { Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
-import { expiryRule } from '../../../src/permissions/rules/expiry';
+import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
 import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
 
@@ -22,7 +22,7 @@ describe('expiryRule', () => {
     ];
 
     expect(
-      expiryRule({ contractAddresses, caveats, requiredEnforcers }),
+      expiryRuleDecoder({ contractAddresses, caveats, requiredEnforcers }),
     ).toBeNull();
   });
 
@@ -40,7 +40,7 @@ describe('expiryRule', () => {
     ];
 
     expect(
-      expiryRule({ contractAddresses, caveats, requiredEnforcers }),
+      expiryRuleDecoder({ contractAddresses, caveats, requiredEnforcers }),
     ).toStrictEqual({
       type: 'expiry',
       data: { timestamp: beforeThreshold },
@@ -62,10 +62,46 @@ describe('expiryRule', () => {
     ];
 
     expect(
-      expiryRule({ contractAddresses, caveats, requiredEnforcers }),
+      expiryRuleDecoder({ contractAddresses, caveats, requiredEnforcers }),
     ).toStrictEqual({
       type: 'expiry',
       data: { timestamp: beforeThreshold },
     });
+  });
+
+  it('throws when timestampBeforeThreshold is 0', () => {
+    const caveats: ChecksumCaveat[] = [
+      {
+        enforcer: timestampEnforcer,
+        terms: createTimestampTerms({
+          afterThreshold: 0,
+          beforeThreshold: 0,
+        }),
+        args: '0x' as Hex,
+      },
+    ];
+
+    expect(() =>
+      expiryRuleDecoder({ contractAddresses, caveats, requiredEnforcers }),
+    ).toThrow(
+      'Invalid expiry: timestampBeforeThreshold must be greater than 0',
+    );
+  });
+
+  it('throws when timestampAfterThreshold is non-zero', () => {
+    const caveats: ChecksumCaveat[] = [
+      {
+        enforcer: timestampEnforcer,
+        terms: createTimestampTerms({
+          afterThreshold: 1,
+          beforeThreshold: 1_750_000_000,
+        }),
+        args: '0x' as Hex,
+      },
+    ];
+
+    expect(() =>
+      expiryRuleDecoder({ contractAddresses, caveats, requiredEnforcers }),
+    ).toThrow('Invalid expiry: timestampAfterThreshold must be 0');
   });
 });

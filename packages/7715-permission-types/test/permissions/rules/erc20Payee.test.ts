@@ -102,7 +102,7 @@ describe('erc20PayeeRuleDecoder', () => {
         requiredEnforcers,
       }),
     ).toThrow(
-      'Invalid payee caveats: multiple AllowedCalldataEnforcer caveats',
+      `Invalid caveats: multiple caveats found matching enforcer ${allowedCalldataEnforcer}`,
     );
   });
 

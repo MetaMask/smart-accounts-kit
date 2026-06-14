@@ -6,7 +6,7 @@ import { getChecksumAddress } from '@metamask/utils';
 
 import type { Hex } from '../../types';
 import type { RuleDecoder } from '../types';
-import { getByteLength } from '../utils';
+import { getByteLength, getTermsByEnforcer } from '../utils';
 
 export const EXECUTION_PERMISSION_PAYEE_RULE_TYPE = 'payee' as const;
 
@@ -46,28 +46,17 @@ export const erc20PayeeRuleDecoder: RuleDecoder = ({
     );
   }
 
-  const matchingCaveats = caveats.filter(
-    (caveat) => caveat.enforcer === allowedCalldataEnforcer,
-  );
+  const terms = getTermsByEnforcer({
+    caveats,
+    enforcer: allowedCalldataEnforcer,
+    throwIfNotFound: false,
+  });
 
-  if (matchingCaveats.length === 0) {
+  if (!terms) {
     return null;
   }
 
-  if (matchingCaveats.length > 1) {
-    throw new Error(
-      'Invalid payee caveats: multiple AllowedCalldataEnforcer caveats',
-    );
-  }
-
-  const [caveat] = matchingCaveats;
-  if (!caveat) {
-    throw new Error(
-      'Invalid payee caveats: multiple AllowedCalldataEnforcer caveats',
-    );
-  }
-
-  const decoded = decodeAllowedCalldataTerms(caveat.terms);
+  const decoded = decodeAllowedCalldataTerms(terms);
 
   if (decoded.startIndex !== ERC20_TRANSFER_PAYEE_START_INDEX) {
     throw new Error(
@@ -111,28 +100,17 @@ export const nativePayeeRuleDecoder: RuleDecoder = ({
     );
   }
 
-  const matchingCaveats = caveats.filter(
-    (caveat) => caveat.enforcer === allowedTargetsEnforcer,
-  );
+  const terms = getTermsByEnforcer({
+    caveats,
+    enforcer: allowedTargetsEnforcer,
+    throwIfNotFound: false,
+  });
 
-  if (matchingCaveats.length === 0) {
+  if (!terms) {
     return null;
   }
 
-  if (matchingCaveats.length > 1) {
-    throw new Error(
-      'Invalid payee caveats: multiple AllowedTargetsEnforcer caveats',
-    );
-  }
-
-  const [caveat] = matchingCaveats;
-  if (!caveat) {
-    throw new Error(
-      'Invalid payee caveats: multiple AllowedTargetsEnforcer caveats',
-    );
-  }
-
-  const decoded = decodeAllowedTargetsTerms(caveat.terms);
+  const decoded = decodeAllowedTargetsTerms(terms);
 
   return {
     type: EXECUTION_PERMISSION_PAYEE_RULE_TYPE,

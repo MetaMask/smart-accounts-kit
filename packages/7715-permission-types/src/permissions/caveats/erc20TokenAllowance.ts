@@ -1,7 +1,7 @@
 import { hexToNumber } from '@metamask/utils';
 
 import type { Erc20TokenAllowancePermission } from '../../types';
-import { expiryRule } from '../rules/expiry';
+import { expiryRuleDecoder } from '../rules/expiry';
 import { erc20PayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
@@ -49,7 +49,7 @@ export function makeErc20TokenAllowanceDecoderConfig(
       [valueLteEnforcer]: 1,
       [nonceEnforcer]: 1,
     },
-    rules: [expiryRule, redeemerRuleDecoder, erc20PayeeRuleDecoder],
+    rules: [expiryRuleDecoder, redeemerRuleDecoder, erc20PayeeRuleDecoder],
     validateAndDecodeData,
   };
 }

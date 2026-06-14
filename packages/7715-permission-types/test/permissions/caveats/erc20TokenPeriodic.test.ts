@@ -7,7 +7,7 @@ import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
 import { makeErc20TokenPeriodicDecoderConfig } from '../../../src/permissions/caveats/erc20TokenPeriodic';
-import { expiryRule } from '../../../src/permissions/rules/expiry';
+import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
@@ -93,7 +93,7 @@ describe('erc20-token-periodic decoder config', () => {
 
     it('includes expected rule decoders in order', () => {
       expect(decoder.rules).toStrictEqual([
-        expiryRule,
+        expiryRuleDecoder,
         redeemerRuleDecoder,
         erc20PayeeRuleDecoder,
       ]);

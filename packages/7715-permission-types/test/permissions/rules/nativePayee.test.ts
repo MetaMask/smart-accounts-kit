@@ -125,6 +125,8 @@ describe('nativePayeeRuleDecoder', () => {
 
     expect(() =>
       nativePayeeRuleDecoder({ contractAddresses, caveats, requiredEnforcers }),
-    ).toThrow('Invalid payee caveats: multiple AllowedTargetsEnforcer caveats');
+    ).toThrow(
+      `Invalid caveats: multiple caveats found matching enforcer ${allowedTargetsEnforcer}`,
+    );
   });
 });

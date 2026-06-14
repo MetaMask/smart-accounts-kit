@@ -24,7 +24,10 @@ export type ExpiryRule = {
  * @param options0.caveats - Checksummed caveats from the delegation.
  * @returns The decoded expiry rule when present, otherwise `null`.
  */
-export const expiryRule: RuleDecoder = ({ contractAddresses, caveats }) => {
+export const expiryRuleDecoder: RuleDecoder = ({
+  contractAddresses,
+  caveats,
+}) => {
   const { timestampEnforcer } = contractAddresses;
 
   const expiryTerms = getTermsByEnforcer({

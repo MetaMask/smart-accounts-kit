@@ -1,4 +1,3 @@
-import { createERC20TokenPeriodTransferTerms } from '@metamask/delegation-core';
 import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
@@ -46,11 +45,13 @@ describe('erc20-token-periodic decoder config', () => {
     periodAmount?: bigint;
     periodDuration?: number;
     startDate?: number;
-  } = {}): Hex =>
-    createERC20TokenPeriodTransferTerms(
-      { tokenAddress, periodAmount, periodDuration, startDate },
-      { out: 'hex' },
-    );
+  } = {}): Hex => {
+    const periodAmountHex = periodAmount.toString(16).padStart(64, '0');
+    const periodDurationHex = periodDuration.toString(16).padStart(64, '0');
+    const startDateHex = startDate.toString(16).padStart(64, '0');
+
+    return `${tokenAddress}${periodAmountHex}${periodDurationHex}${startDateHex}`;
+  };
 
   const makeCaveats = (
     terms: Hex,
@@ -59,14 +60,17 @@ describe('erc20-token-periodic decoder config', () => {
     {
       enforcer: erc20PeriodicEnforcer,
       terms,
+      args: '0x',
     },
     {
       enforcer: valueLteEnforcer,
       terms: valueLteTerms,
+      args: '0x',
     },
     {
       enforcer: nonceEnforcer,
-      terms: '0x' as const,
+      terms: '0x',
+      args: '0x',
     },
   ];
 
@@ -134,7 +138,9 @@ describe('erc20-token-periodic decoder config', () => {
           makeCaveats(makeTerms({ periodDuration: 0 })),
           decoder.contractAddresses,
         ),
-      ).toThrow('Invalid periodDuration: must be a positive number');
+      ).toThrow(
+        'Invalid erc20-token-periodic terms: periodDuration must be a positive number',
+      );
     });
 
     it('validateAndDecodeData rejects when periodAmount is zero', () => {
@@ -143,7 +149,9 @@ describe('erc20-token-periodic decoder config', () => {
           makeCaveats(makeTerms({ periodAmount: 0n })),
           decoder.contractAddresses,
         ),
-      ).toThrow('Invalid periodAmount: must be a positive number');
+      ).toThrow(
+        'Invalid erc20-token-periodic terms: periodAmount must be a positive number',
+      );
     });
 
     it('validateAndDecodeData rejects when periodDuration exceeds MAX_PERIOD_DURATION', () => {

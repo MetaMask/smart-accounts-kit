@@ -1,4 +1,3 @@
-import { createERC20StreamingTerms } from '@metamask/delegation-core';
 import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
@@ -34,17 +33,7 @@ describe('erc20-token-stream decoder config', () => {
   );
   const TOKEN_ADDRESS = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' as Hex;
   const START_TIME = 1715664;
-  const VALID_TERMS = createERC20StreamingTerms(
-    {
-      tokenAddress: TOKEN_ADDRESS,
-      initialAmount: 10n,
-      maxAmount: 100n,
-      amountPerSecond: 5n,
-      startTime: START_TIME,
-    },
-    { out: 'hex' },
-  );
-  const makeRawTerms = ({
+  const makeTerms = ({
     tokenAddress = TOKEN_ADDRESS,
     initialAmount = 10n,
     maxAmount = 100n,
@@ -117,7 +106,7 @@ describe('erc20-token-stream decoder config', () => {
     it('validateAndDecodeData decodes valid stream terms', () => {
       expect(
         decoder.validateAndDecodeData(
-          makeCaveats(VALID_TERMS),
+          makeCaveats(makeTerms({})),
           decoder.contractAddresses,
         ),
       ).toStrictEqual({
@@ -132,23 +121,17 @@ describe('erc20-token-stream decoder config', () => {
     it('validateAndDecodeData rejects non-zero value-lte terms', () => {
       expect(() =>
         decoder.validateAndDecodeData(
-          makeCaveats(VALID_TERMS, `0x${'0'.repeat(63)}1` as Hex),
+          makeCaveats(makeTerms({}), `0x${'0'.repeat(63)}1` as Hex),
           decoder.contractAddresses,
         ),
       ).toThrow(`Invalid value-lte terms: must be ${ZERO_32_BYTES}`);
     });
 
     it('validateAndDecodeData rejects when maxAmount equals initialAmount', () => {
-      const invalidTerms = createERC20StreamingTerms(
-        {
-          tokenAddress: TOKEN_ADDRESS,
-          initialAmount: 100n,
-          maxAmount: 100n,
-          amountPerSecond: 5n,
-          startTime: START_TIME,
-        },
-        { out: 'hex' },
-      );
+      const invalidTerms = makeTerms({
+        initialAmount: 100n,
+        maxAmount: 100n,
+      });
 
       expect(() =>
         decoder.validateAndDecodeData(
@@ -161,7 +144,7 @@ describe('erc20-token-stream decoder config', () => {
     });
 
     it('validateAndDecodeData rejects when amountPerSecond is zero', () => {
-      const invalidTerms = makeRawTerms({ amountPerSecond: 0n });
+      const invalidTerms = makeTerms({ amountPerSecond: 0n });
 
       expect(() =>
         decoder.validateAndDecodeData(
@@ -174,7 +157,7 @@ describe('erc20-token-stream decoder config', () => {
     });
 
     it('validateAndDecodeData rejects when startTime is zero', () => {
-      const invalidTerms = makeRawTerms({ startTime: 0 });
+      const invalidTerms = makeTerms({ startTime: 0 });
 
       expect(() =>
         decoder.validateAndDecodeData(

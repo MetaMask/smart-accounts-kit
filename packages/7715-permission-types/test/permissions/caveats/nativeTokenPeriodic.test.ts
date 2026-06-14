@@ -1,4 +1,3 @@
-import { createNativeTokenPeriodTransferTerms } from '@metamask/delegation-core';
 import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
@@ -33,14 +32,6 @@ describe('native-token-periodic decoder config', () => {
     getChecksumEnforcersByChainId(contracts),
   );
   const START_TIME = 1715664;
-  const VALID_TERMS = createNativeTokenPeriodTransferTerms(
-    {
-      periodAmount: 100n,
-      periodDuration: 86400,
-      startDate: START_TIME,
-    },
-    { out: 'hex' },
-  );
   const makeTerms = ({
     periodAmount = 100n,
     periodDuration = 86400,
@@ -109,7 +100,7 @@ describe('native-token-periodic decoder config', () => {
     it('validateAndDecodeData decodes valid periodic terms', () => {
       expect(
         decoder.validateAndDecodeData(
-          makeCaveats(VALID_TERMS),
+          makeCaveats(makeTerms({})),
           decoder.contractAddresses,
         ),
       ).toStrictEqual({
@@ -122,7 +113,7 @@ describe('native-token-periodic decoder config', () => {
     it('validateAndDecodeData rejects exact-calldata terms that are not 0x', () => {
       expect(() =>
         decoder.validateAndDecodeData(
-          makeCaveats(VALID_TERMS, '0x00'),
+          makeCaveats(makeTerms({}), '0x00'),
           decoder.contractAddresses,
         ),
       ).toThrow('Invalid exact-calldata terms: must be 0x');

@@ -1,4 +1,3 @@
-import { createNativeTokenStreamingTerms } from '@metamask/delegation-core';
 import {
   CHAIN_ID,
   DELEGATOR_CONTRACTS,
@@ -30,15 +29,6 @@ describe('native-token-stream decoder config', () => {
     getChecksumEnforcersByChainId(contracts),
   );
   const START_TIME = 1715664;
-  const VALID_TERMS = createNativeTokenStreamingTerms(
-    {
-      initialAmount: 10n,
-      maxAmount: 100n,
-      amountPerSecond: 5n,
-      startTime: START_TIME,
-    },
-    { out: 'hex' },
-  );
   const makeTerms = ({
     initialAmount = 10n,
     maxAmount = 100n,
@@ -109,7 +99,7 @@ describe('native-token-stream decoder config', () => {
     it('validateAndDecodeData decodes valid stream terms', () => {
       expect(
         decoder.validateAndDecodeData(
-          makeCaveats(VALID_TERMS),
+          makeCaveats(makeTerms({})),
           decoder.contractAddresses,
         ),
       ).toStrictEqual({
@@ -123,7 +113,7 @@ describe('native-token-stream decoder config', () => {
     it('validateAndDecodeData rejects exact-calldata terms that are not 0x', () => {
       expect(() =>
         decoder.validateAndDecodeData(
-          makeCaveats(VALID_TERMS, '0x00'),
+          makeCaveats(makeTerms({}), '0x00'),
           decoder.contractAddresses,
         ),
       ).toThrow('Invalid exact-calldata terms: must be 0x');

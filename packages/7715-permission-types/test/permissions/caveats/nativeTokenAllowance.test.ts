@@ -130,6 +130,20 @@ describe('native-token-allowance decoder config', () => {
       );
     });
 
+    it('validateAndDecodeData rejects when startTime is zero', () => {
+      const invalidTerms =
+        `0x${ALLOWANCE_AMOUNT_HEX}${UINT256_MAX.slice(2)}${toWord(0)}` as Hex;
+
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(invalidTerms),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid native-token-allowance terms: startTime must be a positive number',
+      );
+    });
+
     it('validateAndDecodeData rejects zero allowanceAmount', () => {
       const zeroAllowanceAmount = '0'.repeat(64);
       const invalidTerms =

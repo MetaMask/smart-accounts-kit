@@ -16,6 +16,7 @@ import {
   MAX_PERIOD_DURATION,
   ZERO_32_BYTES,
 } from '../../../src/permissions/utils';
+import { toWord } from '../../test-utils';
 
 describe('erc20-token-periodic decoder config', () => {
   const chainId = CHAIN_ID.sepolia;
@@ -46,9 +47,9 @@ describe('erc20-token-periodic decoder config', () => {
     periodDuration?: number;
     startDate?: number;
   } = {}): Hex => {
-    const periodAmountHex = periodAmount.toString(16).padStart(64, '0');
-    const periodDurationHex = periodDuration.toString(16).padStart(64, '0');
-    const startDateHex = startDate.toString(16).padStart(64, '0');
+    const periodAmountHex = toWord(periodAmount);
+    const periodDurationHex = toWord(periodDuration);
+    const startDateHex = toWord(startDate);
 
     return `${tokenAddress}${periodAmountHex}${periodDurationHex}${startDateHex}`;
   };
@@ -151,6 +152,17 @@ describe('erc20-token-periodic decoder config', () => {
         ),
       ).toThrow(
         'Invalid erc20-token-periodic terms: periodAmount must be a positive number',
+      );
+    });
+
+    it('validateAndDecodeData rejects when startTime is zero', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(makeTerms({ startDate: 0 })),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid erc20-token-periodic terms: startTime must be a positive number',
       );
     });
 

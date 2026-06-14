@@ -97,9 +97,10 @@ describe('erc20-token-allowance decoder config', () => {
 
     it('validateAndDecodeData decodes valid allowance terms', () => {
       expect(
-        decoder.validateAndDecodeData(makeCaveats(VALID_ALLOWANCE_TERMS), {
-          ...decoder.contractAddresses,
-        }),
+        decoder.validateAndDecodeData(
+          makeCaveats(VALID_ALLOWANCE_TERMS),
+          decoder.contractAddresses,
+        ),
       ).toStrictEqual({
         tokenAddress: `0x${TOKEN_ADDRESS_HEX}`,
         allowanceAmount: `0x${ALLOWANCE_AMOUNT_HEX}`,
@@ -128,6 +129,20 @@ describe('erc20-token-allowance decoder config', () => {
         ),
       ).toThrow(
         'Invalid erc20-token-allowance terms: periodDuration must be UINT256_MAX',
+      );
+    });
+
+    it('validateAndDecodeData rejects when startTime is zero', () => {
+      const invalidTerms =
+        `0x${TOKEN_ADDRESS_HEX}${ALLOWANCE_AMOUNT_HEX}${UINT256_MAX.slice(2)}${toWord(0)}` as Hex;
+
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(invalidTerms),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid erc20-token-allowance terms: startTime must be a positive number',
       );
     });
 

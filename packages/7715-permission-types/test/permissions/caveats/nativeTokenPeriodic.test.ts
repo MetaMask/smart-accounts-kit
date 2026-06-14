@@ -144,6 +144,17 @@ describe('native-token-periodic decoder config', () => {
       );
     });
 
+    it('validateAndDecodeData rejects when startTime is zero', () => {
+      expect(() =>
+        decoder.validateAndDecodeData(
+          makeCaveats(makeTerms({ startDate: 0 })),
+          decoder.contractAddresses,
+        ),
+      ).toThrow(
+        'Invalid native-token-periodic terms: startTime must be a positive number',
+      );
+    });
+
     it('validateAndDecodeData rejects when periodDuration exceeds MAX_PERIOD_DURATION', () => {
       expect(() =>
         decoder.validateAndDecodeData(

@@ -1,0 +1,35 @@
+import { makeErc20TokenAllowanceDecoderConfig } from './caveats/erc20TokenAllowance';
+import { makeErc20TokenPeriodicDecoderConfig } from './caveats/erc20TokenPeriodic';
+import { makeErc20TokenStreamDecoderConfig } from './caveats/erc20TokenStream';
+import { makeNativeTokenAllowanceDecoderConfig } from './caveats/nativeTokenAllowance';
+import { makeNativeTokenPeriodicDecoderConfig } from './caveats/nativeTokenPeriodic';
+import { makeNativeTokenStreamDecoderConfig } from './caveats/nativeTokenStream';
+import { makeTokenApprovalRevocationDecoderConfig } from './caveats/tokenApprovalRevocation';
+import type { DeployedContractsByName, PermissionDecoderConfig } from './types';
+import { getChecksumEnforcersByChainId } from './utils';
+
+export type { ExpiryRule } from './rules/expiry';
+export type { PayeeRule } from './rules/payee';
+export type { RedeemerRule } from './rules/redeemer';
+
+/**
+ * Builds the canonical set of permission decoders for a chain.
+ *
+ * @param contracts - Deployed delegation framework contracts for one chain.
+ * @returns The full set of permission decoders for the chain.
+ */
+export const makePermissionDecoderConfigs = (
+  contracts: DeployedContractsByName,
+): PermissionDecoderConfig[] => {
+  const contractAddresses = getChecksumEnforcersByChainId(contracts);
+
+  return [
+    makeNativeTokenStreamDecoderConfig(contractAddresses),
+    makeNativeTokenPeriodicDecoderConfig(contractAddresses),
+    makeNativeTokenAllowanceDecoderConfig(contractAddresses),
+    makeErc20TokenStreamDecoderConfig(contractAddresses),
+    makeErc20TokenPeriodicDecoderConfig(contractAddresses),
+    makeErc20TokenAllowanceDecoderConfig(contractAddresses),
+    makeTokenApprovalRevocationDecoderConfig(contractAddresses),
+  ];
+};

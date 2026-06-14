@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add `makePermissionDecoderConfigs` to resolve the `PermissionDecoderConfig`s to be used with @metamask/gator-permissions-controller ([#259](https://github.com/MetaMask/smart-accounts-kit/pull/259))
+
 ## [0.7.1]
 
 ### Fixed

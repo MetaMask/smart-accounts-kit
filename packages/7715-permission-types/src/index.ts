@@ -18,3 +18,7 @@ export type {
   RevokeExecutionPermissionResponseResult,
   MetaMaskBasePermissionData,
 } from './types';
+
+export type { PayeeRule, RedeemerRule, ExpiryRule } from './permissions';
+
+export { makePermissionDecoderConfigs } from './permissions';

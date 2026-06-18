@@ -232,4 +232,65 @@ describe('createErc20TokenStreamCaveats()', () => {
       },
     ]);
   });
+
+  it('rejects malformed numeric hex input', async () => {
+    const invalidPermission = {
+      ...mockPermission,
+      data: {
+        ...mockPermission.data,
+        initialAmount: 'not-hex' as Hex,
+      },
+    };
+
+    await expect(
+      createErc20TokenStreamCaveats({
+        permission: invalidPermission,
+        contracts,
+      }),
+    ).rejects.toThrow();
+  });
+
+  it('keeps valueLte caveat fixed at zero across varied inputs', async () => {
+    const variedPermission: DeepRequired<Erc20TokenStreamPermission> = {
+      ...mockPermission,
+      data: {
+        ...mockPermission.data,
+        tokenAddress: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        initialAmount: '0x1',
+        maxAmount:
+          '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+        amountPerSecond: '0x2',
+        startTime: 1,
+      },
+    };
+
+    const caveats = await createErc20TokenStreamCaveats({
+      permission: variedPermission,
+      contracts,
+    });
+
+    expect(caveats[1]?.enforcer).toBe(contracts.valueLteEnforcer);
+    expect(caveats[1]?.terms).toBe(ZERO_32_BYTES);
+  });
+
+  it('encodes provided token address in stream terms', async () => {
+    const alternateTokenAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+    const permission = {
+      ...mockPermission,
+      data: {
+        ...mockPermission.data,
+        tokenAddress: alternateTokenAddress,
+      },
+    };
+
+    const caveats = await createErc20TokenStreamCaveats({
+      permission,
+      contracts,
+    });
+
+    expect(caveats[0]?.enforcer).toBe(contracts.erc20StreamingEnforcer);
+    expect(
+      caveats[0]?.terms.startsWith(`0x${alternateTokenAddress.slice(2)}`),
+    ).toBe(true);
+  });
 });

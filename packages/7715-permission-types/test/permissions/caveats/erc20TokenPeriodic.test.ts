@@ -244,4 +244,64 @@ describe('createErc20TokenPeriodicCaveats()', () => {
       },
     ]);
   });
+
+  it('rejects malformed numeric hex input', async () => {
+    const invalidPermission = {
+      ...permission,
+      data: {
+        ...permission.data,
+        periodAmount: 'not-hex' as Hex,
+      },
+    };
+
+    await expect(
+      createErc20TokenPeriodicCaveats({
+        permission: invalidPermission,
+        contracts,
+      }),
+    ).rejects.toThrow();
+  });
+
+  it('keeps valueLte caveat fixed at zero across varied inputs', async () => {
+    const variedPermission: DeepRequired<Erc20TokenPeriodicPermission> = {
+      ...permission,
+      data: {
+        ...permission.data,
+        tokenAddress: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        periodAmount:
+          '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+        periodDuration: 1,
+        startTime: 1,
+      },
+    };
+
+    const caveats = await createErc20TokenPeriodicCaveats({
+      permission: variedPermission,
+      contracts,
+    });
+
+    expect(caveats[1]?.enforcer).toBe(contracts.valueLteEnforcer);
+    expect(caveats[1]?.terms).toBe(ZERO_32_BYTES);
+  });
+
+  it('encodes provided token address in periodic terms', async () => {
+    const alternateTokenAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+    const permissionWithAltToken = {
+      ...permission,
+      data: {
+        ...permission.data,
+        tokenAddress: alternateTokenAddress,
+      },
+    };
+
+    const caveats = await createErc20TokenPeriodicCaveats({
+      permission: permissionWithAltToken,
+      contracts,
+    });
+
+    expect(caveats[0]?.enforcer).toBe(contracts.erc20PeriodicEnforcer);
+    expect(
+      caveats[0]?.terms.startsWith(`0x${alternateTokenAddress.slice(2)}`),
+    ).toBe(true);
+  });
 });

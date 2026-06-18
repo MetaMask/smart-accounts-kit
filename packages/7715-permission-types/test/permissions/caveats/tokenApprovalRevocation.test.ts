@@ -165,4 +165,57 @@ describe('createTokenApprovalRevocationCaveats()', () => {
       },
     ]);
   });
+
+  it('creates single-flag approvalRevocation caveat', async () => {
+    const singleFlagPermission: DeepRequired<TokenApprovalRevocationPermission> =
+      {
+        ...permission,
+        data: {
+          ...permission.data,
+          erc20Approve: true,
+          erc721Approve: false,
+          erc721SetApprovalForAll: false,
+          permit2Approve: false,
+          permit2Lockdown: false,
+          permit2InvalidateNonces: false,
+        },
+      };
+
+    const caveats = await createTokenApprovalRevocationCaveats({
+      permission: singleFlagPermission,
+      contracts,
+    });
+
+    expect(caveats).toStrictEqual([
+      {
+        enforcer: contracts.approvalRevocationEnforcer,
+        terms: '0x01',
+        args: '0x',
+      },
+    ]);
+  });
+
+  it('rejects empty-mask approvalRevocation when all flags are false', async () => {
+    const noFlagPermission: DeepRequired<TokenApprovalRevocationPermission> = {
+      ...permission,
+      data: {
+        ...permission.data,
+        erc20Approve: false,
+        erc721Approve: false,
+        erc721SetApprovalForAll: false,
+        permit2Approve: false,
+        permit2Lockdown: false,
+        permit2InvalidateNonces: false,
+      },
+    };
+
+    await expect(
+      createTokenApprovalRevocationCaveats({
+        permission: noFlagPermission,
+        contracts,
+      }),
+    ).rejects.toThrow(
+      'Invalid ApprovalRevocation terms: at least one revocation primitive must be enabled',
+    );
+  });
 });

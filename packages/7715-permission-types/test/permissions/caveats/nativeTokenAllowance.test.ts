@@ -208,4 +208,41 @@ describe('createNativeTokenAllowanceCaveats()', () => {
       },
     ]);
   });
+
+  it('rejects malformed numeric hex input', async () => {
+    const invalidPermission = {
+      ...permission,
+      data: {
+        ...permission.data,
+        allowanceAmount: 'not-hex' as Hex,
+      },
+    };
+
+    await expect(
+      createNativeTokenAllowanceCaveats({
+        permission: invalidPermission,
+        contracts,
+      }),
+    ).rejects.toThrow();
+  });
+
+  it('keeps exactCalldata caveat fixed across varied inputs', async () => {
+    const variedPermission: DeepRequired<NativeTokenAllowancePermission> = {
+      ...permission,
+      data: {
+        ...permission.data,
+        allowanceAmount:
+          '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+        startTime: 1,
+      },
+    };
+
+    const caveats = await createNativeTokenAllowanceCaveats({
+      permission: variedPermission,
+      contracts,
+    });
+
+    expect(caveats[1]?.enforcer).toBe(contracts.exactCalldataEnforcer);
+    expect(caveats[1]?.terms).toBe('0x');
+  });
 });

@@ -1,4 +1,9 @@
-import { decodeERC20StreamingTerms } from '@metamask/delegation-core';
+import type { Caveat } from '@metamask/delegation-core';
+import {
+  createERC20StreamingTerms,
+  createValueLteTerms,
+  decodeERC20StreamingTerms,
+} from '@metamask/delegation-core';
 import { bigIntToHex } from '@metamask/utils';
 
 import type { Erc20TokenStreamPermission } from '../../types';
@@ -7,9 +12,10 @@ import { erc20PayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
-  ChecksumEnforcersByChainId,
   DecodedPermissionData,
-  MakePermissionDecoderConfig,
+  DeepRequired,
+  ChecksumEnforcersByChainId,
+  PermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer, ZERO_32_BYTES } from '../utils';
 
@@ -21,7 +27,7 @@ import { getTermsByEnforcer, ZERO_32_BYTES } from '../utils';
  */
 export function makeErc20TokenStreamDecoderConfig(
   contractAddresses: ChecksumEnforcersByChainId,
-): MakePermissionDecoderConfig {
+): PermissionDecoderConfig {
   const {
     timestampEnforcer,
     erc20StreamingEnforcer,
@@ -103,4 +109,55 @@ function validateAndDecodeData(
     amountPerSecond: bigIntToHex(amountPerSecond),
     startTime,
   };
+}
+
+/**
+ * Enforcers required to build ERC-20 token stream caveats.
+ */
+export type Erc20TokenStreamEnforcers = Pick<
+  ChecksumEnforcersByChainId,
+  'erc20StreamingEnforcer' | 'valueLteEnforcer'
+>;
+
+/**
+ * Builds the ERC-20 stream caveats required for this permission type.
+ *
+ * @param options0 - Caveat builder arguments.
+ * @param options0.permission - Fully populated ERC-20 stream permission data.
+ * @param options0.contracts - Enforcer addresses used to construct caveats.
+ * @returns The ERC20 streaming and zero-value caveats.
+ */
+export async function createErc20TokenStreamCaveats({
+  permission,
+  contracts,
+}: {
+  permission: DeepRequired<Erc20TokenStreamPermission>;
+  contracts: Erc20TokenStreamEnforcers;
+}): Promise<Caveat[]> {
+  const { initialAmount, maxAmount, amountPerSecond, startTime } =
+    permission.data;
+
+  // ERC20StreamingEnforcer: enforce token address, initial/max amount, amount per second, and start time.
+  const erc20StreamingCaveat: Caveat = {
+    enforcer: contracts.erc20StreamingEnforcer,
+    terms: createERC20StreamingTerms({
+      tokenAddress: permission.data.tokenAddress,
+      initialAmount: BigInt(initialAmount),
+      maxAmount: BigInt(maxAmount),
+      amountPerSecond: BigInt(amountPerSecond),
+      startTime,
+    }),
+    args: '0x',
+  };
+
+  // ValueLteEnforcer: allow no native value (e.g. msg.value must be 0).
+  const valueLteCaveat: Caveat = {
+    enforcer: contracts.valueLteEnforcer,
+    terms: createValueLteTerms({
+      maxValue: 0n,
+    }),
+    args: '0x',
+  };
+
+  return [erc20StreamingCaveat, valueLteCaveat];
 }

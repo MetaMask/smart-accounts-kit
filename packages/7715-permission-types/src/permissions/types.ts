@@ -95,3 +95,18 @@ export type PermissionDecoder = {
  * A map of deployed contract names to addresses for one chain.
  */
 export type DeployedContractsByName = Record<string, Hex>;
+
+/**
+ * Makes all properties in an object type required recursively.
+ * This includes nested objects and arrays.
+ * Also removes undefined from union types.
+ */
+export type DeepRequired<TParent> = TParent extends (infer U)[]
+  ? DeepRequired<U>[]
+  : TParent extends object
+    ? {
+        [P in keyof TParent]-?: DeepRequired<
+          Exclude<TParent[P], undefined | null>
+        >;
+      }
+    : Exclude<TParent, undefined | null>;

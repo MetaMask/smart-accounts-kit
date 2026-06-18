@@ -8,6 +8,12 @@ import { makeTokenApprovalRevocationDecoderConfig } from './caveats/tokenApprova
 import type { DeployedContractsByName, PermissionDecoderConfig } from './types';
 import { getChecksumEnforcersByChainId } from './utils';
 
+export {
+  createErc20TokenStreamCaveats,
+  type Erc20TokenStreamEnforcers,
+  type Erc20TokenStreamDecoderEnforcers,
+} from './caveats/erc20TokenStream';
+
 export type { ExpiryRule } from './rules/expiry';
 export type { PayeeRule } from './rules/payee';
 export type { RedeemerRule } from './rules/redeemer';

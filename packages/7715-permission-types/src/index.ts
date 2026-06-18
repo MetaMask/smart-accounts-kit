@@ -22,6 +22,9 @@ export type {
 export type { PayeeRule, RedeemerRule, ExpiryRule } from './permissions';
 export {
   makePermissionDecoderConfigs,
+  createErc20TokenStreamCaveats,
+  type Erc20TokenStreamEnforcers,
+  type Erc20TokenStreamDecoderEnforcers,
   type DeployedContractsByName,
   type PermissionDecoderConfig,
 } from './permissions';

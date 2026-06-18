@@ -11,8 +11,8 @@ This monorepo consists of a suite of tools to enable developers to build using t
   - `/delegator-e2e` has end-to-end tests for the Smart Accounts Kit.
 - `./shared` contains basic shared resources for configuring and testing the packages.
 - `./skills` contains agent skills that help AI coding assistants use the Smart Accounts Kit correctly.
-  - [`/smart-accounts-kit`](./skills/smart-accounts-kit/skill.md) — build dApps with MetaMask Smart Accounts, ERC-7710 delegations, and ERC-7715 Advanced Permissions.
-  - [`/x402-payments`](./skills/x402-payments/skill.md) — build x402 (HTTP 402) machine-to-machine payment flows using ERC-7710 delegations and ERC-7715 Advanced Permissions.
+  - [`/smart-accounts-kit`](./skills/smart-accounts-kit/SKILL.md) — build dApps with MetaMask Smart Accounts, ERC-7710 delegations, and ERC-7715 Advanced Permissions.
+  - [`/x402-payments`](./skills/x402-payments/SKILL.md) — build x402 (HTTP 402) machine-to-machine payment flows using ERC-7710 delegations and ERC-7715 Advanced Permissions.
 
 ## Getting Started
 

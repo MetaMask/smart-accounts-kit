@@ -88,14 +88,6 @@ function validateAndDecodeData(
 
   const [tokenAddress, allowanceAmount, periodDurationRaw, startTimeRaw] =
     splitHex(terms, [20, 32, 32, 32]);
-  if (
-    !tokenAddress ||
-    !allowanceAmount ||
-    !periodDurationRaw ||
-    !startTimeRaw
-  ) {
-    throw new Error('Invalid erc20-token-allowance terms');
-  }
 
   if (periodDurationRaw.toLowerCase() !== UINT256_MAX) {
     throw new Error(

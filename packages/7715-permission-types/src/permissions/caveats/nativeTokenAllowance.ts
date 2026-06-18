@@ -92,9 +92,6 @@ function validateAndDecodeData(
     terms,
     [32, 32, 32],
   );
-  if (!allowanceAmount || !periodDurationRaw || !startTimeRaw) {
-    throw new Error('Invalid native-token-allowance terms');
-  }
 
   if (periodDurationRaw.toLowerCase() !== UINT256_MAX) {
     throw new Error(

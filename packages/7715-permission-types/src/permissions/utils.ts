@@ -126,13 +126,23 @@ export const getByteLength = (hexString: Hex): number => {
 };
 
 /**
+ * A tuple of TElement, the same length as the specified type TInput
+ */
+type Tuple<TElement, TInput extends readonly unknown[]> = {
+  [K in keyof TInput]: TElement;
+};
+
+/**
  * Splits a 0x-prefixed hex string into parts according to the provided byte lengths.
  *
  * @param value - The hex value to split.
  * @param lengths - Segment lengths in bytes.
  * @returns The split hex segments, each with `0x` prefix.
  */
-export function splitHex(value: Hex, lengths: number[]): Hex[] {
+export function splitHex<const TLengths extends readonly number[]>(
+  value: Hex,
+  lengths: TLengths,
+): Tuple<Hex, TLengths> {
   let start = 2;
   const parts: Hex[] = [];
   for (const partLength of lengths) {
@@ -141,7 +151,7 @@ export function splitHex(value: Hex, lengths: number[]): Hex[] {
     start += partCharLength;
     parts.push(`0x${part}` as const);
   }
-  return parts;
+  return parts as Tuple<Hex, TLengths>;
 }
 
 /**

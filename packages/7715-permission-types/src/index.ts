@@ -20,5 +20,8 @@ export type {
 } from './types';
 
 export type { PayeeRule, RedeemerRule, ExpiryRule } from './permissions';
-
-export { makePermissionDecoderConfigs } from './permissions';
+export {
+  makePermissionDecoderConfigs,
+  type DeployedContractsByName,
+  type PermissionDecoderConfig,
+} from './permissions';

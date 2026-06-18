@@ -11,7 +11,7 @@ import { getChecksumEnforcersByChainId } from './utils';
 export type { ExpiryRule } from './rules/expiry';
 export type { PayeeRule } from './rules/payee';
 export type { RedeemerRule } from './rules/redeemer';
-
+export type { DeployedContractsByName, PermissionDecoderConfig };
 /**
  * Builds the canonical set of permission decoders for a chain.
  *

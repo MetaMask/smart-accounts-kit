@@ -1,4 +1,9 @@
-import { decodeERC20TokenPeriodTransferTerms } from '@metamask/delegation-core';
+import type { Caveat } from '@metamask/delegation-core';
+import {
+  createERC20TokenPeriodTransferTerms,
+  createValueLteTerms,
+  decodeERC20TokenPeriodTransferTerms,
+} from '@metamask/delegation-core';
 import { bigIntToHex } from '@metamask/utils';
 
 import type { Erc20TokenPeriodicPermission } from '../../types';
@@ -9,6 +14,7 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
+  DeepRequired,
   MakePermissionDecoderConfig,
 } from '../types';
 import {
@@ -116,4 +122,50 @@ function validateAndDecodeData(
     periodDuration,
     startTime,
   };
+}
+
+/**
+ * Enforcers required to build ERC-20 token periodic caveats.
+ */
+export type Erc20TokenPeriodicEnforcers = Pick<
+  ChecksumEnforcersByChainId,
+  'erc20PeriodicEnforcer' | 'valueLteEnforcer'
+>;
+
+/**
+ * Builds the erc20-token-periodic caveats required for this permission type.
+ *
+ * @param options0 - Caveat builder arguments.
+ * @param options0.permission - Fully populated erc20-token-periodic permission data.
+ * @param options0.contracts - Enforcer addresses used to construct caveats.
+ * @returns The ERC-20 periodic and zero-value caveats.
+ */
+export async function createErc20TokenPeriodicCaveats({
+  permission,
+  contracts,
+}: {
+  permission: DeepRequired<Erc20TokenPeriodicPermission>;
+  contracts: Erc20TokenPeriodicEnforcers;
+}): Promise<Caveat[]> {
+  const { tokenAddress, periodAmount, periodDuration, startTime } =
+    permission.data;
+
+  const erc20PeriodCaveat: Caveat = {
+    enforcer: contracts.erc20PeriodicEnforcer,
+    terms: createERC20TokenPeriodTransferTerms({
+      tokenAddress,
+      periodAmount: BigInt(periodAmount),
+      periodDuration,
+      startDate: startTime,
+    }),
+    args: '0x',
+  };
+
+  const valueLteCaveat: Caveat = {
+    enforcer: contracts.valueLteEnforcer,
+    terms: createValueLteTerms({ maxValue: 0n }),
+    args: '0x',
+  };
+
+  return [erc20PeriodCaveat, valueLteCaveat];
 }

@@ -6,10 +6,18 @@ import type { Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
-import { makeTokenApprovalRevocationDecoderConfig } from '../../../src/permissions/caveats/tokenApprovalRevocation';
+import {
+  createTokenApprovalRevocationCaveats,
+  makeTokenApprovalRevocationDecoderConfig,
+  type TokenApprovalRevocationEnforcers,
+} from '../../../src/permissions/caveats/tokenApprovalRevocation';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
-import type { ChecksumCaveat } from '../../../src/permissions/types';
+import type {
+  ChecksumCaveat,
+  DeepRequired,
+} from '../../../src/permissions/types';
 import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
+import type { TokenApprovalRevocationPermission } from '../../../src/types';
 
 describe('token-approval-revocation decoder config', () => {
   const chainId = CHAIN_ID.sepolia;
@@ -121,5 +129,40 @@ describe('token-approval-revocation decoder config', () => {
         permit2InvalidateNonces: true,
       });
     });
+  });
+});
+
+describe('createTokenApprovalRevocationCaveats()', () => {
+  const contracts: TokenApprovalRevocationEnforcers = {
+    approvalRevocationEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
+  };
+
+  const permission: DeepRequired<TokenApprovalRevocationPermission> = {
+    type: 'token-approval-revocation',
+    data: {
+      erc20Approve: true,
+      erc721Approve: true,
+      erc721SetApprovalForAll: true,
+      permit2Approve: true,
+      permit2Lockdown: true,
+      permit2InvalidateNonces: true,
+      justification: 'test',
+    },
+    isAdjustmentAllowed: true,
+  };
+
+  it('creates approvalRevocation caveat', async () => {
+    const caveats = await createTokenApprovalRevocationCaveats({
+      permission,
+      contracts,
+    });
+
+    expect(caveats).toStrictEqual([
+      {
+        enforcer: contracts.approvalRevocationEnforcer,
+        terms: '0x3f',
+        args: '0x',
+      },
+    ]);
   });
 });

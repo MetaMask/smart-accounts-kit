@@ -1,4 +1,9 @@
-import { decodeNativeTokenStreamingTerms } from '@metamask/delegation-core';
+import type { Caveat } from '@metamask/delegation-core';
+import {
+  createExactCalldataTerms,
+  createNativeTokenStreamingTerms,
+  decodeNativeTokenStreamingTerms,
+} from '@metamask/delegation-core';
 import { bigIntToHex } from '@metamask/utils';
 
 import type { NativeTokenStreamPermission } from '../../types';
@@ -9,6 +14,7 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
+  DeepRequired,
   MakePermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer } from '../utils';
@@ -103,4 +109,50 @@ function validateAndDecodeData(
     amountPerSecond: bigIntToHex(amountPerSecond),
     startTime,
   };
+}
+
+/**
+ * Enforcers required to build native token stream caveats.
+ */
+export type NativeTokenStreamEnforcers = Pick<
+  ChecksumEnforcersByChainId,
+  'nativeTokenStreamingEnforcer' | 'exactCalldataEnforcer'
+>;
+
+/**
+ * Builds the native-token-stream caveats required for this permission type.
+ *
+ * @param options0 - Caveat builder arguments.
+ * @param options0.permission - Fully populated native-token-stream permission data.
+ * @param options0.contracts - Enforcer addresses used to construct caveats.
+ * @returns The native token streaming and exact-calldata caveats.
+ */
+export async function createNativeTokenStreamCaveats({
+  permission,
+  contracts,
+}: {
+  permission: DeepRequired<NativeTokenStreamPermission>;
+  contracts: NativeTokenStreamEnforcers;
+}): Promise<Caveat[]> {
+  const { initialAmount, maxAmount, amountPerSecond, startTime } =
+    permission.data;
+
+  const nativeTokenStreamingCaveat: Caveat = {
+    enforcer: contracts.nativeTokenStreamingEnforcer,
+    terms: createNativeTokenStreamingTerms({
+      initialAmount: BigInt(initialAmount),
+      maxAmount: BigInt(maxAmount),
+      amountPerSecond: BigInt(amountPerSecond),
+      startTime,
+    }),
+    args: '0x',
+  };
+
+  const exactCalldataCaveat: Caveat = {
+    enforcer: contracts.exactCalldataEnforcer,
+    terms: createExactCalldataTerms({ calldata: '0x' }),
+    args: '0x',
+  };
+
+  return [nativeTokenStreamingCaveat, exactCalldataCaveat];
 }

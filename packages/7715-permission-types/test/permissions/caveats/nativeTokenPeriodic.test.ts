@@ -6,15 +6,23 @@ import { bigIntToHex, type Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
-import { makeNativeTokenPeriodicDecoderConfig } from '../../../src/permissions/caveats/nativeTokenPeriodic';
+import {
+  createNativeTokenPeriodicCaveats,
+  makeNativeTokenPeriodicDecoderConfig,
+  type NativeTokenPeriodicEnforcers,
+} from '../../../src/permissions/caveats/nativeTokenPeriodic';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
-import type { ChecksumCaveat } from '../../../src/permissions/types';
+import type {
+  ChecksumCaveat,
+  DeepRequired,
+} from '../../../src/permissions/types';
 import {
   getChecksumEnforcersByChainId,
   MAX_PERIOD_DURATION,
 } from '../../../src/permissions/utils';
+import type { NativeTokenPeriodicPermission } from '../../../src/types';
 import { toWord } from '../../test-utils';
 
 describe('native-token-periodic decoder config', () => {
@@ -178,5 +186,49 @@ describe('native-token-periodic decoder config', () => {
         startTime: START_TIME,
       });
     });
+  });
+});
+
+describe('createNativeTokenPeriodicCaveats()', () => {
+  const periodAmount = '0x64' as const;
+  const periodDuration = 86400;
+  const startTime = 1729900800;
+
+  const contracts: NativeTokenPeriodicEnforcers = {
+    nativeTokenPeriodicEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
+    exactCalldataEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
+  };
+
+  const permission: DeepRequired<NativeTokenPeriodicPermission> = {
+    type: 'native-token-periodic',
+    data: {
+      periodAmount,
+      periodDuration,
+      startTime,
+      justification: 'test',
+    },
+    isAdjustmentAllowed: true,
+  };
+
+  it('creates nativeTokenPeriodic and exactCalldata caveats', async () => {
+    const caveats = await createNativeTokenPeriodicCaveats({
+      permission,
+      contracts,
+    });
+
+    const nativeTokenPeriodicExpectedTerms = `0x${toWord(BigInt(periodAmount))}${toWord(periodDuration)}${toWord(startTime)}`;
+
+    expect(caveats).toStrictEqual([
+      {
+        enforcer: contracts.nativeTokenPeriodicEnforcer,
+        terms: nativeTokenPeriodicExpectedTerms,
+        args: '0x',
+      },
+      {
+        enforcer: contracts.exactCalldataEnforcer,
+        terms: '0x',
+        args: '0x',
+      },
+    ]);
   });
 });

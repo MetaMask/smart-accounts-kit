@@ -1,3 +1,8 @@
+import type { Caveat } from '@metamask/delegation-core';
+import {
+  createExactCalldataTerms,
+  createNativeTokenPeriodTransferTerms,
+} from '@metamask/delegation-core';
 import { hexToNumber } from '@metamask/utils';
 
 import type { NativeTokenAllowancePermission } from '../../types';
@@ -8,6 +13,7 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
+  DeepRequired,
   MakePermissionDecoderConfig,
 } from '../types';
 import {
@@ -114,4 +120,49 @@ function validateAndDecodeData(
   }
 
   return { allowanceAmount, startTime };
+}
+
+/**
+ * Enforcers required to build native token allowance caveats.
+ */
+export type NativeTokenAllowanceEnforcers = Pick<
+  ChecksumEnforcersByChainId,
+  'nativeTokenPeriodicEnforcer' | 'exactCalldataEnforcer'
+>;
+
+/**
+ * Builds the native-token-allowance caveats required for this permission type.
+ *
+ * @param options0 - Caveat builder arguments.
+ * @param options0.permission - Fully populated native-token-allowance permission data.
+ * @param options0.contracts - Enforcer addresses used to construct caveats.
+ * @returns The native token allowance and exact-calldata caveats.
+ */
+export async function createNativeTokenAllowanceCaveats({
+  permission,
+  contracts,
+}: {
+  permission: DeepRequired<NativeTokenAllowancePermission>;
+  contracts: NativeTokenAllowanceEnforcers;
+}): Promise<Caveat[]> {
+  const { allowanceAmount, startTime } = permission.data;
+
+  const nativeTokenPeriodTransferCaveat: Caveat = {
+    enforcer: contracts.nativeTokenPeriodicEnforcer,
+    terms: createNativeTokenPeriodTransferTerms({
+      periodAmount: BigInt(allowanceAmount),
+      // delegation-core accepts bigint for encoding although the type is `number`.
+      periodDuration: BigInt(UINT256_MAX) as unknown as number,
+      startDate: startTime,
+    }),
+    args: '0x',
+  };
+
+  const exactCalldataCaveat: Caveat = {
+    enforcer: contracts.exactCalldataEnforcer,
+    terms: createExactCalldataTerms({ calldata: '0x' }),
+    args: '0x',
+  };
+
+  return [nativeTokenPeriodTransferCaveat, exactCalldataCaveat];
 }

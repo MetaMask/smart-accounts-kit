@@ -21,10 +21,21 @@ export type {
 
 export type { PayeeRule, RedeemerRule, ExpiryRule } from './permissions';
 export {
+  createErc20TokenAllowanceCaveats,
+  type Erc20TokenAllowanceEnforcers,
+  createErc20TokenPeriodicCaveats,
+  type Erc20TokenPeriodicEnforcers,
   makePermissionDecoderConfigs,
   createErc20TokenStreamCaveats,
   type Erc20TokenStreamEnforcers,
-  type Erc20TokenStreamDecoderEnforcers,
+  createNativeTokenAllowanceCaveats,
+  type NativeTokenAllowanceEnforcers,
+  createNativeTokenPeriodicCaveats,
+  type NativeTokenPeriodicEnforcers,
+  createNativeTokenStreamCaveats,
+  type NativeTokenStreamEnforcers,
+  createTokenApprovalRevocationCaveats,
+  type TokenApprovalRevocationEnforcers,
   type DeployedContractsByName,
   type PermissionDecoderConfig,
 } from './permissions';

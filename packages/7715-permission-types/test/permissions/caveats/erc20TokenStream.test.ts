@@ -5,7 +5,7 @@ import {
 import { bigIntToHex, type Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
-import { makePermissionDecoderConfigs} from '../../../src/permissions';
+import { makePermissionDecoderConfigs } from '../../../src/permissions';
 import {
   createErc20TokenStreamCaveats,
   type Erc20TokenStreamEnforcers,

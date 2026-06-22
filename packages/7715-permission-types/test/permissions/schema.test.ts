@@ -30,6 +30,22 @@ describe('permission schemas', () => {
       'Unknown permission type: unregistered-type',
     );
   });
+
+  it('does not treat inherited object properties as matching permission types', () => {
+    const unknownSchema = getPermissionSchemaEntry('__proto__');
+    const unknownTypeElement = unknownSchema.sections
+      .flatMap((section) => section.elements)
+      .find(
+        (element) =>
+          'testId' in element &&
+          element.testId === 'review-gator-permission-unknown-type',
+      );
+
+    expect(unknownTypeElement?.type).toBe('raw-text');
+    expect(() => getPermissionSchemaEntry('__proto__', true)).toThrow(
+      'Unknown permission type: __proto__',
+    );
+  });
 });
 
 describe('MetaMask facilitator addresses', () => {

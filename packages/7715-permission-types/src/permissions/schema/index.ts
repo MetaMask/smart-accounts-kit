@@ -687,7 +687,10 @@ export function getPermissionSchemaEntry(
   throwIfUnknown: boolean = false,
 ): PermissionSchemaEntry {
   const matchingSchema = PERMISSION_SCHEMAS[permissionType];
-  if (matchingSchema) {
+  if (
+    Object.prototype.hasOwnProperty.call(PERMISSION_SCHEMAS, permissionType) &&
+    matchingSchema
+  ) {
     return matchingSchema;
   }
   if (throwIfUnknown) {

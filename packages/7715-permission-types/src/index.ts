@@ -25,3 +25,4 @@ export {
   type DeployedContractsByName,
   type PermissionDecoderConfig,
 } from './permissions';
+export * from './permissions/schema';

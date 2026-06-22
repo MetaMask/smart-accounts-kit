@@ -12,6 +12,7 @@ export type { ExpiryRule } from './rules/expiry';
 export type { PayeeRule } from './rules/payee';
 export type { RedeemerRule } from './rules/redeemer';
 export type { DeployedContractsByName, PermissionDecoderConfig };
+export * from './schema';
 /**
  * Builds the canonical set of permission decoders for a chain.
  *

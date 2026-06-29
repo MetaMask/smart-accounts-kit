@@ -207,8 +207,8 @@ describe('createErc20TokenStreamCaveats()', () => {
     isAdjustmentAllowed: true,
   };
 
-  it('creates erc20Streaming and valueLte caveats', async () => {
-    const caveats = await createErc20TokenStreamCaveats({
+  it('creates erc20Streaming and valueLte caveats', () => {
+    const caveats = createErc20TokenStreamCaveats({
       permission: mockPermission,
       contracts,
     });
@@ -233,7 +233,7 @@ describe('createErc20TokenStreamCaveats()', () => {
     ]);
   });
 
-  it('rejects malformed numeric hex input', async () => {
+  it('rejects malformed numeric hex input', () => {
     const invalidPermission = {
       ...mockPermission,
       data: {
@@ -242,15 +242,15 @@ describe('createErc20TokenStreamCaveats()', () => {
       },
     };
 
-    await expect(
+    expect(() =>
       createErc20TokenStreamCaveats({
         permission: invalidPermission,
         contracts,
       }),
-    ).rejects.toThrow();
+    ).toThrow();
   });
 
-  it('keeps valueLte caveat fixed at zero across varied inputs', async () => {
+  it('keeps valueLte caveat fixed at zero across varied inputs', () => {
     const variedPermission: DeepRequired<Erc20TokenStreamPermission> = {
       ...mockPermission,
       data: {
@@ -264,7 +264,7 @@ describe('createErc20TokenStreamCaveats()', () => {
       },
     };
 
-    const caveats = await createErc20TokenStreamCaveats({
+    const caveats = createErc20TokenStreamCaveats({
       permission: variedPermission,
       contracts,
     });
@@ -273,7 +273,7 @@ describe('createErc20TokenStreamCaveats()', () => {
     expect(caveats[1]?.terms).toBe(ZERO_32_BYTES);
   });
 
-  it('encodes provided token address in stream terms', async () => {
+  it('encodes provided token address in stream terms', () => {
     const alternateTokenAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
     const permission = {
       ...mockPermission,
@@ -283,7 +283,7 @@ describe('createErc20TokenStreamCaveats()', () => {
       },
     };
 
-    const caveats = await createErc20TokenStreamCaveats({
+    const caveats = createErc20TokenStreamCaveats({
       permission,
       contracts,
     });

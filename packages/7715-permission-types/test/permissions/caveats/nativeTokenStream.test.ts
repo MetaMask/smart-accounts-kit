@@ -188,8 +188,8 @@ describe('createNativeTokenStreamCaveats()', () => {
     isAdjustmentAllowed: true,
   };
 
-  it('creates nativeTokenStreaming and exactCalldata caveats', async () => {
-    const caveats = await createNativeTokenStreamCaveats({
+  it('creates nativeTokenStreaming and exactCalldata caveats', () => {
+    const caveats = createNativeTokenStreamCaveats({
       permission,
       contracts,
     });
@@ -214,7 +214,7 @@ describe('createNativeTokenStreamCaveats()', () => {
     ]);
   });
 
-  it('rejects malformed numeric hex input', async () => {
+  it('rejects malformed numeric hex input', () => {
     const invalidPermission = {
       ...permission,
       data: {
@@ -223,15 +223,15 @@ describe('createNativeTokenStreamCaveats()', () => {
       },
     };
 
-    await expect(
+    expect(() =>
       createNativeTokenStreamCaveats({
         permission: invalidPermission,
         contracts,
       }),
-    ).rejects.toThrow();
+    ).toThrow();
   });
 
-  it('keeps exactCalldata caveat fixed across varied inputs', async () => {
+  it('keeps exactCalldata caveat fixed across varied inputs', () => {
     const variedPermission: DeepRequired<NativeTokenStreamPermission> = {
       ...permission,
       data: {
@@ -244,7 +244,7 @@ describe('createNativeTokenStreamCaveats()', () => {
       },
     };
 
-    const caveats = await createNativeTokenStreamCaveats({
+    const caveats = createNativeTokenStreamCaveats({
       permission: variedPermission,
       contracts,
     });

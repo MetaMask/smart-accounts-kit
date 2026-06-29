@@ -138,13 +138,13 @@ export type NativeTokenAllowanceEnforcers = Pick<
  * @param options0.contracts - Enforcer addresses used to construct caveats.
  * @returns The native token allowance and exact-calldata caveats.
  */
-export async function createNativeTokenAllowanceCaveats({
+export function createNativeTokenAllowanceCaveats({
   permission,
   contracts,
 }: {
   permission: DeepRequired<NativeTokenAllowancePermission>;
   contracts: NativeTokenAllowanceEnforcers;
-}): Promise<Caveat[]> {
+}): Caveat[] {
   const { allowanceAmount, startTime } = permission.data;
 
   const nativeTokenPeriodTransferCaveat: Caveat = {

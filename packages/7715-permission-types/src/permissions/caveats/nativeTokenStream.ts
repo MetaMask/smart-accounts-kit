@@ -127,13 +127,13 @@ export type NativeTokenStreamEnforcers = Pick<
  * @param options0.contracts - Enforcer addresses used to construct caveats.
  * @returns The native token streaming and exact-calldata caveats.
  */
-export async function createNativeTokenStreamCaveats({
+export function createNativeTokenStreamCaveats({
   permission,
   contracts,
 }: {
   permission: DeepRequired<NativeTokenStreamPermission>;
   contracts: NativeTokenStreamEnforcers;
-}): Promise<Caveat[]> {
+}): Caveat[] {
   const { initialAmount, maxAmount, amountPerSecond, startTime } =
     permission.data;
 

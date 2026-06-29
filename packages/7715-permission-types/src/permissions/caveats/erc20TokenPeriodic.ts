@@ -140,13 +140,13 @@ export type Erc20TokenPeriodicEnforcers = Pick<
  * @param options0.contracts - Enforcer addresses used to construct caveats.
  * @returns The ERC-20 periodic and zero-value caveats.
  */
-export async function createErc20TokenPeriodicCaveats({
+export function createErc20TokenPeriodicCaveats({
   permission,
   contracts,
 }: {
   permission: DeepRequired<Erc20TokenPeriodicPermission>;
   contracts: Erc20TokenPeriodicEnforcers;
-}): Promise<Caveat[]> {
+}): Caveat[] {
   const { tokenAddress, periodAmount, periodDuration, startTime } =
     permission.data;
 

@@ -192,8 +192,8 @@ describe('createErc20TokenAllowanceCaveats()', () => {
     isAdjustmentAllowed: true,
   };
 
-  it('creates erc20Periodic and valueLte caveats', async () => {
-    const caveats = await createErc20TokenAllowanceCaveats({
+  it('creates erc20Periodic and valueLte caveats', () => {
+    const caveats = createErc20TokenAllowanceCaveats({
       permission,
       contracts,
     });
@@ -213,7 +213,7 @@ describe('createErc20TokenAllowanceCaveats()', () => {
     ]);
   });
 
-  it('rejects malformed numeric hex input', async () => {
+  it('rejects malformed numeric hex input', () => {
     const invalidPermission = {
       ...permission,
       data: {
@@ -222,15 +222,15 @@ describe('createErc20TokenAllowanceCaveats()', () => {
       },
     };
 
-    await expect(
+    expect(() =>
       createErc20TokenAllowanceCaveats({
         permission: invalidPermission,
         contracts,
       }),
-    ).rejects.toThrow();
+    ).toThrow();
   });
 
-  it('keeps valueLte caveat fixed at zero across varied inputs', async () => {
+  it('keeps valueLte caveat fixed at zero across varied inputs', () => {
     const variedPermission: DeepRequired<Erc20TokenAllowancePermission> = {
       ...permission,
       data: {
@@ -242,7 +242,7 @@ describe('createErc20TokenAllowanceCaveats()', () => {
       },
     };
 
-    const caveats = await createErc20TokenAllowanceCaveats({
+    const caveats = createErc20TokenAllowanceCaveats({
       permission: variedPermission,
       contracts,
     });
@@ -251,7 +251,7 @@ describe('createErc20TokenAllowanceCaveats()', () => {
     expect(caveats[1]?.terms).toBe(ZERO_32_BYTES);
   });
 
-  it('encodes provided token address in allowance terms', async () => {
+  it('encodes provided token address in allowance terms', () => {
     const alternateTokenAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
     const permissionWithAltToken = {
       ...permission,
@@ -261,7 +261,7 @@ describe('createErc20TokenAllowanceCaveats()', () => {
       },
     };
 
-    const caveats = await createErc20TokenAllowanceCaveats({
+    const caveats = createErc20TokenAllowanceCaveats({
       permission: permissionWithAltToken,
       contracts,
     });

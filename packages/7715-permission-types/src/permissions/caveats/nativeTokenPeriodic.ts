@@ -135,13 +135,13 @@ export type NativeTokenPeriodicEnforcers = Pick<
  * @param options0.contracts - Enforcer addresses used to construct caveats.
  * @returns The native token periodic and exact-calldata caveats.
  */
-export async function createNativeTokenPeriodicCaveats({
+export function createNativeTokenPeriodicCaveats({
   permission,
   contracts,
 }: {
   permission: DeepRequired<NativeTokenPeriodicPermission>;
   contracts: NativeTokenPeriodicEnforcers;
-}): Promise<Caveat[]> {
+}): Caveat[] {
   const { periodAmount, periodDuration, startTime } = permission.data;
 
   const nativeTokenPeriodTransferCaveat: Caveat = {

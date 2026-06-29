@@ -224,8 +224,8 @@ describe('createErc20TokenPeriodicCaveats()', () => {
     isAdjustmentAllowed: true,
   };
 
-  it('creates erc20Periodic and valueLte caveats', async () => {
-    const caveats = await createErc20TokenPeriodicCaveats({
+  it('creates erc20Periodic and valueLte caveats', () => {
+    const caveats = createErc20TokenPeriodicCaveats({
       permission,
       contracts,
     });
@@ -245,7 +245,7 @@ describe('createErc20TokenPeriodicCaveats()', () => {
     ]);
   });
 
-  it('rejects malformed numeric hex input', async () => {
+  it('rejects malformed numeric hex input', () => {
     const invalidPermission = {
       ...permission,
       data: {
@@ -254,15 +254,15 @@ describe('createErc20TokenPeriodicCaveats()', () => {
       },
     };
 
-    await expect(
+    expect(() =>
       createErc20TokenPeriodicCaveats({
         permission: invalidPermission,
         contracts,
       }),
-    ).rejects.toThrow();
+    ).toThrow();
   });
 
-  it('keeps valueLte caveat fixed at zero across varied inputs', async () => {
+  it('keeps valueLte caveat fixed at zero across varied inputs', () => {
     const variedPermission: DeepRequired<Erc20TokenPeriodicPermission> = {
       ...permission,
       data: {
@@ -275,7 +275,7 @@ describe('createErc20TokenPeriodicCaveats()', () => {
       },
     };
 
-    const caveats = await createErc20TokenPeriodicCaveats({
+    const caveats = createErc20TokenPeriodicCaveats({
       permission: variedPermission,
       contracts,
     });
@@ -284,7 +284,7 @@ describe('createErc20TokenPeriodicCaveats()', () => {
     expect(caveats[1]?.terms).toBe(ZERO_32_BYTES);
   });
 
-  it('encodes provided token address in periodic terms', async () => {
+  it('encodes provided token address in periodic terms', () => {
     const alternateTokenAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
     const permissionWithAltToken = {
       ...permission,
@@ -294,7 +294,7 @@ describe('createErc20TokenPeriodicCaveats()', () => {
       },
     };
 
-    const caveats = await createErc20TokenPeriodicCaveats({
+    const caveats = createErc20TokenPeriodicCaveats({
       permission: permissionWithAltToken,
       contracts,
     });

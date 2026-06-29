@@ -134,13 +134,13 @@ export type Erc20TokenAllowanceEnforcers = Pick<
  * @param options0.contracts - Enforcer addresses used to construct caveats.
  * @returns The ERC-20 allowance and zero-value caveats.
  */
-export async function createErc20TokenAllowanceCaveats({
+export function createErc20TokenAllowanceCaveats({
   permission,
   contracts,
 }: {
   permission: DeepRequired<Erc20TokenAllowancePermission>;
   contracts: Erc20TokenAllowanceEnforcers;
-}): Promise<Caveat[]> {
+}): Caveat[] {
   const { tokenAddress, allowanceAmount, startTime } = permission.data;
 
   const erc20PeriodCaveat: Caveat = {

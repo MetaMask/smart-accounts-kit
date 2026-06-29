@@ -95,13 +95,13 @@ export type TokenApprovalRevocationEnforcers = Pick<
  * @param options0.contracts - Enforcer addresses used to construct caveats.
  * @returns A single approval-revocation caveat.
  */
-export async function createTokenApprovalRevocationCaveats({
+export function createTokenApprovalRevocationCaveats({
   permission,
   contracts,
 }: {
   permission: DeepRequired<TokenApprovalRevocationPermission>;
   contracts: TokenApprovalRevocationEnforcers;
-}): Promise<Caveat[]> {
+}): Caveat[] {
   const approvalRevocationCaveat: Caveat = {
     enforcer: contracts.approvalRevocationEnforcer,
     terms: createApprovalRevocationTerms(permission.data),

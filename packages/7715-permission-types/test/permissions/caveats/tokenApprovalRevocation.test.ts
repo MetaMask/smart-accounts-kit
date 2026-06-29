@@ -151,8 +151,8 @@ describe('createTokenApprovalRevocationCaveats()', () => {
     isAdjustmentAllowed: true,
   };
 
-  it('creates approvalRevocation caveat', async () => {
-    const caveats = await createTokenApprovalRevocationCaveats({
+  it('creates approvalRevocation caveat', () => {
+    const caveats = createTokenApprovalRevocationCaveats({
       permission,
       contracts,
     });
@@ -166,7 +166,7 @@ describe('createTokenApprovalRevocationCaveats()', () => {
     ]);
   });
 
-  it('creates single-flag approvalRevocation caveat', async () => {
+  it('creates single-flag approvalRevocation caveat', () => {
     const singleFlagPermission: DeepRequired<TokenApprovalRevocationPermission> =
       {
         ...permission,
@@ -181,7 +181,7 @@ describe('createTokenApprovalRevocationCaveats()', () => {
         },
       };
 
-    const caveats = await createTokenApprovalRevocationCaveats({
+    const caveats = createTokenApprovalRevocationCaveats({
       permission: singleFlagPermission,
       contracts,
     });
@@ -195,7 +195,7 @@ describe('createTokenApprovalRevocationCaveats()', () => {
     ]);
   });
 
-  it('rejects empty-mask approvalRevocation when all flags are false', async () => {
+  it('rejects empty-mask approvalRevocation when all flags are false', () => {
     const noFlagPermission: DeepRequired<TokenApprovalRevocationPermission> = {
       ...permission,
       data: {
@@ -209,12 +209,12 @@ describe('createTokenApprovalRevocationCaveats()', () => {
       },
     };
 
-    await expect(
+    expect(() =>
       createTokenApprovalRevocationCaveats({
         permission: noFlagPermission,
         contracts,
       }),
-    ).rejects.toThrow(
+    ).toThrow(
       'Invalid ApprovalRevocation terms: at least one revocation primitive must be enabled',
     );
   });

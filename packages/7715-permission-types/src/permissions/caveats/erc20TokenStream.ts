@@ -127,13 +127,13 @@ export type Erc20TokenStreamEnforcers = Pick<
  * @param options0.contracts - Enforcer addresses used to construct caveats.
  * @returns The ERC20 streaming and zero-value caveats.
  */
-export async function createErc20TokenStreamCaveats({
+export function createErc20TokenStreamCaveats({
   permission,
   contracts,
 }: {
   permission: DeepRequired<Erc20TokenStreamPermission>;
   contracts: Erc20TokenStreamEnforcers;
-}): Promise<Caveat[]> {
+}): Caveat[] {
   const { initialAmount, maxAmount, amountPerSecond, startTime } =
     permission.data;
 

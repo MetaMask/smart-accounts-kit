@@ -188,8 +188,8 @@ describe('createNativeTokenAllowanceCaveats()', () => {
     isAdjustmentAllowed: true,
   };
 
-  it('creates nativeTokenPeriodic and exactCalldata caveats', async () => {
-    const caveats = await createNativeTokenAllowanceCaveats({
+  it('creates nativeTokenPeriodic and exactCalldata caveats', () => {
+    const caveats = createNativeTokenAllowanceCaveats({
       permission,
       contracts,
     });
@@ -209,7 +209,7 @@ describe('createNativeTokenAllowanceCaveats()', () => {
     ]);
   });
 
-  it('rejects malformed numeric hex input', async () => {
+  it('rejects malformed numeric hex input', () => {
     const invalidPermission = {
       ...permission,
       data: {
@@ -218,15 +218,15 @@ describe('createNativeTokenAllowanceCaveats()', () => {
       },
     };
 
-    await expect(
+    expect(() =>
       createNativeTokenAllowanceCaveats({
         permission: invalidPermission,
         contracts,
       }),
-    ).rejects.toThrow();
+    ).toThrow();
   });
 
-  it('keeps exactCalldata caveat fixed across varied inputs', async () => {
+  it('keeps exactCalldata caveat fixed across varied inputs', () => {
     const variedPermission: DeepRequired<NativeTokenAllowancePermission> = {
       ...permission,
       data: {
@@ -237,7 +237,7 @@ describe('createNativeTokenAllowanceCaveats()', () => {
       },
     };
 
-    const caveats = await createNativeTokenAllowanceCaveats({
+    const caveats = createNativeTokenAllowanceCaveats({
       permission: variedPermission,
       contracts,
     });

@@ -65,7 +65,7 @@
     "prettier": "^3.5.3",
     "tsup": "^8.5.0",
     "typescript": "5.5.4",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.9"
   },
   "dependencies": {
     "@metamask/abi-utils": "^3.0.0",

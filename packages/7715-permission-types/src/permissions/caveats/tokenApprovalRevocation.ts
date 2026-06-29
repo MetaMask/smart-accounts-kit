@@ -1,4 +1,8 @@
-import { decodeApprovalRevocationTerms } from '@metamask/delegation-core';
+import type { Caveat } from '@metamask/delegation-core';
+import {
+  createApprovalRevocationTerms,
+  decodeApprovalRevocationTerms,
+} from '@metamask/delegation-core';
 
 import type { TokenApprovalRevocationPermission } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
@@ -6,6 +10,7 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
+  DeepRequired,
   MakePermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer } from '../utils';
@@ -72,4 +77,36 @@ function validateAndDecodeData(
     permit2Lockdown,
     permit2InvalidateNonces,
   };
+}
+
+/**
+ * Enforcers required to build token approval revocation caveats.
+ */
+export type TokenApprovalRevocationEnforcers = Pick<
+  ChecksumEnforcersByChainId,
+  'approvalRevocationEnforcer'
+>;
+
+/**
+ * Builds the token-approval-revocation caveat required for this permission type.
+ *
+ * @param options0 - Caveat builder arguments.
+ * @param options0.permission - Fully populated token-approval-revocation permission data.
+ * @param options0.contracts - Enforcer addresses used to construct caveats.
+ * @returns A single approval-revocation caveat.
+ */
+export function createTokenApprovalRevocationCaveats({
+  permission,
+  contracts,
+}: {
+  permission: DeepRequired<TokenApprovalRevocationPermission>;
+  contracts: TokenApprovalRevocationEnforcers;
+}): Caveat[] {
+  const approvalRevocationCaveat: Caveat = {
+    enforcer: contracts.approvalRevocationEnforcer,
+    terms: createApprovalRevocationTerms(permission.data),
+    args: '0x',
+  };
+
+  return [approvalRevocationCaveat];
 }

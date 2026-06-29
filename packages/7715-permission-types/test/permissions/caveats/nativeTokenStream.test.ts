@@ -6,12 +6,20 @@ import { bigIntToHex, type Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
-import { makeNativeTokenStreamDecoderConfig } from '../../../src/permissions/caveats/nativeTokenStream';
+import {
+  createNativeTokenStreamCaveats,
+  makeNativeTokenStreamDecoderConfig,
+  type NativeTokenStreamEnforcers,
+} from '../../../src/permissions/caveats/nativeTokenStream';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
-import type { ChecksumCaveat } from '../../../src/permissions/types';
+import type {
+  ChecksumCaveat,
+  DeepRequired,
+} from '../../../src/permissions/types';
 import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
+import type { NativeTokenStreamPermission } from '../../../src/types';
 import { toWord } from '../../test-utils';
 
 describe('native-token-stream decoder config', () => {
@@ -154,5 +162,94 @@ describe('native-token-stream decoder config', () => {
         'Invalid native-token-stream terms: startTime must be a positive number',
       );
     });
+  });
+});
+
+describe('createNativeTokenStreamCaveats()', () => {
+  const initialAmount = '0x0de0b6b3a7640000' as const;
+  const maxAmount = '0x8ac7230489e80000' as const;
+  const amountPerSecond = '0x06f05b59d3b20000' as const;
+  const startTime = 1729900800;
+
+  const contracts: NativeTokenStreamEnforcers = {
+    nativeTokenStreamingEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
+    exactCalldataEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
+  };
+
+  const permission: DeepRequired<NativeTokenStreamPermission> = {
+    type: 'native-token-stream',
+    data: {
+      initialAmount,
+      maxAmount,
+      amountPerSecond,
+      startTime,
+      justification: 'test',
+    },
+    isAdjustmentAllowed: true,
+  };
+
+  it('creates nativeTokenStreaming and exactCalldata caveats', () => {
+    const caveats = createNativeTokenStreamCaveats({
+      permission,
+      contracts,
+    });
+
+    const initialAmountHex = initialAmount.slice(2).padStart(64, '0');
+    const maxAmountHex = maxAmount.slice(2).padStart(64, '0');
+    const amountPerSecondHex = amountPerSecond.slice(2).padStart(64, '0');
+    const startTimeHex = toWord(startTime);
+    const nativeTokenStreamingExpectedTerms = `0x${initialAmountHex}${maxAmountHex}${amountPerSecondHex}${startTimeHex}`;
+
+    expect(caveats).toStrictEqual([
+      {
+        enforcer: contracts.nativeTokenStreamingEnforcer,
+        terms: nativeTokenStreamingExpectedTerms,
+        args: '0x',
+      },
+      {
+        enforcer: contracts.exactCalldataEnforcer,
+        terms: '0x',
+        args: '0x',
+      },
+    ]);
+  });
+
+  it('rejects malformed numeric hex input', () => {
+    const invalidPermission = {
+      ...permission,
+      data: {
+        ...permission.data,
+        initialAmount: 'not-hex' as Hex,
+      },
+    };
+
+    expect(() =>
+      createNativeTokenStreamCaveats({
+        permission: invalidPermission,
+        contracts,
+      }),
+    ).toThrow();
+  });
+
+  it('keeps exactCalldata caveat fixed across varied inputs', () => {
+    const variedPermission: DeepRequired<NativeTokenStreamPermission> = {
+      ...permission,
+      data: {
+        ...permission.data,
+        initialAmount: '0x1',
+        maxAmount:
+          '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+        amountPerSecond: '0x2',
+        startTime: 1,
+      },
+    };
+
+    const caveats = createNativeTokenStreamCaveats({
+      permission: variedPermission,
+      contracts,
+    });
+
+    expect(caveats[1]?.enforcer).toBe(contracts.exactCalldataEnforcer);
+    expect(caveats[1]?.terms).toBe('0x');
   });
 });

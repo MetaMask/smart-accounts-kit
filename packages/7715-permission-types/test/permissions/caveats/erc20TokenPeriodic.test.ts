@@ -6,16 +6,24 @@ import { bigIntToHex, type Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
-import { makeErc20TokenPeriodicDecoderConfig } from '../../../src/permissions/caveats/erc20TokenPeriodic';
+import {
+  createErc20TokenPeriodicCaveats,
+  makeErc20TokenPeriodicDecoderConfig,
+  type Erc20TokenPeriodicEnforcers,
+} from '../../../src/permissions/caveats/erc20TokenPeriodic';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
-import type { ChecksumCaveat } from '../../../src/permissions/types';
+import type {
+  ChecksumCaveat,
+  DeepRequired,
+} from '../../../src/permissions/types';
 import {
   getChecksumEnforcersByChainId,
   MAX_PERIOD_DURATION,
   ZERO_32_BYTES,
 } from '../../../src/permissions/utils';
+import type { Erc20TokenPeriodicPermission } from '../../../src/types';
 import { toWord } from '../../test-utils';
 
 describe('erc20-token-periodic decoder config', () => {
@@ -190,5 +198,110 @@ describe('erc20-token-periodic decoder config', () => {
         startTime: START_TIME,
       });
     });
+  });
+});
+
+describe('createErc20TokenPeriodicCaveats()', () => {
+  const tokenAddress = '0x1234567890123456789012345678901234567890' as const;
+  const periodAmount = '0x64' as const;
+  const periodDuration = 86400;
+  const startTime = 1729900800;
+
+  const contracts: Erc20TokenPeriodicEnforcers = {
+    erc20PeriodicEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
+    valueLteEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
+  };
+
+  const permission: DeepRequired<Erc20TokenPeriodicPermission> = {
+    type: 'erc20-token-periodic',
+    data: {
+      tokenAddress,
+      periodAmount,
+      periodDuration,
+      startTime,
+      justification: 'test',
+    },
+    isAdjustmentAllowed: true,
+  };
+
+  it('creates erc20Periodic and valueLte caveats', () => {
+    const caveats = createErc20TokenPeriodicCaveats({
+      permission,
+      contracts,
+    });
+    const expectedTerms = `0x${tokenAddress.slice(2)}${toWord(BigInt(periodAmount))}${toWord(periodDuration)}${toWord(startTime)}`;
+
+    expect(caveats).toStrictEqual([
+      {
+        enforcer: contracts.erc20PeriodicEnforcer,
+        terms: expectedTerms,
+        args: '0x',
+      },
+      {
+        enforcer: contracts.valueLteEnforcer,
+        terms: ZERO_32_BYTES,
+        args: '0x',
+      },
+    ]);
+  });
+
+  it('rejects malformed numeric hex input', () => {
+    const invalidPermission = {
+      ...permission,
+      data: {
+        ...permission.data,
+        periodAmount: 'not-hex' as Hex,
+      },
+    };
+
+    expect(() =>
+      createErc20TokenPeriodicCaveats({
+        permission: invalidPermission,
+        contracts,
+      }),
+    ).toThrow();
+  });
+
+  it('keeps valueLte caveat fixed at zero across varied inputs', () => {
+    const variedPermission: DeepRequired<Erc20TokenPeriodicPermission> = {
+      ...permission,
+      data: {
+        ...permission.data,
+        tokenAddress: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        periodAmount:
+          '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+        periodDuration: 1,
+        startTime: 1,
+      },
+    };
+
+    const caveats = createErc20TokenPeriodicCaveats({
+      permission: variedPermission,
+      contracts,
+    });
+
+    expect(caveats[1]?.enforcer).toBe(contracts.valueLteEnforcer);
+    expect(caveats[1]?.terms).toBe(ZERO_32_BYTES);
+  });
+
+  it('encodes provided token address in periodic terms', () => {
+    const alternateTokenAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+    const permissionWithAltToken = {
+      ...permission,
+      data: {
+        ...permission.data,
+        tokenAddress: alternateTokenAddress,
+      },
+    };
+
+    const caveats = createErc20TokenPeriodicCaveats({
+      permission: permissionWithAltToken,
+      contracts,
+    });
+
+    expect(caveats[0]?.enforcer).toBe(contracts.erc20PeriodicEnforcer);
+    expect(
+      caveats[0]?.terms.startsWith(`0x${alternateTokenAddress.slice(2)}`),
+    ).toBe(true);
   });
 });

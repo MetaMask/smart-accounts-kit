@@ -6,15 +6,23 @@ import type { Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
-import { makeNativeTokenAllowanceDecoderConfig } from '../../../src/permissions/caveats/nativeTokenAllowance';
+import {
+  createNativeTokenAllowanceCaveats,
+  makeNativeTokenAllowanceDecoderConfig,
+  type NativeTokenAllowanceEnforcers,
+} from '../../../src/permissions/caveats/nativeTokenAllowance';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
-import type { ChecksumCaveat } from '../../../src/permissions/types';
+import type {
+  ChecksumCaveat,
+  DeepRequired,
+} from '../../../src/permissions/types';
 import {
   getChecksumEnforcersByChainId,
   UINT256_MAX,
 } from '../../../src/permissions/utils';
+import type { NativeTokenAllowancePermission } from '../../../src/types';
 import { toWord } from '../../test-utils';
 
 describe('native-token-allowance decoder config', () => {
@@ -158,5 +166,83 @@ describe('native-token-allowance decoder config', () => {
         'Invalid native-token-allowance terms: allowanceAmount must be a positive number',
       );
     });
+  });
+});
+
+describe('createNativeTokenAllowanceCaveats()', () => {
+  const allowanceAmount = '0x64' as const;
+  const startTime = 1729900800;
+
+  const contracts: NativeTokenAllowanceEnforcers = {
+    nativeTokenPeriodicEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
+    exactCalldataEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
+  };
+
+  const permission: DeepRequired<NativeTokenAllowancePermission> = {
+    type: 'native-token-allowance',
+    data: {
+      allowanceAmount,
+      startTime,
+      justification: 'test',
+    },
+    isAdjustmentAllowed: true,
+  };
+
+  it('creates nativeTokenPeriodic and exactCalldata caveats', () => {
+    const caveats = createNativeTokenAllowanceCaveats({
+      permission,
+      contracts,
+    });
+    const expectedTerms = `0x${toWord(BigInt(allowanceAmount))}${UINT256_MAX.slice(2)}${toWord(startTime)}`;
+
+    expect(caveats).toStrictEqual([
+      {
+        enforcer: contracts.nativeTokenPeriodicEnforcer,
+        terms: expectedTerms,
+        args: '0x',
+      },
+      {
+        enforcer: contracts.exactCalldataEnforcer,
+        terms: '0x',
+        args: '0x',
+      },
+    ]);
+  });
+
+  it('rejects malformed numeric hex input', () => {
+    const invalidPermission = {
+      ...permission,
+      data: {
+        ...permission.data,
+        allowanceAmount: 'not-hex' as Hex,
+      },
+    };
+
+    expect(() =>
+      createNativeTokenAllowanceCaveats({
+        permission: invalidPermission,
+        contracts,
+      }),
+    ).toThrow();
+  });
+
+  it('keeps exactCalldata caveat fixed across varied inputs', () => {
+    const variedPermission: DeepRequired<NativeTokenAllowancePermission> = {
+      ...permission,
+      data: {
+        ...permission.data,
+        allowanceAmount:
+          '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff',
+        startTime: 1,
+      },
+    };
+
+    const caveats = createNativeTokenAllowanceCaveats({
+      permission: variedPermission,
+      contracts,
+    });
+
+    expect(caveats[1]?.enforcer).toBe(contracts.exactCalldataEnforcer);
+    expect(caveats[1]?.terms).toBe('0x');
   });
 });

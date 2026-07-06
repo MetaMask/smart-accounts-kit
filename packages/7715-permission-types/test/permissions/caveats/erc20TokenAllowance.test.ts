@@ -230,6 +230,40 @@ describe('createErc20TokenAllowanceCaveats()', () => {
     ).toThrow();
   });
 
+  it('rejects zero allowanceAmount', () => {
+    expect(() =>
+      createErc20TokenAllowanceCaveats({
+        permission: {
+          ...permission,
+          data: {
+            ...permission.data,
+            allowanceAmount: '0x0',
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid erc20-token-allowance permission: allowanceAmount must be a positive number.',
+    );
+  });
+
+  it('rejects when startTime is zero', () => {
+    expect(() =>
+      createErc20TokenAllowanceCaveats({
+        permission: {
+          ...permission,
+          data: {
+            ...permission.data,
+            startTime: 0,
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid erc20-token-allowance permission: startTime must be a positive number.',
+    );
+  });
+
   it('keeps valueLte caveat fixed at zero across varied inputs', () => {
     const variedPermission: Populated<Erc20TokenAllowancePermission> = {
       ...permission,
@@ -252,7 +286,8 @@ describe('createErc20TokenAllowanceCaveats()', () => {
   });
 
   it('encodes provided token address in allowance terms', () => {
-    const alternateTokenAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+    const alternateTokenAddress =
+      '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' as Hex;
     const permissionWithAltToken = {
       ...permission,
       data: {
@@ -265,10 +300,11 @@ describe('createErc20TokenAllowanceCaveats()', () => {
       permission: permissionWithAltToken,
       contracts,
     });
+    const erc20AllowanceTerms = caveats[0]?.terms as Hex;
 
     expect(caveats[0]?.enforcer).toBe(contracts.erc20PeriodicEnforcer);
     expect(
-      caveats[0]?.terms.startsWith(`0x${alternateTokenAddress.slice(2)}`),
+      erc20AllowanceTerms.startsWith(`0x${alternateTokenAddress.slice(2)}`),
     ).toBe(true);
   });
 });

@@ -4,7 +4,7 @@ import {
   createNativeTokenStreamingTerms,
   decodeNativeTokenStreamingTerms,
 } from '@metamask/delegation-core';
-import { bigIntToHex } from '@metamask/utils';
+import { bigIntToHex, hexToBigInt } from '@metamask/utils';
 
 import type { NativeTokenStreamPermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
@@ -135,13 +135,34 @@ export function createNativeTokenStreamCaveats({
 }): Caveat[] {
   const { initialAmount, maxAmount, amountPerSecond, startTime } =
     permission.data;
+  const initialAmountBigInt = hexToBigInt(initialAmount);
+  const maxAmountBigInt = hexToBigInt(maxAmount);
+  const amountPerSecondBigInt = hexToBigInt(amountPerSecond);
+
+  if (maxAmountBigInt <= initialAmountBigInt) {
+    throw new Error(
+      'Invalid native-token-stream permission: maxAmount must be greater than initialAmount.',
+    );
+  }
+
+  if (amountPerSecondBigInt === 0n) {
+    throw new Error(
+      'Invalid native-token-stream permission: amountPerSecond must be a positive number.',
+    );
+  }
+
+  if (startTime <= 0) {
+    throw new Error(
+      'Invalid native-token-stream permission: startTime must be a positive number.',
+    );
+  }
 
   const nativeTokenStreamingCaveat: Caveat = {
     enforcer: contracts.nativeTokenStreamingEnforcer,
     terms: createNativeTokenStreamingTerms({
-      initialAmount: BigInt(initialAmount),
-      maxAmount: BigInt(maxAmount),
-      amountPerSecond: BigInt(amountPerSecond),
+      initialAmount: initialAmountBigInt,
+      maxAmount: maxAmountBigInt,
+      amountPerSecond: amountPerSecondBigInt,
       startTime,
     }),
     args: '0x',

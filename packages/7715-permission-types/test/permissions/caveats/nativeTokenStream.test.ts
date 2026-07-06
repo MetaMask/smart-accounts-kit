@@ -231,6 +231,58 @@ describe('createNativeTokenStreamCaveats()', () => {
     ).toThrow();
   });
 
+  it('rejects when maxAmount equals initialAmount', () => {
+    expect(() =>
+      createNativeTokenStreamCaveats({
+        permission: {
+          ...permission,
+          data: {
+            ...permission.data,
+            initialAmount: '0x64',
+            maxAmount: '0x64',
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid native-token-stream permission: maxAmount must be greater than initialAmount.',
+    );
+  });
+
+  it('rejects when amountPerSecond is zero', () => {
+    expect(() =>
+      createNativeTokenStreamCaveats({
+        permission: {
+          ...permission,
+          data: {
+            ...permission.data,
+            amountPerSecond: '0x0',
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid native-token-stream permission: amountPerSecond must be a positive number.',
+    );
+  });
+
+  it('rejects when startTime is zero', () => {
+    expect(() =>
+      createNativeTokenStreamCaveats({
+        permission: {
+          ...permission,
+          data: {
+            ...permission.data,
+            startTime: 0,
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid native-token-stream permission: startTime must be a positive number.',
+    );
+  });
+
   it('keeps exactCalldata caveat fixed across varied inputs', () => {
     const variedPermission: Populated<NativeTokenStreamPermission> = {
       ...permission,

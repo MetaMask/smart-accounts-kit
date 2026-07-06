@@ -247,6 +247,58 @@ describe('createErc20TokenStreamCaveats()', () => {
     ).toThrow();
   });
 
+  it('rejects when maxAmount equals initialAmount', () => {
+    expect(() =>
+      createErc20TokenStreamCaveats({
+        permission: {
+          ...mockPermission,
+          data: {
+            ...mockPermission.data,
+            initialAmount: '0x64',
+            maxAmount: '0x64',
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid erc20-token-stream permission: maxAmount must be greater than initialAmount.',
+    );
+  });
+
+  it('rejects when amountPerSecond is zero', () => {
+    expect(() =>
+      createErc20TokenStreamCaveats({
+        permission: {
+          ...mockPermission,
+          data: {
+            ...mockPermission.data,
+            amountPerSecond: '0x0',
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid erc20-token-stream permission: amountPerSecond must be a positive number.',
+    );
+  });
+
+  it('rejects when startTime is zero', () => {
+    expect(() =>
+      createErc20TokenStreamCaveats({
+        permission: {
+          ...mockPermission,
+          data: {
+            ...mockPermission.data,
+            startTime: 0,
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid erc20-token-stream permission: startTime must be a positive number.',
+    );
+  });
+
   it('keeps valueLte caveat fixed at zero across varied inputs', () => {
     const variedPermission: Populated<Erc20TokenStreamPermission> = {
       ...mockPermission,
@@ -271,7 +323,8 @@ describe('createErc20TokenStreamCaveats()', () => {
   });
 
   it('encodes provided token address in stream terms', () => {
-    const alternateTokenAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+    const alternateTokenAddress =
+      '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' as Hex;
     const permission = {
       ...mockPermission,
       data: {
@@ -284,10 +337,11 @@ describe('createErc20TokenStreamCaveats()', () => {
       permission,
       contracts,
     });
+    const erc20StreamingTerms = caveats[0]?.terms as Hex;
 
     expect(caveats[0]?.enforcer).toBe(contracts.erc20StreamingEnforcer);
     expect(
-      caveats[0]?.terms.startsWith(`0x${alternateTokenAddress.slice(2)}`),
+      erc20StreamingTerms.startsWith(`0x${alternateTokenAddress.slice(2)}`),
     ).toBe(true);
   });
 });

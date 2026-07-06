@@ -4,7 +4,7 @@ import {
   createNativeTokenPeriodTransferTerms,
   decodeNativeTokenPeriodTransferTerms,
 } from '@metamask/delegation-core';
-import { bigIntToHex } from '@metamask/utils';
+import { bigIntToHex, hexToBigInt } from '@metamask/utils';
 
 import type { NativeTokenPeriodicPermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
@@ -142,11 +142,36 @@ export function createNativeTokenPeriodicCaveats({
   contracts: NativeTokenPeriodicEnforcers;
 }): Caveat[] {
   const { periodAmount, periodDuration, startTime } = permission.data;
+  const periodAmountBigInt = hexToBigInt(periodAmount);
+
+  if (periodAmountBigInt === 0n) {
+    throw new Error(
+      'Invalid native-token-periodic permission: periodAmount must be a positive number.',
+    );
+  }
+
+  if (periodDuration <= 0) {
+    throw new Error(
+      'Invalid native-token-periodic permission: periodDuration must be a positive number.',
+    );
+  }
+
+  if (periodDuration > MAX_PERIOD_DURATION) {
+    throw new Error(
+      'Invalid native-token-periodic permission: periodDuration must be less than or equal to MAX_PERIOD_DURATION.',
+    );
+  }
+
+  if (startTime <= 0) {
+    throw new Error(
+      'Invalid native-token-periodic permission: startTime must be a positive number.',
+    );
+  }
 
   const nativeTokenPeriodTransferCaveat: Caveat = {
     enforcer: contracts.nativeTokenPeriodicEnforcer,
     terms: createNativeTokenPeriodTransferTerms({
-      periodAmount: BigInt(periodAmount),
+      periodAmount: periodAmountBigInt,
       periodDuration,
       startDate: startTime,
     }),

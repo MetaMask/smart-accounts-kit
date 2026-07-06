@@ -3,7 +3,7 @@ import {
   createExactCalldataTerms,
   createNativeTokenPeriodTransferTerms,
 } from '@metamask/delegation-core';
-import { hexToNumber } from '@metamask/utils';
+import { hexToBigInt, hexToNumber } from '@metamask/utils';
 
 import type { NativeTokenAllowancePermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
@@ -145,11 +145,24 @@ export function createNativeTokenAllowanceCaveats({
   contracts: NativeTokenAllowanceEnforcers;
 }): Caveat[] {
   const { allowanceAmount, startTime } = permission.data;
+  const allowanceAmountBigInt = hexToBigInt(allowanceAmount);
+
+  if (allowanceAmountBigInt === 0n) {
+    throw new Error(
+      'Invalid native-token-allowance permission: allowanceAmount must be a positive number.',
+    );
+  }
+
+  if (startTime <= 0) {
+    throw new Error(
+      'Invalid native-token-allowance permission: startTime must be a positive number.',
+    );
+  }
 
   const nativeTokenPeriodTransferCaveat: Caveat = {
     enforcer: contracts.nativeTokenPeriodicEnforcer,
     terms: createNativeTokenPeriodTransferTerms({
-      periodAmount: BigInt(allowanceAmount),
+      periodAmount: allowanceAmountBigInt,
       // delegation-core accepts bigint for encoding although the type is `number`.
       periodDuration: BigInt(UINT256_MAX) as unknown as number,
       startDate: startTime,

@@ -249,6 +249,74 @@ describe('createNativeTokenPeriodicCaveats()', () => {
     ).toThrow();
   });
 
+  it('rejects when periodAmount is zero', () => {
+    expect(() =>
+      createNativeTokenPeriodicCaveats({
+        permission: {
+          ...permission,
+          data: {
+            ...permission.data,
+            periodAmount: '0x0',
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid native-token-periodic permission: periodAmount must be a positive number.',
+    );
+  });
+
+  it('rejects when periodDuration is zero', () => {
+    expect(() =>
+      createNativeTokenPeriodicCaveats({
+        permission: {
+          ...permission,
+          data: {
+            ...permission.data,
+            periodDuration: 0,
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid native-token-periodic permission: periodDuration must be a positive number.',
+    );
+  });
+
+  it('rejects when periodDuration exceeds MAX_PERIOD_DURATION', () => {
+    expect(() =>
+      createNativeTokenPeriodicCaveats({
+        permission: {
+          ...permission,
+          data: {
+            ...permission.data,
+            periodDuration: MAX_PERIOD_DURATION + 1,
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid native-token-periodic permission: periodDuration must be less than or equal to MAX_PERIOD_DURATION.',
+    );
+  });
+
+  it('rejects when startTime is zero', () => {
+    expect(() =>
+      createNativeTokenPeriodicCaveats({
+        permission: {
+          ...permission,
+          data: {
+            ...permission.data,
+            startTime: 0,
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid native-token-periodic permission: startTime must be a positive number.',
+    );
+  });
+
   it('keeps exactCalldata caveat fixed across varied inputs', () => {
     const variedPermission: Populated<NativeTokenPeriodicPermission> = {
       ...permission,

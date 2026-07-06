@@ -226,6 +226,40 @@ describe('createNativeTokenAllowanceCaveats()', () => {
     ).toThrow();
   });
 
+  it('rejects zero allowanceAmount', () => {
+    expect(() =>
+      createNativeTokenAllowanceCaveats({
+        permission: {
+          ...permission,
+          data: {
+            ...permission.data,
+            allowanceAmount: '0x0',
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid native-token-allowance permission: allowanceAmount must be a positive number.',
+    );
+  });
+
+  it('rejects when startTime is zero', () => {
+    expect(() =>
+      createNativeTokenAllowanceCaveats({
+        permission: {
+          ...permission,
+          data: {
+            ...permission.data,
+            startTime: 0,
+          },
+        },
+        contracts,
+      }),
+    ).toThrow(
+      'Invalid native-token-allowance permission: startTime must be a positive number.',
+    );
+  });
+
   it('keeps exactCalldata caveat fixed across varied inputs', () => {
     const variedPermission: Populated<NativeTokenAllowancePermission> = {
       ...permission,

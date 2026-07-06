@@ -3,7 +3,7 @@ import {
   createERC20TokenPeriodTransferTerms,
   createValueLteTerms,
 } from '@metamask/delegation-core';
-import { hexToNumber } from '@metamask/utils';
+import { hexToBigInt, hexToNumber } from '@metamask/utils';
 
 import type { Erc20TokenAllowancePermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
@@ -141,12 +141,25 @@ export function createErc20TokenAllowanceCaveats({
   contracts: Erc20TokenAllowanceEnforcers;
 }): Caveat[] {
   const { tokenAddress, allowanceAmount, startTime } = permission.data;
+  const allowanceAmountBigInt = hexToBigInt(allowanceAmount);
+
+  if (allowanceAmountBigInt === 0n) {
+    throw new Error(
+      'Invalid erc20-token-allowance permission: allowanceAmount must be a positive number.',
+    );
+  }
+
+  if (startTime <= 0) {
+    throw new Error(
+      'Invalid erc20-token-allowance permission: startTime must be a positive number.',
+    );
+  }
 
   const erc20PeriodCaveat: Caveat = {
     enforcer: contracts.erc20PeriodicEnforcer,
     terms: createERC20TokenPeriodTransferTerms({
       tokenAddress,
-      periodAmount: BigInt(allowanceAmount),
+      periodAmount: allowanceAmountBigInt,
       // delegation-core accepts bigint for encoding although the type is `number`.
       periodDuration: BigInt(UINT256_MAX) as unknown as number,
       startDate: startTime,

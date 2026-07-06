@@ -6,14 +6,13 @@ import {
 } from '@metamask/delegation-core';
 import { bigIntToHex } from '@metamask/utils';
 
-import type { Erc20TokenStreamPermission } from '../../types';
+import type { Erc20TokenStreamPermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
 import { erc20PayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
   DecodedPermissionData,
-  DeepRequired,
   ChecksumEnforcersByChainId,
   PermissionDecoderConfig,
 } from '../types';
@@ -131,7 +130,7 @@ export function createErc20TokenStreamCaveats({
   permission,
   contracts,
 }: {
-  permission: DeepRequired<Erc20TokenStreamPermission>;
+  permission: Populated<Erc20TokenStreamPermission>;
   contracts: Erc20TokenStreamEnforcers;
 }): Caveat[] {
   const { initialAmount, maxAmount, amountPerSecond, startTime } =

@@ -6,7 +6,7 @@ import {
 } from '@metamask/delegation-core';
 import { bigIntToHex } from '@metamask/utils';
 
-import type { Erc20TokenPeriodicPermission } from '../../types';
+import type { Erc20TokenPeriodicPermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
 import { erc20PayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
@@ -14,7 +14,6 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
-  DeepRequired,
   MakePermissionDecoderConfig,
 } from '../types';
 import {
@@ -144,7 +143,7 @@ export function createErc20TokenPeriodicCaveats({
   permission,
   contracts,
 }: {
-  permission: DeepRequired<Erc20TokenPeriodicPermission>;
+  permission: Populated<Erc20TokenPeriodicPermission>;
   contracts: Erc20TokenPeriodicEnforcers;
 }): Caveat[] {
   const { tokenAddress, periodAmount, periodDuration, startTime } =

@@ -12,12 +12,12 @@ import {
   type TokenApprovalRevocationEnforcers,
 } from '../../../src/permissions/caveats/tokenApprovalRevocation';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
-import type {
-  ChecksumCaveat,
-  DeepRequired,
-} from '../../../src/permissions/types';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
 import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
-import type { TokenApprovalRevocationPermission } from '../../../src/types';
+import type {
+  TokenApprovalRevocationPermission,
+  Populated,
+} from '../../../src/types';
 
 describe('token-approval-revocation decoder config', () => {
   const chainId = CHAIN_ID.sepolia;
@@ -137,7 +137,7 @@ describe('createTokenApprovalRevocationCaveats()', () => {
     approvalRevocationEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
   };
 
-  const permission: DeepRequired<TokenApprovalRevocationPermission> = {
+  const permission: Populated<TokenApprovalRevocationPermission> = {
     type: 'token-approval-revocation',
     data: {
       erc20Approve: true,
@@ -167,19 +167,18 @@ describe('createTokenApprovalRevocationCaveats()', () => {
   });
 
   it('creates single-flag approvalRevocation caveat', () => {
-    const singleFlagPermission: DeepRequired<TokenApprovalRevocationPermission> =
-      {
-        ...permission,
-        data: {
-          ...permission.data,
-          erc20Approve: true,
-          erc721Approve: false,
-          erc721SetApprovalForAll: false,
-          permit2Approve: false,
-          permit2Lockdown: false,
-          permit2InvalidateNonces: false,
-        },
-      };
+    const singleFlagPermission: Populated<TokenApprovalRevocationPermission> = {
+      ...permission,
+      data: {
+        ...permission.data,
+        erc20Approve: true,
+        erc721Approve: false,
+        erc721SetApprovalForAll: false,
+        permit2Approve: false,
+        permit2Lockdown: false,
+        permit2InvalidateNonces: false,
+      },
+    };
 
     const caveats = createTokenApprovalRevocationCaveats({
       permission: singleFlagPermission,
@@ -196,7 +195,7 @@ describe('createTokenApprovalRevocationCaveats()', () => {
   });
 
   it('rejects empty-mask approvalRevocation when all flags are false', () => {
-    const noFlagPermission: DeepRequired<TokenApprovalRevocationPermission> = {
+    const noFlagPermission: Populated<TokenApprovalRevocationPermission> = {
       ...permission,
       data: {
         ...permission.data,

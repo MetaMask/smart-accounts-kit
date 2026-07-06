@@ -53,6 +53,24 @@ export type MetaMaskBasePermissionData = {
 };
 
 /**
+ * Makes all properties in an object type required recursively.
+ * This includes nested objects and arrays.
+ * Also removes undefined and null from union types.
+ */
+type RecursivePopulated<TParent> = TParent extends (infer U)[]
+  ? RecursivePopulated<U>[]
+  : TParent extends object
+    ? {
+        [P in keyof TParent]-?: RecursivePopulated<
+          Exclude<TParent[P], undefined | null>
+        >;
+      }
+    : Exclude<TParent, undefined | null>;
+
+export type Populated<TParent extends BasePermission> =
+  RecursivePopulated<TParent>;
+
+/**
  * A permission to stream native tokens.
  *
  * data.initialAmount - is the initial amount of the native token to be streamed. Defaults to 0.

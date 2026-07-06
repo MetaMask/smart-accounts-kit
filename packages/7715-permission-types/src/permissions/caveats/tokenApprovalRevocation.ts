@@ -4,13 +4,12 @@ import {
   decodeApprovalRevocationTerms,
 } from '@metamask/delegation-core';
 
-import type { TokenApprovalRevocationPermission } from '../../types';
+import type { TokenApprovalRevocationPermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
 import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
-  DeepRequired,
   MakePermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer } from '../utils';
@@ -99,7 +98,7 @@ export function createTokenApprovalRevocationCaveats({
   permission,
   contracts,
 }: {
-  permission: DeepRequired<TokenApprovalRevocationPermission>;
+  permission: Populated<TokenApprovalRevocationPermission>;
   contracts: TokenApprovalRevocationEnforcers;
 }): Caveat[] {
   const approvalRevocationCaveat: Caveat = {

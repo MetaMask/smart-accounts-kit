@@ -14,12 +14,12 @@ import {
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
-import type {
-  ChecksumCaveat,
-  DeepRequired,
-} from '../../../src/permissions/types';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
 import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
-import type { NativeTokenStreamPermission } from '../../../src/types';
+import type {
+  NativeTokenStreamPermission,
+  Populated,
+} from '../../../src/types';
 import { toWord } from '../../test-utils';
 
 describe('native-token-stream decoder config', () => {
@@ -176,7 +176,7 @@ describe('createNativeTokenStreamCaveats()', () => {
     exactCalldataEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
   };
 
-  const permission: DeepRequired<NativeTokenStreamPermission> = {
+  const permission: Populated<NativeTokenStreamPermission> = {
     type: 'native-token-stream',
     data: {
       initialAmount,
@@ -232,7 +232,7 @@ describe('createNativeTokenStreamCaveats()', () => {
   });
 
   it('keeps exactCalldata caveat fixed across varied inputs', () => {
-    const variedPermission: DeepRequired<NativeTokenStreamPermission> = {
+    const variedPermission: Populated<NativeTokenStreamPermission> = {
       ...permission,
       data: {
         ...permission.data,

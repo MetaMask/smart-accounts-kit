@@ -6,7 +6,7 @@ import {
 } from '@metamask/delegation-core';
 import { bigIntToHex } from '@metamask/utils';
 
-import type { NativeTokenStreamPermission } from '../../types';
+import type { NativeTokenStreamPermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
 import { nativePayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
@@ -14,7 +14,6 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
-  DeepRequired,
   MakePermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer } from '../utils';
@@ -131,7 +130,7 @@ export function createNativeTokenStreamCaveats({
   permission,
   contracts,
 }: {
-  permission: DeepRequired<NativeTokenStreamPermission>;
+  permission: Populated<NativeTokenStreamPermission>;
   contracts: NativeTokenStreamEnforcers;
 }): Caveat[] {
   const { initialAmount, maxAmount, amountPerSecond, startTime } =

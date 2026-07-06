@@ -14,15 +14,12 @@ import {
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
-import type {
-  ChecksumCaveat,
-  DeepRequired,
-} from '../../../src/permissions/types';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
 import {
   getChecksumEnforcersByChainId,
   ZERO_32_BYTES,
 } from '../../../src/permissions/utils';
-import type { Erc20TokenStreamPermission } from '../../../src/types';
+import type { Erc20TokenStreamPermission, Populated } from '../../../src/types';
 import { toWord } from '../../test-utils';
 
 describe('erc20-token-stream decoder config', () => {
@@ -194,7 +191,7 @@ describe('createErc20TokenStreamCaveats()', () => {
     valueLteEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
   };
 
-  const mockPermission: DeepRequired<Erc20TokenStreamPermission> = {
+  const mockPermission: Populated<Erc20TokenStreamPermission> = {
     type: 'erc20-token-stream',
     data: {
       initialAmount,
@@ -251,7 +248,7 @@ describe('createErc20TokenStreamCaveats()', () => {
   });
 
   it('keeps valueLte caveat fixed at zero across varied inputs', () => {
-    const variedPermission: DeepRequired<Erc20TokenStreamPermission> = {
+    const variedPermission: Populated<Erc20TokenStreamPermission> = {
       ...mockPermission,
       data: {
         ...mockPermission.data,

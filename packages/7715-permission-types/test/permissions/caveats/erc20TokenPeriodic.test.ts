@@ -14,16 +14,16 @@ import {
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
-import type {
-  ChecksumCaveat,
-  DeepRequired,
-} from '../../../src/permissions/types';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
 import {
   getChecksumEnforcersByChainId,
   MAX_PERIOD_DURATION,
   ZERO_32_BYTES,
 } from '../../../src/permissions/utils';
-import type { Erc20TokenPeriodicPermission } from '../../../src/types';
+import type {
+  Erc20TokenPeriodicPermission,
+  Populated,
+} from '../../../src/types';
 import { toWord } from '../../test-utils';
 
 describe('erc20-token-periodic decoder config', () => {
@@ -212,7 +212,7 @@ describe('createErc20TokenPeriodicCaveats()', () => {
     valueLteEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
   };
 
-  const permission: DeepRequired<Erc20TokenPeriodicPermission> = {
+  const permission: Populated<Erc20TokenPeriodicPermission> = {
     type: 'erc20-token-periodic',
     data: {
       tokenAddress,
@@ -263,7 +263,7 @@ describe('createErc20TokenPeriodicCaveats()', () => {
   });
 
   it('keeps valueLte caveat fixed at zero across varied inputs', () => {
-    const variedPermission: DeepRequired<Erc20TokenPeriodicPermission> = {
+    const variedPermission: Populated<Erc20TokenPeriodicPermission> = {
       ...permission,
       data: {
         ...permission.data,

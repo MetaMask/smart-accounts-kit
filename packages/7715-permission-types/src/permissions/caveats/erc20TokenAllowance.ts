@@ -5,7 +5,7 @@ import {
 } from '@metamask/delegation-core';
 import { hexToNumber } from '@metamask/utils';
 
-import type { Erc20TokenAllowancePermission } from '../../types';
+import type { Erc20TokenAllowancePermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
 import { erc20PayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
@@ -13,7 +13,6 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
-  DeepRequired,
   MakePermissionDecoderConfig,
 } from '../types';
 import {
@@ -138,7 +137,7 @@ export function createErc20TokenAllowanceCaveats({
   permission,
   contracts,
 }: {
-  permission: DeepRequired<Erc20TokenAllowancePermission>;
+  permission: Populated<Erc20TokenAllowancePermission>;
   contracts: Erc20TokenAllowanceEnforcers;
 }): Caveat[] {
   const { tokenAddress, allowanceAmount, startTime } = permission.data;

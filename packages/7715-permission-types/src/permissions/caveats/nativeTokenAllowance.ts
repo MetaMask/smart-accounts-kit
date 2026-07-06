@@ -5,7 +5,7 @@ import {
 } from '@metamask/delegation-core';
 import { hexToNumber } from '@metamask/utils';
 
-import type { NativeTokenAllowancePermission } from '../../types';
+import type { NativeTokenAllowancePermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
 import { nativePayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
@@ -13,7 +13,6 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
-  DeepRequired,
   MakePermissionDecoderConfig,
 } from '../types';
 import {
@@ -142,7 +141,7 @@ export function createNativeTokenAllowanceCaveats({
   permission,
   contracts,
 }: {
-  permission: DeepRequired<NativeTokenAllowancePermission>;
+  permission: Populated<NativeTokenAllowancePermission>;
   contracts: NativeTokenAllowanceEnforcers;
 }): Caveat[] {
   const { allowanceAmount, startTime } = permission.data;

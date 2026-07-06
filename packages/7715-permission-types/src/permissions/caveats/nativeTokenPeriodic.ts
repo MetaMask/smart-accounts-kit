@@ -6,7 +6,7 @@ import {
 } from '@metamask/delegation-core';
 import { bigIntToHex } from '@metamask/utils';
 
-import type { NativeTokenPeriodicPermission } from '../../types';
+import type { NativeTokenPeriodicPermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
 import { nativePayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
@@ -14,7 +14,6 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
-  DeepRequired,
   MakePermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer, MAX_PERIOD_DURATION } from '../utils';
@@ -139,7 +138,7 @@ export function createNativeTokenPeriodicCaveats({
   permission,
   contracts,
 }: {
-  permission: DeepRequired<NativeTokenPeriodicPermission>;
+  permission: Populated<NativeTokenPeriodicPermission>;
   contracts: NativeTokenPeriodicEnforcers;
 }): Caveat[] {
   const { periodAmount, periodDuration, startTime } = permission.data;

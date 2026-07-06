@@ -14,15 +14,15 @@ import {
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
-import type {
-  ChecksumCaveat,
-  DeepRequired,
-} from '../../../src/permissions/types';
+import type { ChecksumCaveat } from '../../../src/permissions/types';
 import {
   getChecksumEnforcersByChainId,
   MAX_PERIOD_DURATION,
 } from '../../../src/permissions/utils';
-import type { NativeTokenPeriodicPermission } from '../../../src/types';
+import type {
+  NativeTokenPeriodicPermission,
+  Populated,
+} from '../../../src/types';
 import { toWord } from '../../test-utils';
 
 describe('native-token-periodic decoder config', () => {
@@ -199,7 +199,7 @@ describe('createNativeTokenPeriodicCaveats()', () => {
     exactCalldataEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
   };
 
-  const permission: DeepRequired<NativeTokenPeriodicPermission> = {
+  const permission: Populated<NativeTokenPeriodicPermission> = {
     type: 'native-token-periodic',
     data: {
       periodAmount,
@@ -250,7 +250,7 @@ describe('createNativeTokenPeriodicCaveats()', () => {
   });
 
   it('keeps exactCalldata caveat fixed across varied inputs', () => {
-    const variedPermission: DeepRequired<NativeTokenPeriodicPermission> = {
+    const variedPermission: Populated<NativeTokenPeriodicPermission> = {
       ...permission,
       data: {
         ...permission.data,

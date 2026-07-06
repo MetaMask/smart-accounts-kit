@@ -14,7 +14,7 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
-  MakePermissionDecoderConfig,
+  PermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer } from '../utils';
 
@@ -26,7 +26,7 @@ import { getTermsByEnforcer } from '../utils';
  */
 export function makeNativeTokenStreamDecoderConfig(
   contractAddresses: ChecksumEnforcersByChainId,
-): MakePermissionDecoderConfig {
+): PermissionDecoderConfig {
   const {
     timestampEnforcer,
     nativeTokenStreamingEnforcer,

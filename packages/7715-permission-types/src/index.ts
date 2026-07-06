@@ -22,11 +22,11 @@ export type {
 
 export type { PayeeRule, RedeemerRule, ExpiryRule } from './permissions';
 export {
+  makePermissionDecoderConfigs,
   createErc20TokenAllowanceCaveats,
   type Erc20TokenAllowanceEnforcers,
   createErc20TokenPeriodicCaveats,
   type Erc20TokenPeriodicEnforcers,
-  makePermissionDecoderConfigs,
   createErc20TokenStreamCaveats,
   type Erc20TokenStreamEnforcers,
   createNativeTokenAllowanceCaveats,

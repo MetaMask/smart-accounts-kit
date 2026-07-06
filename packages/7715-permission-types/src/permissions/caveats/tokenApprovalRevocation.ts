@@ -10,7 +10,7 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
-  MakePermissionDecoderConfig,
+  PermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer } from '../utils';
 
@@ -22,7 +22,7 @@ import { getTermsByEnforcer } from '../utils';
  */
 export function makeTokenApprovalRevocationDecoderConfig(
   contractAddresses: ChecksumEnforcersByChainId,
-): MakePermissionDecoderConfig {
+): PermissionDecoderConfig {
   const { timestampEnforcer, approvalRevocationEnforcer, nonceEnforcer } =
     contractAddresses;
 

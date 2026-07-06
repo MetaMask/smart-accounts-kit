@@ -14,7 +14,7 @@ import type {
   ChecksumCaveat,
   ChecksumEnforcersByChainId,
   DecodedPermissionData,
-  MakePermissionDecoderConfig,
+  PermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer, MAX_PERIOD_DURATION } from '../utils';
 
@@ -26,7 +26,7 @@ import { getTermsByEnforcer, MAX_PERIOD_DURATION } from '../utils';
  */
 export function makeNativeTokenPeriodicDecoderConfig(
   contractAddresses: ChecksumEnforcersByChainId,
-): MakePermissionDecoderConfig {
+): PermissionDecoderConfig {
   const {
     timestampEnforcer,
     nativeTokenPeriodicEnforcer,

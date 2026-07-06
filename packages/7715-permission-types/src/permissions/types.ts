@@ -59,11 +59,6 @@ export type PermissionDecoderConfig = {
   ) => DecodedPermissionData;
 };
 
-/**
- * Alias kept to align with existing decoder factory naming.
- */
-export type MakePermissionDecoderConfig = PermissionDecoderConfig;
-
 export type PermissionDecoderSpec = (
   contractAddresses: ChecksumEnforcersByChainId,
 ) => PermissionDecoderConfig;

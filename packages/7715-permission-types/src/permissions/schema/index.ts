@@ -30,7 +30,6 @@ export type {
   AddressField,
   AmountField,
   DateField,
-  DeepNonNullable,
   DividerElement,
   ExpiryField,
   FieldView,
@@ -68,6 +67,8 @@ const PERMISSION_SCHEMAS: PermissionSchemaRegistry = {
   'erc20-token-stream': erc20TokenStreamSchema,
   'erc20-token-allowance': erc20TokenAllowanceSchema,
   'token-approval-revocation': tokenApprovalRevocationSchema,
+  // Deprecated in favor of 'token-approval-revocation'; same rendering.
+  'erc20-token-revocation': tokenApprovalRevocationSchema,
 };
 
 /**
@@ -81,12 +82,12 @@ export function getPermissionSchemaEntry(
   permissionType: string,
   throwIfUnknown: boolean = false,
 ): PermissionSchemaEntry {
-  const matchingSchema = PERMISSION_SCHEMAS[permissionType];
   if (
-    Object.prototype.hasOwnProperty.call(PERMISSION_SCHEMAS, permissionType) &&
-    matchingSchema
+    Object.prototype.hasOwnProperty.call(PERMISSION_SCHEMAS, permissionType)
   ) {
-    return matchingSchema;
+    return (PERMISSION_SCHEMAS as Record<string, PermissionSchemaEntry>)[
+      permissionType
+    ] as PermissionSchemaEntry;
   }
   if (throwIfUnknown) {
     throw new Error(`Unknown permission type: ${permissionType}`);

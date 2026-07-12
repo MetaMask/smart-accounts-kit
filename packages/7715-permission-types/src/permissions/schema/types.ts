@@ -1,9 +1,6 @@
 import type { Hex } from '@metamask/utils';
 
-/** Recursively strips `null` and `undefined` from all properties. */
-export type DeepNonNullable<TObj> = TObj extends object
-  ? { [K in keyof TObj]-?: DeepNonNullable<NonNullable<TObj[K]>> }
-  : NonNullable<TObj>;
+import type { PermissionType } from '../types';
 
 export type I18nFunction = (
   key: string,
@@ -167,4 +164,7 @@ export type PermissionSchemaEntry = {
 };
 
 /** Maps permission type strings to their schema entries. */
-export type PermissionSchemaRegistry = Record<string, PermissionSchemaEntry>;
+export type PermissionSchemaRegistry = Record<
+  PermissionType,
+  PermissionSchemaEntry
+>;

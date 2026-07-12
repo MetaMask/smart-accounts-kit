@@ -12,7 +12,52 @@ export type { ExpiryRule } from './rules/expiry';
 export type { PayeeRule } from './rules/payee';
 export type { RedeemerRule } from './rules/redeemer';
 export type { DeployedContractsByName, PermissionDecoderConfig };
-export * from './schema';
+export {
+  DAY,
+  FORTNIGHT,
+  HOUR,
+  MAX_UINT256,
+  MONTH,
+  SECOND,
+  WEEK,
+  YEAR,
+  ALL_METAMASK_FACILITATOR_ADDRESSES,
+  METAMASK_FACILITATOR_ADDRESSES,
+  METAMASK_FACILITATOR_ADDRESSES_DEV,
+  areOnlyMetaMaskFacilitatorAddresses,
+  isMetaMaskFacilitatorAddress,
+  convertAmountPerSecondToAmountPerPeriod,
+  convertMillisecondsToSeconds,
+  formatPermissionPeriodDuration,
+  getPeriodFrequencyValueTranslationKey,
+  parseHexPermissionAmount,
+  getPermissionSchemaEntry,
+} from './schema';
+export type {
+  AccountField,
+  AddressField,
+  AmountField,
+  DateField,
+  DividerElement,
+  ExpiryField,
+  FieldView,
+  I18nFunction,
+  JustificationField,
+  ListField,
+  NetworkField,
+  OriginField,
+  PermissionRenderContext,
+  PermissionSchemaEntry,
+  PermissionSchemaRegistry,
+  RawTextField,
+  ReviewFieldView,
+  RuleAddressField,
+  SchemaElement,
+  SchemaSection,
+  TextField,
+  TokenResolution,
+  TokenVariant,
+} from './schema';
 /**
  * Builds the canonical set of permission decoders for a chain.
  *

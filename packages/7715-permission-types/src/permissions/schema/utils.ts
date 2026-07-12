@@ -18,13 +18,7 @@ export function parseHexPermissionAmount(value: string): bigint {
     throw new Error('Cannot parse empty permission amount');
   }
 
-  const hexValue = (
-    trimmed.startsWith('0x') || trimmed.startsWith('0X')
-      ? trimmed
-      : `0x${trimmed}`
-  ) as Hex;
-
-  return hexToBigInt(hexValue);
+  return hexToBigInt(trimmed as Hex);
 }
 
 /**

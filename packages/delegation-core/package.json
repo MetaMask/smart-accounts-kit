@@ -45,7 +45,7 @@
   "scripts": {
     "build": "yarn typecheck && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --coverage",
     "test:watch": "vitest",
     "changelog:update": "../../scripts/update-changelog.sh @metamask/delegation-core",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/delegation-core",
@@ -61,6 +61,7 @@
   "devDependencies": {
     "@metamask/auto-changelog": "^6.1.1",
     "@types/node": "^20.19.0",
+    "@vitest/coverage-v8": "4.1.9",
     "eslint": "^9.39.2",
     "prettier": "^3.5.3",
     "tsup": "^8.5.0",

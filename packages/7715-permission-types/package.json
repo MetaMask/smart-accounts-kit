@@ -65,7 +65,7 @@
     "prettier": "^3.5.3",
     "tsup": "^8.5.0",
     "typescript": "5.5.4",
-    "vitest": "4.0.18"
+    "vitest": "4.1.0"
   },
   "dependencies": {
     "@metamask/delegation-core": "^2.2.1",

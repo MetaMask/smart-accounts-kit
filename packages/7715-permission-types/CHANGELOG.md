@@ -9,10 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.0]
 
-### Uncategorized
-
-- chore(deps-dev): bump @metamask/auto-changelog from 5.3.2 to 6.1.1 ([#249](https://github.com/metamask/smart-accounts-kit/pull/249))
-
 ### Added
 
 - Utility functions to create caveats array for each permission type ([#265](https://github.com/metamask/smart-accounts-kit/pull/265))
@@ -23,8 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `createNativeTokenPeriodicCaveats()`
   - `createNativeTokenAllowanceCaveats()`
   - `createTokenApprovalRevocationCaveats()`
-- Add `makePermissionDecoderConfigs` to resolve the `PermissionDecoderConfig`s to be used with @metamask/gator-permissions-controller ([#259](https://github.com/metamask/smart-accounts-kit/pull/259))
-- Add permission schema metadata and MetaMask facilitator address utilities ([#267](https://github.com/metamask/smart-accounts-kit/pull/267))
+- Function `makePermissionDecoderConfigs` to resolve the `PermissionDecoderConfig`s to be used with @metamask/gator-permissions-controller ([#259](https://github.com/metamask/smart-accounts-kit/pull/259))
+- Permission schema metadata and MetaMask facilitator address utilities ([#267](https://github.com/metamask/smart-accounts-kit/pull/267))
 
 ## [0.7.1]
 

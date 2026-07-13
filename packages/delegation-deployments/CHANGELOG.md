@@ -7,15 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Uncategorized
-
-- chore(deps-dev): bump @metamask/auto-changelog from 5.3.2 to 6.1.1 ([#249](https://github.com/metamask/smart-accounts-kit/pull/249))
-
 ## [1.4.0]
 
 ### Added
 
-- Add chain deployment for Intuition mainnet and testnet ([#206](https://github.com/metamask/smart-accounts-kit/pull/206))
+- Add chain deployment for Intuition mainnet and testnet ([#206](https://github.com/MetaMask/smart-accounts-kit/pull/206))
 - Deployment address for `ApprovalRevocationEnforcer` added ([#226](https://github.com/metamask/smart-accounts-kit/pull/226))
 
 ## [1.3.0]
@@ -28,14 +24,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add chain deployment for Katana mainnet and Katana Bokuto ([#203](https://github.com/metamask/smart-accounts-kit/pull/203))
+- Add chain deployment for Katana mainnet and Katana Bokuto ([#203](https://github.com/MetaMask/smart-accounts-kit/pull/203))
 
 ## [1.1.0]
 
 ### Added
 
-- Add chain deployment for Citrea mainnet ([#180](https://github.com/metamask/smart-accounts-kit/pull/180))
-- Add chain deployment for Mantle mainnet and Mantle Sepolia ([#197](https://github.com/metamask/smart-accounts-kit/pull/197))
+- Add chain deployment for Citrea mainnet ([#180](https://github.com/MetaMask/smart-accounts-kit/pull/180))
+- Add chain deployment for Mantle mainnet and Mantle Sepolia ([#197](https://github.com/MetaMask/smart-accounts-kit/pull/197))
 
 ## [1.0.0]
 
@@ -48,13 +44,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Tempo mainnet and Tempo Moderato testnet ([#177](https://github.com/metamask/smart-accounts-kit/pull/177))
-- Celo and Ronin mainnet and testnets ([#173](https://github.com/metamask/smart-accounts-kit/pull/173))
+- Celo and Ronin mainnet and testnets ([#173](https://github.com/MetaMask/smart-accounts-kit/pull/173))
 
 ## [0.16.0]
 
 ### Added
 
-- Add chain deployment for MegaETH mainnet ([#124](https://github.com/metamask/smart-accounts-kit/pull/124))
+- Add chain deployment for MegaETH mainnet ([#124](https://github.com/MetaMask/smart-accounts-kit/pull/124))
 
 ### Changed
 
@@ -64,13 +60,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add chain deployments for Monad mainnet ([#102](https://github.com/metamask/smart-accounts-kit/pull/102))
+- Add chain deployments for Monad mainnet ([#102](https://github.com/MetaMask/smart-accounts-kit/pull/102))
 
 ## [0.14.0]
 
 ### Added
 
-- Add chain deployments for new chains ([#98](https://github.com/metamask/smart-accounts-kit/pull/98))
+- Add chain deployments for new chains ([#98](https://github.com/MetaMask/smart-accounts-kit/pull/98))
   - Sonic mainnet
   - Sonic testnet
   - Sei testnet

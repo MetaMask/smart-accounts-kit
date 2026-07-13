@@ -7,15 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Uncategorized
-
-- chore(deps-dev): bump @metamask/auto-changelog from 5.3.2 to 6.1.1 ([#249](https://github.com/metamask/smart-accounts-kit/pull/249))
-
 ## [2.2.1]
 
 ### Fixed
 
-- Rename `permit2ApproveZero` to `permit2Approve` in `approvalRevocationEnforcer` terms builders and decoders ([#237](https://github.com/metamask/smart-accounts-kit/pull/237))
+- Rename `permit2ApproveZero` to `permit2Approve` in `approvalRevocationEnforcer` terms builders and decoders ([#237](https://github.com/MetaMask/smart-accounts-kit/pull/237))
 
 ## [2.2.0]
 
@@ -27,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `MultiTokenPeriod`, `Erc20TokenPeriodTransfer`, and `NativeTokenPeriodTransfer` encoders now accept `periodDuration` parameter as `bigint. ([#227](https://github.com/metamask/smart-accounts-kit/pull/227))
+- `MultiTokenPeriod`, `Erc20TokenPeriodTransfer`, and `NativeTokenPeriodTransfer` encoders now accept `periodDuration` parameter as `bigint. ([#227](https://github.com/MetaMask/smart-accounts-kit/pull/227))
 
 ## [2.0.0]
 
@@ -92,7 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New `allowedCalldata` terms builder ([#108](https://github.com/metamask/smart-accounts-kit/pull/108))
+- New `allowedCalldata` terms builder ([#108](https://github.com/MetaMask/smart-accounts-kit/pull/108))
 
 ## [0.2.0]
 

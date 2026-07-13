@@ -7,11 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.8.0]
-
 ### Added
 
-- Utility functions to create caveats array for each permission type ([#265](https://github.com/metamask/smart-accounts-kit/pull/265))
+- Utility functions to create caveats array for each permission type ([#265](https://github.com/MetaMask/smart-accounts-kit/pull/265))
   - `createErc20TokenStreamCaveats()`
   - `createErc20TokenPeriodicCaveats()`
   - `createErc20TokenAllowanceCaveats()`
@@ -19,24 +17,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `createNativeTokenPeriodicCaveats()`
   - `createNativeTokenAllowanceCaveats()`
   - `createTokenApprovalRevocationCaveats()`
-- Function `makePermissionDecoderConfigs` to resolve the `PermissionDecoderConfig`s to be used with @metamask/gator-permissions-controller ([#259](https://github.com/metamask/smart-accounts-kit/pull/259))
-- Permission schema metadata and MetaMask facilitator address utilities ([#267](https://github.com/metamask/smart-accounts-kit/pull/267))
+- Add `makePermissionDecoderConfigs` to resolve the `PermissionDecoderConfig`s to be used with @metamask/gator-permissions-controller ([#259](https://github.com/MetaMask/smart-accounts-kit/pull/259))
+- Add permission schema metadata and MetaMask facilitator address utilities ([#267](https://github.com/MetaMask/smart-accounts-kit/pull/267))
 
 ## [0.7.1]
 
 ### Fixed
 
-- Rename `permit2ApproveZero` to `permit2Approve` in `TokenApprovalRevocationPermission` ERC-7715 permission data ([#237](https://github.com/metamask/smart-accounts-kit/pull/237))
+- Rename `permit2ApproveZero` to `permit2Approve` in `TokenApprovalRevocationPermission` ERC-7715 permission data ([#237](https://github.com/MetaMask/smart-accounts-kit/pull/237))
 
 ## [0.7.0]
 
 ### Added
 
-- New permission type `token-approval-revocation` ([#226](https://github.com/metamask/smart-accounts-kit/pull/226))
+- New permission type `token-approval-revocation` ([#226](https://github.com/MetaMask/smart-accounts-kit/pull/226))
 
 ### Deprecated
 
-- Deprecated `erc20-token-revocation` in favor of `token-approval-revocation` ([#226](https://github.com/metamask/smart-accounts-kit/pull/226))
+- Deprecated `erc20-token-revocation` in favor of `token-approval-revocation` ([#226](https://github.com/MetaMask/smart-accounts-kit/pull/226))
 
 ## [0.6.0]
 
@@ -58,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New permission type `erc20-token-revocation` ([#110](https://github.com/metamask/smart-accounts-kit/pull/110))
+- New permission type `erc20-token-revocation` ([#110](https://github.com/MetaMask/smart-accounts-kit/pull/110))
 
 ## [0.3.0]
 
@@ -72,8 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Type definitions for EIP-7715 Execution Permissions, and definitions for permission types supported by MetaMask
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.8.0...HEAD
-[0.8.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.7.1...@metamask/7715-permission-types@0.8.0
+[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.7.1...HEAD
 [0.7.1]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.7.0...@metamask/7715-permission-types@0.7.1
 [0.7.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.6.0...@metamask/7715-permission-types@0.7.0
 [0.6.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.5.0...@metamask/7715-permission-types@0.6.0

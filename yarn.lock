@@ -754,7 +754,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/7715-permission-types@npm:^0.8.0, @metamask/7715-permission-types@workspace:packages/7715-permission-types":
+"@metamask/7715-permission-types@npm:^0.7.1, @metamask/7715-permission-types@workspace:packages/7715-permission-types":
   version: 0.0.0-use.local
   resolution: "@metamask/7715-permission-types@workspace:packages/7715-permission-types"
   dependencies:
@@ -961,7 +961,7 @@ __metadata:
   dependencies:
     "@lavamoat/allow-scripts": "npm:^3.4.0"
     "@lavamoat/preinstall-always-fail": "npm:^2.1.1"
-    "@metamask/7715-permission-types": "npm:^0.8.0"
+    "@metamask/7715-permission-types": "npm:^0.7.1"
     "@metamask/auto-changelog": "npm:^6.1.1"
     "@metamask/delegation-abis": "npm:^1.1.0"
     "@metamask/delegation-core": "npm:^2.2.1"

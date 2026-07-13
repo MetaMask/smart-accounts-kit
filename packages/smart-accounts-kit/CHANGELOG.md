@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Experimental `createx402DelegationProvider` now resolves redeemers as the intersection of `facilitatorAddresses` and `redeemer.addresses` ([#256](https://github.com/MetaMask/smart-accounts-kit/pull/256))
-- Bump @metamask/7715-permission-types from `^0.7.1` to `^0.8.0` ([#269](https://github.com/MetaMask/smart-accounts-kit/pull/269))
 
 ## [1.6.0]
 

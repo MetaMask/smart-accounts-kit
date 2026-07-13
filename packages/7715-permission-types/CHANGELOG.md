@@ -9,12 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.0]
 
-### Uncategorized
-
-- Fix casting of repo URL from https://github.com/metamask/smart-accounts-kit to https://github.com/MetaMask/smart-accounts-kit across package.json and CHANGELOG.md files ([#272](https://github.com/MetaMask/smart-accounts-kit/pull/272))
-- Revert "Release/34.0.0 (#269)" ([#269](https://github.com/MetaMask/smart-accounts-kit/pull/269))
-- chore(deps): bump the npm_and_yarn group across 1 directory with 6 updates ([#266](https://github.com/MetaMask/smart-accounts-kit/pull/266))
-
 ### Added
 
 - Utility functions to create caveats array for each permission type ([#265](https://github.com/MetaMask/smart-accounts-kit/pull/265))

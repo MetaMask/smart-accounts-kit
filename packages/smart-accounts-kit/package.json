@@ -102,7 +102,7 @@
     "changelog:update": "../../scripts/update-changelog.sh @metamask/smart-accounts-kit",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/smart-accounts-kit",
     "clean": "rm -rf dist",
-    "test": "vitest run --coverage",
+    "test": "vitest run",
     "test:watch": "vitest watch",
     "format": "prettier --write \"src/**/*.{ts,tsx}\" --ignore-path .prettierignore",
     "lint": "yarn lint:eslint",

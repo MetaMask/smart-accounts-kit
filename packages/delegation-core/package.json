@@ -45,7 +45,7 @@
   "scripts": {
     "build": "yarn typecheck && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --coverage",
+    "test": "vitest run",
     "test:watch": "vitest",
     "changelog:update": "../../scripts/update-changelog.sh @metamask/delegation-core",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/delegation-core",

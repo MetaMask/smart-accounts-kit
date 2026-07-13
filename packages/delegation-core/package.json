@@ -8,13 +8,13 @@
     "MetaMask",
     "Ethereum"
   ],
-  "homepage": "https://github.com/metamask/smart-accounts-kit/tree/main/packages/delegation-core#readme",
+  "homepage": "https://github.com/MetaMask/smart-accounts-kit/tree/main/packages/delegation-core#readme",
   "bugs": {
-    "url": "https://github.com/metamask/smart-accounts-kit/issues"
+    "url": "https://github.com/MetaMask/smart-accounts-kit/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/metamask/smart-accounts-kit.git"
+    "url": "https://github.com/MetaMask/smart-accounts-kit.git"
   },
   "author": "MetaMask <hello@metamask.io>",
   "sideEffects": false,

@@ -5,7 +5,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/metamask/smart-accounts-kit.git"
+    "url": "https://github.com/MetaMask/smart-accounts-kit.git"
   },
   "files": [],
   "workspaces": [

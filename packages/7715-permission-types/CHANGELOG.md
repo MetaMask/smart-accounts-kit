@@ -40,17 +40,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- New erc-7715 simple allowance types, `native-token-allowance` and `erc20-token-allowance` ([#214](https://github.com/metamask/smart-accounts-kit/pull/214))
+- New erc-7715 simple allowance types, `native-token-allowance` and `erc20-token-allowance` ([#214](https://github.com/MetaMask/smart-accounts-kit/pull/214))
 
 ## [0.5.0]
 
 ### Changed
 
-- **Breaking** Implement erc-7715 type scheme revisions ([#128](https://github.com/metamask/smart-accounts-kit/pull/128))
+- **Breaking** Implement erc-7715 type scheme revisions ([#128](https://github.com/MetaMask/smart-accounts-kit/pull/128))
 
 ### Fixed
 
-- Resolve yarn peer dependency warnings ([#123](https://github.com/metamask/smart-accounts-kit/pull/123))
+- Resolve yarn peer dependency warnings ([#123](https://github.com/MetaMask/smart-accounts-kit/pull/123))
 
 ## [0.4.0]
 
@@ -62,7 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Export `MetaMaskBasePermissionData` type ([#65](https://github.com/metamask/smart-accounts-kit/pull/65))
+- Export `MetaMaskBasePermissionData` type ([#65](https://github.com/MetaMask/smart-accounts-kit/pull/65))
 
 ## [0.2.0]
 
@@ -70,11 +70,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Type definitions for EIP-7715 Execution Permissions, and definitions for permission types supported by MetaMask
 
-[Unreleased]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.7.1...HEAD
-[0.7.1]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.7.0...@metamask/7715-permission-types@0.7.1
-[0.7.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.6.0...@metamask/7715-permission-types@0.7.0
-[0.6.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.5.0...@metamask/7715-permission-types@0.6.0
-[0.5.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.4.0...@metamask/7715-permission-types@0.5.0
-[0.4.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.3.0...@metamask/7715-permission-types@0.4.0
-[0.3.0]: https://github.com/metamask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.2.0...@metamask/7715-permission-types@0.3.0
-[0.2.0]: https://github.com/metamask/smart-accounts-kit/releases/tag/@metamask/7715-permission-types@0.2.0
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.7.1...HEAD
+[0.7.1]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.7.0...@metamask/7715-permission-types@0.7.1
+[0.7.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.6.0...@metamask/7715-permission-types@0.7.0
+[0.6.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.5.0...@metamask/7715-permission-types@0.6.0
+[0.5.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.4.0...@metamask/7715-permission-types@0.5.0
+[0.4.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.3.0...@metamask/7715-permission-types@0.4.0
+[0.3.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.2.0...@metamask/7715-permission-types@0.3.0
+[0.2.0]: https://github.com/MetaMask/smart-accounts-kit/releases/tag/@metamask/7715-permission-types@0.2.0

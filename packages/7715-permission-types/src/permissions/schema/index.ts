@@ -67,8 +67,6 @@ const PERMISSION_SCHEMAS: PermissionSchemaRegistry = {
   'erc20-token-stream': erc20TokenStreamSchema,
   'erc20-token-allowance': erc20TokenAllowanceSchema,
   'token-approval-revocation': tokenApprovalRevocationSchema,
-  // Deprecated in favor of 'token-approval-revocation'; same rendering.
-  'erc20-token-revocation': tokenApprovalRevocationSchema,
 };
 
 /**

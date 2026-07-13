@@ -163,8 +163,12 @@ export type PermissionSchemaEntry = {
   sections: SchemaSection[];
 };
 
-/** Maps permission type strings to their schema entries. */
+/**
+ * Maps permission type strings to their schema entries.
+ * `erc20-token-revocation` is deprecated in favor of `token-approval-revocation`
+ * and intentionally excluded; it renders as an unknown permission type.
+ */
 export type PermissionSchemaRegistry = Record<
-  PermissionType,
+  Exclude<PermissionType, 'erc20-token-revocation'>,
   PermissionSchemaEntry
 >;

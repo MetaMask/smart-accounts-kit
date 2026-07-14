@@ -124,7 +124,7 @@
     }
   },
   "dependencies": {
-    "@metamask/7715-permission-types": "^0.8.0",
+    "@metamask/7715-permission-types": "^0.9.0",
     "@metamask/delegation-abis": "^1.1.0",
     "@metamask/delegation-core": "^2.2.1",
     "@metamask/delegation-deployments": "^1.4.0",

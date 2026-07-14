@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0]
+
 ### Added
 
 - Export `I18nValue` type ([#275](https://github.com/MetaMask/smart-accounts-kit/pull/275))
@@ -82,7 +84,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Type definitions for EIP-7715 Execution Permissions, and definitions for permission types supported by MetaMask
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.8.0...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.9.0...HEAD
+[0.9.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.8.0...@metamask/7715-permission-types@0.9.0
 [0.8.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.7.1...@metamask/7715-permission-types@0.8.0
 [0.7.1]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.7.0...@metamask/7715-permission-types@0.7.1
 [0.7.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.6.0...@metamask/7715-permission-types@0.7.0

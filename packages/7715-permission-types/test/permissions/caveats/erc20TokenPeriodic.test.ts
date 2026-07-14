@@ -31,7 +31,7 @@ describe('erc20-token-periodic decoder config', () => {
   const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
   const {
     timestampEnforcer,
-    erc20PeriodicEnforcer,
+    erc20PeriodTransferEnforcer,
     valueLteEnforcer,
     nonceEnforcer,
     allowedCalldataEnforcer,
@@ -67,7 +67,7 @@ describe('erc20-token-periodic decoder config', () => {
     valueLteTerms: Hex = ZERO_32_BYTES,
   ): ChecksumCaveat[] => [
     {
-      enforcer: erc20PeriodicEnforcer,
+      enforcer: erc20PeriodTransferEnforcer,
       terms,
       args: '0x',
     },
@@ -86,7 +86,7 @@ describe('erc20-token-periodic decoder config', () => {
   describe('static configuration', () => {
     it('exposes expected required enforcers', () => {
       expect(decoder.requiredEnforcers).toStrictEqual({
-        [erc20PeriodicEnforcer]: 1,
+        [erc20PeriodTransferEnforcer]: 1,
         [valueLteEnforcer]: 1,
         [nonceEnforcer]: 1,
       });
@@ -208,7 +208,7 @@ describe('createErc20TokenPeriodicCaveats()', () => {
   const startTime = 1729900800;
 
   const contracts: Erc20TokenPeriodicEnforcers = {
-    erc20PeriodicEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
+    erc20PeriodTransferEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
     valueLteEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
   };
 
@@ -233,7 +233,7 @@ describe('createErc20TokenPeriodicCaveats()', () => {
 
     expect(caveats).toStrictEqual([
       {
-        enforcer: contracts.erc20PeriodicEnforcer,
+        enforcer: contracts.erc20PeriodTransferEnforcer,
         terms: expectedTerms,
         args: '0x',
       },
@@ -369,7 +369,7 @@ describe('createErc20TokenPeriodicCaveats()', () => {
     });
     const erc20PeriodicTerms = caveats[0]?.terms as Hex;
 
-    expect(caveats[0]?.enforcer).toBe(contracts.erc20PeriodicEnforcer);
+    expect(caveats[0]?.enforcer).toBe(contracts.erc20PeriodTransferEnforcer);
     expect(
       erc20PeriodicTerms.startsWith(`0x${alternateTokenAddress.slice(2)}`),
     ).toBe(true);

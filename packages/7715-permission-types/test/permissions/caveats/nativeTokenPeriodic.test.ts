@@ -30,7 +30,7 @@ describe('native-token-periodic decoder config', () => {
   const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
   const {
     timestampEnforcer,
-    nativeTokenPeriodicEnforcer,
+    nativeTokenPeriodTransferEnforcer,
     exactCalldataEnforcer,
     nonceEnforcer,
     allowedTargetsEnforcer,
@@ -57,7 +57,7 @@ describe('native-token-periodic decoder config', () => {
     exactCalldataTerms: Hex = '0x',
   ): ChecksumCaveat[] => [
     {
-      enforcer: nativeTokenPeriodicEnforcer,
+      enforcer: nativeTokenPeriodTransferEnforcer,
       terms: nativeTokenPeriodicTerms,
       args: '0x',
     },
@@ -76,7 +76,7 @@ describe('native-token-periodic decoder config', () => {
   describe('static configuration', () => {
     it('exposes expected required enforcers', () => {
       expect(decoder.requiredEnforcers).toStrictEqual({
-        [nativeTokenPeriodicEnforcer]: 1,
+        [nativeTokenPeriodTransferEnforcer]: 1,
         [exactCalldataEnforcer]: 1,
         [nonceEnforcer]: 1,
       });
@@ -195,7 +195,8 @@ describe('createNativeTokenPeriodicCaveats()', () => {
   const startTime = 1729900800;
 
   const contracts: NativeTokenPeriodicEnforcers = {
-    nativeTokenPeriodicEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
+    nativeTokenPeriodTransferEnforcer:
+      '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
     exactCalldataEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
   };
 
@@ -220,7 +221,7 @@ describe('createNativeTokenPeriodicCaveats()', () => {
 
     expect(caveats).toStrictEqual([
       {
-        enforcer: contracts.nativeTokenPeriodicEnforcer,
+        enforcer: contracts.nativeTokenPeriodTransferEnforcer,
         terms: nativeTokenPeriodicExpectedTerms,
         args: '0x',
       },

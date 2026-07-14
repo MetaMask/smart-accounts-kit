@@ -7,9 +7,9 @@ import type { Hex, PermissionTypes, Rule } from '../types';
  */
 export type ChecksumEnforcersByChainId = {
   erc20StreamingEnforcer: Hex;
-  erc20PeriodicEnforcer: Hex;
+  erc20PeriodTransferEnforcer: Hex;
   nativeTokenStreamingEnforcer: Hex;
-  nativeTokenPeriodicEnforcer: Hex;
+  nativeTokenPeriodTransferEnforcer: Hex;
   approvalRevocationEnforcer: Hex;
   exactCalldataEnforcer: Hex;
   valueLteEnforcer: Hex;

@@ -70,6 +70,7 @@ export type {
   ExpiryField,
   FieldView,
   I18nFunction,
+  I18nValue,
   JustificationField,
   ListField,
   NetworkField,

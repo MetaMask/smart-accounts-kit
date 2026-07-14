@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Export `I18nValue` type ([#275](https://github.com/MetaMask/smart-accounts-kit/pull/275))
+
 ### Fixed
 
 - Incorrectly named caveats used in caveat factory functions ([#274](https://github.com/MetaMask/smart-accounts-kit/pull/274))

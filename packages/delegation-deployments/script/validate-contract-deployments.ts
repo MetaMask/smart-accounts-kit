@@ -344,6 +344,36 @@ const intuitionTestnetChain: Chain = {
   },
 };
 
+const robinhoodMainnetChain: Chain = {
+  id: 4663,
+  name: 'Robinhood Chain',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.mainnet.chain.robinhood.com'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Ether',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+};
+
+const robinhoodTestnetChain: Chain = {
+  id: 46630,
+  name: 'Robinhood Chain Testnet',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.testnet.chain.robinhood.com'],
+    },
+  },
+  nativeCurrency: {
+    name: 'Ether',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+};
+
 const celoSepoliaChain: Chain = {
   id: 11142220,
   name: 'Celo Sepolia',
@@ -382,6 +412,8 @@ export const chains = {
   katanaBokuto: katanaBokutoChain,
   intuitionMainnet: intuitionMainnetChain,
   intuitionTestnet: intuitionTestnetChain,
+  robinhoodMainnet: robinhoodMainnetChain,
+  robinhoodTestnet: robinhoodTestnetChain,
   celoSepolia: celoSepoliaChain,
 } as any as { [key: string]: Chain };
 

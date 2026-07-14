@@ -34,7 +34,7 @@ export function makeErc20TokenAllowanceDecoderConfig(
 ): PermissionDecoderConfig {
   const {
     timestampEnforcer,
-    erc20PeriodicEnforcer,
+    erc20PeriodTransferEnforcer,
     valueLteEnforcer,
     nonceEnforcer,
     allowedCalldataEnforcer,
@@ -50,7 +50,7 @@ export function makeErc20TokenAllowanceDecoderConfig(
       allowedCalldataEnforcer, // payee rule
     ],
     requiredEnforcers: {
-      [erc20PeriodicEnforcer]: 1,
+      [erc20PeriodTransferEnforcer]: 1,
       [valueLteEnforcer]: 1,
       [nonceEnforcer]: 1,
     },
@@ -70,7 +70,7 @@ function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: ChecksumEnforcersByChainId,
 ): DecodedPermissionData<Erc20TokenAllowancePermission> {
-  const { erc20PeriodicEnforcer, valueLteEnforcer } = contractAddresses;
+  const { erc20PeriodTransferEnforcer, valueLteEnforcer } = contractAddresses;
 
   const valueLteTerms = getTermsByEnforcer({
     caveats,
@@ -82,7 +82,7 @@ function validateAndDecodeData(
 
   const terms = getTermsByEnforcer({
     caveats,
-    enforcer: erc20PeriodicEnforcer,
+    enforcer: erc20PeriodTransferEnforcer,
   });
 
   const EXPECTED_TERMS_BYTELENGTH = 116; // 20 + 32 + 32 + 32
@@ -122,7 +122,7 @@ function validateAndDecodeData(
  */
 export type Erc20TokenAllowanceEnforcers = Pick<
   ChecksumEnforcersByChainId,
-  'erc20PeriodicEnforcer' | 'valueLteEnforcer'
+  'erc20PeriodTransferEnforcer' | 'valueLteEnforcer'
 >;
 
 /**
@@ -156,7 +156,7 @@ export function createErc20TokenAllowanceCaveats({
   }
 
   const erc20PeriodCaveat: Caveat = {
-    enforcer: contracts.erc20PeriodicEnforcer,
+    enforcer: contracts.erc20PeriodTransferEnforcer,
     terms: createERC20TokenPeriodTransferTerms({
       tokenAddress,
       periodAmount: allowanceAmountBigInt,

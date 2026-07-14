@@ -29,7 +29,7 @@ export function makeNativeTokenPeriodicDecoderConfig(
 ): PermissionDecoderConfig {
   const {
     timestampEnforcer,
-    nativeTokenPeriodicEnforcer,
+    nativeTokenPeriodTransferEnforcer,
     exactCalldataEnforcer,
     nonceEnforcer,
     allowedTargetsEnforcer,
@@ -45,7 +45,7 @@ export function makeNativeTokenPeriodicDecoderConfig(
       allowedTargetsEnforcer, // payee rule
     ],
     requiredEnforcers: {
-      [nativeTokenPeriodicEnforcer]: 1,
+      [nativeTokenPeriodTransferEnforcer]: 1,
       [exactCalldataEnforcer]: 1,
       [nonceEnforcer]: 1,
     },
@@ -65,7 +65,7 @@ function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: ChecksumEnforcersByChainId,
 ): DecodedPermissionData<NativeTokenPeriodicPermission> {
-  const { nativeTokenPeriodicEnforcer, exactCalldataEnforcer } =
+  const { nativeTokenPeriodTransferEnforcer, exactCalldataEnforcer } =
     contractAddresses;
 
   const exactCalldataTerms = getTermsByEnforcer({
@@ -79,7 +79,7 @@ function validateAndDecodeData(
 
   const terms = getTermsByEnforcer({
     caveats,
-    enforcer: nativeTokenPeriodicEnforcer,
+    enforcer: nativeTokenPeriodTransferEnforcer,
   });
   const {
     periodAmount,
@@ -123,7 +123,7 @@ function validateAndDecodeData(
  */
 export type NativeTokenPeriodicEnforcers = Pick<
   ChecksumEnforcersByChainId,
-  'nativeTokenPeriodicEnforcer' | 'exactCalldataEnforcer'
+  'nativeTokenPeriodTransferEnforcer' | 'exactCalldataEnforcer'
 >;
 
 /**
@@ -169,7 +169,7 @@ export function createNativeTokenPeriodicCaveats({
   }
 
   const nativeTokenPeriodTransferCaveat: Caveat = {
-    enforcer: contracts.nativeTokenPeriodicEnforcer,
+    enforcer: contracts.nativeTokenPeriodTransferEnforcer,
     terms: createNativeTokenPeriodTransferTerms({
       periodAmount: periodAmountBigInt,
       periodDuration,

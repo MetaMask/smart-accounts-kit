@@ -1,7 +1,3 @@
-import {
-  CHAIN_ID,
-  DELEGATOR_CONTRACTS,
-} from '@metamask/delegation-deployments';
 import type { Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
@@ -16,18 +12,17 @@ import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
 import {
-  getChecksumEnforcersByChainId,
+  checksumEnforcerAddresses,
   UINT256_MAX,
 } from '../../../src/permissions/utils';
 import type {
   NativeTokenAllowancePermission,
   Populated,
 } from '../../../src/types';
-import { toWord } from '../../test-utils';
+import { contracts, toWord } from '../../test-utils';
 
 describe('native-token-allowance decoder config', () => {
-  const chainId = CHAIN_ID.sepolia;
-  const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
+  const enforcers = checksumEnforcerAddresses(contracts);
   const {
     timestampEnforcer,
     nativeTokenPeriodTransferEnforcer,
@@ -35,10 +30,8 @@ describe('native-token-allowance decoder config', () => {
     nonceEnforcer,
     allowedTargetsEnforcer,
     redeemerEnforcer,
-  } = getChecksumEnforcersByChainId(contracts);
-  const decoder = makeNativeTokenAllowanceDecoderConfig(
-    getChecksumEnforcersByChainId(contracts),
-  );
+  } = enforcers;
+  const decoder = makeNativeTokenAllowanceDecoderConfig(enforcers);
 
   const ALLOWANCE_AMOUNT_HEX = toWord(100n);
   const START_TIME = 1715664;
@@ -173,7 +166,7 @@ describe('createNativeTokenAllowanceCaveats()', () => {
   const allowanceAmount = '0x64' as const;
   const startTime = 1729900800;
 
-  const contracts: NativeTokenAllowanceEnforcers = {
+  const enforcers: NativeTokenAllowanceEnforcers = {
     nativeTokenPeriodTransferEnforcer:
       '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
     exactCalldataEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
@@ -192,18 +185,18 @@ describe('createNativeTokenAllowanceCaveats()', () => {
   it('creates nativeTokenPeriodic and exactCalldata caveats', () => {
     const caveats = createNativeTokenAllowanceCaveats({
       permission,
-      contracts,
+      contracts: enforcers,
     });
     const expectedTerms = `0x${toWord(BigInt(allowanceAmount))}${UINT256_MAX.slice(2)}${toWord(startTime)}`;
 
     expect(caveats).toStrictEqual([
       {
-        enforcer: contracts.nativeTokenPeriodTransferEnforcer,
+        enforcer: enforcers.nativeTokenPeriodTransferEnforcer,
         terms: expectedTerms,
         args: '0x',
       },
       {
-        enforcer: contracts.exactCalldataEnforcer,
+        enforcer: enforcers.exactCalldataEnforcer,
         terms: '0x',
         args: '0x',
       },
@@ -222,7 +215,7 @@ describe('createNativeTokenAllowanceCaveats()', () => {
     expect(() =>
       createNativeTokenAllowanceCaveats({
         permission: invalidPermission,
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow();
   });
@@ -237,7 +230,7 @@ describe('createNativeTokenAllowanceCaveats()', () => {
             allowanceAmount: '0x0',
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid native-token-allowance permission: allowanceAmount must be a positive number.',
@@ -254,7 +247,7 @@ describe('createNativeTokenAllowanceCaveats()', () => {
             startTime: 0,
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid native-token-allowance permission: startTime must be a positive number.',
@@ -274,10 +267,10 @@ describe('createNativeTokenAllowanceCaveats()', () => {
 
     const caveats = createNativeTokenAllowanceCaveats({
       permission: variedPermission,
-      contracts,
+      contracts: enforcers,
     });
 
-    expect(caveats[1]?.enforcer).toBe(contracts.exactCalldataEnforcer);
+    expect(caveats[1]?.enforcer).toBe(enforcers.exactCalldataEnforcer);
     expect(caveats[1]?.terms).toBe('0x');
   });
 });

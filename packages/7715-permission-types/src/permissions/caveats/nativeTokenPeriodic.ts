@@ -12,7 +12,7 @@ import { nativePayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
-  ChecksumEnforcersByChainId,
+  EnforcerAddressesByName,
   DecodedPermissionData,
   PermissionDecoderConfig,
 } from '../types';
@@ -25,7 +25,7 @@ import { getTermsByEnforcer, MAX_PERIOD_DURATION } from '../utils';
  * @returns The native-token-periodic permission decoder configuration.
  */
 export function makeNativeTokenPeriodicDecoderConfig(
-  contractAddresses: ChecksumEnforcersByChainId,
+  contractAddresses: EnforcerAddressesByName,
 ): PermissionDecoderConfig {
   const {
     timestampEnforcer,
@@ -63,7 +63,7 @@ export function makeNativeTokenPeriodicDecoderConfig(
  */
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
-  contractAddresses: ChecksumEnforcersByChainId,
+  contractAddresses: EnforcerAddressesByName,
 ): DecodedPermissionData<NativeTokenPeriodicPermission> {
   const { nativeTokenPeriodTransferEnforcer, exactCalldataEnforcer } =
     contractAddresses;
@@ -122,7 +122,7 @@ function validateAndDecodeData(
  * Enforcers required to build native token periodic caveats.
  */
 export type NativeTokenPeriodicEnforcers = Pick<
-  ChecksumEnforcersByChainId,
+  EnforcerAddressesByName,
   'nativeTokenPeriodTransferEnforcer' | 'exactCalldataEnforcer'
 >;
 

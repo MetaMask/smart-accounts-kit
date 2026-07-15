@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING:** `makePermissionDecoderConfigs` now accepts `EnforcerAddressesByName`, which is keyed with specific contract names ([#278](https://github.com/MetaMask/smart-accounts-kit/pull/278))
+  - Removes `ChecksumEnforcersByChainId` and `DeployedContractsByName` types
+
 ## [0.9.0]
 
 ### Added

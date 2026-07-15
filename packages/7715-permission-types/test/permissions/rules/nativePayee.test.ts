@@ -1,19 +1,15 @@
 import { createAllowedTargetsTerms } from '@metamask/delegation-core';
-import {
-  CHAIN_ID,
-  DELEGATOR_CONTRACTS,
-} from '@metamask/delegation-deployments';
 import { getChecksumAddress } from '@metamask/utils';
 import type { Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
-import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
+import { checksumEnforcerAddresses } from '../../../src/permissions/utils';
+import { contracts } from '../../test-utils';
 
 describe('nativePayeeRuleDecoder', () => {
-  const contracts = DELEGATOR_CONTRACTS['1.3.0'][CHAIN_ID.sepolia];
-  const contractAddresses = getChecksumEnforcersByChainId(contracts);
+  const contractAddresses = checksumEnforcerAddresses(contracts);
   const { allowedTargetsEnforcer, nonceEnforcer } = contractAddresses;
   const requiredEnforcers = new Map<Hex, number>([[nonceEnforcer, 1]]);
 

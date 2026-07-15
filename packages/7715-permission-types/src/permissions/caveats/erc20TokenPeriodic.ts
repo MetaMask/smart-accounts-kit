@@ -12,7 +12,7 @@ import { erc20PayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
-  ChecksumEnforcersByChainId,
+  EnforcerAddressesByName,
   DecodedPermissionData,
   PermissionDecoderConfig,
 } from '../types';
@@ -29,7 +29,7 @@ import {
  * @returns The erc20-token-periodic permission decoder configuration.
  */
 export function makeErc20TokenPeriodicDecoderConfig(
-  contractAddresses: ChecksumEnforcersByChainId,
+  contractAddresses: EnforcerAddressesByName,
 ): PermissionDecoderConfig {
   const {
     timestampEnforcer,
@@ -67,7 +67,7 @@ export function makeErc20TokenPeriodicDecoderConfig(
  */
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
-  contractAddresses: ChecksumEnforcersByChainId,
+  contractAddresses: EnforcerAddressesByName,
 ): DecodedPermissionData<Erc20TokenPeriodicPermission> {
   const { erc20PeriodTransferEnforcer, valueLteEnforcer } = contractAddresses;
 
@@ -127,7 +127,7 @@ function validateAndDecodeData(
  * Enforcers required to build ERC-20 token periodic caveats.
  */
 export type Erc20TokenPeriodicEnforcers = Pick<
-  ChecksumEnforcersByChainId,
+  EnforcerAddressesByName,
   'erc20PeriodTransferEnforcer' | 'valueLteEnforcer'
 >;
 

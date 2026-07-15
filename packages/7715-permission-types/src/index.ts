@@ -37,7 +37,7 @@ export {
   type NativeTokenStreamEnforcers,
   createTokenApprovalRevocationCaveats,
   type TokenApprovalRevocationEnforcers,
-  type DeployedContractsByName,
+  type EnforcerAddressesByName,
   type PermissionDecoderConfig,
 } from './permissions';
 export {

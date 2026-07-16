@@ -64,6 +64,7 @@ export {
 export type {
   AccountField,
   AddressField,
+  AllPermissionKeys,
   AmountField,
   DateField,
   DividerElement,

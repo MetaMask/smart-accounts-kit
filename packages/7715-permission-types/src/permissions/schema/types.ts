@@ -55,10 +55,39 @@ export type PermissionRenderContext = {
 /** Whether an amount field is for a native token or an ERC20 token. */
 export type TokenVariant = 'native' | 'erc20';
 
+/**
+ * Union of all i18n label keys used across permission schema field definitions.
+ * Useful for building exhaustive `Record<AllPermissionKeys, ...>` translation maps.
+ */
+export type AllPermissionKeys =
+  | 'account'
+  | 'amount'
+  | 'confirmFieldAllowance'
+  | 'confirmFieldAvailablePerDay'
+  | 'confirmFieldFrequency'
+  | 'confirmFieldTotalExposure'
+  | 'gatorPermissionsExpirationDate'
+  | 'gatorPermissionsInitialAllowance'
+  | 'gatorPermissionsJustification'
+  | 'gatorPermissionsMaxAllowance'
+  | 'gatorPermissionsRevocationMethods'
+  | 'gatorPermissionsStartDate'
+  | 'gatorPermissionsStreamingAmountLabel'
+  | 'gatorPermissionsStreamRate'
+  | 'gatorPermissionTokenPeriodicFrequencyLabel'
+  | 'gatorPermissionTokenStreamFrequencyLabel'
+  | 'payee'
+  | 'recipient'
+  | 'redeemer'
+  | 'redeemers'
+  | 'requestFrom'
+  | 'revokeTokenApprovals'
+  | 'unknownPermissionType';
+
 /** Shared config for schema rows that read a value from render context. */
 export type BaseField<TType extends string, TValueType> = {
   type: TType;
-  labelKey: string;
+  labelKey: AllPermissionKeys;
   testId: string;
   getValue: (ctx: PermissionRenderContext) => TValueType;
   isVisible: (ctx: PermissionRenderContext) => boolean;

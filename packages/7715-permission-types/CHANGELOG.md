@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Export `AllPermissionKeys` type from `@metamask/7715-permission-types`, a union of all permission schema i18n label keys ([#279](https://github.com/MetaMask/smart-accounts-kit/pull/279))
+- Export `TranslationKeys` type from `@metamask/7715-permission-types`, a union of all permission schema i18n label keys ([#279](https://github.com/MetaMask/smart-accounts-kit/pull/279))
 
 ### Changed
 

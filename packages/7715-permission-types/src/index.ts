@@ -86,4 +86,5 @@ export type {
   TextField,
   TokenResolution,
   TokenVariant,
+  TranslationKeys,
 } from './permissions/schema';

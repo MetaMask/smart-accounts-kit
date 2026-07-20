@@ -1,7 +1,3 @@
-import {
-  CHAIN_ID,
-  DELEGATOR_CONTRACTS,
-} from '@metamask/delegation-deployments';
 import { bigIntToHex, type Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
@@ -16,15 +12,14 @@ import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
 import {
-  getChecksumEnforcersByChainId,
+  checksumEnforcerAddresses,
   ZERO_32_BYTES,
 } from '../../../src/permissions/utils';
 import type { Erc20TokenStreamPermission, Populated } from '../../../src/types';
-import { toWord } from '../../test-utils';
+import { contracts, toWord } from '../../test-utils';
 
 describe('erc20-token-stream decoder config', () => {
-  const chainId = CHAIN_ID.sepolia;
-  const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
+  const enforcers = checksumEnforcerAddresses(contracts);
   const {
     timestampEnforcer,
     erc20StreamingEnforcer,
@@ -32,10 +27,8 @@ describe('erc20-token-stream decoder config', () => {
     nonceEnforcer,
     allowedCalldataEnforcer,
     redeemerEnforcer,
-  } = getChecksumEnforcersByChainId(contracts);
-  const decoder = makeErc20TokenStreamDecoderConfig(
-    getChecksumEnforcersByChainId(contracts),
-  );
+  } = enforcers;
+  const decoder = makeErc20TokenStreamDecoderConfig(enforcers);
   const TOKEN_ADDRESS = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' as Hex;
   const START_TIME = 1715664;
   const makeTerms = ({
@@ -186,7 +179,7 @@ describe('createErc20TokenStreamCaveats()', () => {
   const startTime = 1729900800; // 10/26/2024 00:00:00 UTC
   const tokenAddress = '0x1234567890123456789012345678901234567890' as const;
 
-  const contracts: Erc20TokenStreamEnforcers = {
+  const enforcers: Erc20TokenStreamEnforcers = {
     erc20StreamingEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
     valueLteEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
   };
@@ -207,7 +200,7 @@ describe('createErc20TokenStreamCaveats()', () => {
   it('creates erc20Streaming and valueLte caveats', () => {
     const caveats = createErc20TokenStreamCaveats({
       permission: mockPermission,
-      contracts,
+      contracts: enforcers,
     });
     const initialAmountHex = initialAmount.slice(2).padStart(64, '0');
     const maxAmountHex = maxAmount.slice(2).padStart(64, '0');
@@ -217,12 +210,12 @@ describe('createErc20TokenStreamCaveats()', () => {
 
     expect(caveats).toStrictEqual([
       {
-        enforcer: contracts.erc20StreamingEnforcer,
+        enforcer: enforcers.erc20StreamingEnforcer,
         terms: erc20StreamingExpectedTerms,
         args: '0x',
       },
       {
-        enforcer: contracts.valueLteEnforcer,
+        enforcer: enforcers.valueLteEnforcer,
         terms:
           '0x0000000000000000000000000000000000000000000000000000000000000000',
         args: '0x',
@@ -242,7 +235,7 @@ describe('createErc20TokenStreamCaveats()', () => {
     expect(() =>
       createErc20TokenStreamCaveats({
         permission: invalidPermission,
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow();
   });
@@ -258,7 +251,7 @@ describe('createErc20TokenStreamCaveats()', () => {
             maxAmount: '0x64',
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid erc20-token-stream permission: maxAmount must be greater than initialAmount.',
@@ -275,7 +268,7 @@ describe('createErc20TokenStreamCaveats()', () => {
             amountPerSecond: '0x0',
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid erc20-token-stream permission: amountPerSecond must be a positive number.',
@@ -292,7 +285,7 @@ describe('createErc20TokenStreamCaveats()', () => {
             startTime: 0,
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid erc20-token-stream permission: startTime must be a positive number.',
@@ -315,10 +308,10 @@ describe('createErc20TokenStreamCaveats()', () => {
 
     const caveats = createErc20TokenStreamCaveats({
       permission: variedPermission,
-      contracts,
+      contracts: enforcers,
     });
 
-    expect(caveats[1]?.enforcer).toBe(contracts.valueLteEnforcer);
+    expect(caveats[1]?.enforcer).toBe(enforcers.valueLteEnforcer);
     expect(caveats[1]?.terms).toBe(ZERO_32_BYTES);
   });
 
@@ -335,11 +328,11 @@ describe('createErc20TokenStreamCaveats()', () => {
 
     const caveats = createErc20TokenStreamCaveats({
       permission,
-      contracts,
+      contracts: enforcers,
     });
     const erc20StreamingTerms = caveats[0]?.terms as Hex;
 
-    expect(caveats[0]?.enforcer).toBe(contracts.erc20StreamingEnforcer);
+    expect(caveats[0]?.enforcer).toBe(enforcers.erc20StreamingEnforcer);
     expect(
       erc20StreamingTerms.startsWith(`0x${alternateTokenAddress.slice(2)}`),
     ).toBe(true);

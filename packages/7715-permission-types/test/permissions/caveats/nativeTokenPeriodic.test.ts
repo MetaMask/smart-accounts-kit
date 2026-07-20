@@ -1,7 +1,3 @@
-import {
-  CHAIN_ID,
-  DELEGATOR_CONTRACTS,
-} from '@metamask/delegation-deployments';
 import { bigIntToHex, type Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
@@ -16,18 +12,17 @@ import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
 import {
-  getChecksumEnforcersByChainId,
+  checksumEnforcerAddresses,
   MAX_PERIOD_DURATION,
 } from '../../../src/permissions/utils';
 import type {
   NativeTokenPeriodicPermission,
   Populated,
 } from '../../../src/types';
-import { toWord } from '../../test-utils';
+import { contracts, toWord } from '../../test-utils';
 
 describe('native-token-periodic decoder config', () => {
-  const chainId = CHAIN_ID.sepolia;
-  const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
+  const enforcers = checksumEnforcerAddresses(contracts);
   const {
     timestampEnforcer,
     nativeTokenPeriodTransferEnforcer,
@@ -35,10 +30,8 @@ describe('native-token-periodic decoder config', () => {
     nonceEnforcer,
     allowedTargetsEnforcer,
     redeemerEnforcer,
-  } = getChecksumEnforcersByChainId(contracts);
-  const decoder = makeNativeTokenPeriodicDecoderConfig(
-    getChecksumEnforcersByChainId(contracts),
-  );
+  } = enforcers;
+  const decoder = makeNativeTokenPeriodicDecoderConfig(enforcers);
   const START_TIME = 1715664;
   const makeTerms = ({
     periodAmount = 100n,
@@ -194,7 +187,7 @@ describe('createNativeTokenPeriodicCaveats()', () => {
   const periodDuration = 86400;
   const startTime = 1729900800;
 
-  const contracts: NativeTokenPeriodicEnforcers = {
+  const enforcers: NativeTokenPeriodicEnforcers = {
     nativeTokenPeriodTransferEnforcer:
       '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
     exactCalldataEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
@@ -214,19 +207,19 @@ describe('createNativeTokenPeriodicCaveats()', () => {
   it('creates nativeTokenPeriodic and exactCalldata caveats', () => {
     const caveats = createNativeTokenPeriodicCaveats({
       permission,
-      contracts,
+      contracts: enforcers,
     });
 
     const nativeTokenPeriodicExpectedTerms = `0x${toWord(BigInt(periodAmount))}${toWord(periodDuration)}${toWord(startTime)}`;
 
     expect(caveats).toStrictEqual([
       {
-        enforcer: contracts.nativeTokenPeriodTransferEnforcer,
+        enforcer: enforcers.nativeTokenPeriodTransferEnforcer,
         terms: nativeTokenPeriodicExpectedTerms,
         args: '0x',
       },
       {
-        enforcer: contracts.exactCalldataEnforcer,
+        enforcer: enforcers.exactCalldataEnforcer,
         terms: '0x',
         args: '0x',
       },
@@ -245,7 +238,7 @@ describe('createNativeTokenPeriodicCaveats()', () => {
     expect(() =>
       createNativeTokenPeriodicCaveats({
         permission: invalidPermission,
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow();
   });
@@ -260,7 +253,7 @@ describe('createNativeTokenPeriodicCaveats()', () => {
             periodAmount: '0x0',
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid native-token-periodic permission: periodAmount must be a positive number.',
@@ -277,7 +270,7 @@ describe('createNativeTokenPeriodicCaveats()', () => {
             periodDuration: 0,
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid native-token-periodic permission: periodDuration must be a positive number.',
@@ -294,7 +287,7 @@ describe('createNativeTokenPeriodicCaveats()', () => {
             periodDuration: MAX_PERIOD_DURATION + 1,
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid native-token-periodic permission: periodDuration must be less than or equal to MAX_PERIOD_DURATION.',
@@ -311,7 +304,7 @@ describe('createNativeTokenPeriodicCaveats()', () => {
             startTime: 0,
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid native-token-periodic permission: startTime must be a positive number.',
@@ -332,10 +325,10 @@ describe('createNativeTokenPeriodicCaveats()', () => {
 
     const caveats = createNativeTokenPeriodicCaveats({
       permission: variedPermission,
-      contracts,
+      contracts: enforcers,
     });
 
-    expect(caveats[1]?.enforcer).toBe(contracts.exactCalldataEnforcer);
+    expect(caveats[1]?.enforcer).toBe(enforcers.exactCalldataEnforcer);
     expect(caveats[1]?.terms).toBe('0x');
   });
 });

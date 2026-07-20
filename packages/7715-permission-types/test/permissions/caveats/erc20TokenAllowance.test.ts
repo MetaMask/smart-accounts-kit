@@ -1,7 +1,3 @@
-import {
-  CHAIN_ID,
-  DELEGATOR_CONTRACTS,
-} from '@metamask/delegation-deployments';
 import type { Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
@@ -16,7 +12,7 @@ import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
 import {
-  getChecksumEnforcersByChainId,
+  checksumEnforcerAddresses,
   UINT256_MAX,
   ZERO_32_BYTES,
 } from '../../../src/permissions/utils';
@@ -24,11 +20,10 @@ import type {
   Erc20TokenAllowancePermission,
   Populated,
 } from '../../../src/types';
-import { toWord } from '../../test-utils';
+import { contracts, toWord } from '../../test-utils';
 
 describe('erc20-token-allowance decoder config', () => {
-  const chainId = CHAIN_ID.sepolia;
-  const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
+  const enforcers = checksumEnforcerAddresses(contracts);
   const {
     timestampEnforcer,
     erc20PeriodTransferEnforcer,
@@ -36,10 +31,8 @@ describe('erc20-token-allowance decoder config', () => {
     nonceEnforcer,
     allowedCalldataEnforcer,
     redeemerEnforcer,
-  } = getChecksumEnforcersByChainId(contracts);
-  const decoder = makeErc20TokenAllowanceDecoderConfig(
-    getChecksumEnforcersByChainId(contracts),
-  );
+  } = enforcers;
+  const decoder = makeErc20TokenAllowanceDecoderConfig(enforcers);
   const TOKEN_ADDRESS_HEX = 'aa'.repeat(20);
   const ALLOWANCE_AMOUNT_HEX = toWord(100n);
   const START_TIME = 1715664;
@@ -176,7 +169,7 @@ describe('createErc20TokenAllowanceCaveats()', () => {
   const allowanceAmount = '0x64' as const;
   const startTime = 1729900800;
 
-  const contracts: Erc20TokenAllowanceEnforcers = {
+  const enforcers: Erc20TokenAllowanceEnforcers = {
     erc20PeriodTransferEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
     valueLteEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
   };
@@ -195,18 +188,18 @@ describe('createErc20TokenAllowanceCaveats()', () => {
   it('creates erc20Periodic and valueLte caveats', () => {
     const caveats = createErc20TokenAllowanceCaveats({
       permission,
-      contracts,
+      contracts: enforcers,
     });
     const expectedTerms = `0x${tokenAddress.slice(2)}${toWord(BigInt(allowanceAmount))}${UINT256_MAX.slice(2)}${toWord(startTime)}`;
 
     expect(caveats).toStrictEqual([
       {
-        enforcer: contracts.erc20PeriodTransferEnforcer,
+        enforcer: enforcers.erc20PeriodTransferEnforcer,
         terms: expectedTerms,
         args: '0x',
       },
       {
-        enforcer: contracts.valueLteEnforcer,
+        enforcer: enforcers.valueLteEnforcer,
         terms: ZERO_32_BYTES,
         args: '0x',
       },
@@ -225,7 +218,7 @@ describe('createErc20TokenAllowanceCaveats()', () => {
     expect(() =>
       createErc20TokenAllowanceCaveats({
         permission: invalidPermission,
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow();
   });
@@ -240,7 +233,7 @@ describe('createErc20TokenAllowanceCaveats()', () => {
             allowanceAmount: '0x0',
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid erc20-token-allowance permission: allowanceAmount must be a positive number.',
@@ -257,7 +250,7 @@ describe('createErc20TokenAllowanceCaveats()', () => {
             startTime: 0,
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid erc20-token-allowance permission: startTime must be a positive number.',
@@ -278,10 +271,10 @@ describe('createErc20TokenAllowanceCaveats()', () => {
 
     const caveats = createErc20TokenAllowanceCaveats({
       permission: variedPermission,
-      contracts,
+      contracts: enforcers,
     });
 
-    expect(caveats[1]?.enforcer).toBe(contracts.valueLteEnforcer);
+    expect(caveats[1]?.enforcer).toBe(enforcers.valueLteEnforcer);
     expect(caveats[1]?.terms).toBe(ZERO_32_BYTES);
   });
 
@@ -298,11 +291,11 @@ describe('createErc20TokenAllowanceCaveats()', () => {
 
     const caveats = createErc20TokenAllowanceCaveats({
       permission: permissionWithAltToken,
-      contracts,
+      contracts: enforcers,
     });
     const erc20AllowanceTerms = caveats[0]?.terms as Hex;
 
-    expect(caveats[0]?.enforcer).toBe(contracts.erc20PeriodTransferEnforcer);
+    expect(caveats[0]?.enforcer).toBe(enforcers.erc20PeriodTransferEnforcer);
     expect(
       erc20AllowanceTerms.startsWith(`0x${alternateTokenAddress.slice(2)}`),
     ).toBe(true);

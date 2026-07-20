@@ -1,7 +1,3 @@
-import {
-  CHAIN_ID,
-  DELEGATOR_CONTRACTS,
-} from '@metamask/delegation-deployments';
 import { bigIntToHex, type Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
@@ -15,16 +11,15 @@ import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
-import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
+import { checksumEnforcerAddresses } from '../../../src/permissions/utils';
 import type {
   NativeTokenStreamPermission,
   Populated,
 } from '../../../src/types';
-import { toWord } from '../../test-utils';
+import { contracts, toWord } from '../../test-utils';
 
 describe('native-token-stream decoder config', () => {
-  const chainId = CHAIN_ID.sepolia;
-  const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
+  const enforcers = checksumEnforcerAddresses(contracts);
   const {
     timestampEnforcer,
     nativeTokenStreamingEnforcer,
@@ -32,10 +27,8 @@ describe('native-token-stream decoder config', () => {
     nonceEnforcer,
     allowedTargetsEnforcer,
     redeemerEnforcer,
-  } = getChecksumEnforcersByChainId(contracts);
-  const decoder = makeNativeTokenStreamDecoderConfig(
-    getChecksumEnforcersByChainId(contracts),
-  );
+  } = enforcers;
+  const decoder = makeNativeTokenStreamDecoderConfig(enforcers);
   const START_TIME = 1715664;
   const makeTerms = ({
     initialAmount = 10n,
@@ -171,7 +164,7 @@ describe('createNativeTokenStreamCaveats()', () => {
   const amountPerSecond = '0x06f05b59d3b20000' as const;
   const startTime = 1729900800;
 
-  const contracts: NativeTokenStreamEnforcers = {
+  const enforcers: NativeTokenStreamEnforcers = {
     nativeTokenStreamingEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
     exactCalldataEnforcer: '0x5e12Ca712176E7557e4fAa1c8cc27382B60B5e39',
   };
@@ -191,7 +184,7 @@ describe('createNativeTokenStreamCaveats()', () => {
   it('creates nativeTokenStreaming and exactCalldata caveats', () => {
     const caveats = createNativeTokenStreamCaveats({
       permission,
-      contracts,
+      contracts: enforcers,
     });
 
     const initialAmountHex = initialAmount.slice(2).padStart(64, '0');
@@ -202,12 +195,12 @@ describe('createNativeTokenStreamCaveats()', () => {
 
     expect(caveats).toStrictEqual([
       {
-        enforcer: contracts.nativeTokenStreamingEnforcer,
+        enforcer: enforcers.nativeTokenStreamingEnforcer,
         terms: nativeTokenStreamingExpectedTerms,
         args: '0x',
       },
       {
-        enforcer: contracts.exactCalldataEnforcer,
+        enforcer: enforcers.exactCalldataEnforcer,
         terms: '0x',
         args: '0x',
       },
@@ -226,7 +219,7 @@ describe('createNativeTokenStreamCaveats()', () => {
     expect(() =>
       createNativeTokenStreamCaveats({
         permission: invalidPermission,
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow();
   });
@@ -242,7 +235,7 @@ describe('createNativeTokenStreamCaveats()', () => {
             maxAmount: '0x64',
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid native-token-stream permission: maxAmount must be greater than initialAmount.',
@@ -259,7 +252,7 @@ describe('createNativeTokenStreamCaveats()', () => {
             amountPerSecond: '0x0',
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid native-token-stream permission: amountPerSecond must be a positive number.',
@@ -276,7 +269,7 @@ describe('createNativeTokenStreamCaveats()', () => {
             startTime: 0,
           },
         },
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid native-token-stream permission: startTime must be a positive number.',
@@ -298,10 +291,10 @@ describe('createNativeTokenStreamCaveats()', () => {
 
     const caveats = createNativeTokenStreamCaveats({
       permission: variedPermission,
-      contracts,
+      contracts: enforcers,
     });
 
-    expect(caveats[1]?.enforcer).toBe(contracts.exactCalldataEnforcer);
+    expect(caveats[1]?.enforcer).toBe(enforcers.exactCalldataEnforcer);
     expect(caveats[1]?.terms).toBe('0x');
   });
 });

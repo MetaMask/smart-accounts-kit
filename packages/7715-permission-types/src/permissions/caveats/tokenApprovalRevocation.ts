@@ -8,7 +8,7 @@ import type { TokenApprovalRevocationPermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
 import type {
   ChecksumCaveat,
-  ChecksumEnforcersByChainId,
+  EnforcerAddressesByName,
   DecodedPermissionData,
   PermissionDecoderConfig,
 } from '../types';
@@ -21,7 +21,7 @@ import { getTermsByEnforcer } from '../utils';
  * @returns The token-approval-revocation permission decoder configuration.
  */
 export function makeTokenApprovalRevocationDecoderConfig(
-  contractAddresses: ChecksumEnforcersByChainId,
+  contractAddresses: EnforcerAddressesByName,
 ): PermissionDecoderConfig {
   const { timestampEnforcer, approvalRevocationEnforcer, nonceEnforcer } =
     contractAddresses;
@@ -50,7 +50,7 @@ export function makeTokenApprovalRevocationDecoderConfig(
  */
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
-  contractAddresses: ChecksumEnforcersByChainId,
+  contractAddresses: EnforcerAddressesByName,
 ): DecodedPermissionData<TokenApprovalRevocationPermission> {
   const { approvalRevocationEnforcer } = contractAddresses;
 
@@ -82,7 +82,7 @@ function validateAndDecodeData(
  * Enforcers required to build token approval revocation caveats.
  */
 export type TokenApprovalRevocationEnforcers = Pick<
-  ChecksumEnforcersByChainId,
+  EnforcerAddressesByName,
   'approvalRevocationEnforcer'
 >;
 

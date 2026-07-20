@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Export `AllPermissionKeys` type from `@metamask/7715-permission-types`, a union of all permission schema i18n label keys ([#279](https://github.com/MetaMask/smart-accounts-kit/pull/279))
 
+### Changed
+
+- **BREAKING:** `makePermissionDecoderConfigs` now accepts `EnforcerAddressesByName`, which is keyed with specific contract names ([#278](https://github.com/MetaMask/smart-accounts-kit/pull/278))
+  - Removes `ChecksumEnforcersByChainId` and `DeployedContractsByName` types
+
 ## [0.9.0]
 
 ### Added

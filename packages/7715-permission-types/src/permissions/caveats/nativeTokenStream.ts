@@ -12,7 +12,7 @@ import { nativePayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
-  ChecksumEnforcersByChainId,
+  EnforcerAddressesByName,
   DecodedPermissionData,
   PermissionDecoderConfig,
 } from '../types';
@@ -25,7 +25,7 @@ import { getTermsByEnforcer } from '../utils';
  * @returns The native-token-stream permission decoder configuration.
  */
 export function makeNativeTokenStreamDecoderConfig(
-  contractAddresses: ChecksumEnforcersByChainId,
+  contractAddresses: EnforcerAddressesByName,
 ): PermissionDecoderConfig {
   const {
     timestampEnforcer,
@@ -63,7 +63,7 @@ export function makeNativeTokenStreamDecoderConfig(
  */
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
-  contractAddresses: ChecksumEnforcersByChainId,
+  contractAddresses: EnforcerAddressesByName,
 ): DecodedPermissionData<NativeTokenStreamPermission> {
   const { nativeTokenStreamingEnforcer, exactCalldataEnforcer } =
     contractAddresses;
@@ -114,7 +114,7 @@ function validateAndDecodeData(
  * Enforcers required to build native token stream caveats.
  */
 export type NativeTokenStreamEnforcers = Pick<
-  ChecksumEnforcersByChainId,
+  EnforcerAddressesByName,
   'nativeTokenStreamingEnforcer' | 'exactCalldataEnforcer'
 >;
 

@@ -1,7 +1,3 @@
-import {
-  CHAIN_ID,
-  DELEGATOR_CONTRACTS,
-} from '@metamask/delegation-deployments';
 import type { Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
@@ -13,20 +9,18 @@ import {
 } from '../../../src/permissions/caveats/tokenApprovalRevocation';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
-import { getChecksumEnforcersByChainId } from '../../../src/permissions/utils';
+import { checksumEnforcerAddresses } from '../../../src/permissions/utils';
 import type {
   TokenApprovalRevocationPermission,
   Populated,
 } from '../../../src/types';
+import { contracts } from '../../test-utils';
 
 describe('token-approval-revocation decoder config', () => {
-  const chainId = CHAIN_ID.sepolia;
-  const contracts = DELEGATOR_CONTRACTS['1.3.0'][chainId];
+  const enforcers = checksumEnforcerAddresses(contracts);
   const { timestampEnforcer, approvalRevocationEnforcer, nonceEnforcer } =
-    getChecksumEnforcersByChainId(contracts);
-  const decoder = makeTokenApprovalRevocationDecoderConfig(
-    getChecksumEnforcersByChainId(contracts),
-  );
+    enforcers;
+  const decoder = makeTokenApprovalRevocationDecoderConfig(enforcers);
 
   const makeCaveats = (approvalRevocationTerms: Hex): ChecksumCaveat[] => [
     {
@@ -133,7 +127,7 @@ describe('token-approval-revocation decoder config', () => {
 });
 
 describe('createTokenApprovalRevocationCaveats()', () => {
-  const contracts: TokenApprovalRevocationEnforcers = {
+  const enforcers: TokenApprovalRevocationEnforcers = {
     approvalRevocationEnforcer: '0x7356Ed4321Ff9e7DAE246461829cDC170ff660Ab',
   };
 
@@ -154,12 +148,12 @@ describe('createTokenApprovalRevocationCaveats()', () => {
   it('creates approvalRevocation caveat', () => {
     const caveats = createTokenApprovalRevocationCaveats({
       permission,
-      contracts,
+      contracts: enforcers,
     });
 
     expect(caveats).toStrictEqual([
       {
-        enforcer: contracts.approvalRevocationEnforcer,
+        enforcer: enforcers.approvalRevocationEnforcer,
         terms: '0x3f',
         args: '0x',
       },
@@ -182,12 +176,12 @@ describe('createTokenApprovalRevocationCaveats()', () => {
 
     const caveats = createTokenApprovalRevocationCaveats({
       permission: singleFlagPermission,
-      contracts,
+      contracts: enforcers,
     });
 
     expect(caveats).toStrictEqual([
       {
-        enforcer: contracts.approvalRevocationEnforcer,
+        enforcer: enforcers.approvalRevocationEnforcer,
         terms: '0x01',
         args: '0x',
       },
@@ -211,7 +205,7 @@ describe('createTokenApprovalRevocationCaveats()', () => {
     expect(() =>
       createTokenApprovalRevocationCaveats({
         permission: noFlagPermission,
-        contracts,
+        contracts: enforcers,
       }),
     ).toThrow(
       'Invalid ApprovalRevocation terms: at least one revocation primitive must be enabled',

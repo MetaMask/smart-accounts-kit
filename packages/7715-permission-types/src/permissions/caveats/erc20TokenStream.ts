@@ -13,7 +13,7 @@ import { redeemerRuleDecoder } from '../rules/redeemer';
 import type {
   ChecksumCaveat,
   DecodedPermissionData,
-  ChecksumEnforcersByChainId,
+  EnforcerAddressesByName,
   PermissionDecoderConfig,
 } from '../types';
 import { getTermsByEnforcer, ZERO_32_BYTES } from '../utils';
@@ -25,7 +25,7 @@ import { getTermsByEnforcer, ZERO_32_BYTES } from '../utils';
  * @returns The erc20-token-stream permission decoder configuration.
  */
 export function makeErc20TokenStreamDecoderConfig(
-  contractAddresses: ChecksumEnforcersByChainId,
+  contractAddresses: EnforcerAddressesByName,
 ): PermissionDecoderConfig {
   const {
     timestampEnforcer,
@@ -63,7 +63,7 @@ export function makeErc20TokenStreamDecoderConfig(
  */
 function validateAndDecodeData(
   caveats: ChecksumCaveat[],
-  contractAddresses: ChecksumEnforcersByChainId,
+  contractAddresses: EnforcerAddressesByName,
 ): DecodedPermissionData<Erc20TokenStreamPermission> {
   const { erc20StreamingEnforcer, valueLteEnforcer } = contractAddresses;
 
@@ -114,7 +114,7 @@ function validateAndDecodeData(
  * Enforcers required to build ERC-20 token stream caveats.
  */
 export type Erc20TokenStreamEnforcers = Pick<
-  ChecksumEnforcersByChainId,
+  EnforcerAddressesByName,
   'erc20StreamingEnforcer' | 'valueLteEnforcer'
 >;
 

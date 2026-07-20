@@ -5,8 +5,8 @@ import { makeNativeTokenAllowanceDecoderConfig } from './caveats/nativeTokenAllo
 import { makeNativeTokenPeriodicDecoderConfig } from './caveats/nativeTokenPeriodic';
 import { makeNativeTokenStreamDecoderConfig } from './caveats/nativeTokenStream';
 import { makeTokenApprovalRevocationDecoderConfig } from './caveats/tokenApprovalRevocation';
-import type { DeployedContractsByName, PermissionDecoderConfig } from './types';
-import { getChecksumEnforcersByChainId } from './utils';
+import type { EnforcerAddressesByName, PermissionDecoderConfig } from './types';
+import { checksumEnforcerAddresses } from './utils';
 
 export {
   createErc20TokenStreamCaveats,
@@ -40,7 +40,7 @@ export {
 export type { ExpiryRule } from './rules/expiry';
 export type { PayeeRule } from './rules/payee';
 export type { RedeemerRule } from './rules/redeemer';
-export type { DeployedContractsByName, PermissionDecoderConfig };
+export type { EnforcerAddressesByName, PermissionDecoderConfig };
 export {
   DAY,
   FORTNIGHT,
@@ -87,6 +87,7 @@ export type {
   TokenResolution,
   TokenVariant,
 } from './schema';
+
 /**
  * Builds the canonical set of permission decoders for a chain.
  *
@@ -94,17 +95,17 @@ export type {
  * @returns The full set of permission decoders for the chain.
  */
 export const makePermissionDecoderConfigs = (
-  contracts: DeployedContractsByName,
+  contracts: EnforcerAddressesByName,
 ): PermissionDecoderConfig[] => {
-  const contractAddresses = getChecksumEnforcersByChainId(contracts);
+  const enforcerAddresses = checksumEnforcerAddresses(contracts);
 
   return [
-    makeNativeTokenStreamDecoderConfig(contractAddresses),
-    makeNativeTokenPeriodicDecoderConfig(contractAddresses),
-    makeNativeTokenAllowanceDecoderConfig(contractAddresses),
-    makeErc20TokenStreamDecoderConfig(contractAddresses),
-    makeErc20TokenPeriodicDecoderConfig(contractAddresses),
-    makeErc20TokenAllowanceDecoderConfig(contractAddresses),
-    makeTokenApprovalRevocationDecoderConfig(contractAddresses),
+    makeNativeTokenStreamDecoderConfig(enforcerAddresses),
+    makeNativeTokenPeriodicDecoderConfig(enforcerAddresses),
+    makeNativeTokenAllowanceDecoderConfig(enforcerAddresses),
+    makeErc20TokenStreamDecoderConfig(enforcerAddresses),
+    makeErc20TokenPeriodicDecoderConfig(enforcerAddresses),
+    makeErc20TokenAllowanceDecoderConfig(enforcerAddresses),
+    makeTokenApprovalRevocationDecoderConfig(enforcerAddresses),
   ];
 };

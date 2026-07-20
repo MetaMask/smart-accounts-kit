@@ -1,6 +1,6 @@
 import { getChecksumAddress } from '@metamask/utils';
 
-import type { ChecksumCaveat, ChecksumEnforcersByChainId } from './types';
+import type { ChecksumCaveat, EnforcerAddressesByName } from './types';
 import type { Hex } from '../types';
 
 /**
@@ -25,21 +25,6 @@ export const ERC20_APPROVE_ZERO_AMOUNT_TERMS =
 
 /** Maximum period duration in seconds. */
 export const MAX_PERIOD_DURATION = 10 * 365 * 24 * 60 * 60;
-
-const ENFORCER_CONTRACT_NAMES = {
-  ERC20PeriodTransferEnforcer: 'ERC20PeriodTransferEnforcer',
-  ERC20StreamingEnforcer: 'ERC20StreamingEnforcer',
-  ApprovalRevocationEnforcer: 'ApprovalRevocationEnforcer',
-  ExactCalldataEnforcer: 'ExactCalldataEnforcer',
-  NativeTokenPeriodTransferEnforcer: 'NativeTokenPeriodTransferEnforcer',
-  NativeTokenStreamingEnforcer: 'NativeTokenStreamingEnforcer',
-  TimestampEnforcer: 'TimestampEnforcer',
-  ValueLteEnforcer: 'ValueLteEnforcer',
-  NonceEnforcer: 'NonceEnforcer',
-  AllowedCalldataEnforcer: 'AllowedCalldataEnforcer',
-  AllowedTargetsEnforcer: 'AllowedTargetsEnforcer',
-  RedeemerEnforcer: 'RedeemerEnforcer',
-};
 
 /**
  * Gets the terms for a given enforcer from a list of caveats.
@@ -160,68 +145,35 @@ export function splitHex<const TLengths extends readonly number[]>(
  * @param contracts - Deployed contract-name-to-address map for a chain.
  * @returns Checksummed enforcer addresses keyed by known enforcer role.
  */
-export const getChecksumEnforcersByChainId = (
-  contracts: Record<string, Hex>,
-): ChecksumEnforcersByChainId => {
-  const getChecksumContractAddress = (contractName: string): Hex => {
-    const address = contracts[contractName];
-
-    if (!address) {
-      throw new Error(`Contract not found: ${contractName}`);
-    }
-
-    return getChecksumAddress(address);
-  };
-
-  const erc20StreamingEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.ERC20StreamingEnforcer,
-  );
-  const erc20PeriodTransferEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.ERC20PeriodTransferEnforcer,
-  );
-  const nativeTokenStreamingEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.NativeTokenStreamingEnforcer,
-  );
-  const nativeTokenPeriodTransferEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.NativeTokenPeriodTransferEnforcer,
-  );
-  const approvalRevocationEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.ApprovalRevocationEnforcer,
-  );
-  const exactCalldataEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.ExactCalldataEnforcer,
-  );
-  const valueLteEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.ValueLteEnforcer,
-  );
-  const timestampEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.TimestampEnforcer,
-  );
-  const nonceEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.NonceEnforcer,
-  );
-  const allowedCalldataEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.AllowedCalldataEnforcer,
-  );
-  const allowedTargetsEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.AllowedTargetsEnforcer,
-  );
-  const redeemerEnforcer = getChecksumContractAddress(
-    ENFORCER_CONTRACT_NAMES.RedeemerEnforcer,
-  );
-
+export const checksumEnforcerAddresses = (
+  contracts: EnforcerAddressesByName,
+): EnforcerAddressesByName => {
   return {
-    erc20StreamingEnforcer,
-    erc20PeriodTransferEnforcer,
-    nativeTokenStreamingEnforcer,
-    nativeTokenPeriodTransferEnforcer,
-    approvalRevocationEnforcer,
-    exactCalldataEnforcer,
-    valueLteEnforcer,
-    timestampEnforcer,
-    nonceEnforcer,
-    allowedCalldataEnforcer,
-    allowedTargetsEnforcer,
-    redeemerEnforcer,
+    erc20StreamingEnforcer: getChecksumAddress(
+      contracts.erc20StreamingEnforcer,
+    ),
+    erc20PeriodTransferEnforcer: getChecksumAddress(
+      contracts.erc20PeriodTransferEnforcer,
+    ),
+    nativeTokenStreamingEnforcer: getChecksumAddress(
+      contracts.nativeTokenStreamingEnforcer,
+    ),
+    nativeTokenPeriodTransferEnforcer: getChecksumAddress(
+      contracts.nativeTokenPeriodTransferEnforcer,
+    ),
+    approvalRevocationEnforcer: getChecksumAddress(
+      contracts.approvalRevocationEnforcer,
+    ),
+    exactCalldataEnforcer: getChecksumAddress(contracts.exactCalldataEnforcer),
+    valueLteEnforcer: getChecksumAddress(contracts.valueLteEnforcer),
+    timestampEnforcer: getChecksumAddress(contracts.timestampEnforcer),
+    nonceEnforcer: getChecksumAddress(contracts.nonceEnforcer),
+    allowedCalldataEnforcer: getChecksumAddress(
+      contracts.allowedCalldataEnforcer,
+    ),
+    allowedTargetsEnforcer: getChecksumAddress(
+      contracts.allowedTargetsEnforcer,
+    ),
+    redeemerEnforcer: getChecksumAddress(contracts.redeemerEnforcer),
   };
 };

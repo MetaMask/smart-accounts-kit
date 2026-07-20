@@ -2,24 +2,6 @@ import type { Caveat } from '@metamask/delegation-core';
 
 import type { Hex, PermissionTypes, Rule } from '../types';
 
-/**
- * Checksummed enforcer contract addresses for a chain (from getChecksumEnforcersByChainId).
- */
-export type ChecksumEnforcersByChainId = {
-  erc20StreamingEnforcer: Hex;
-  erc20PeriodTransferEnforcer: Hex;
-  nativeTokenStreamingEnforcer: Hex;
-  nativeTokenPeriodTransferEnforcer: Hex;
-  approvalRevocationEnforcer: Hex;
-  exactCalldataEnforcer: Hex;
-  valueLteEnforcer: Hex;
-  timestampEnforcer: Hex;
-  nonceEnforcer: Hex;
-  allowedCalldataEnforcer: Hex;
-  allowedTargetsEnforcer: Hex;
-  redeemerEnforcer: Hex;
-};
-
 /** Caveat with checksummed enforcer address; used by rule decode functions. */
 export type ChecksumCaveat = Caveat<Hex>;
 
@@ -39,7 +21,7 @@ export type PermissionType = PermissionTypes['type'];
  * A function that inspects checksummed caveats and optionally produces a Rule.
  */
 export type RuleDecoder = (args: {
-  contractAddresses: ChecksumEnforcersByChainId;
+  contractAddresses: EnforcerAddressesByName;
   caveats: ChecksumCaveat[];
   requiredEnforcers: Map<Hex, number>;
 }) => Rule | null;
@@ -49,18 +31,18 @@ export type RuleDecoder = (args: {
  */
 export type PermissionDecoderConfig = {
   permissionType: PermissionType;
-  contractAddresses: ChecksumEnforcersByChainId;
+  contractAddresses: EnforcerAddressesByName;
   optionalEnforcers: Hex[];
   requiredEnforcers: Record<Hex, number>;
   rules: RuleDecoder[];
   validateAndDecodeData: (
     caveats: ChecksumCaveat[],
-    contractAddresses: ChecksumEnforcersByChainId,
+    contractAddresses: EnforcerAddressesByName,
   ) => DecodedPermissionData;
 };
 
 export type PermissionDecoderSpec = (
-  contractAddresses: ChecksumEnforcersByChainId,
+  contractAddresses: EnforcerAddressesByName,
 ) => PermissionDecoderConfig;
 
 /**
@@ -86,7 +68,21 @@ export type PermissionDecoder = {
   validateAndDecodePermission: (caveats: Caveat[]) => ValidateAndDecodeResult;
 };
 
+export type EnforcerContractName =
+  | 'erc20StreamingEnforcer'
+  | 'erc20PeriodTransferEnforcer'
+  | 'nativeTokenStreamingEnforcer'
+  | 'nativeTokenPeriodTransferEnforcer'
+  | 'approvalRevocationEnforcer'
+  | 'exactCalldataEnforcer'
+  | 'valueLteEnforcer'
+  | 'timestampEnforcer'
+  | 'nonceEnforcer'
+  | 'allowedCalldataEnforcer'
+  | 'allowedTargetsEnforcer'
+  | 'redeemerEnforcer';
+
 /**
- * A map of deployed contract names to addresses for one chain.
+ * A map of enforcer contract names to addresses.
  */
-export type DeployedContractsByName = Record<string, Hex>;
+export type EnforcerAddressesByName = Record<EnforcerContractName, Hex>;

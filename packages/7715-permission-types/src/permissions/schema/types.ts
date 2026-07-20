@@ -57,9 +57,9 @@ export type TokenVariant = 'native' | 'erc20';
 
 /**
  * Union of all i18n label keys used across permission schema field definitions.
- * Useful for building exhaustive `Record<AllPermissionKeys, ...>` translation maps.
+ * Useful for building exhaustive `Record<TranslationKeys, ...>` translation maps.
  */
-export type AllPermissionKeys =
+export type TranslationKeys =
   | 'account'
   | 'amount'
   | 'confirmFieldAllowance'
@@ -87,7 +87,7 @@ export type AllPermissionKeys =
 /** Shared config for schema rows that read a value from render context. */
 export type BaseField<TType extends string, TValueType> = {
   type: TType;
-  labelKey: AllPermissionKeys;
+  labelKey: TranslationKeys;
   testId: string;
   getValue: (ctx: PermissionRenderContext) => TValueType;
   isVisible: (ctx: PermissionRenderContext) => boolean;

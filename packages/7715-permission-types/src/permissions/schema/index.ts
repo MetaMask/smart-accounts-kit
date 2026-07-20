@@ -28,7 +28,6 @@ export {
 export type {
   AccountField,
   AddressField,
-  AllPermissionKeys,
   AmountField,
   DateField,
   DividerElement,
@@ -51,6 +50,7 @@ export type {
   TextField,
   TokenResolution,
   TokenVariant,
+  TranslationKeys,
 } from './types';
 export {
   convertAmountPerSecondToAmountPerPeriod,

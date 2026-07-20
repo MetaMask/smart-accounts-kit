@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0]
+
 ### Added
 
 - Constants `METAMASK_FACILITATOR_ADDRESSES`, `METAMASK_FACILITATOR_ADDRESSES_DEV` added to @metamask/smart-accounts-kit/experimental ([#255](https://github.com/MetaMask/smart-accounts-kit/pull/255))
@@ -14,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Experimental `createx402DelegationProvider` now resolves redeemers as the intersection of `facilitatorAddresses` and `redeemer.addresses` ([#256](https://github.com/MetaMask/smart-accounts-kit/pull/256))
-- Bumped @metamask/7715-permission-types from `^0.7.1` to `^0.9.0` ([#273](https://github.com/MetaMask/smart-accounts-kit/pull/273), ([#276](https://github.com/MetaMask/smart-accounts-kit/pull/276)))
+- Bumped @metamask/7715-permission-types from `^0.7.1` to `^1.0.0` ([#273](https://github.com/MetaMask/smart-accounts-kit/pull/273), [#276](https://github.com/MetaMask/smart-accounts-kit/pull/276), [#281](https://github.com/MetaMask/smart-accounts-kit/pull/281))
 
 ## [1.6.0]
 
@@ -168,7 +170,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.6.0...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.7.0...HEAD
+[1.7.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.6.0...@metamask/smart-accounts-kit@1.7.0
 [1.6.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.5.0...@metamask/smart-accounts-kit@1.6.0
 [1.5.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.4.0...@metamask/smart-accounts-kit@1.5.0
 [1.4.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.3.0...@metamask/smart-accounts-kit@1.4.0

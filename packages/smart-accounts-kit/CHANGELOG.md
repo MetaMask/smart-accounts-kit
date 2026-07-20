@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0]
+
 ### Uncategorized
 
 - Release/34.0.0 ([#273](https://github.com/MetaMask/smart-accounts-kit/pull/273))
@@ -176,7 +178,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.6.0...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.7.0...HEAD
+[1.7.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.6.0...@metamask/smart-accounts-kit@1.7.0
 [1.6.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.5.0...@metamask/smart-accounts-kit@1.6.0
 [1.5.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.4.0...@metamask/smart-accounts-kit@1.5.0
 [1.4.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.3.0...@metamask/smart-accounts-kit@1.4.0

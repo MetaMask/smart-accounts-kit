@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- Release/34.0.0 ([#273](https://github.com/MetaMask/smart-accounts-kit/pull/273))
+- Fix casting of repo URL from https://github.com/metamask/smart-accounts-kit to https://github.com/MetaMask/smart-accounts-kit across package.json and CHANGELOG.md files ([#272](https://github.com/MetaMask/smart-accounts-kit/pull/272))
+- Revert "Release/34.0.0 (#269)" ([#269](https://github.com/MetaMask/smart-accounts-kit/pull/269))
+- chore(deps): bump the npm_and_yarn group across 1 directory with 6 updates ([#266](https://github.com/MetaMask/smart-accounts-kit/pull/266))
+- Release/34.0.0 ([#269](https://github.com/MetaMask/smart-accounts-kit/pull/269))
+
 ### Added
 
 - Constants `METAMASK_FACILITATOR_ADDRESSES`, `METAMASK_FACILITATOR_ADDRESSES_DEV` added to @metamask/smart-accounts-kit/experimental ([#255](https://github.com/MetaMask/smart-accounts-kit/pull/255))
@@ -14,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Experimental `createx402DelegationProvider` now resolves redeemers as the intersection of `facilitatorAddresses` and `redeemer.addresses` ([#256](https://github.com/MetaMask/smart-accounts-kit/pull/256))
-- Bumped @metamask/7715-permission-types from `^0.7.1` to `^0.9.0` ([#273](https://github.com/MetaMask/smart-accounts-kit/pull/273), ([#276](https://github.com/MetaMask/smart-accounts-kit/pull/276)))
+- Bumped @metamask/7715-permission-types from `^0.7.1` to `^0.9.0` ([#273](https://github.com/MetaMask/smart-accounts-kit/pull/273),) ([#276](https://github.com/MetaMask/smart-accounts-kit/pull/276))
 
 ## [1.6.0]
 

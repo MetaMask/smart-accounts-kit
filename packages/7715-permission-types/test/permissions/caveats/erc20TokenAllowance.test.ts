@@ -11,6 +11,7 @@ import {
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
+import { startTimeRuleDecoder } from '../../../src/permissions/rules/startTime';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
 import {
   checksumEnforcerAddresses,
@@ -90,6 +91,7 @@ describe('erc20-token-allowance decoder config', () => {
     it('includes expected rule decoders in order', () => {
       expect(decoder.rules).toStrictEqual([
         expiryRuleDecoder,
+        startTimeRuleDecoder,
         redeemerRuleDecoder,
         erc20PayeeRuleDecoder,
       ]);

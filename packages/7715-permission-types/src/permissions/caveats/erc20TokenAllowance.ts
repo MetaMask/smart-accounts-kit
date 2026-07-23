@@ -11,6 +11,7 @@ import type { Erc20TokenAllowancePermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
 import { erc20PayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
+import { startTimeRuleDecoder } from '../rules/startTime';
 import type {
   ChecksumCaveat,
   EnforcerAddressesByName,
@@ -55,7 +56,12 @@ export function makeErc20TokenAllowanceDecoderConfig(
       [timestampEnforcer]: 1,
       [nonceEnforcer]: 1,
     },
-    rules: [expiryRuleDecoder, redeemerRuleDecoder, erc20PayeeRuleDecoder],
+    rules: [
+      expiryRuleDecoder,
+      startTimeRuleDecoder,
+      redeemerRuleDecoder,
+      erc20PayeeRuleDecoder,
+    ],
     validateAndDecodeData,
   };
 }

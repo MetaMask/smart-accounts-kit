@@ -11,6 +11,7 @@ import type { NativeTokenAllowancePermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
 import { nativePayeeRuleDecoder } from '../rules/payee';
 import { redeemerRuleDecoder } from '../rules/redeemer';
+import { startTimeRuleDecoder } from '../rules/startTime';
 import type {
   ChecksumCaveat,
   EnforcerAddressesByName,
@@ -50,7 +51,12 @@ export function makeNativeTokenAllowanceDecoderConfig(
       [timestampEnforcer]: 1,
       [nonceEnforcer]: 1,
     },
-    rules: [expiryRuleDecoder, redeemerRuleDecoder, nativePayeeRuleDecoder],
+    rules: [
+      expiryRuleDecoder,
+      startTimeRuleDecoder,
+      redeemerRuleDecoder,
+      nativePayeeRuleDecoder,
+    ],
     validateAndDecodeData,
   };
 }

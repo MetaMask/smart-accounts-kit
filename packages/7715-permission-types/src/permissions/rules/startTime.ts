@@ -3,56 +3,56 @@ import { decodeTimestampTerms } from '@metamask/delegation-core';
 import type { RuleDecoder } from '../types';
 import { getTermsByEnforcer } from '../utils';
 
-export const EXECUTION_PERMISSION_EXPIRY_RULE_TYPE = 'expiry' as const;
+export const EXECUTION_PERMISSION_START_TIME_RULE_TYPE = 'startTime' as const;
 
 /**
- * Execution permission rule derived from the TimestampEnforcer's beforeThreshold.
+ * Execution permission rule derived from the TimestampEnforcer's afterThreshold.
  */
-export type ExpiryRule = {
-  type: 'expiry';
+export type StartTimeRule = {
+  type: 'startTime';
   data: {
-    timestamp: number;
+    startTime: number;
   };
 };
 
 /**
- * Rule decoder that extracts the expiry threshold from a TimestampEnforcer
+ * Rule decoder that extracts the start-time threshold from a TimestampEnforcer
  * caveat, when present.
  *
  * @param options0 - Rule decoder arguments.
  * @param options0.contractAddresses - Checksummed enforcer addresses for the chain.
  * @param options0.caveats - Checksummed caveats from the delegation.
- * @returns The decoded expiry rule when present, otherwise `null`.
+ * @returns The decoded start-time rule when present, otherwise `null`.
  */
-export const expiryRuleDecoder: RuleDecoder = ({
+export const startTimeRuleDecoder: RuleDecoder = ({
   contractAddresses,
   caveats,
 }) => {
   const { timestampEnforcer } = contractAddresses;
 
-  const expiryTerms = getTermsByEnforcer({
+  const terms = getTermsByEnforcer({
     caveats,
     enforcer: timestampEnforcer,
     throwIfNotFound: false,
   });
 
-  if (!expiryTerms) {
+  if (!terms) {
     return null;
   }
 
-  if (expiryTerms.length !== 66) {
+  if (terms.length !== 66) {
     throw new Error('Invalid TimestampEnforcer terms length');
   }
 
-  const { beforeThreshold } = decodeTimestampTerms(expiryTerms);
-  const timestamp = Number(beforeThreshold);
+  const { afterThreshold } = decodeTimestampTerms(terms);
+  const startTime = Number(afterThreshold);
 
-  if (timestamp <= 0) {
+  if (startTime <= 0) {
     return null;
   }
 
   return {
-    type: EXECUTION_PERMISSION_EXPIRY_RULE_TYPE,
-    data: { timestamp },
+    type: EXECUTION_PERMISSION_START_TIME_RULE_TYPE,
+    data: { startTime },
   };
 };

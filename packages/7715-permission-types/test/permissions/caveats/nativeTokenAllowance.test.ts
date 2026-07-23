@@ -11,6 +11,7 @@ import {
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';
+import { startTimeRuleDecoder } from '../../../src/permissions/rules/startTime';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
 import { checksumEnforcerAddresses } from '../../../src/permissions/utils';
 import type {
@@ -86,6 +87,7 @@ describe('native-token-allowance decoder config', () => {
     it('includes expected rule decoders in order', () => {
       expect(decoder.rules).toStrictEqual([
         expiryRuleDecoder,
+        startTimeRuleDecoder,
         redeemerRuleDecoder,
         nativePayeeRuleDecoder,
       ]);

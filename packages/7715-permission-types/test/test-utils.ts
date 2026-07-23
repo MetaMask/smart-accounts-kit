@@ -6,9 +6,12 @@ export const toWord = (value: bigint | number): string =>
 export const contracts: EnforcerAddressesByName = {
   erc20StreamingEnforcer: '0x1234567890abcdef1234567890abcdef12345678',
   erc20PeriodTransferEnforcer: '0x234567890abcdef1234567890abcdef123456781',
+  erc20TransferAmountEnforcer: '0xcc34567890abcdef1234567890abcdef12345678',
   nativeTokenStreamingEnforcer: '0x34567890abcdef1234567890abcdef1234567812',
   nativeTokenPeriodTransferEnforcer:
     '0x4567890abcdef1234567890abcdef12345678123',
+  nativeTokenTransferAmountEnforcer:
+    '0xd4567890abcdef1234567890abcdef1234567812',
   approvalRevocationEnforcer: '0x567890abcdef1234567890abcdef123456781234',
   exactCalldataEnforcer: '0x67890abcdef1234567890abcdef1234567812345',
   valueLteEnforcer: '0x7890abcdef1234567890abcdef12345678123456',

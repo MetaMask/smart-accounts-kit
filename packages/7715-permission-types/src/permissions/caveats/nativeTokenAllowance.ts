@@ -1,9 +1,11 @@
 import type { Caveat } from '@metamask/delegation-core';
 import {
   createExactCalldataTerms,
-  createNativeTokenPeriodTransferTerms,
+  createNativeTokenTransferAmountTerms,
+  createTimestampTerms,
+  decodeTimestampTerms,
 } from '@metamask/delegation-core';
-import { hexToBigInt, hexToNumber } from '@metamask/utils';
+import { hexToBigInt } from '@metamask/utils';
 
 import type { NativeTokenAllowancePermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
@@ -15,13 +17,7 @@ import type {
   DecodedPermissionData,
   PermissionDecoderConfig,
 } from '../types';
-import {
-  getByteLength,
-  getTermsByEnforcer,
-  splitHex,
-  UINT256_MAX,
-  ZERO_32_BYTES,
-} from '../utils';
+import { getByteLength, getTermsByEnforcer, ZERO_32_BYTES } from '../utils';
 
 /**
  * Builds the configuration for the native-token-allowance permission decoder.
@@ -34,7 +30,7 @@ export function makeNativeTokenAllowanceDecoderConfig(
 ): PermissionDecoderConfig {
   const {
     timestampEnforcer,
-    nativeTokenPeriodTransferEnforcer,
+    nativeTokenTransferAmountEnforcer,
     exactCalldataEnforcer,
     nonceEnforcer,
     allowedTargetsEnforcer,
@@ -45,13 +41,13 @@ export function makeNativeTokenAllowanceDecoderConfig(
     permissionType: 'native-token-allowance',
     contractAddresses,
     optionalEnforcers: [
-      timestampEnforcer, // expiry rule
       redeemerEnforcer, // redeemer rule
       allowedTargetsEnforcer, // payee rule
     ],
     requiredEnforcers: {
-      [nativeTokenPeriodTransferEnforcer]: 1,
+      [nativeTokenTransferAmountEnforcer]: 1,
       [exactCalldataEnforcer]: 1,
+      [timestampEnforcer]: 1,
       [nonceEnforcer]: 1,
     },
     rules: [expiryRuleDecoder, redeemerRuleDecoder, nativePayeeRuleDecoder],
@@ -70,8 +66,11 @@ function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: EnforcerAddressesByName,
 ): DecodedPermissionData<NativeTokenAllowancePermission> {
-  const { nativeTokenPeriodTransferEnforcer, exactCalldataEnforcer } =
-    contractAddresses;
+  const {
+    nativeTokenTransferAmountEnforcer,
+    exactCalldataEnforcer,
+    timestampEnforcer,
+  } = contractAddresses;
 
   const exactCalldataTerms = getTermsByEnforcer({
     caveats,
@@ -82,39 +81,33 @@ function validateAndDecodeData(
     throw new Error('Invalid exact-calldata terms: must be 0x');
   }
 
-  const terms = getTermsByEnforcer({
+  const allowanceAmount = getTermsByEnforcer({
     caveats,
-    enforcer: nativeTokenPeriodTransferEnforcer,
+    enforcer: nativeTokenTransferAmountEnforcer,
   });
 
-  const EXPECTED_TERMS_BYTELENGTH = 96; // 32 + 32 + 32
+  const EXPECTED_TERMS_BYTELENGTH = 32;
 
-  if (getByteLength(terms) !== EXPECTED_TERMS_BYTELENGTH) {
-    throw new Error('Invalid native-token-allowance terms: expected 96 bytes');
-  }
-
-  const [allowanceAmount, periodDurationRaw, startTimeRaw] = splitHex(
-    terms,
-    [32, 32, 32],
-  );
-
-  if (periodDurationRaw.toLowerCase() !== UINT256_MAX) {
-    throw new Error(
-      'Invalid native-token-allowance terms: periodDuration must be UINT256_MAX',
-    );
-  }
-
-  const startTime = hexToNumber(startTimeRaw);
-
-  if (startTime === 0) {
-    throw new Error(
-      'Invalid native-token-allowance terms: startTime must be a positive number',
-    );
+  if (getByteLength(allowanceAmount) !== EXPECTED_TERMS_BYTELENGTH) {
+    throw new Error('Invalid native-token-allowance terms: expected 32 bytes');
   }
 
   if (allowanceAmount === ZERO_32_BYTES) {
     throw new Error(
       'Invalid native-token-allowance terms: allowanceAmount must be a positive number',
+    );
+  }
+
+  const timestampTerms = getTermsByEnforcer({
+    caveats,
+    enforcer: timestampEnforcer,
+  });
+
+  const { afterThreshold: startTime } = decodeTimestampTerms(timestampTerms);
+
+  if (startTime === 0) {
+    throw new Error(
+      'Invalid native-token-allowance terms: startTime must be a positive number',
     );
   }
 
@@ -126,7 +119,9 @@ function validateAndDecodeData(
  */
 export type NativeTokenAllowanceEnforcers = Pick<
   EnforcerAddressesByName,
-  'nativeTokenPeriodTransferEnforcer' | 'exactCalldataEnforcer'
+  | 'nativeTokenTransferAmountEnforcer'
+  | 'exactCalldataEnforcer'
+  | 'timestampEnforcer'
 >;
 
 /**
@@ -135,7 +130,7 @@ export type NativeTokenAllowanceEnforcers = Pick<
  * @param options0 - Caveat builder arguments.
  * @param options0.permission - Fully populated native-token-allowance permission data.
  * @param options0.contracts - Enforcer addresses used to construct caveats.
- * @returns The native token allowance and exact-calldata caveats.
+ * @returns The native token allowance, exact-calldata, and start-time caveats.
  */
 export function createNativeTokenAllowanceCaveats({
   permission,
@@ -159,13 +154,10 @@ export function createNativeTokenAllowanceCaveats({
     );
   }
 
-  const nativeTokenPeriodTransferCaveat: Caveat = {
-    enforcer: contracts.nativeTokenPeriodTransferEnforcer,
-    terms: createNativeTokenPeriodTransferTerms({
-      periodAmount: allowanceAmountBigInt,
-      // delegation-core accepts bigint for encoding although the type is `number`.
-      periodDuration: BigInt(UINT256_MAX) as unknown as number,
-      startDate: startTime,
+  const nativeTokenTransferAmountCaveat: Caveat = {
+    enforcer: contracts.nativeTokenTransferAmountEnforcer,
+    terms: createNativeTokenTransferAmountTerms({
+      maxAmount: allowanceAmountBigInt,
     }),
     args: '0x',
   };
@@ -176,5 +168,18 @@ export function createNativeTokenAllowanceCaveats({
     args: '0x',
   };
 
-  return [nativeTokenPeriodTransferCaveat, exactCalldataCaveat];
+  const timestampCaveat: Caveat = {
+    enforcer: contracts.timestampEnforcer,
+    terms: createTimestampTerms({
+      afterThreshold: startTime,
+      beforeThreshold: 0,
+    }),
+    args: '0x',
+  };
+
+  return [
+    nativeTokenTransferAmountCaveat,
+    exactCalldataCaveat,
+    timestampCaveat,
+  ];
 }

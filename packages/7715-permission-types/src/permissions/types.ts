@@ -71,8 +71,10 @@ export type PermissionDecoder = {
 export type EnforcerContractName =
   | 'erc20StreamingEnforcer'
   | 'erc20PeriodTransferEnforcer'
+  | 'erc20TransferAmountEnforcer'
   | 'nativeTokenStreamingEnforcer'
   | 'nativeTokenPeriodTransferEnforcer'
+  | 'nativeTokenTransferAmountEnforcer'
   | 'approvalRevocationEnforcer'
   | 'exactCalldataEnforcer'
   | 'valueLteEnforcer'

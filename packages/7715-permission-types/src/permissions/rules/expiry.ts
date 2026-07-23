@@ -7,17 +7,21 @@ export const EXECUTION_PERMISSION_EXPIRY_RULE_TYPE = 'expiry' as const;
 
 /**
  * Execution permission rule derived from TimestampEnforcer caveats.
+ *
+ * data.timestamp - the expiry (beforeThreshold), when the enforcer sets an upper bound.
+ * data.startTime - the start time (afterThreshold), when the enforcer sets a lower bound.
  */
 export type ExpiryRule = {
   type: 'expiry';
   data: {
-    timestamp: number;
+    timestamp?: number;
+    startTime?: number;
   };
 };
 
 /**
- * Rule decoder that extracts the expiry timestamp from a TimestampEnforcer
- * caveat, when present.
+ * Rule decoder that extracts the expiry and/or start-time thresholds from a
+ * TimestampEnforcer caveat, when present.
  *
  * @param options0 - Rule decoder arguments.
  * @param options0.contractAddresses - Checksummed enforcer addresses for the chain.
@@ -48,18 +52,15 @@ export const expiryRuleDecoder: RuleDecoder = ({
   const timestampBeforeThreshold = Number(decodedTerms.beforeThreshold);
   const timestampAfterThreshold = Number(decodedTerms.afterThreshold);
 
-  if (timestampBeforeThreshold <= 0) {
-    throw new Error(
-      'Invalid expiry: timestampBeforeThreshold must be greater than 0',
-    );
-  }
-
-  if (timestampAfterThreshold !== 0) {
-    throw new Error('Invalid expiry: timestampAfterThreshold must be 0');
-  }
-
   return {
     type: EXECUTION_PERMISSION_EXPIRY_RULE_TYPE,
-    data: { timestamp: timestampBeforeThreshold },
+    data: {
+      ...(timestampBeforeThreshold > 0 && {
+        timestamp: timestampBeforeThreshold,
+      }),
+      ...(timestampAfterThreshold > 0 && {
+        startTime: timestampAfterThreshold,
+      }),
+    },
   };
 };

@@ -155,11 +155,17 @@ export const checksumEnforcerAddresses = (
     erc20PeriodTransferEnforcer: getChecksumAddress(
       contracts.erc20PeriodTransferEnforcer,
     ),
+    erc20TransferAmountEnforcer: getChecksumAddress(
+      contracts.erc20TransferAmountEnforcer,
+    ),
     nativeTokenStreamingEnforcer: getChecksumAddress(
       contracts.nativeTokenStreamingEnforcer,
     ),
     nativeTokenPeriodTransferEnforcer: getChecksumAddress(
       contracts.nativeTokenPeriodTransferEnforcer,
+    ),
+    nativeTokenTransferAmountEnforcer: getChecksumAddress(
+      contracts.nativeTokenTransferAmountEnforcer,
     ),
     approvalRevocationEnforcer: getChecksumAddress(
       contracts.approvalRevocationEnforcer,

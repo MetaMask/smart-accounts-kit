@@ -65,7 +65,7 @@ describe('expiryRule', () => {
     });
   });
 
-  it('throws when timestampBeforeThreshold is 0', () => {
+  it('returns an empty data object when both thresholds are 0', () => {
     const caveats: ChecksumCaveat[] = [
       {
         enforcer: timestampEnforcer,
@@ -77,27 +77,30 @@ describe('expiryRule', () => {
       },
     ];
 
-    expect(() =>
+    expect(
       expiryRuleDecoder({ contractAddresses, caveats, requiredEnforcers }),
-    ).toThrow(
-      'Invalid expiry: timestampBeforeThreshold must be greater than 0',
-    );
+    ).toStrictEqual({ type: 'expiry', data: {} });
   });
 
-  it('throws when timestampAfterThreshold is non-zero', () => {
+  it('returns the decoded startTime when timestampAfterThreshold is non-zero', () => {
+    const afterThreshold = 1_700_000_000;
+    const beforeThreshold = 1_750_000_000;
     const caveats: ChecksumCaveat[] = [
       {
         enforcer: timestampEnforcer,
         terms: createTimestampTerms({
-          afterThreshold: 1,
-          beforeThreshold: 1_750_000_000,
+          afterThreshold,
+          beforeThreshold,
         }),
         args: '0x' as Hex,
       },
     ];
 
-    expect(() =>
+    expect(
       expiryRuleDecoder({ contractAddresses, caveats, requiredEnforcers }),
-    ).toThrow('Invalid expiry: timestampAfterThreshold must be 0');
+    ).toStrictEqual({
+      type: 'expiry',
+      data: { timestamp: beforeThreshold, startTime: afterThreshold },
+    });
   });
 });

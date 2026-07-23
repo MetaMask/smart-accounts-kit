@@ -1,9 +1,11 @@
 import type { Caveat } from '@metamask/delegation-core';
 import {
-  createERC20TokenPeriodTransferTerms,
+  createERC20TransferAmountTerms,
+  createTimestampTerms,
   createValueLteTerms,
+  decodeTimestampTerms,
 } from '@metamask/delegation-core';
-import { hexToBigInt, hexToNumber } from '@metamask/utils';
+import { hexToBigInt } from '@metamask/utils';
 
 import type { Erc20TokenAllowancePermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
@@ -19,7 +21,6 @@ import {
   getByteLength,
   getTermsByEnforcer,
   splitHex,
-  UINT256_MAX,
   ZERO_32_BYTES,
 } from '../utils';
 
@@ -34,7 +35,7 @@ export function makeErc20TokenAllowanceDecoderConfig(
 ): PermissionDecoderConfig {
   const {
     timestampEnforcer,
-    erc20PeriodTransferEnforcer,
+    erc20TransferAmountEnforcer,
     valueLteEnforcer,
     nonceEnforcer,
     allowedCalldataEnforcer,
@@ -45,13 +46,13 @@ export function makeErc20TokenAllowanceDecoderConfig(
     permissionType: 'erc20-token-allowance',
     contractAddresses,
     optionalEnforcers: [
-      timestampEnforcer, // expiry rule
       redeemerEnforcer, // redeemer rule
       allowedCalldataEnforcer, // payee rule
     ],
     requiredEnforcers: {
-      [erc20PeriodTransferEnforcer]: 1,
+      [erc20TransferAmountEnforcer]: 1,
       [valueLteEnforcer]: 1,
+      [timestampEnforcer]: 1,
       [nonceEnforcer]: 1,
     },
     rules: [expiryRuleDecoder, redeemerRuleDecoder, erc20PayeeRuleDecoder],
@@ -70,7 +71,8 @@ function validateAndDecodeData(
   caveats: ChecksumCaveat[],
   contractAddresses: EnforcerAddressesByName,
 ): DecodedPermissionData<Erc20TokenAllowancePermission> {
-  const { erc20PeriodTransferEnforcer, valueLteEnforcer } = contractAddresses;
+  const { erc20TransferAmountEnforcer, valueLteEnforcer, timestampEnforcer } =
+    contractAddresses;
 
   const valueLteTerms = getTermsByEnforcer({
     caveats,
@@ -82,35 +84,33 @@ function validateAndDecodeData(
 
   const terms = getTermsByEnforcer({
     caveats,
-    enforcer: erc20PeriodTransferEnforcer,
+    enforcer: erc20TransferAmountEnforcer,
   });
 
-  const EXPECTED_TERMS_BYTELENGTH = 116; // 20 + 32 + 32 + 32
+  const EXPECTED_TERMS_BYTELENGTH = 52; // 20 + 32
 
   if (getByteLength(terms) !== EXPECTED_TERMS_BYTELENGTH) {
-    throw new Error('Invalid erc20-token-allowance terms: expected 116 bytes');
+    throw new Error('Invalid erc20-token-allowance terms: expected 52 bytes');
   }
 
-  const [tokenAddress, allowanceAmount, periodDurationRaw, startTimeRaw] =
-    splitHex(terms, [20, 32, 32, 32]);
-
-  if (periodDurationRaw.toLowerCase() !== UINT256_MAX) {
-    throw new Error(
-      'Invalid erc20-token-allowance terms: periodDuration must be UINT256_MAX',
-    );
-  }
-
-  const startTime = hexToNumber(startTimeRaw);
-
-  if (startTime === 0) {
-    throw new Error(
-      'Invalid erc20-token-allowance terms: startTime must be a positive number',
-    );
-  }
+  const [tokenAddress, allowanceAmount] = splitHex(terms, [20, 32]);
 
   if (allowanceAmount === ZERO_32_BYTES) {
     throw new Error(
       'Invalid erc20-token-allowance terms: allowanceAmount must be a positive number',
+    );
+  }
+
+  const timestampTerms = getTermsByEnforcer({
+    caveats,
+    enforcer: timestampEnforcer,
+  });
+
+  const { afterThreshold: startTime } = decodeTimestampTerms(timestampTerms);
+
+  if (startTime === 0) {
+    throw new Error(
+      'Invalid erc20-token-allowance terms: startTime must be a positive number',
     );
   }
 
@@ -122,7 +122,7 @@ function validateAndDecodeData(
  */
 export type Erc20TokenAllowanceEnforcers = Pick<
   EnforcerAddressesByName,
-  'erc20PeriodTransferEnforcer' | 'valueLteEnforcer'
+  'erc20TransferAmountEnforcer' | 'valueLteEnforcer' | 'timestampEnforcer'
 >;
 
 /**
@@ -131,7 +131,7 @@ export type Erc20TokenAllowanceEnforcers = Pick<
  * @param options0 - Caveat builder arguments.
  * @param options0.permission - Fully populated erc20-token-allowance permission data.
  * @param options0.contracts - Enforcer addresses used to construct caveats.
- * @returns The ERC-20 allowance and zero-value caveats.
+ * @returns The ERC-20 allowance, zero-value, and start-time caveats.
  */
 export function createErc20TokenAllowanceCaveats({
   permission,
@@ -155,14 +155,11 @@ export function createErc20TokenAllowanceCaveats({
     );
   }
 
-  const erc20PeriodCaveat: Caveat = {
-    enforcer: contracts.erc20PeriodTransferEnforcer,
-    terms: createERC20TokenPeriodTransferTerms({
+  const erc20TransferAmountCaveat: Caveat = {
+    enforcer: contracts.erc20TransferAmountEnforcer,
+    terms: createERC20TransferAmountTerms({
       tokenAddress,
-      periodAmount: allowanceAmountBigInt,
-      // delegation-core accepts bigint for encoding although the type is `number`.
-      periodDuration: BigInt(UINT256_MAX) as unknown as number,
-      startDate: startTime,
+      maxAmount: allowanceAmountBigInt,
     }),
     args: '0x',
   };
@@ -173,5 +170,14 @@ export function createErc20TokenAllowanceCaveats({
     args: '0x',
   };
 
-  return [erc20PeriodCaveat, valueLteCaveat];
+  const timestampCaveat: Caveat = {
+    enforcer: contracts.timestampEnforcer,
+    terms: createTimestampTerms({
+      afterThreshold: startTime,
+      beforeThreshold: 0,
+    }),
+    args: '0x',
+  };
+
+  return [erc20TransferAmountCaveat, valueLteCaveat, timestampCaveat];
 }

@@ -3,9 +3,10 @@ import {
   createExactCalldataTerms,
   createNativeTokenTransferAmountTerms,
   createTimestampTerms,
+  decodeNativeTokenTransferAmountTerms,
   decodeTimestampTerms,
 } from '@metamask/delegation-core';
-import { hexToBigInt } from '@metamask/utils';
+import { bigIntToHex, hexToBigInt } from '@metamask/utils';
 
 import type { NativeTokenAllowancePermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
@@ -18,7 +19,7 @@ import type {
   DecodedPermissionData,
   PermissionDecoderConfig,
 } from '../types';
-import { getByteLength, getTermsByEnforcer, ZERO_32_BYTES } from '../utils';
+import { getTermsByEnforcer } from '../utils';
 
 /**
  * Builds the configuration for the native-token-allowance permission decoder.
@@ -87,22 +88,20 @@ function validateAndDecodeData(
     throw new Error('Invalid exact-calldata terms: must be 0x');
   }
 
-  const allowanceAmount = getTermsByEnforcer({
+  const terms = getTermsByEnforcer({
     caveats,
     enforcer: nativeTokenTransferAmountEnforcer,
   });
 
-  const EXPECTED_TERMS_BYTELENGTH = 32;
+  const { maxAmount } = decodeNativeTokenTransferAmountTerms(terms);
 
-  if (getByteLength(allowanceAmount) !== EXPECTED_TERMS_BYTELENGTH) {
-    throw new Error('Invalid native-token-allowance terms: expected 32 bytes');
-  }
-
-  if (allowanceAmount === ZERO_32_BYTES) {
+  if (maxAmount === 0n) {
     throw new Error(
       'Invalid native-token-allowance terms: allowanceAmount must be a positive number',
     );
   }
+
+  const allowanceAmount = bigIntToHex(maxAmount);
 
   const timestampTerms = getTermsByEnforcer({
     caveats,

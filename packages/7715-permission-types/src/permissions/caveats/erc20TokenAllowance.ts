@@ -3,9 +3,10 @@ import {
   createERC20TransferAmountTerms,
   createTimestampTerms,
   createValueLteTerms,
+  decodeERC20TransferAmountTerms,
   decodeTimestampTerms,
 } from '@metamask/delegation-core';
-import { hexToBigInt } from '@metamask/utils';
+import { bigIntToHex, hexToBigInt } from '@metamask/utils';
 
 import type { Erc20TokenAllowancePermission, Populated } from '../../types';
 import { expiryRuleDecoder } from '../rules/expiry';
@@ -18,12 +19,7 @@ import type {
   DecodedPermissionData,
   PermissionDecoderConfig,
 } from '../types';
-import {
-  getByteLength,
-  getTermsByEnforcer,
-  splitHex,
-  ZERO_32_BYTES,
-} from '../utils';
+import { getTermsByEnforcer, ZERO_32_BYTES } from '../utils';
 
 /**
  * Builds the configuration for the erc20-token-allowance permission decoder.
@@ -93,19 +89,15 @@ function validateAndDecodeData(
     enforcer: erc20TransferAmountEnforcer,
   });
 
-  const EXPECTED_TERMS_BYTELENGTH = 52; // 20 + 32
+  const { tokenAddress, maxAmount } = decodeERC20TransferAmountTerms(terms);
 
-  if (getByteLength(terms) !== EXPECTED_TERMS_BYTELENGTH) {
-    throw new Error('Invalid erc20-token-allowance terms: expected 52 bytes');
-  }
-
-  const [tokenAddress, allowanceAmount] = splitHex(terms, [20, 32]);
-
-  if (allowanceAmount === ZERO_32_BYTES) {
+  if (maxAmount === 0n) {
     throw new Error(
       'Invalid erc20-token-allowance terms: allowanceAmount must be a positive number',
     );
   }
+
+  const allowanceAmount = bigIntToHex(maxAmount);
 
   const timestampTerms = getTermsByEnforcer({
     caveats,

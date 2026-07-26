@@ -1,5 +1,5 @@
 import { createTimestampTerms } from '@metamask/delegation-core';
-import type { Hex } from '@metamask/utils';
+import { bigIntToHex, type Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
@@ -110,7 +110,7 @@ describe('native-token-allowance decoder config', () => {
           decoder.contractAddresses,
         ),
       ).toStrictEqual({
-        allowanceAmount: `0x${ALLOWANCE_AMOUNT_HEX}`,
+        allowanceAmount: bigIntToHex(100n),
         startTime: START_TIME,
       });
     });
@@ -132,7 +132,9 @@ describe('native-token-allowance decoder config', () => {
           makeCaveats(invalidTerms),
           decoder.contractAddresses,
         ),
-      ).toThrow('Invalid native-token-allowance terms: expected 32 bytes');
+      ).toThrow(
+        'Invalid NativeTokenTransferAmount terms: must be exactly 32 bytes',
+      );
     });
 
     it('validateAndDecodeData rejects zero allowanceAmount', () => {

@@ -1,5 +1,5 @@
 import { createTimestampTerms } from '@metamask/delegation-core';
-import type { Hex } from '@metamask/utils';
+import { bigIntToHex, type Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
@@ -115,7 +115,7 @@ describe('erc20-token-allowance decoder config', () => {
         ),
       ).toStrictEqual({
         tokenAddress: `0x${TOKEN_ADDRESS_HEX}`,
-        allowanceAmount: `0x${ALLOWANCE_AMOUNT_HEX}`,
+        allowanceAmount: bigIntToHex(100n),
         startTime: START_TIME,
       });
     });
@@ -138,7 +138,7 @@ describe('erc20-token-allowance decoder config', () => {
           makeCaveats(invalidTerms),
           decoder.contractAddresses,
         ),
-      ).toThrow('Invalid erc20-token-allowance terms: expected 52 bytes');
+      ).toThrow('Invalid ERC20TransferAmount terms: must be exactly 52 bytes');
     });
 
     it('validateAndDecodeData rejects zero allowanceAmount', () => {

@@ -61,12 +61,12 @@
   "devDependencies": {
     "@metamask/auto-changelog": "^6.1.1",
     "@types/node": "^20.19.0",
-    "@vitest/coverage-v8": "4.0.18",
+    "@vitest/coverage-v8": "4.1.10",
     "eslint": "^9.39.2",
     "prettier": "^3.5.3",
     "tsup": "^8.5.0",
     "typescript": "5.5.4",
-    "vitest": "4.0.18"
+    "vitest": "4.1.10"
   },
   "dependencies": {
     "@metamask/abi-utils": "^3.0.0",

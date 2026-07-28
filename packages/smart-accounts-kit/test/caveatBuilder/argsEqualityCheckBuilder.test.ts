@@ -1,4 +1,5 @@
-import { size, type Hex } from 'viem';
+import { size } from 'viem';
+import type { Hex } from 'viem';
 import { expect, describe, it } from 'vitest';
 
 import { argsEqualityCheckBuilder } from '../../src/caveatBuilder/argsEqualityCheckBuilder';

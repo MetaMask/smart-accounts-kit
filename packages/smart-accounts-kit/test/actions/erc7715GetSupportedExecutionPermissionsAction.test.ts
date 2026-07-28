@@ -3,10 +3,8 @@ import type { Client } from 'viem';
 import { createClient, custom } from 'viem';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import {
-  erc7715ProviderActions,
-  type RpcGetSupportedExecutionPermissionsResult,
-} from '../../src/actions';
+import { erc7715ProviderActions } from '../../src/actions';
+import type { RpcGetSupportedExecutionPermissionsResult } from '../../src/actions';
 import { erc7715GetSupportedExecutionPermissionsAction } from '../../src/actions/erc7715GetSupportedExecutionPermissionsAction';
 
 describe('erc7715GetSupportedExecutionPermissionsAction', () => {

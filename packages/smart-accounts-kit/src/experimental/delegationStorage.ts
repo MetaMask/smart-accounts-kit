@@ -1,4 +1,5 @@
-import { type Hex, toHex } from 'viem';
+import { toHex } from 'viem';
+import type { Hex } from 'viem';
 
 import { trackSmartAccountsKitFunctionCall } from '../analytics';
 import { hashDelegation } from '../delegation';

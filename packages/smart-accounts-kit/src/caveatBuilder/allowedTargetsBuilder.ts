@@ -1,5 +1,6 @@
 import { createAllowedTargetsTerms } from '@metamask/delegation-core';
-import { isAddress, type Address } from 'viem';
+import { isAddress } from 'viem';
+import type { Address } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention -- analytics payload field names */
 import { describe, beforeEach, it, expect } from 'vitest';
 
 import {

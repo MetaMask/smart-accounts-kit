@@ -19,8 +19,10 @@ import type {
 import {
   redelegatePermissionContextAction,
   redelegatePermissionContextOpenAction,
-  type RedelegatePermissionContextOpenParameters,
-  type RedelegatePermissionContextParameters,
+} from './redelegatePermissionContext';
+import type {
+  RedelegatePermissionContextOpenParameters,
+  RedelegatePermissionContextParameters,
 } from './redelegatePermissionContext';
 
 export {

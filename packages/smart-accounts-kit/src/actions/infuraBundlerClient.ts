@@ -1,9 +1,9 @@
 import type { Transport, Chain, Hex, Client, Account } from 'viem';
-import {
-  createBundlerClient,
-  type BundlerClient,
-  type BundlerClientConfig,
-  type SmartAccount,
+import { createBundlerClient } from 'viem/account-abstraction';
+import type {
+  BundlerClient,
+  BundlerClientConfig,
+  SmartAccount,
 } from 'viem/account-abstraction';
 
 import { trackSmartAccountsKitFunctionCall } from '../analytics';

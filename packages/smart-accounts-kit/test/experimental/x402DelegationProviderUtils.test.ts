@@ -5,7 +5,8 @@ import {
   decodeRedeemerTerms,
   decodeTimestampTerms,
 } from '@metamask/delegation-core';
-import { pad, type Account, type Hex } from 'viem';
+import { pad } from 'viem';
+import type { Account, Hex } from 'viem';
 import { describe, expect, it, vi } from 'vitest';
 
 import {

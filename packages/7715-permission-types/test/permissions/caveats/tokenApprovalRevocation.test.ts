@@ -5,8 +5,8 @@ import { makePermissionDecoderConfigs } from '../../../src/permissions';
 import {
   createTokenApprovalRevocationCaveats,
   makeTokenApprovalRevocationDecoderConfig,
-  type TokenApprovalRevocationEnforcers,
 } from '../../../src/permissions/caveats/tokenApprovalRevocation';
+import type { TokenApprovalRevocationEnforcers } from '../../../src/permissions/caveats/tokenApprovalRevocation';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import type { ChecksumCaveat } from '../../../src/permissions/types';
 import { checksumEnforcerAddresses } from '../../../src/permissions/utils';

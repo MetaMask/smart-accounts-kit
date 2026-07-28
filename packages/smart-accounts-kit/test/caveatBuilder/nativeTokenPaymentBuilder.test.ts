@@ -1,4 +1,5 @@
-import { concat, size, toHex, type Hex } from 'viem';
+import { concat, size, toHex } from 'viem';
+import type { Hex } from 'viem';
 import { expect, describe, it } from 'vitest';
 
 import { nativeTokenPaymentBuilder } from '../../src/caveatBuilder/nativeTokenPaymentBuilder';

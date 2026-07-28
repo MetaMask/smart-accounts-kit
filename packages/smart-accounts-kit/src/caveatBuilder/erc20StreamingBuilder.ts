@@ -1,5 +1,5 @@
 import { createERC20StreamingTerms } from '@metamask/delegation-core';
-import { type Address } from 'viem';
+import type { Address } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 

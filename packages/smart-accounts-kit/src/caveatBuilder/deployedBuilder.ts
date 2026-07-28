@@ -1,5 +1,6 @@
 import { createDeployedTerms } from '@metamask/delegation-core';
-import { isAddress, isHex, type Address, type Hex } from 'viem';
+import { isAddress, isHex } from 'viem';
+import type { Address, Hex } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 

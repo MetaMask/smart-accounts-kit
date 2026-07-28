@@ -1,4 +1,5 @@
-import { createWalletClient, http, type Address, type Hex } from 'viem';
+import { createWalletClient, http } from 'viem';
+import type { Address, Hex } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { sepolia } from 'viem/chains';
 import { describe, it, expect, beforeEach } from 'vitest';

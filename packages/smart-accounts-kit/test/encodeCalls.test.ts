@@ -8,7 +8,7 @@ import { encodeDelegations } from '../src/delegation';
 import { encodeCallsForCaller } from '../src/encodeCalls';
 import { ExecutionMode, encodeExecutionCalldatas } from '../src/executions';
 import type { ExecutionStruct } from '../src/executions';
-import { type Call, type Delegation } from '../src/types';
+import type { Call, Delegation } from '../src/types';
 
 describe('encodeCallsForCaller', () => {
   const caller: Address = '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC';

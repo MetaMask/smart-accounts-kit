@@ -1,4 +1,5 @@
-import { isStrictHexString, type Hex } from '@metamask/utils';
+import { isStrictHexString } from '@metamask/utils';
+import type { Hex } from '@metamask/utils';
 
 import { getAddress } from './ethereum';
 

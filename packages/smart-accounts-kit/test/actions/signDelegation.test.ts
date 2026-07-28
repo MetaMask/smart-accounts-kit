@@ -7,8 +7,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   signDelegation,
   signDelegationActions,
-  type SignDelegationParameters,
 } from '../../src/actions/signDelegation';
+import type { SignDelegationParameters } from '../../src/actions/signDelegation';
 import { ROOT_AUTHORITY } from '../../src/delegation';
 import type { Delegation } from '../../src/types';
 

@@ -3,11 +3,11 @@ import { createBundlerClient as createAABundlerClient } from 'viem/account-abstr
 import { sepolia } from 'viem/chains';
 import { expect, test, describe, vi, beforeEach } from 'vitest';
 
-import {
-  createInfuraBundlerClient,
-  type InfuraBundlerClient,
-  type UserOperationGasPriceResponse,
-  type GasPriceTier,
+import { createInfuraBundlerClient } from '../../src/actions/infuraBundlerClient';
+import type {
+  InfuraBundlerClient,
+  UserOperationGasPriceResponse,
+  GasPriceTier,
 } from '../../src/actions/infuraBundlerClient';
 
 // Mock the viem bundler client

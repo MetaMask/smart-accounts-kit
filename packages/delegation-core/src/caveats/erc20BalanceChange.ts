@@ -17,13 +17,11 @@ import {
   normalizeAddressLowercase,
   toHexString,
 } from '../internalUtils';
-import {
-  bytesLikeToHex,
-  defaultOptions,
-  prepareResult,
-  type DecodedBytesLike,
-  type EncodingOptions,
-  type ResultValue,
+import { bytesLikeToHex, defaultOptions, prepareResult } from '../returns';
+import type {
+  DecodedBytesLike,
+  EncodingOptions,
+  ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
 import { BalanceChangeType } from './types';

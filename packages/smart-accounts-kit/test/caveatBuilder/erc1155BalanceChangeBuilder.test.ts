@@ -1,5 +1,6 @@
 import { BalanceChangeType } from '@metamask/delegation-core';
-import { encodePacked, size, type Address } from 'viem';
+import { encodePacked, size } from 'viem';
+import type { Address } from 'viem';
 import { expect, describe, it } from 'vitest';
 
 import { erc1155BalanceChangeBuilder } from '../../src/caveatBuilder/erc1155BalanceChangeBuilder';

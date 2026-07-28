@@ -1,12 +1,13 @@
-import { bigIntToHex, type Hex } from '@metamask/utils';
+import { bigIntToHex } from '@metamask/utils';
+import type { Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
 import {
   createErc20TokenPeriodicCaveats,
   makeErc20TokenPeriodicDecoderConfig,
-  type Erc20TokenPeriodicEnforcers,
 } from '../../../src/permissions/caveats/erc20TokenPeriodic';
+import type { Erc20TokenPeriodicEnforcers } from '../../../src/permissions/caveats/erc20TokenPeriodic';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';

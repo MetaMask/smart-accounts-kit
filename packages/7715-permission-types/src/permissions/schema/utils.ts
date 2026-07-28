@@ -1,4 +1,5 @@
-import { bigIntToHex, type Hex, hexToBigInt } from '@metamask/utils';
+import { bigIntToHex, hexToBigInt } from '@metamask/utils';
+import type { Hex } from '@metamask/utils';
 
 import { DAY, FORTNIGHT, HOUR, MONTH, SECOND, WEEK, YEAR } from './constants';
 import type { I18nValue } from './types';

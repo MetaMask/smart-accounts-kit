@@ -1,10 +1,10 @@
-import { getAddress, type Address, type Hex } from 'viem';
+import { getAddress } from 'viem';
+import type { Address, Hex } from 'viem';
 import { describe, it, expect } from 'vitest';
 
 import { randomAddress } from './utils';
 import { ScopeType } from '../src/constants';
 import {
-  type DelegationStruct,
   ROOT_AUTHORITY,
   toDelegationStruct,
   createDelegation,
@@ -16,6 +16,7 @@ import {
   decodeDelegation,
   signDelegation,
 } from '../src/delegation';
+import type { DelegationStruct } from '../src/delegation';
 import type {
   Caveat,
   Delegation,

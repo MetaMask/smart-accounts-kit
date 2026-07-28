@@ -6,7 +6,8 @@ import {
   decodeTimestampTerms,
 } from '@metamask/delegation-core';
 import { parseCaipChainId } from '@metamask/utils';
-import { pad, type Account, type Address, type Hex } from 'viem';
+import { pad } from 'viem';
+import type { Account, Address, Hex } from 'viem';
 
 import type { Caveats } from '../caveatBuilder';
 import { resolveCaveats } from '../caveatBuilder';

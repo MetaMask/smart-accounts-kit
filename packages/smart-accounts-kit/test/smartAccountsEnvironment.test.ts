@@ -4,7 +4,7 @@ import {
   getSmartAccountsEnvironment,
   overrideDeployedEnvironment,
 } from '../src/smartAccountsEnvironment';
-import { type SmartAccountsEnvironment } from '../src/types';
+import type { SmartAccountsEnvironment } from '../src/types';
 
 describe('SmartAccountsEnvironment', () => {
   describe('overrideDeployedEnvironment', () => {

@@ -3,10 +3,8 @@ import type { Address, Client } from 'viem';
 import { encodeFunctionData } from 'viem';
 import { simulateContract, writeContract } from 'viem/actions';
 
-import {
-  decodeRevertReason,
-  type DecodedRevertReason,
-} from '../../../decodeRevertReason';
+import { decodeRevertReason } from '../../../decodeRevertReason';
+import type { DecodedRevertReason } from '../../../decodeRevertReason';
 import { encodeDelegations } from '../../../delegation';
 import { encodeExecutionCalldatas } from '../../../executions';
 import type { ExecutionMode, ExecutionStruct } from '../../../executions';

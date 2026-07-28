@@ -5,8 +5,8 @@ import { makePermissionDecoderConfigs } from '../../../src/permissions';
 import {
   createErc20TokenAllowanceCaveats,
   makeErc20TokenAllowanceDecoderConfig,
-  type Erc20TokenAllowanceEnforcers,
 } from '../../../src/permissions/caveats/erc20TokenAllowance';
+import type { Erc20TokenAllowanceEnforcers } from '../../../src/permissions/caveats/erc20TokenAllowance';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { erc20PayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';

@@ -1,9 +1,8 @@
 import type { CaveatBuilder } from './caveatBuilder';
-import {
-  createCaveatBuilder,
-  type CoreCaveatConfiguration,
-} from './coreCaveatBuilder';
-import { createCaveatBuilderFromScope, type ScopeConfig } from './scope';
+import { createCaveatBuilder } from './coreCaveatBuilder';
+import type { CoreCaveatConfiguration } from './coreCaveatBuilder';
+import { createCaveatBuilderFromScope } from './scope';
+import type { ScopeConfig } from './scope';
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 
 export type Caveats = CaveatBuilder | (Caveat | CoreCaveatConfiguration)[];

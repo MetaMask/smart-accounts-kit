@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import nock from 'nock';
 import {
   describe,

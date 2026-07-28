@@ -13,13 +13,8 @@ import {
   extractNumber,
   toHexString,
 } from '../internalUtils';
-import {
-  bytesLikeToHex,
-  defaultOptions,
-  prepareResult,
-  type EncodingOptions,
-  type ResultValue,
-} from '../returns';
+import { bytesLikeToHex, defaultOptions, prepareResult } from '../returns';
+import type { EncodingOptions, ResultValue } from '../returns';
 import type { Hex } from '../types';
 
 // Upper bound for timestamps (equivalent to January 1, 10000 CE)

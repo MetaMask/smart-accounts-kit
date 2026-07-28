@@ -1,11 +1,5 @@
-import {
-  bytesToHex,
-  hexToBytes,
-  isHexString,
-  remove0x,
-  type Hex,
-  type BytesLike,
-} from '@metamask/utils';
+import { bytesToHex, hexToBytes, isHexString, remove0x } from '@metamask/utils';
+import type { Hex, BytesLike } from '@metamask/utils';
 
 /**
  * Converts a numeric value to a hexadecimal string with zero-padding, without 0x prefix.

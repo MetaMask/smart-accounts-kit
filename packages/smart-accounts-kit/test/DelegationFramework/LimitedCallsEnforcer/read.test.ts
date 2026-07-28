@@ -1,4 +1,5 @@
-import { createPublicClient, http, type Address, type Hex } from 'viem';
+import { createPublicClient, http } from 'viem';
+import type { Address, Hex } from 'viem';
 import { readContract } from 'viem/actions';
 import { sepolia } from 'viem/chains';
 import { describe, it, expect, vi, beforeEach } from 'vitest';

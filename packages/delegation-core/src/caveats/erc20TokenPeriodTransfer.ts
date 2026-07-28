@@ -6,7 +6,8 @@
  * Terms are encoded as 20-byte token address then three 32-byte big-endian uint256 words: period amount, period duration, start date.
  */
 
-import { type BytesLike, isHexString, bytesToHex } from '@metamask/utils';
+import { isHexString, bytesToHex } from '@metamask/utils';
+import type { BytesLike } from '@metamask/utils';
 
 import {
   assertHexByteExactLength,
@@ -15,13 +16,11 @@ import {
   extractNumber,
   toHexString,
 } from '../internalUtils';
-import {
-  bytesLikeToHex,
-  defaultOptions,
-  prepareResult,
-  type DecodedBytesLike,
-  type EncodingOptions,
-  type ResultValue,
+import { bytesLikeToHex, defaultOptions, prepareResult } from '../returns';
+import type {
+  DecodedBytesLike,
+  EncodingOptions,
+  ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
 

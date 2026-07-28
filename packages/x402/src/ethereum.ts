@@ -1,8 +1,5 @@
-import {
-  getChecksumAddress,
-  isHexChecksumAddress,
-  type Hex,
-} from '@metamask/utils';
+import { getChecksumAddress, isHexChecksumAddress } from '@metamask/utils';
+import type { Hex } from '@metamask/utils';
 
 /**
  * Validate and normalize an Ethereum address to its EIP-55 checksum form.

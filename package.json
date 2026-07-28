@@ -57,7 +57,7 @@
   },
   "packageManager": "yarn@4.16.0",
   "engines": {
-    "node": "^18.18 || >=20"
+    "node": ">=20"
   },
   "resolutions": {
     "elliptic": "^6.6.1"

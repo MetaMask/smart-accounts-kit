@@ -9,7 +9,7 @@
     "dotenv": "^16.3.1",
     "tsx": "^4.20.5",
     "viem": "2.31.4",
-    "vitest": "4.0.18"
+    "vitest": "4.1.10"
   },
   "scripts": {
     "build": "cd contracts && forge build && cd ..",

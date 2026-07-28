@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add chain deployment for Robinhood Chain mainnet and testnet ([#277](https://github.com/MetaMask/smart-accounts-kit/pull/277))
 
+### Changed
+
+- **BREAKING:** Removes support for Nodejs 18 - engines changed from `^18.18 || >=20` to `>=20` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
+
 ## [1.4.0]
 
 ### Added

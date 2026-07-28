@@ -7,8 +7,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   signUserOperation,
   signUserOperationActions,
-  type SignUserOperationParameters,
 } from '../../src/actions/signUserOperation';
+import type { SignUserOperationParameters } from '../../src/actions/signUserOperation';
 import type { UserOperationV07 } from '../../src/userOp';
 
 const getLastSignCall = (mockFn: any) => {

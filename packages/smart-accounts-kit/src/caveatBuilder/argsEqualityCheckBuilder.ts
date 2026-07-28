@@ -1,5 +1,6 @@
 import { createArgsEqualityCheckTerms } from '@metamask/delegation-core';
-import { type Hex, isHex } from 'viem';
+import { isHex } from 'viem';
+import type { Hex } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 

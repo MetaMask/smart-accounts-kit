@@ -7,16 +7,15 @@
  */
 
 import { decodeSingle, encodeSingle } from '@metamask/abi-utils';
-import { bytesToHex, type BytesLike } from '@metamask/utils';
+import { bytesToHex } from '@metamask/utils';
+import type { BytesLike } from '@metamask/utils';
 
 import { normalizeAddress } from '../internalUtils';
-import {
-  bytesLikeToHex,
-  defaultOptions,
-  prepareResult,
-  type DecodedBytesLike,
-  type EncodingOptions,
-  type ResultValue,
+import { bytesLikeToHex, defaultOptions, prepareResult } from '../returns';
+import type {
+  DecodedBytesLike,
+  EncodingOptions,
+  ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
 

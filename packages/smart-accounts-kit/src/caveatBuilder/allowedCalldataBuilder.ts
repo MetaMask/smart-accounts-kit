@@ -1,5 +1,5 @@
 import { createAllowedCalldataTerms } from '@metamask/delegation-core';
-import { type Hex } from 'viem';
+import type { Hex } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 

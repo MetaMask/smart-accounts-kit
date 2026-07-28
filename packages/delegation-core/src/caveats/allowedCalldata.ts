@@ -6,7 +6,8 @@
  * Terms are encoded as a 32-byte big-endian start index followed by the expected calldata bytes (not ABI-wrapped).
  */
 
-import { bytesToHex, remove0x, type BytesLike } from '@metamask/utils';
+import { bytesToHex, remove0x } from '@metamask/utils';
+import type { BytesLike } from '@metamask/utils';
 
 import {
   assertHexBytesMinLength,
@@ -14,13 +15,11 @@ import {
   extractRemainingHex,
   toHexString,
 } from '../internalUtils';
-import {
-  bytesLikeToHex,
-  defaultOptions,
-  prepareResult,
-  type DecodedBytesLike,
-  type EncodingOptions,
-  type ResultValue,
+import { bytesLikeToHex, defaultOptions, prepareResult } from '../returns';
+import type {
+  DecodedBytesLike,
+  EncodingOptions,
+  ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
 

@@ -1,4 +1,5 @@
-import { encodeAbiParameters, type Address, type Hex } from 'viem';
+import { encodeAbiParameters } from 'viem';
+import type { Address, Hex } from 'viem';
 import { expect, describe, it } from 'vitest';
 
 import { exactCalldataBatchBuilder } from '../../src/caveatBuilder/exactCalldataBatchBuilder';

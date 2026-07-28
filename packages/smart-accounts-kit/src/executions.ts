@@ -1,9 +1,5 @@
-import {
-  type Address,
-  type Hex,
-  encodeAbiParameters,
-  encodePacked,
-} from 'viem';
+import { encodeAbiParameters, encodePacked } from 'viem';
+import type { Address, Hex } from 'viem';
 
 export type ExecutionStruct = {
   target: Address;

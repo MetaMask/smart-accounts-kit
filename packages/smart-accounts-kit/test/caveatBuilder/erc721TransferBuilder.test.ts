@@ -1,4 +1,5 @@
-import { concat, size, toHex, type Address } from 'viem';
+import { concat, size, toHex } from 'viem';
+import type { Address } from 'viem';
 import { expect, describe, it } from 'vitest';
 
 import { erc721TransferBuilder } from '../../src/caveatBuilder/erc721TransferBuilder';

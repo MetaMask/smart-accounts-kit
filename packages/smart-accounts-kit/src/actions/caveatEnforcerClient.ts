@@ -2,11 +2,11 @@ import type { Client, Transport, Chain, Account } from 'viem';
 
 import { trackSmartAccountsKitFunctionCall } from '../analytics';
 import type { SmartAccountsEnvironment } from '../types';
-import {
-  caveatEnforcerActions,
-  type CaveatEnforcerParams,
-  type PeriodTransferResult,
-  type StreamingResult,
+import { caveatEnforcerActions } from './getCaveatAvailableAmount';
+import type {
+  CaveatEnforcerParams,
+  PeriodTransferResult,
+  StreamingResult,
 } from './getCaveatAvailableAmount';
 
 /**

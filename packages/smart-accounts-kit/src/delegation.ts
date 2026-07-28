@@ -14,7 +14,8 @@ import type { TypedData, AbiParameter, Address, Hex } from 'viem';
 import { signTypedData } from 'viem/accounts';
 
 import { trackSmartAccountsKitFunctionCall } from './analytics';
-import { type Caveats, resolveCaveats } from './caveatBuilder';
+import { resolveCaveats } from './caveatBuilder';
+import type { Caveats } from './caveatBuilder';
 import type { ScopeConfig } from './caveatBuilder/scope';
 import { CAVEAT_ABI_TYPE_COMPONENTS } from './caveats';
 import type {

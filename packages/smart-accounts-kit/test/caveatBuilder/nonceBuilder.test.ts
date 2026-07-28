@@ -1,4 +1,5 @@
-import { pad, size, type Hex } from 'viem';
+import { pad, size } from 'viem';
+import type { Hex } from 'viem';
 import { expect, describe, it } from 'vitest';
 
 import { nonceBuilder } from '../../src/caveatBuilder/nonceBuilder';

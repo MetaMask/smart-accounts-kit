@@ -1,4 +1,5 @@
-import { size, type Address } from 'viem';
+import { size } from 'viem';
+import type { Address } from 'viem';
 import { expect, describe, it } from 'vitest';
 
 import { ownershipTransferBuilder } from '../../src/caveatBuilder/ownershipTransferBuilder';

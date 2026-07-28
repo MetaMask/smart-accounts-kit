@@ -5,8 +5,8 @@ import { makePermissionDecoderConfigs } from '../../../src/permissions';
 import {
   createNativeTokenAllowanceCaveats,
   makeNativeTokenAllowanceDecoderConfig,
-  type NativeTokenAllowanceEnforcers,
 } from '../../../src/permissions/caveats/nativeTokenAllowance';
+import type { NativeTokenAllowanceEnforcers } from '../../../src/permissions/caveats/nativeTokenAllowance';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';

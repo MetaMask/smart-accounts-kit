@@ -6,7 +6,8 @@
  * Terms are encoded as a concatenation of 4-byte function selectors with no padding between selectors.
  */
 
-import { bytesToHex, isHexString, type BytesLike } from '@metamask/utils';
+import { bytesToHex, isHexString } from '@metamask/utils';
+import type { BytesLike } from '@metamask/utils';
 
 import {
   assertHexByteLengthAtLeastOneMultipleOf,
@@ -14,13 +15,11 @@ import {
   extractHex,
   getByteLength,
 } from '../internalUtils';
-import {
-  bytesLikeToHex,
-  defaultOptions,
-  prepareResult,
-  type DecodedBytesLike,
-  type EncodingOptions,
-  type ResultValue,
+import { bytesLikeToHex, defaultOptions, prepareResult } from '../returns';
+import type {
+  DecodedBytesLike,
+  EncodingOptions,
+  ResultValue,
 } from '../returns';
 import type { Hex } from '../types';
 

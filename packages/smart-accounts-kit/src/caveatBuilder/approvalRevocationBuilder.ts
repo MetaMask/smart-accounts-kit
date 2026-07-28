@@ -1,7 +1,5 @@
-import {
-  createApprovalRevocationTerms,
-  type ApprovalRevocationTerms,
-} from '@metamask/delegation-core';
+import { createApprovalRevocationTerms } from '@metamask/delegation-core';
+import type { ApprovalRevocationTerms } from '@metamask/delegation-core';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 

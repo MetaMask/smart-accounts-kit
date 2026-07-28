@@ -1,5 +1,6 @@
 import { createRedeemerTerms } from '@metamask/delegation-core';
-import { type Address, isAddress } from 'viem';
+import { isAddress } from 'viem';
+import type { Address } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 

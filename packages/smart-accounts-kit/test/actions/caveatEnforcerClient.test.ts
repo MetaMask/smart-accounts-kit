@@ -1,11 +1,12 @@
-import { type PublicClient, createPublicClient, http, type Hex } from 'viem';
+import { createPublicClient, http } from 'viem';
+import type { PublicClient, Hex } from 'viem';
 import { sepolia } from 'viem/chains';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  createCaveatEnforcerClient,
-  type CaveatEnforcerClient,
-  type CaveatEnforcerParams,
+import { createCaveatEnforcerClient } from '../../src/actions/caveatEnforcerClient';
+import type {
+  CaveatEnforcerClient,
+  CaveatEnforcerParams,
 } from '../../src/actions/caveatEnforcerClient';
 import {
   getErc20PeriodTransferEnforcerAvailableAmount,

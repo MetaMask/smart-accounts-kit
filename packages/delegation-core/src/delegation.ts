@@ -1,5 +1,6 @@
 import { encode, encodeSingle, decodeSingle } from '@metamask/abi-utils';
-import { hexToBytes, type BytesLike } from '@metamask/utils';
+import { hexToBytes } from '@metamask/utils';
+import type { BytesLike } from '@metamask/utils';
 import { keccak_256 as keccak256 } from '@noble/hashes/sha3';
 
 import {
@@ -7,9 +8,8 @@ import {
   bytesLikeToHex,
   defaultOptions,
   prepareResult,
-  type EncodingOptions,
-  type ResultValue,
 } from './returns';
+import type { EncodingOptions, ResultValue } from './returns';
 import type { CaveatStruct, DelegationStruct, Hex } from './types';
 
 /**

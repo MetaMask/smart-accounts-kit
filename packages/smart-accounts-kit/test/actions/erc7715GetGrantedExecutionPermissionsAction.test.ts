@@ -7,10 +7,8 @@ import type { Client } from 'viem';
 import { createClient, custom, getAddress } from 'viem';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import {
-  erc7715ProviderActions,
-  type RpcGetGrantedExecutionPermissionsResult,
-} from '../../src/actions';
+import { erc7715ProviderActions } from '../../src/actions';
+import type { RpcGetGrantedExecutionPermissionsResult } from '../../src/actions';
 import { erc7715GetGrantedExecutionPermissionsAction } from '../../src/actions/erc7715GetGrantedExecutionPermissionsAction';
 
 describe('erc7715GetGrantedExecutionPermissionsAction', () => {

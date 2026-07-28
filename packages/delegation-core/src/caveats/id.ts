@@ -13,13 +13,8 @@ import {
   extractBigInt,
   toHexString,
 } from '../internalUtils';
-import {
-  bytesLikeToHex,
-  defaultOptions,
-  prepareResult,
-  type EncodingOptions,
-  type ResultValue,
-} from '../returns';
+import { bytesLikeToHex, defaultOptions, prepareResult } from '../returns';
+import type { EncodingOptions, ResultValue } from '../returns';
 import type { Hex } from '../types';
 
 const MAX_UINT256 = BigInt(`0x${'f'.repeat(64)}`);

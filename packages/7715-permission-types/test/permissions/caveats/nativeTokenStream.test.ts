@@ -1,12 +1,13 @@
-import { bigIntToHex, type Hex } from '@metamask/utils';
+import { bigIntToHex } from '@metamask/utils';
+import type { Hex } from '@metamask/utils';
 import { describe, it, expect } from 'vitest';
 
 import { makePermissionDecoderConfigs } from '../../../src/permissions';
 import {
   createNativeTokenStreamCaveats,
   makeNativeTokenStreamDecoderConfig,
-  type NativeTokenStreamEnforcers,
 } from '../../../src/permissions/caveats/nativeTokenStream';
+import type { NativeTokenStreamEnforcers } from '../../../src/permissions/caveats/nativeTokenStream';
 import { expiryRuleDecoder } from '../../../src/permissions/rules/expiry';
 import { nativePayeeRuleDecoder } from '../../../src/permissions/rules/payee';
 import { redeemerRuleDecoder } from '../../../src/permissions/rules/redeemer';

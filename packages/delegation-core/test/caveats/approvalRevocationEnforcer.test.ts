@@ -4,8 +4,8 @@ import { describe, it, expect } from 'vitest';
 import {
   createApprovalRevocationTerms,
   decodeApprovalRevocationTerms,
-  type ApprovalRevocationTerms,
 } from '../../src/caveats/approvalRevocationEnforcer';
+import type { ApprovalRevocationTerms } from '../../src/caveats/approvalRevocationEnforcer';
 
 const ALL_FALSE = {
   erc20Approve: false,

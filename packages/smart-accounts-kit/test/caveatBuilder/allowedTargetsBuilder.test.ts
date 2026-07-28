@@ -1,4 +1,5 @@
-import { concat, size, type Address, type Hex } from 'viem';
+import { concat, size } from 'viem';
+import type { Address, Hex } from 'viem';
 import { expect, describe, it } from 'vitest';
 
 import { allowedTargetsBuilder } from '../../src/caveatBuilder/allowedTargetsBuilder';

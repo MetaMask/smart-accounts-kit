@@ -1,4 +1,5 @@
-import { type Hex, isHex, toHex } from 'viem';
+import { isHex, toHex } from 'viem';
+import type { Hex } from 'viem';
 
 /**
  * Utility function to check if an object has all specified properties defined and not undefined.

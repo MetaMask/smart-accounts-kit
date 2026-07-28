@@ -1,5 +1,6 @@
 import { createERC721TransferTerms } from '@metamask/delegation-core';
-import { type Address, isAddress } from 'viem';
+import { isAddress } from 'viem';
+import type { Address } from 'viem';
 
 import type { SmartAccountsEnvironment, Caveat } from '../types';
 

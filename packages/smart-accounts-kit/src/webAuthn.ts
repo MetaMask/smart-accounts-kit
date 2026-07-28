@@ -2,12 +2,12 @@ import { Signature } from 'ox';
 import {
   parseAbiParameters,
   encodeAbiParameters,
-  type Hex,
   encodePacked,
   keccak256,
   concat,
   hexToBytes,
 } from 'viem';
+import type { Hex } from 'viem';
 
 export const FIELD_MODULUS =
   115792089210356248762697446949407573529996955224135760342422259061068512044369n;

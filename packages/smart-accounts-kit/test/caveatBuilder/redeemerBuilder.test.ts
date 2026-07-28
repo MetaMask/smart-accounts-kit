@@ -1,4 +1,5 @@
-import { size, type Address } from 'viem';
+import { size } from 'viem';
+import type { Address } from 'viem';
 import { expect, describe, it, beforeEach } from 'vitest';
 
 import { redeemerBuilder } from '../../src/caveatBuilder/redeemerBuilder';

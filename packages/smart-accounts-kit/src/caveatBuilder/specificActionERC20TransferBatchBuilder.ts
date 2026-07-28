@@ -1,5 +1,6 @@
 import { createSpecificActionERC20TransferBatchTerms } from '@metamask/delegation-core';
-import { isAddress, type Address, type Hex } from 'viem';
+import { isAddress } from 'viem';
+import type { Address, Hex } from 'viem';
 
 import type { Caveat, SmartAccountsEnvironment } from '../types';
 

@@ -1,4 +1,5 @@
-import { type BytesLike, bytesToHex, hexToBytes } from '@metamask/utils';
+import { bytesToHex, hexToBytes } from '@metamask/utils';
+import type { BytesLike } from '@metamask/utils';
 
 import type { Hex } from './types';
 

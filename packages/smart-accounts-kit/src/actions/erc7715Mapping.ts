@@ -11,7 +11,8 @@ import type {
   Rule,
   TokenApprovalRevocationPermission as RpcTokenApprovalRevocationPermission,
 } from '@metamask/7715-permission-types';
-import { getAddress, hexToNumber, isAddress, toHex, type Hex } from 'viem';
+import { getAddress, hexToNumber, isAddress, toHex } from 'viem';
+import type { Hex } from 'viem';
 
 import { isDefined, toHexOrThrow } from '../utils';
 import type {

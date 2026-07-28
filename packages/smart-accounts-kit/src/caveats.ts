@@ -33,12 +33,12 @@ import {
   decodeOwnershipTransferTerms,
 } from '@metamask/delegation-core';
 import {
-  type Hex,
   encodeAbiParameters,
   parseAbiParameters,
   keccak256,
   toHex,
 } from 'viem';
+import type { Hex } from 'viem';
 
 import type { CoreCaveatConfiguration } from './caveatBuilder/coreCaveatBuilder';
 import { CaveatType } from './constants';

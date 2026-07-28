@@ -1,11 +1,9 @@
-import { isHex, type Hex } from 'viem';
+import { isHex } from 'viem';
+import type { Hex } from 'viem';
 import { describe, it, expect } from 'vitest';
 
-import {
-  createExecution,
-  encodeExecutionCalldatas,
-  type ExecutionStruct,
-} from '../src/executions';
+import { createExecution, encodeExecutionCalldatas } from '../src/executions';
+import type { ExecutionStruct } from '../src/executions';
 
 describe('executions', () => {
   describe('createExecution()', () => {

@@ -1,39 +1,21 @@
-import {
-  type Erc20PeriodicScopeConfig,
-  createErc20PeriodicCaveatBuilder,
-} from './erc20PeriodicScope';
-import {
-  type Erc20StreamingScopeConfig,
-  createErc20StreamingCaveatBuilder,
-} from './erc20StreamingScope';
-import {
-  type Erc20TransferScopeConfig,
-  createErc20TransferCaveatBuilder,
-} from './erc20TransferScope';
-import {
-  type Erc721ScopeConfig,
-  createErc721CaveatBuilder,
-} from './erc721Scope';
-import {
-  createFunctionCallCaveatBuilder,
-  type FunctionCallScopeConfig,
-} from './functionCallScope';
-import {
-  type NativeTokenPeriodicScopeConfig,
-  createNativeTokenPeriodicCaveatBuilder,
-} from './nativeTokenPeriodicScope';
-import {
-  type NativeTokenStreamingScopeConfig,
-  createNativeTokenStreamingCaveatBuilder,
-} from './nativeTokenStreamingScope';
-import {
-  type NativeTokenTransferScopeConfig,
-  createNativeTokenTransferCaveatBuilder,
-} from './nativeTokenTransferScope';
-import {
-  createOwnershipCaveatBuilder,
-  type OwnershipScopeConfig,
-} from './ownershipScope';
+import { createErc20PeriodicCaveatBuilder } from './erc20PeriodicScope';
+import type { Erc20PeriodicScopeConfig } from './erc20PeriodicScope';
+import { createErc20StreamingCaveatBuilder } from './erc20StreamingScope';
+import type { Erc20StreamingScopeConfig } from './erc20StreamingScope';
+import { createErc20TransferCaveatBuilder } from './erc20TransferScope';
+import type { Erc20TransferScopeConfig } from './erc20TransferScope';
+import { createErc721CaveatBuilder } from './erc721Scope';
+import type { Erc721ScopeConfig } from './erc721Scope';
+import { createFunctionCallCaveatBuilder } from './functionCallScope';
+import type { FunctionCallScopeConfig } from './functionCallScope';
+import { createNativeTokenPeriodicCaveatBuilder } from './nativeTokenPeriodicScope';
+import type { NativeTokenPeriodicScopeConfig } from './nativeTokenPeriodicScope';
+import { createNativeTokenStreamingCaveatBuilder } from './nativeTokenStreamingScope';
+import type { NativeTokenStreamingScopeConfig } from './nativeTokenStreamingScope';
+import { createNativeTokenTransferCaveatBuilder } from './nativeTokenTransferScope';
+import type { NativeTokenTransferScopeConfig } from './nativeTokenTransferScope';
+import { createOwnershipCaveatBuilder } from './ownershipScope';
+import type { OwnershipScopeConfig } from './ownershipScope';
 import { ScopeType } from '../../constants';
 import type { SmartAccountsEnvironment } from '../../types';
 import type { CoreCaveatBuilder } from '../coreCaveatBuilder';

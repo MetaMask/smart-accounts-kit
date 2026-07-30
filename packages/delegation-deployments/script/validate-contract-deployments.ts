@@ -389,8 +389,25 @@ const celoSepoliaChain: Chain = {
   },
 };
 
+const arcTestnetChain: Chain = {
+  id: 5042002,
+  name: 'Arc Testnet',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.testnet.arc.network'],
+    },
+  },
+  // Arc uses USDC as its native gas token instead of a volatile native currency.
+  nativeCurrency: {
+    name: 'USDC',
+    symbol: 'USDC',
+    decimals: 18,
+  },
+};
+
 export const chains = {
   ...allChains,
+  arcTestnet: arcTestnetChain,
   megaEthTestNet: megaEthTestNetChain,
   berachainMainnet: berachainMainnetChain,
   bepoliaTestnet: bepoliaTestnetChain,

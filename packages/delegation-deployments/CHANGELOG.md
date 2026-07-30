@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Add chain deployment for Robinhood Chain mainnet and testnet ([#277](https://github.com/MetaMask/smart-accounts-kit/pull/277))
+- Add chain deployment for Arc Testnet ([#289](https://github.com/MetaMask/smart-accounts-kit/pull/289))
 
 ### Changed
 

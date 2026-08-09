@@ -151,7 +151,6 @@ export const DELEGATOR_CONTRACTS: DeployedContracts = {
     [CHAIN_ID.katanaBokuto]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.intuitionTestnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.robinhoodTestnet]: DEPLOYMENTS_1_3_0,
-    // Deployment pending: not yet deployed on Arc as of writing.
     [CHAIN_ID.arcTestnet]: DEPLOYMENTS_1_3_0,
   },
 };

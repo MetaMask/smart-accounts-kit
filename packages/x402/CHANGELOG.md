@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0]
+
 ### Uncategorized
 
 - chore(deps-dev): bump @metamask/eslint-config-typescript from 14.0.0 to 15.0.1 ([#285](https://github.com/MetaMask/smart-accounts-kit/pull/285))
@@ -30,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - New @metamask/x402 package providing plugins to @x402 packages ([#236](https://github.com/MetaMask/smart-accounts-kit/pull/236))
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/x402@0.2.0...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/x402@1.0.0...HEAD
+[1.0.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/x402@0.2.0...@metamask/x402@1.0.0
 [0.2.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/x402@0.1.0...@metamask/x402@0.2.0
 [0.1.0]: https://github.com/MetaMask/smart-accounts-kit/releases/tag/@metamask/x402@0.1.0

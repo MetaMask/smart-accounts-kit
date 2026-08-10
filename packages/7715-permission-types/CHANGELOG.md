@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0]
+
 ### Uncategorized
 
 - chore(deps-dev): bump @metamask/eslint-config-typescript from 14.0.0 to 15.0.1 ([#285](https://github.com/MetaMask/smart-accounts-kit/pull/285))
@@ -104,7 +106,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Type definitions for EIP-7715 Execution Permissions, and definitions for permission types supported by MetaMask
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@1.0.0...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@2.0.0...HEAD
+[2.0.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@1.0.0...@metamask/7715-permission-types@2.0.0
 [1.0.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.9.0...@metamask/7715-permission-types@1.0.0
 [0.9.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.8.0...@metamask/7715-permission-types@0.9.0
 [0.8.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.7.1...@metamask/7715-permission-types@0.8.0

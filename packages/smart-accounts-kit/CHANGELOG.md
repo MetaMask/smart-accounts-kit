@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0]
+
 ### Uncategorized
 
 - chore(deps-dev): bump @metamask/eslint-config-typescript from 14.0.0 to 15.0.1 ([#285](https://github.com/MetaMask/smart-accounts-kit/pull/285))
@@ -180,7 +182,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.7.0...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@2.0.0...HEAD
+[2.0.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.7.0...@metamask/smart-accounts-kit@2.0.0
 [1.7.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.6.0...@metamask/smart-accounts-kit@1.7.0
 [1.6.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.5.0...@metamask/smart-accounts-kit@1.6.0
 [1.5.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.4.0...@metamask/smart-accounts-kit@1.5.0

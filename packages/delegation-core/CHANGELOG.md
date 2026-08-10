@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0]
+
 ### Uncategorized
 
 - chore(deps-dev): bump @metamask/eslint-config-typescript from 14.0.0 to 15.0.1 ([#285](https://github.com/MetaMask/smart-accounts-kit/pull/285))
@@ -130,7 +132,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add @metamask/delegation-core package, providing utility types, delegation hashing, and terms encoding for a limited set of caveat enforcers.
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-core@2.2.1...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-core@3.0.0...HEAD
+[3.0.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-core@2.2.1...@metamask/delegation-core@3.0.0
 [2.2.1]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-core@2.2.0...@metamask/delegation-core@2.2.1
 [2.2.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-core@2.1.0...@metamask/delegation-core@2.2.0
 [2.1.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-core@2.0.0...@metamask/delegation-core@2.1.0

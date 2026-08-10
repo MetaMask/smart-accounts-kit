@@ -63,7 +63,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emnapi/core@npm:1.11.1":
+"@emnapi/core@npm:1.11.1, @emnapi/core@npm:^1.4.3":
   version: 1.11.1
   resolution: "@emnapi/core@npm:1.11.1"
   dependencies:
@@ -73,40 +73,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emnapi/core@npm:^1.4.3":
-  version: 1.8.1
-  resolution: "@emnapi/core@npm:1.8.1"
-  dependencies:
-    "@emnapi/wasi-threads": "npm:1.1.0"
-    tslib: "npm:^2.4.0"
-  checksum: 10/904ea60c91fc7d8aeb4a8f2c433b8cfb47c50618f2b6f37429fc5093c857c6381c60628a5cfbc3a7b0d75b0a288f21d4ed2d4533e82f92c043801ef255fd6a5c
-  languageName: node
-  linkType: hard
-
-"@emnapi/runtime@npm:1.11.1":
+"@emnapi/runtime@npm:1.11.1, @emnapi/runtime@npm:^1.4.3":
   version: 1.11.1
   resolution: "@emnapi/runtime@npm:1.11.1"
   dependencies:
     tslib: "npm:^2.4.0"
   checksum: 10/8f7c622a49314df4d07952110e108e83b0fe129a8ddb9ef1e0ae372d754616169d5b0dd47a0d354a0fea2612abe42cedb582d15916936d1320c6c468acc804cc
-  languageName: node
-  linkType: hard
-
-"@emnapi/runtime@npm:^1.4.3":
-  version: 1.8.1
-  resolution: "@emnapi/runtime@npm:1.8.1"
-  dependencies:
-    tslib: "npm:^2.4.0"
-  checksum: 10/26725e202d4baefdc4a6ba770f703dfc80825a27c27a08c22bac1e1ce6f8f75c47b4fe9424d9b63239463c33ef20b650f08d710da18dfa1164a95e5acb865dba
-  languageName: node
-  linkType: hard
-
-"@emnapi/wasi-threads@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@emnapi/wasi-threads@npm:1.1.0"
-  dependencies:
-    tslib: "npm:^2.4.0"
-  checksum: 10/0d557e75262d2f4c95cb2a456ba0785ef61f919ce488c1d76e5e3acfd26e00c753ef928cd80068363e0c166ba8cc0141305daf0f81aad5afcd421f38f11e0f4e
   languageName: node
   linkType: hard
 
@@ -583,13 +555,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/7715-permission-types@npm:^1.0.0, @metamask/7715-permission-types@workspace:packages/7715-permission-types":
+"@metamask/7715-permission-types@npm:^2.0.0, @metamask/7715-permission-types@workspace:packages/7715-permission-types":
   version: 0.0.0-use.local
   resolution: "@metamask/7715-permission-types@workspace:packages/7715-permission-types"
   dependencies:
     "@metamask/auto-changelog": "npm:^6.1.1"
-    "@metamask/delegation-core": "npm:^2.2.1"
-    "@metamask/delegation-deployments": "npm:^1.4.0"
+    "@metamask/delegation-core": "npm:^3.0.0"
+    "@metamask/delegation-deployments": "npm:^2.0.0"
     "@metamask/utils": "npm:^11.4.0"
     "@types/node": "npm:^20.19.0"
     "@vitest/coverage-v8": "npm:4.1.10"
@@ -677,7 +649,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/delegation-abis@npm:^1.1.0, @metamask/delegation-abis@workspace:packages/delegation-abis":
+"@metamask/delegation-abis@npm:^2.0.0, @metamask/delegation-abis@workspace:packages/delegation-abis":
   version: 0.0.0-use.local
   resolution: "@metamask/delegation-abis@workspace:packages/delegation-abis"
   dependencies:
@@ -688,7 +660,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/delegation-core@npm:^2.2.1, @metamask/delegation-core@workspace:packages/delegation-core":
+"@metamask/delegation-core@npm:^3.0.0, @metamask/delegation-core@workspace:packages/delegation-core":
   version: 0.0.0-use.local
   resolution: "@metamask/delegation-core@workspace:packages/delegation-core"
   dependencies:
@@ -706,7 +678,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/delegation-deployments@npm:^1.4.0, @metamask/delegation-deployments@workspace:packages/delegation-deployments":
+"@metamask/delegation-deployments@npm:^2.0.0, @metamask/delegation-deployments@workspace:packages/delegation-deployments":
   version: 0.0.0-use.local
   resolution: "@metamask/delegation-deployments@workspace:packages/delegation-deployments"
   dependencies:
@@ -790,11 +762,11 @@ __metadata:
   dependencies:
     "@lavamoat/allow-scripts": "npm:^3.4.0"
     "@lavamoat/preinstall-always-fail": "npm:^2.1.1"
-    "@metamask/7715-permission-types": "npm:^1.0.0"
+    "@metamask/7715-permission-types": "npm:^2.0.0"
     "@metamask/auto-changelog": "npm:^6.1.1"
-    "@metamask/delegation-abis": "npm:^1.1.0"
-    "@metamask/delegation-core": "npm:^2.2.1"
-    "@metamask/delegation-deployments": "npm:^1.4.0"
+    "@metamask/delegation-abis": "npm:^2.0.0"
+    "@metamask/delegation-core": "npm:^3.0.0"
+    "@metamask/delegation-deployments": "npm:^2.0.0"
     "@metamask/eslint-config": "npm:14.1.0"
     "@metamask/eslint-config-nodejs": "npm:15.0.1"
     "@metamask/eslint-config-typescript": "npm:15.0.1"
@@ -1743,16 +1715,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tybys/wasm-util@npm:^0.10.0":
-  version: 0.10.1
-  resolution: "@tybys/wasm-util@npm:0.10.1"
-  dependencies:
-    tslib: "npm:^2.4.0"
-  checksum: 10/7fe0d239397aebb002ac4855d30c197c06a05ea8df8511350a3a5b1abeefe26167c60eda8a5508337571161e4c4b53d7c1342296123f9607af8705369de9fa7f
-  languageName: node
-  linkType: hard
-
-"@tybys/wasm-util@npm:^0.10.3":
+"@tybys/wasm-util@npm:^0.10.0, @tybys/wasm-util@npm:^0.10.3":
   version: 0.10.3
   resolution: "@tybys/wasm-util@npm:0.10.3"
   dependencies:
@@ -5509,14 +5472,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picomatch@npm:^4.0.2, picomatch@npm:^4.0.3":
-  version: 4.0.3
-  resolution: "picomatch@npm:4.0.3"
-  checksum: 10/57b99055f40b16798f2802916d9c17e9744e620a0db136554af01d19598b96e45e2f00014c91d1b8b13874b80caa8c295b3d589a3f72373ec4aaf54baa5962d5
-  languageName: node
-  linkType: hard
-
-"picomatch@npm:^4.0.4, picomatch@npm:^4.0.5":
+"picomatch@npm:^4.0.2, picomatch@npm:^4.0.3, picomatch@npm:^4.0.4, picomatch@npm:^4.0.5":
   version: 4.0.5
   resolution: "picomatch@npm:4.0.5"
   checksum: 10/8bad770af9dcdb7f94ad1a893adcbe08a97d75a18872f8fed37161d3124217471c402b3929f051532f795f4ff2e53dcebb1644df4c1a5f3a9c476fef3b9f8c51
@@ -6440,17 +6396,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinyglobby@npm:^0.2.11, tinyglobby@npm:^0.2.15":
-  version: 0.2.15
-  resolution: "tinyglobby@npm:0.2.15"
-  dependencies:
-    fdir: "npm:^6.5.0"
-    picomatch: "npm:^4.0.3"
-  checksum: 10/d72bd826a8b0fa5fa3929e7fe5ba48fceb2ae495df3a231b6c5408cd7d8c00b58ab5a9c2a76ba56a62ee9b5e083626f1f33599734bed1ffc4b792406408f0ca2
-  languageName: node
-  linkType: hard
-
-"tinyglobby@npm:^0.2.17":
+"tinyglobby@npm:^0.2.11, tinyglobby@npm:^0.2.15, tinyglobby@npm:^0.2.17":
   version: 0.2.17
   resolution: "tinyglobby@npm:0.2.17"
   dependencies:

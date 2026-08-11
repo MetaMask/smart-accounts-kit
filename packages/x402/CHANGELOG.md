@@ -9,16 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0]
 
-### Uncategorized
-
-- chore(deps-dev): bump @metamask/eslint-config-typescript from 14.0.0 to 15.0.1 ([#285](https://github.com/MetaMask/smart-accounts-kit/pull/285))
-- Fix casting of repo URL from https://github.com/metamask/smart-accounts-kit to https://github.com/MetaMask/smart-accounts-kit across package.json and CHANGELOG.md files ([#272](https://github.com/MetaMask/smart-accounts-kit/pull/272))
-- chore(deps): bump the npm_and_yarn group across 1 directory with 6 updates ([#266](https://github.com/MetaMask/smart-accounts-kit/pull/266))
-
 ### Changed
 
 - **BREAKING:** Removes support for Nodejs 18 - engines changed from `^18.18 || >=20` to `>=20` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
   - Bump @vitest and @vitest/coverage-v8 from `4.0.18` to `4.1.10` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
+- chore(deps-dev): bump @metamask/eslint-config-typescript from 14.0.0 to 15.0.1 ([#285](https://github.com/MetaMask/smart-accounts-kit/pull/285))
+- chore(deps): bump the npm_and_yarn group across 1 directory with 6 updates ([#266](https://github.com/MetaMask/smart-accounts-kit/pull/266))
+
+### Fixed
+
+- Fix casting of repo URL from https://github.com/metamask/smart-accounts-kit to https://github.com/MetaMask/smart-accounts-kit across package.json and CHANGELOG.md files ([#272](https://github.com/MetaMask/smart-accounts-kit/pull/272))
 
 ## [0.2.0]
 

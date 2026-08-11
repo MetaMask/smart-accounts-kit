@@ -9,14 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0]
 
-### Uncategorized
-
-- Fix casting of repo URL from https://github.com/metamask/smart-accounts-kit to https://github.com/MetaMask/smart-accounts-kit across package.json and CHANGELOG.md files ([#272](https://github.com/MetaMask/smart-accounts-kit/pull/272))
-- chore(deps-dev): bump @metamask/auto-changelog from 5.3.2 to 6.1.1 ([#249](https://github.com/MetaMask/smart-accounts-kit/pull/249))
-
 ### Changed
 
 - **BREAKING:** Removes support for Nodejs 18 - engines changed from `^18.18 || >=20` to `>=20` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
+- chore(deps-dev): bump @metamask/auto-changelog from 5.3.2 to 6.1.1 ([#249](https://github.com/MetaMask/smart-accounts-kit/pull/249))
+
+### Fixed
+
+- Fix casting of repo URL from https://github.com/metamask/smart-accounts-kit to https://github.com/MetaMask/smart-accounts-kit across package.json and CHANGELOG.md files ([#272](https://github.com/MetaMask/smart-accounts-kit/pull/272))
 
 ## [1.1.0]
 

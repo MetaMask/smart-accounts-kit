@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **BREAKING:** Removes support for Nodejs 18 - engines changed from `^18.18 || >=20` to `>=20` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
   - Bump @vitest and @vitest/coverage-v8 from `4.0.18` to `4.1.10` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
+- Bumped @metamask/delegation-core from `^2.2.1` to `^3.0.0` ([#291](https://github.com/MetaMask/smart-accounts-kit/pull/291))
+- Bumped @metamask/delegation-deployments from `^1.4.0` to `^2.0.0` ([#291](https://github.com/MetaMask/smart-accounts-kit/pull/291))
 
 ## [1.0.0]
 

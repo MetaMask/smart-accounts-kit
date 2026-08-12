@@ -14,10 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING:** Removes support for Nodejs 18 - engines changed from `^18.18 || >=20` to `>=20` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
   - Bump @vitest and @vitest/coverage-v8 from `4.0.18` to `4.1.10` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
 
-### Fixed
-
-- Fix casting of repo URL from https://github.com/metamask/smart-accounts-kit to https://github.com/MetaMask/smart-accounts-kit across package.json and CHANGELOG.md files ([#272](https://github.com/MetaMask/smart-accounts-kit/pull/272))
-
 ## [0.2.0]
 
 ### Changed

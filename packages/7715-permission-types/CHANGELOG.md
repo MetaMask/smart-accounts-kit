@@ -7,10 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0]
+
 ### Changed
 
 - **BREAKING:** Removes support for Nodejs 18 - engines changed from `^18.18 || >=20` to `>=20` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
   - Bump @vitest and @vitest/coverage-v8 from `4.0.18` to `4.1.10` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
+- Bumped @metamask/delegation-core from `^2.2.1` to `^3.0.0` ([#291](https://github.com/MetaMask/smart-accounts-kit/pull/291))
+- Bumped @metamask/delegation-deployments from `^1.4.0` to `^2.0.0` ([#291](https://github.com/MetaMask/smart-accounts-kit/pull/291))
 
 ## [1.0.0]
 
@@ -100,7 +104,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Type definitions for EIP-7715 Execution Permissions, and definitions for permission types supported by MetaMask
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@1.0.0...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@2.0.0...HEAD
+[2.0.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@1.0.0...@metamask/7715-permission-types@2.0.0
 [1.0.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.9.0...@metamask/7715-permission-types@1.0.0
 [0.9.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.8.0...@metamask/7715-permission-types@0.9.0
 [0.8.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/7715-permission-types@0.7.1...@metamask/7715-permission-types@0.8.0

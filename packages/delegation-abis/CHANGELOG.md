@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0]
+
 ### Changed
 
 - **BREAKING:** Removes support for Nodejs 18 - engines changed from `^18.18 || >=20` to `>=20` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
@@ -29,7 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Improve @metamask/delegation-abis tree-shakability ([#131](https://github.com/MetaMask/smart-accounts-kit/pull/131))
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-abis@1.1.0...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-abis@2.0.0...HEAD
+[2.0.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-abis@1.1.0...@metamask/delegation-abis@2.0.0
 [1.1.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-abis@1.0.0...@metamask/delegation-abis@1.1.0
 [1.0.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-abis@0.12.0-beta.0...@metamask/delegation-abis@1.0.0
 [0.12.0-beta.0]: https://github.com/MetaMask/smart-accounts-kit/releases/tag/@metamask/delegation-abis@0.12.0-beta.0

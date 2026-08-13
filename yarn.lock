@@ -583,13 +583,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/7715-permission-types@npm:^1.0.0, @metamask/7715-permission-types@workspace:packages/7715-permission-types":
+"@metamask/7715-permission-types@npm:^2.0.0, @metamask/7715-permission-types@workspace:packages/7715-permission-types":
   version: 0.0.0-use.local
   resolution: "@metamask/7715-permission-types@workspace:packages/7715-permission-types"
   dependencies:
     "@metamask/auto-changelog": "npm:^6.1.1"
-    "@metamask/delegation-core": "npm:^2.2.1"
-    "@metamask/delegation-deployments": "npm:^1.4.0"
+    "@metamask/delegation-core": "npm:^3.0.0"
+    "@metamask/delegation-deployments": "npm:^2.0.0"
     "@metamask/utils": "npm:^11.4.0"
     "@types/node": "npm:^20.19.0"
     "@vitest/coverage-v8": "npm:4.1.10"
@@ -677,7 +677,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/delegation-abis@npm:^1.1.0, @metamask/delegation-abis@workspace:packages/delegation-abis":
+"@metamask/delegation-abis@npm:^2.0.0, @metamask/delegation-abis@workspace:packages/delegation-abis":
   version: 0.0.0-use.local
   resolution: "@metamask/delegation-abis@workspace:packages/delegation-abis"
   dependencies:
@@ -688,7 +688,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/delegation-core@npm:^2.2.1, @metamask/delegation-core@workspace:packages/delegation-core":
+"@metamask/delegation-core@npm:^3.0.0, @metamask/delegation-core@workspace:packages/delegation-core":
   version: 0.0.0-use.local
   resolution: "@metamask/delegation-core@workspace:packages/delegation-core"
   dependencies:
@@ -706,7 +706,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/delegation-deployments@npm:^1.4.0, @metamask/delegation-deployments@workspace:packages/delegation-deployments":
+"@metamask/delegation-deployments@npm:^2.0.0, @metamask/delegation-deployments@workspace:packages/delegation-deployments":
   version: 0.0.0-use.local
   resolution: "@metamask/delegation-deployments@workspace:packages/delegation-deployments"
   dependencies:
@@ -790,11 +790,11 @@ __metadata:
   dependencies:
     "@lavamoat/allow-scripts": "npm:^3.4.0"
     "@lavamoat/preinstall-always-fail": "npm:^2.1.1"
-    "@metamask/7715-permission-types": "npm:^1.0.0"
+    "@metamask/7715-permission-types": "npm:^2.0.0"
     "@metamask/auto-changelog": "npm:^6.1.1"
-    "@metamask/delegation-abis": "npm:^1.1.0"
-    "@metamask/delegation-core": "npm:^2.2.1"
-    "@metamask/delegation-deployments": "npm:^1.4.0"
+    "@metamask/delegation-abis": "npm:^2.0.0"
+    "@metamask/delegation-core": "npm:^3.0.0"
+    "@metamask/delegation-deployments": "npm:^2.0.0"
     "@metamask/eslint-config": "npm:14.1.0"
     "@metamask/eslint-config-nodejs": "npm:15.0.1"
     "@metamask/eslint-config-typescript": "npm:15.0.1"

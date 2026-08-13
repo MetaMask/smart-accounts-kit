@@ -1,6 +1,6 @@
 {
   "name": "@metamask/7715-permission-types",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Permission types for the ERC-7715",
   "license": "(MIT-0 OR Apache-2.0)",
   "type": "module",
@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@metamask/auto-changelog": "^6.1.1",
-    "@metamask/delegation-deployments": "^1.4.0",
+    "@metamask/delegation-deployments": "^2.0.0",
     "@types/node": "^20.19.0",
     "@vitest/coverage-v8": "4.1.10",
     "compare-versions": "^6.1.1",
@@ -68,7 +68,7 @@
     "vitest": "4.1.10"
   },
   "dependencies": {
-    "@metamask/delegation-core": "^2.2.1",
+    "@metamask/delegation-core": "^3.0.0",
     "@metamask/utils": "^11.4.0"
   }
 }

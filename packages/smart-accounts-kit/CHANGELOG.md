@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0]
+
 ### Changed
 
 - **BREAKING:** Removes support for Nodejs 18 - engines changed from `^18.18 || >=20` to `>=20` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
   - Bump @vitest and @vitest/coverage-v8 from `4.0.18` to `4.1.10` ([#286](https://github.com/MetaMask/smart-accounts-kit/pull/286))
+- Bumped @metamask/7715-permission-types from `^1.0.0` to `^2.0.0` ([#291](https://github.com/MetaMask/smart-accounts-kit/pull/291))
+- Bumped @metamask/delegation-abis from `^1.1.0` to `^2.0.0` ([#291](https://github.com/MetaMask/smart-accounts-kit/pull/291))
+- Bumped @metamask/delegation-core from `^2.2.1` to `^3.0.0` ([#291](https://github.com/MetaMask/smart-accounts-kit/pull/291))
+- Bumped @metamask/delegation-deployments from `^1.4.0` to `^2.0.0` ([#291](https://github.com/MetaMask/smart-accounts-kit/pull/291))
 
 ## [1.7.0]
 
@@ -175,7 +181,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Promote readable permissions actions (`requestExecutionPermissions`, `sendTransactionWithDelegation`, and `sendUserOperationWithDelegation`) from experimental ([#91](https://github.com/MetaMask/smart-accounts-kit/pull/91))
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.7.0...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@2.0.0...HEAD
+[2.0.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.7.0...@metamask/smart-accounts-kit@2.0.0
 [1.7.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.6.0...@metamask/smart-accounts-kit@1.7.0
 [1.6.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.5.0...@metamask/smart-accounts-kit@1.6.0
 [1.5.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/smart-accounts-kit@1.4.0...@metamask/smart-accounts-kit@1.5.0

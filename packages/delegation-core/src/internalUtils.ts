@@ -18,7 +18,9 @@ export const toHexString = ({
   value,
   size,
 }: {
+  /** Numeric value to encode as hex. */
   value: bigint | number;
+  /** Output width in bytes (two hex characters per byte). */
   size: number;
 }): string => {
   return value.toString(16).padStart(size * 2, '0');

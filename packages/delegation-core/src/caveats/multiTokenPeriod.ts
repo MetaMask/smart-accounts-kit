@@ -33,9 +33,13 @@ export type TokenPeriodConfig<
   TBytesLike extends BytesLike = BytesLike,
   TDuration extends number | bigint = number,
 > = {
+  /** Token contract address (`address(0)` denotes native token). */
   token: TBytesLike;
+  /** Maximum amount that can be transferred within each period. */
   periodAmount: bigint;
+  /** Duration of each period in seconds. */
   periodDuration: TDuration;
+  /** Unix timestamp when the first period begins. */
   startDate: number;
 };
 
@@ -46,6 +50,7 @@ export type MultiTokenPeriodTerms<
   TBytesLike extends BytesLike = BytesLike,
   TDuration extends number | bigint = number,
 > = {
+  /** Per-token period limits encoded into terms. */
   tokenConfigs: TokenPeriodConfig<TBytesLike, TDuration>[];
 };
 

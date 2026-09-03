@@ -9,12 +9,28 @@ import { x402Erc7710Server } from './x402Server';
 export class x402ExactEvmErc7710ServerScheme extends ExactEvmScheme {
   readonly #erc7710Server = new x402Erc7710Server();
 
+  /**
+   * Enhance payment requirements, adding ERC-7710 fields when requested.
+   *
+   * @param paymentRequirements - Payment requirements to enhance.
+   * @param supportedKind - Facilitator-supported kind metadata.
+   * @param supportedKind.x402Version - x402 protocol version.
+   * @param supportedKind.scheme - Payment scheme identifier.
+   * @param supportedKind.network - Network identifier for the payment.
+   * @param supportedKind.extra - Optional extra fields from the facilitator.
+   * @param facilitatorExtensions - Facilitator extension identifiers.
+   * @returns Enhanced payment requirements.
+   */
   async enhancePaymentRequirements(
     paymentRequirements: PaymentRequirements,
     supportedKind: {
+      /** x402 protocol version. */
       x402Version: number;
+      /** Payment scheme identifier. */
       scheme: string;
+      /** Network identifier for the payment. */
       network: Network;
+      /** Optional extra fields from the facilitator. */
       extra?: Record<string, unknown>;
     },
     facilitatorExtensions: string[],

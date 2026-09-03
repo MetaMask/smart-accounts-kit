@@ -42,6 +42,9 @@ export type LogicalOrWrapperArgs<TBytesLike extends BytesLike = BytesLike> = {
 const CAVEAT_GROUPS_ABI = '((address,bytes,bytes)[])[]';
 const SELECTED_GROUP_ABI = '(uint256,bytes[])';
 
+/**
+ * ABI row for a caveat: `(enforcer, terms, args)` as hex strings.
+ */
 type EncodedCaveatRow = readonly [string, string, string];
 
 /**

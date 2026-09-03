@@ -3,7 +3,14 @@ import type { Hex } from '@metamask/utils';
 import { getAddress } from './ethereum';
 import type { x402PaymentRequirements } from './x402Client';
 
+/**
+ * Configuration for {@link x402Erc7710Server}.
+ */
 export type x402Erc7710ServerConfig = {
+  /**
+   * When true, overwrite an existing `assetTransferMethod` with `"erc7710"`.
+   * Defaults to false, which rejects conflicting methods.
+   */
   allowAssetTransferMethodOverride?: boolean;
 };
 
@@ -71,14 +78,28 @@ export class x402Erc7710Server {
 
   readonly #allowAssetTransferMethodOverride: boolean;
 
+  /**
+   * Create an ERC-7710 x402 server helper.
+   *
+   * @param config - Optional server configuration.
+   */
   constructor(config?: x402Erc7710ServerConfig) {
     this.#allowAssetTransferMethodOverride =
       config?.allowAssetTransferMethodOverride ?? false;
   }
 
+  /**
+   * Publish `assetTransferMethod: "erc7710"` and optional facilitator addresses.
+   *
+   * @param paymentRequirements - Payment requirements to enhance.
+   * @param supportedKind - Facilitator-supported kind metadata.
+   * @param supportedKind.extra - Optional extra fields, including facilitator addresses.
+   * @returns Payment requirements with ERC-7710 metadata applied.
+   */
   async enhancePaymentRequirements(
     paymentRequirements: x402PaymentRequirements,
     supportedKind: {
+      /** Optional extra fields, including facilitator addresses. */
       extra?: Record<string, unknown>;
     },
   ): Promise<x402PaymentRequirements> {

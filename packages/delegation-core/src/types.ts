@@ -12,8 +12,11 @@ export type { Hex } from '@metamask/utils';
  * args - Additional arguments required by the caveat enforcer, encoded as hex data.
  */
 export type CaveatStruct<TBytes extends BytesLike = BytesLike> = {
+  /** Address of the contract that enforces this caveat's conditions. */
   enforcer: TBytes;
+  /** Terms or conditions of the caveat encoded as hex or bytes. */
   terms: TBytes;
+  /** Additional arguments required by the caveat enforcer. */
   args: TBytes;
 };
 
@@ -33,10 +36,16 @@ export type CaveatStruct<TBytes extends BytesLike = BytesLike> = {
  * signature - The cryptographic signature validating this delegation.
  */
 export type DelegationStruct<TBytes extends BytesLike = BytesLike> = {
+  /** Address of the entity receiving the delegation. */
   delegate: TBytes;
+  /** Address of the entity granting the delegation. */
   delegator: TBytes;
+  /** Authority under which this delegation is granted. For root delegations, this is `ROOT_AUTHORITY`. */
   authority: TBytes;
+  /** Restrictions or conditions applied to this delegation. */
   caveats: CaveatStruct<TBytes>[];
+  /** Unique value to prevent replay attacks and ensure uniqueness of the delegation. */
   salt: bigint;
+  /** Cryptographic signature validating this delegation. */
   signature: TBytes;
 };

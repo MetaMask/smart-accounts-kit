@@ -62,6 +62,9 @@ export const CHAIN_ID = {
   lineaGoerli: 0xe704,
 };
 
+/**
+ * Mapping of contract version to chain ID to deployed contract name and address.
+ */
 type DeployedContracts = Record<
   string,
   Record<number, Record<string, Address>>

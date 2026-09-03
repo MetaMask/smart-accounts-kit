@@ -509,6 +509,9 @@ const allChainsDone = chainIds.map(async (chainIdAsString) => {
   const chainId = parseInt(chainIdAsString, 10);
   const chainIdHex = `0x${chainId.toString(16)}`;
 
+  /**
+   * Validates that each expected contract has code at its deployed address on this chain.
+   */
   const run = async (): Promise<void> => {
     const contracts = latestContracts[chainId];
 

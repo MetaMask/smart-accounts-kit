@@ -26,8 +26,11 @@ export type ExactExecutionBatchTerms<TBytesLike extends BytesLike = BytesLike> =
   {
     /** The executions that must be matched exactly in the batch. */
     executions: {
+      /** Target address of the execution. */
       target: TBytesLike;
+      /** Native token value of the execution (wei). */
       value: bigint;
+      /** Calldata of the execution. */
       callData: TBytesLike;
     }[];
   };

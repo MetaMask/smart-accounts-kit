@@ -10,6 +10,13 @@ import type { Hex } from '../../src/types';
 
 describe('AllowedCalldata', () => {
   describe('createAllowedCalldataTerms', function () {
+    /**
+     * Prefixes calldata with a 32-byte start index, matching encoded AllowedCalldata terms.
+     *
+     * @param startIndex - Byte offset encoded as a 32-byte big-endian integer.
+     * @param value - Calldata fragment as a `0x`-prefixed hex string.
+     * @returns Encoded terms hex: index prefix concatenated with `value`.
+     */
     const prefixWithIndex = (startIndex: number, value: Hex): Hex => {
       const indexHex = toHexString({ value: startIndex, size: 32 });
       return `0x${indexHex}${value.slice(2)}` as Hex;

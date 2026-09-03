@@ -32,8 +32,11 @@ import type { Hex } from '../types';
 export type ExactExecutionTerms<TBytesLike extends BytesLike = BytesLike> = {
   /** The execution that must be matched exactly. */
   execution: {
+    /** Target address of the execution. */
     target: TBytesLike;
+    /** Native token value of the execution (wei). */
     value: bigint;
+    /** Calldata of the execution. */
     callData: TBytesLike;
   };
 };

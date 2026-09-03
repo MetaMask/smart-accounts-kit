@@ -27,7 +27,9 @@ import type { Hex } from '../types';
  * Terms for configuring an AllowedCalldata caveat.
  */
 export type AllowedCalldataTerms<TBytesLike extends BytesLike = BytesLike> = {
+  /** Byte offset in execution calldata where the expected fragment must match. */
   startIndex: number;
+  /** Expected calldata fragment starting at `startIndex`. */
   value: TBytesLike;
 };
 

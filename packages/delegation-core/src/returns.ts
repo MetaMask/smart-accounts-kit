@@ -25,6 +25,7 @@ export type DecodedBytesLike<TResultValue extends ResultValue> =
  * Base options interface for operations that can return hex or bytes.
  */
 export type EncodingOptions<TResultValue extends ResultValue> = {
+  /** Desired encoding of the result (`hex` or `bytes`). */
   out: TResultValue;
 };
 

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add chain deployment for Arc Mainnet ([#304](https://github.com/MetaMask/smart-accounts-kit/pull/304))
+
 ## [2.0.0]
 
 ### Added

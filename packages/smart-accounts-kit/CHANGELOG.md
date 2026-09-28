@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Bumped @metamask/delegation-deployments from `^2.0.0` to `^2.1.0` ([#305](https://github.com/MetaMask/smart-accounts-kit/pull/305))
+
 ## [2.0.0]
 
 ### Changed

@@ -389,6 +389,21 @@ const celoSepoliaChain: Chain = {
   },
 };
 
+const arcMainnetChain: Chain = {
+  id: 5042,
+  name: 'Arc Mainnet',
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.mainnet.arc.io'],
+    },
+  },
+  nativeCurrency: {
+    name: 'USDC',
+    symbol: 'USDC',
+    decimals: 18,
+  },
+};
+
 const arcTestnetChain: Chain = {
   id: 5042002,
   name: 'Arc Testnet',
@@ -432,6 +447,7 @@ export const chains = {
   robinhoodMainnet: robinhoodMainnetChain,
   robinhoodTestnet: robinhoodTestnetChain,
   celoSepolia: celoSepoliaChain,
+  arcMainnet: arcMainnetChain,
 } as any as { [key: string]: Chain };
 
 // The default rpc urls for these chains are not reliable, so we override them

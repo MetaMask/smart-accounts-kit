@@ -32,6 +32,7 @@ export const CHAIN_ID = {
   katanaMainnet: 0xb67d2,
   intuitionMainnet: 0x483,
   robinhoodMainnet: 0x1237,
+  arcMainnet: 0x13b2,
   // Testnets
   bscTestnet: 0x61,
   arbitrumSepolia: 0x66eee,
@@ -126,6 +127,7 @@ export const DELEGATOR_CONTRACTS: DeployedContracts = {
     [CHAIN_ID.katanaMainnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.intuitionMainnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.robinhoodMainnet]: DEPLOYMENTS_1_3_0,
+    [CHAIN_ID.arcMainnet]: DEPLOYMENTS_1_3_0,
     // Testnets
     [CHAIN_ID.bscTestnet]: DEPLOYMENTS_1_3_0,
     [CHAIN_ID.citreaTestnet]: DEPLOYMENTS_1_3_0,

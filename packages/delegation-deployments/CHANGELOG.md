@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0]
+
 ### Added
 
 - Add chain deployment for Arc Mainnet ([#304](https://github.com/MetaMask/smart-accounts-kit/pull/304))
@@ -93,7 +95,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add deployments for Sei mainnet ([#84](https://github.com/MetaMask/smart-accounts-kit/pull/84))
 
-[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-deployments@2.0.0...HEAD
+[Unreleased]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-deployments@2.1.0...HEAD
+[2.1.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-deployments@2.0.0...@metamask/delegation-deployments@2.1.0
 [2.0.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.4.0...@metamask/delegation-deployments@2.0.0
 [1.4.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.3.0...@metamask/delegation-deployments@1.4.0
 [1.3.0]: https://github.com/MetaMask/smart-accounts-kit/compare/@metamask/delegation-deployments@1.2.0...@metamask/delegation-deployments@1.3.0

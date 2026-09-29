@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@metamask/auto-changelog": "^6.1.1",
-    "@metamask/delegation-deployments": "^2.0.0",
+    "@metamask/delegation-deployments": "^2.1.0",
     "@types/node": "^20.19.0",
     "@vitest/coverage-v8": "4.1.10",
     "compare-versions": "^6.1.1",

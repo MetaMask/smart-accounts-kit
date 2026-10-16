@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and setup environment
-        uses: MetaMask/action-checkout-and-setup@v1
+        uses: MetaMask/action-checkout-and-setup@392abd40aa6a0600a3c0ef4af75851662587e6ec # v1.4.0
         with:
           is-high-risk-environment: false
       - name: Download actionlint
@@ -79,7 +79,7 @@ jobs:
       IS_RELEASE: ${{ steps.is-release.outputs.IS_RELEASE }}
     steps:
       - id: is-release
-        uses: MetaMask/action-is-release@v2
+        uses: MetaMask/action-is-release@3cd51b98fa98d1347d06f5961299b0172ee31ae8 # v2.3.0
         with:
           commit-starts-with: 'Release [version],Release v[version],Release/[version],Release/v[version],Release `[version]`'
 

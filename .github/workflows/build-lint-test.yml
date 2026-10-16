@@ -23,14 +23,14 @@ jobs:
         node-version: [20.x, 22.x]
     steps:
       - name: Checkout and setup environment
-        uses: MetaMask/action-checkout-and-setup@v1
+        uses: MetaMask/action-checkout-and-setup@392abd40aa6a0600a3c0ef4af75851662587e6ec # v1.4.0
         with:
           is-high-risk-environment: false
           cache-node-modules: true
           submodules: 'recursive'
 
       - name: Install Foundry
-        uses: MetaMask/foundry-toolchain@v1
+        uses: MetaMask/foundry-toolchain@cb603ca0abb544f301eaed59ac0baf579aa6aecf # v1.0.10
         with:
           version: nightly
 
@@ -38,7 +38,7 @@ jobs:
         run: forge install
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'

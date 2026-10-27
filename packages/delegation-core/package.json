@@ -59,7 +59,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@metamask/auto-changelog": "^6.1.1",
+    "@metamask/auto-changelog": "^7.0.1",
     "@types/node": "^20.19.0",
     "@vitest/coverage-v8": "4.1.10",
     "eslint": "^9.39.2",
